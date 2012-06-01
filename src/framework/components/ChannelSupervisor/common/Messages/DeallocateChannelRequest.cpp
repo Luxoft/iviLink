@@ -1,0 +1,82 @@
+/* 
+ *  iviLINK SDK, version 0.9 (for preview only)                                      
+ *    http://www.ivilink.net                                                         
+ *  Cross Platform Application Communication Stack for In-Vehicle Applications       
+ *                                                                                   
+ *  Copyright (C) 2012, Luxoft Professional Corp., member of IBS group               
+ *                                                                                   
+ *  This library is free software; you can redistribute it and/or                    
+ *  modify it under the terms of the GNU Lesser General Public                       
+ *  License as published by the Free Software Foundation; version 2.1.               
+ *                                                                                   
+ *  This library is distributed in the hope that it will be useful,                  
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of                   
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU                
+ *  Lesser General Public License for more details.                                  
+ *                                                                                   
+ *  You should have received a copy of the GNU Lesser General Public                 
+ *  License along with this library; if not, write to the Free Software              
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA   
+ * 
+ * 
+ * 
+ * 
+ */
+
+/*
+ * DeallocateChannelRequest.cpp
+ *
+ *  Created on: Mar 16, 2012
+ *      Author: mprosuntsov
+ */
+
+
+
+#include <string>
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include "pugixml.hpp"
+#include "Request.hpp"
+#include "Message.hpp"
+#include "DeallocateChannelRequest.hpp"
+
+
+DeallocateChannelRequest::DeallocateChannelRequest(   const char* tag, const unsigned int channelId  )
+   : Request(REQUESTTYPE_DEALLOCATE_CHANNEL)
+{
+   if (channelId != 0 && strlen(tag) > 0 )
+   {
+      m_tag = tag;
+      AppendCharStringNode(m_messageDocMainNode, "tag", m_tag.c_str());
+      m_offerredChId = channelId;
+      AppendIntegerNode(m_messageDocMainNode, "channel-id", m_offerredChId);
+   }
+}
+
+DeallocateChannelRequest::DeallocateChannelRequest(pugi::xml_document* doc) :  Request(doc)
+{
+   pugi::xml_node channelIdNode = m_messageDocMainNode.child("channel-id");
+   if (channelIdNode)
+   {
+      const char* cid = channelIdNode.first_child().value();
+      if (cid != NULL && cid[0] != '\0')
+      {
+         char *ptr;
+         m_offerredChId = strtol(cid, &ptr, 10);
+      }
+
+      pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
+
+      if (tagNode)
+      {
+         m_tag = tagNode.first_child().value();
+      }
+   }
+}
+
+
+
+
+
+

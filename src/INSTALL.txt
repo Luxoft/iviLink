@@ -1,0 +1,37 @@
+iviLINK SDK build and run
+This instruction describes how to install, build and run the iviLINK SDK v0.9 Technology Preview.
+
+I. Preconditions
+	a) The trusted host platform for iviLINK SDK v0.9 is Ubuntu version 10.10 or higher. It is possible to build SDK
+           on another Linux OS, but some or all items of this instruction maybe inactual there. Luxoft doesn't test the
+           build procedure on operating systems other than Ubuntu of versions mentioned above.
+	b) GCC version <NN> shall be installed. Ensure you have compiler prepared with using the following command:
+	   sudo apt-get install gcc g++ make .
+        c) Qt framework shall be installed. You may install Qt with using the following command:
+           sudo apt-get install qt4-dev-tools qt4-qmakeg++ .
+        
+
+II. Installing IVILink SDK and  Packages
+
+	a) Clone iviLINK repository from github	
+	b) Enter the src directory
+	c) Run the following command to build all the SDK components:
+		make
+           Ensure there're no build errors in the log.
+	d) Run the following command to deploy built SDK on the local system:
+		make install
+
+
+III. Run SDK and demo applications
+	
+	Pay attention: you should have two computers connected to the same IP network with no NAT to run this technology
+        preview sample apps. The following actions must be performed on both of PCs.
+	a) Enter src_install directory
+	b) run "IVILinkSystemController -g client" on one of the PCs and "IVILinkSystemController -g server" on another
+	c) run sample_app on one of the hosts
+
+        You should see sample app GUI and be able to manage the remote side.
+
+Contact kkhait@luxoft.com in case of issues.
+
+

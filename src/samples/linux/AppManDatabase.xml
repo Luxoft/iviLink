@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>./sample_app</launch-info>
+         <services>
+            <service uid="ClimateServiceHUI" />
+            <service uid="VehicleSystemHUI" />
+            <service uid="ClimateServiceClient" />
+            <service uid="VehicleSystemClient" />
+         </services>
+      </app>
+<!--       <app>
+         <launch-info>../../../../applications/linux/test06_seat_app</launch-info>
+         <services>
+            <service uid="ClimateServiceClient" />
+            <service uid="VehicleSystemClient" />
+         </services>
+      </app> -->
+   </applications>
+</app-man>

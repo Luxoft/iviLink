@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<profile-apis>
+	<profile-api>
+		<uid>ClimateProfile_PAPI_UID</uid>
+		<src>ClimateProfile_API.xml</src>
+	</profile-api>
+	<profile-api>
+		<uid>SeatProfile_PAPI_UID</uid>
+		<src>SeatProfile_API.xml</src>
+	</profile-api>
+	<profile-api>
+		<uid>VNCProfile_PAPI_UID</uid>
+		<src>VNCProfile_API.xml</src>
+	</profile-api>
+</profile-apis>

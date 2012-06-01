@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<profiles>
+
+	<profile>
+		<manifest-path>ClimateProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="Profiles/ClimateProfileImpl/libClimateProfileImpl.so" />
+		</libs>
+	</profile>
+	<profile>
+		<manifest-path>SeatProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="Profiles/SeatProfileImpl/libSeatProfileImpl.so" />
+		</libs>
+	</profile>
+	<profile>
+		<manifest-path>VNCProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="Profiles/VNCProfileImpl/libVNCProfileImpl.so" />
+		</libs>
+	</profile>	
+
+</profiles>
+
