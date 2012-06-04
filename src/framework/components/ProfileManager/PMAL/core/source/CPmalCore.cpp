@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmalCore.cpp
- * @brief            Header file for PMAL Core class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 #include <cstdlib>

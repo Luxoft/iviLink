@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CLauncher.hpp
- * @brief            Source file for CLauncher class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cerrno>
 #include <cstdlib>

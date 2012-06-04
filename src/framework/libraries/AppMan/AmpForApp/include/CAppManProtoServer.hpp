@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CAppManProtoServer.hpp
- * @brief            Header file for server of AppMan-Protocol (AppMan-App interaction)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CAPPMANPROTOSERVER_HPP_
 #define CAPPMANPROTOSERVER_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CSystemConrollerProtocol.hpp
-* @brief            The CSystemConrollerProtocol class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef SYSTEM_CONTROLLER_PROTOCOL_HPP
 #define SYSTEM_CONTROLLER_PROTOCOL_HPP
 /********************************************************************

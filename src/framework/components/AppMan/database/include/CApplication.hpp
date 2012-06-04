@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CApplication.hpp
- * @brief            Header file for application representation in AppMan
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CAPPLICATION_HPP_
 #define CAPPLICATION_HPP_

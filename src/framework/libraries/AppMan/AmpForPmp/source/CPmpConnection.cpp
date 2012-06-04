@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpConnection.cpp
- * @brief            Source file for CPmpConnection class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/libraries/AppMan/AmpForPmp/include/CPmpConnection.hpp"
 

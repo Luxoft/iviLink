@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * TriggerQueue.cpp
- *
- *  Created on: Mar 30, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include <cstring>
 #include <cerrno>

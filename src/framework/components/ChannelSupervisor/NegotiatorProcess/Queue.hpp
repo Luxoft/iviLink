@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * Queue
- *
- *  Created on: Mar 11, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef QUEUE_HPP
 #define QUEUE_HPP

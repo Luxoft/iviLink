@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CNetlinkSocket.hpp
- * @brief            CNetlinkSocket class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CNETLINKSOCKET_HPP_
 #define CNETLINKSOCKET_HPP_

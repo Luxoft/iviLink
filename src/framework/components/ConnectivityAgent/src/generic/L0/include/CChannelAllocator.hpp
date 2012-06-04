@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CChannelAllocator.hpp
-* @brief            The CChannelAllocator class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CCHANNEL_ALLOCATOR_HPP
 #define CCHANNEL_ALLOCATOR_HPP
 /********************************************************************

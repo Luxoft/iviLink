@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IAppManProto.hpp
- * @brief            Header file for AppMan-Protocol Interface (AppMan-App interaction)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IAPPMANPROTO_HPP_
 #define IAPPMANPROTO_HPP_

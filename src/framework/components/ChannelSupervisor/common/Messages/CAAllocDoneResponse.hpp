@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * AllocateChannelResponse.hpp
- *
- *  Created on: Mar 16, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef CAALLOCATEDONERESPONSE_HPP_
 #define CAALLOCATEDONERESPONSE_HPP_

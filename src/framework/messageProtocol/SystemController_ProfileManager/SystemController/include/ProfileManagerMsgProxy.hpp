@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelSupervisorMsgProxy.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef PROFILE_MANAGER_MSG_PROXY_HPP
 #define PROFILE_MANAGER_MSG_PROXY_HPP

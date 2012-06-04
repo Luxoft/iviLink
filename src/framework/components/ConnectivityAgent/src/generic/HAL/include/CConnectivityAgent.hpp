@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CConnectivityAgent.hpp
- * @brief            The CConnectivityAgent class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CCONNECTIVITYAGENT_HPP_
 #define CCONNECTIVITYAGENT_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTimeoutManager.cpp
- * @brief            CTimeoutManager class implementation file
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "../include/CTimeoutManager.hpp"
 #include <sys/time.h>

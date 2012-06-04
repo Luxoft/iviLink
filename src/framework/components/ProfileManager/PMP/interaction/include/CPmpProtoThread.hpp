@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpProtoThread.hpp
- * @brief            Header file for CPmpProtoThread class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPPROTOTHREAD_HPP_
 #define CPMPPROTOTHREAD_HPP_

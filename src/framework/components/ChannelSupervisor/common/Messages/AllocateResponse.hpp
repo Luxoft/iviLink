@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * AllocateResponse.hpp
- *
- *  Created on: Mar 13, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef ALLOCATERESPONSE_HPP_
 #define ALLOCATERESPONSE_HPP_

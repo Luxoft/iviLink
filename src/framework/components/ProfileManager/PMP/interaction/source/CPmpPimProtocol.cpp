@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpPimProtocol.hpp
- * @brief            Source file for CPmpPimProtocol class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 

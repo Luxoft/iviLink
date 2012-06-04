@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             ConnectionInfo.hpp
-* @brief            All *ConnectionInfo structures will be in this file.
-* @author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef CONNECTIONINFO_HPP_
 #define CONNECTIONINFO_HPP_

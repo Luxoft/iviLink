@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * message.hpp
- *
- *  Created on: Feb 22, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef MESSAGE_HPP_
 #define MESSAGE_HPP_

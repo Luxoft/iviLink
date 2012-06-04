@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             logging.cpp
- * @brief
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #include <assert.h>
 #include <cstdarg>

@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * TriggerQueue.hpp
- *
- *  Created on: Mar 30, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef TRIGGERQUEUE_HPP_
 #define TRIGGERQUEUE_HPP_

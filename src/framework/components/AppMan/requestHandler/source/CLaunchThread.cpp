@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CLaunchThread.cpp
- * @brief            Source file for CLaunchThread class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/AppMan/requestHandler/include/CLaunchThread.hpp"
 #include "utils/threads/include/CSignalSemaphore.hpp"

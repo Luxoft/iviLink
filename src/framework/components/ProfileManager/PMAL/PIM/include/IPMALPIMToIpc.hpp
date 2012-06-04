@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IPIMToIpc.hpp
- *
- *  Created on: Mar 1, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef IPIMTOIPC_HPP_
 #define IPIMTOIPC_HPP_

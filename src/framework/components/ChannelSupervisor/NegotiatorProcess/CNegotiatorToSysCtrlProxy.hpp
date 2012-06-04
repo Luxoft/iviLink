@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CNegotiatorToSysCtrlProxy.hpp
-* @brief            The CNegotiatorToSysCtrlProxy class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef NEGOTIATOR_SYSTEM_CONTROLLER_PROTOCOL_HPP
 #define NEGOTIATOR_SYSTEM_CONTROLLER_PROTOCOL_HPP
 /********************************************************************

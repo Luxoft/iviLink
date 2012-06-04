@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CComponentMgr.hpp
- * @brief            Header file for CComponentMgr class.
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef PMAL_CCOMPONENTMGR_HPP_
 #define PMAL_CCOMPONENTMGR_HPP_

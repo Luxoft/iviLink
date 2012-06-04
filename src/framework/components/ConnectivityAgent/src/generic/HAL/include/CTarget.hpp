@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTarget.hpp
- * @brief            CTarger class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CTARGET_HPP_
 #define CTARGET_HPP_

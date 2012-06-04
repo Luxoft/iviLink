@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpConnectionStatus.hpp
- * @brief            Header file for IPmpConnectionStatus interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPCONNECTIONSTATUS_HPP_
 #define IPMPCONNECTIONSTATUS_HPP_

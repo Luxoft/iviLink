@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTargetAgent.cpp
- * @brief            The CTargetAgent class implementation file
- * @author           KSkidanov
- ***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

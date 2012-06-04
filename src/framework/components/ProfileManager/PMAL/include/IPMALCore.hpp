@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             ICore.hpp
- * @brief            Header file for ICore interface.
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef PMAL_ICORE_HPP_
 #define PMAL_ICORE_HPP_

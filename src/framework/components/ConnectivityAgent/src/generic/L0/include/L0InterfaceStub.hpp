@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             L0InterfaceStub.hpp
-* @brief            The L0InterfaceStub class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef L0INTERFACE_STUB_HPP
 #define L0INTERFACE_STUB_HPP
 /********************************************************************

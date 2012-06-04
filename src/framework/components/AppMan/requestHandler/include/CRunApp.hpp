@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRunApp.cpp
- * @brief            Source file for CRunApp class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CRUNAPP_HPP_
 #define CRUNAPP_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CIncomeDispatcher.hpp
-* @brief            The CIncomeDispatcher class header file  
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CINCOME_DISPATCHER_HPP
 #define CINCOME_DISPATCHER_HPP
 

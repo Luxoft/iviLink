@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              Frame.hpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 #ifndef FRAME_HPP_
 #define FRAME_HPP_
 

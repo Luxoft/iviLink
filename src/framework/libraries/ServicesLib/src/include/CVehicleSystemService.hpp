@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CVehicleSystemService.hpp
-* @brief            The CClimateService class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef VEHICLE_SYSTEM_SERVICE_HPP
 #define VEHICLE_SYSTEM_SERVICE_HPP
 /********************************************************************

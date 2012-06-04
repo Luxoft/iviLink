@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * TmpMessage.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef TMPMESSAGE_HPP_
 #define TMPMESSAGE_HPP_

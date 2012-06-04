@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * AllocateChannelResponse.hpp
- *
- *  Created on: Mar 16, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef ALLOCATECHANNELRESPONSE_HPP_
 #define ALLOCATECHANNELRESPONSE_HPP_

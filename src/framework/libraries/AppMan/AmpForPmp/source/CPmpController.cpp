@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpController.cpp
- * @brief            Source file for CPmpController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/libraries/AppMan/AmpForPmp/include/CPmpController.hpp"
 #include "framework/libraries/AppMan/AmpForPmp/include/CAppManPmpIpcServer.hpp"

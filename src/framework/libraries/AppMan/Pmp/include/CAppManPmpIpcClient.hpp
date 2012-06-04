@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CAppManPmpIpcClient.hpp
- * @brief            Header file for AppMan PMP-client
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CAPPMANPMPIPCCLIENT_HPP_
 #define CAPPMANPMPIPCCLIENT_HPP_

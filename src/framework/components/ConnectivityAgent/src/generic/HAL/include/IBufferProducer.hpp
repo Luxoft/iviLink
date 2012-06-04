@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             IBufferProducer.hpp
-* @brief            IBufferProducer interface header file
-* @author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef IBUFFERPRODUCER_HPP_
 #define IBUFFERPRODUCER_HPP_

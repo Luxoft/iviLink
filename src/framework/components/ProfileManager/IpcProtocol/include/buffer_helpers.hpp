@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             buffer_helpers.hpp
- * @brief            Header file for CBufferReader and CBufferWriter helpers
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef BUFFER_HELPERS_HPP_
 #define BUFFER_HELPERS_HPP_

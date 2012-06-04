@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * File              byteOrder.cpp
- * Description
- * @Author           PIlin
- ***************************************************************************/
+
+
+
 
 #include "utils/misc/include/byteOrder.hpp"
 

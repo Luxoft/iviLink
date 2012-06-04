@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpCoreToPim.hpp
- * @brief            
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPCORETOPIM_HPP_
 #define IPMPCORETOPIM_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileInstanceData.hpp
- * @brief
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef PMPPIMHELPERS_HPP_
 #define PMPPIMHELPERS_HPP_

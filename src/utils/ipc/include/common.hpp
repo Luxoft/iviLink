@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             common.hpp
- * @brief            Header for common types for AXIS::Ipc
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef IPCLIB_COMMON_HPP_
 #define IPCLIB_COMMON_HPP_

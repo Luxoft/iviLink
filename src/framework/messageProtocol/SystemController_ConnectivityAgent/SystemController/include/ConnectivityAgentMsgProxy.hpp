@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ConnectivityAgentMsgProxy.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef CONNECTIVITY_AGENT_MDG_PROXY_HPP
 #define CONNECTIVITY_AGENT_MDG_PROXY_HPP

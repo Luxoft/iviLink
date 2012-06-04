@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IIpcToCore.hpp
- *
- *  Created on: Mar 2, 2012
- *      Author: esperto
- */
+
+
+
 
 #ifndef IIPCTOCORE_HPP_
 #define IIPCTOCORE_HPP_

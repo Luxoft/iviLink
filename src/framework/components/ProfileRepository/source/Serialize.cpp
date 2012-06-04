@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             Serialize.hpp
- * @brief            Source file for serialization functionality
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cstring>
 

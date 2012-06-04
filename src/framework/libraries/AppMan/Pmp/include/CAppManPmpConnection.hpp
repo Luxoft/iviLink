@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CAppManPmpConnection.hpp
- * @brief            Header file for CAppManPmpConnection class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CAPPMANPMP_HPP_
 #define CAPPMANPMP_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* File              IChannelObserver.hpp
-* Description       The IChannelObserver interface class header file
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CHANNEL_OBSERVER_HPP
 #define CHANNEL_OBSERVER_HPP
 

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpCoreProfileInfo.hpp
- * @brief            Header file for CPMPCoreProfileInfo class (PMP Core library)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPCOREPROFILEINFO_HPP_
 #define CPMPCOREPROFILEINFO_HPP_

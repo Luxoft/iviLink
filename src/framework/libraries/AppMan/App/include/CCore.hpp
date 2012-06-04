@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CCore.hpp
- * @brief            Header file for Core of Application Manager AppLib
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CCORE_HPP_
 #define CCORE_HPP_

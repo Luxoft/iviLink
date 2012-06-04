@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             IUnixSocketSubscriber.hpp
- * @brief            IUnixSocketSubscriber interface header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef IUNIXSOCKETSUBSCRIBER_HPP_
 #define IUNIXSOCKETSUBSCRIBER_HPP_

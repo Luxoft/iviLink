@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CommandTimeoutResponse.hpp
- *
- *  Created on: Mar 14, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef COMMANDTIMEOUTRESPONSE_HPP_
 #define COMMANDTIMEOUTRESPONSE_HPP_

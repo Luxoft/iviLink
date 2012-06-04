@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IDatabase.hpp
- * @brief            Header file for AppMan database interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IDATABASE_HPP_
 #define IDATABASE_HPP_

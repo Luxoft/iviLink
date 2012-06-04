@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             main.cpp
- * @brief            Contains main function of Profile Repository Process
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <climits>
 #include <cstdio>

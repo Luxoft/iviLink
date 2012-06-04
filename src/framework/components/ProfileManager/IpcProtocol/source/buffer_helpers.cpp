@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * buffer_helpers.cpp
- *
- *  Created on: Feb 20, 2012
- *      Author: pilin
- */
+
+
+
 
 #include "framework/components/ProfileManager/IpcProtocol/include/buffer_helpers.hpp"
 

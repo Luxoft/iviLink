@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CIncomeDispatcher.cpp
-* @brief            CIncomeDispatcher class implementation file 
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 
 /********************************************************************
  *

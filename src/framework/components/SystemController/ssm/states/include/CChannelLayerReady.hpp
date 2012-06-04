@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelLayerReady.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef CHANNEL_LAYER_READY_HPP_
 #define CHANNEL_LAYER_READY_HPP_

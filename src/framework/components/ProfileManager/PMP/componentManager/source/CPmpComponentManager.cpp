@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpComponentManager.cpp
- * @brief            Source file for CPmpComponentManager class (PMP Component manager library)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 #include <cerrno>

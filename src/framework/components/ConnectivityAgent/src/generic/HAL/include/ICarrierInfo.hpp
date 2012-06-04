@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              ICarrierInfo.hpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef ICARRIERINFO_HPP_
 #define ICARRIERINFO_HPP_

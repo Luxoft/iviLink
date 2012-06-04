@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileApiDatabase.cpp
- * @brief            Source file for CProfileApiDatabase class (part of Profile Repository Process)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 #include <cstdio>

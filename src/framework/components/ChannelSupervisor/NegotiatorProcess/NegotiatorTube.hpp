@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorTube.hpp
- *
- *  Created on: Apr 2, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef NEGOTIATORTUBE_HPP_
 #define NEGOTIATORTUBE_HPP_

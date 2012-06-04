@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelObserver.hpp
- *
- *  Created on: Mar 30, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef CHANNELOBSERVER_HPP_
 #define CHANNELOBSERVER_HPP_

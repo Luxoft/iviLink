@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorStates.hpp
- *
- *  Created on: Apr 3, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef NEGOTIATORSTATES_HPP_
 #define NEGOTIATORSTATES_HPP_

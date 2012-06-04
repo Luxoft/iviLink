@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CConnectivityManager.cpp
-* @brief            The CConnectivityManager class implementation file  
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 
 /********************************************************************
  *

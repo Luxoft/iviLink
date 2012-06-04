@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTcpAutoConnectionFinder.cpp
- * @brief            CTcpAutoConnectionFinder class implementation file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 /********************************************************************
  *

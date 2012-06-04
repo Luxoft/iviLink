@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CAdapterFactory.hpp
- * @brief            CAdapterFactory class header file
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CADAPTERFACTORY_HPP_
 #define CADAPTERFACTORY_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             L0InterfaceStub.cpp
-* @brief            The L0InterfaceStub class implementation file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

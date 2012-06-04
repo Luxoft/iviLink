@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ConnectivityAgentMsgProxy.cpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include <cassert>
 

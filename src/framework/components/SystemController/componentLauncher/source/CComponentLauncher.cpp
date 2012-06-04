@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ComponentLauncher.cpp
- *
- *  Created on: Mar 5, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include <unistd.h>
 

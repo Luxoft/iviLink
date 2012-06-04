@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CThread.cpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>

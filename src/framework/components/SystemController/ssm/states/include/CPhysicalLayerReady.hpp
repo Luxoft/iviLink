@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * PhysicalLayerReady.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef PHYSICAL_LAYER_READY_HPP_
 #define PHYSICAL_LAYER_READY_HPP_

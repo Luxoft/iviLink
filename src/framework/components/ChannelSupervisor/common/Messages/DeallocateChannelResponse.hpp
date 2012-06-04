@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * DeallocateChannelResponse.hpp
- *
- *  Created on: Mar 16, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef DEALLOCATECHANNELRESPONSE_HPP_
 #define DEALLOCATECHANNELRESPONSE_HPP_

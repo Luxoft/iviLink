@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CCore.cpp
- * @brief            Source file for Core of Application Manager AppLib
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <unistd.h>
 #include <cstdlib>

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IAppManProtoAmpToApp.hpp
- * @brief            Header file for IAppManProtoAmpToApp
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IAPPMANPROTOAMPTOAPP_HPP_
 #define IAPPMANPROTOAMPTOAPP_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             IBufferConsumer.hpp
-* @brief            IBufferConcumer interface header file
-* @author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef IBUFFERCONSUMER_HPP_
 #define IBUFFERCONSUMER_HPP_

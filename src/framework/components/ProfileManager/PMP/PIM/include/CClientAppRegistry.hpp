@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CClientAppRegistry.hpp
- * @brief            
- * @author           pilin
- ***************************************************************************/
+
+
+
 
 
 #ifndef CCLIENTAPPREGISTRY_HPP_

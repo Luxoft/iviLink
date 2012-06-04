@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* File              CThreadPoolJob.cpp
-* Description       The CThreadPoolJob.cpp class implementation file
-* @Author           PIlin
-***************************************************************************/
+
+
+
 
 
 /********************************************************************

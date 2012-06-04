@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CDataAccessor.cpp
-* @brief            The CDataAccessor class implementation file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

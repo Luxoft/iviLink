@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CLauncher.hpp
- * @brief            Header file for CLauncher class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CLAUNCHER_HPP_
 #define CLAUNCHER_HPP_

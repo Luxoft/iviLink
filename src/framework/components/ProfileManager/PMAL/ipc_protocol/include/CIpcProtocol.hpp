@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CIpcProtocol.hpp
- *
- *  Created on: Feb 16, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef CIPCPROTOCOL_HPP_
 #define CIPCPROTOCOL_HPP_

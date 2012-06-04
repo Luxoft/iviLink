@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IdleState.hpp
- *
- *  Created on: Mar 28, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef IDLESTATE_HPP_
 #define IDLESTATE_HPP_

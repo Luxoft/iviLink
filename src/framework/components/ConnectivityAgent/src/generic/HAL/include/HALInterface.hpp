@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             HALInterface.hpp
-* @brief            The HALInterface class header file  
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef HALINTERFACE_HPP
 #define HALINTERFACE_HPP
 /********************************************************************

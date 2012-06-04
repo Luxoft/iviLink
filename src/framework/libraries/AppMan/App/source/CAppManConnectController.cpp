@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CAppManConnectController.cpp
- * @brief            Source file for CAppManConnectController
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/libraries/AppMan/App/include/CAppManConnectController.hpp"
 #include "framework/libraries/AppMan/App/include/CAppManProtoClient.hpp"

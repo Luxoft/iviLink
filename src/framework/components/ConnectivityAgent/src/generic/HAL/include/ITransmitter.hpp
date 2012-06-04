@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              ITransmitter.hpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef TRANSMITTER_H_
 #define TRANSMITTER_H_

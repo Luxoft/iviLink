@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CConnectivityAgentProxy.hpp
-* @brief            The CConnectivityAgentProxy class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CONNECTIVITY_AGENT_PROXY_HPP
 #define CONNECTIVITY_AGENT_PROXY_HPP
 /********************************************************************

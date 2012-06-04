@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTcpCarrierAdapter.hpp
- * @brief            CTcpCarrierAdapter class header file
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CTCPCARRIERADAPTER_HPP_
 #define CTCPCARRIERADAPTER_HPP_

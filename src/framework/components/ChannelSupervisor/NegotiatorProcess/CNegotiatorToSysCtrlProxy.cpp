@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CNegotiatorToSysCtrlProxy.cpp
-* @brief            The CNegotiatorToSysCtrlProxy class implementation file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

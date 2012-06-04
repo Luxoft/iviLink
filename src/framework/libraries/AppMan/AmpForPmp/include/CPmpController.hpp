@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpController.hpp
- * @brief            Header file for CPmpController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPCONTROLLER_HPP_
 #define CPMPCONTROLLER_HPP_

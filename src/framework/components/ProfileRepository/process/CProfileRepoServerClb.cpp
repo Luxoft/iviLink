@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoServerClb.cpp
- * @brief            SOurce file for CProfileRepoServerClb class (part of Profile Repository Process)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <unistd.h>
 

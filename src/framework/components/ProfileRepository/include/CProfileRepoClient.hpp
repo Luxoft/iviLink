@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoClient.hpp
- * @brief            Header file for CProfileRepoClient class (part of Profile Repository Library)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEREPOCLIENT_HPP_
 #define CPROFILEREPOCLIENT_HPP_

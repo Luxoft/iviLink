@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpCoreClbCtrl.hpp
- * @brief            Header file for CPmpCoreClbCtrl class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPCORECLBCTRL_HPP_
 #define CPMPCORECLBCTRL_HPP_

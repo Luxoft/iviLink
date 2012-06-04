@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CDatabase.hpp
- * @brief            Header file for Application database implementation
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CDATABASE_HPP_
 #define CDATABASE_HPP_

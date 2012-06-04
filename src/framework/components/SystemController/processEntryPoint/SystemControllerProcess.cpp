@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SystemControllerProcess.cpp
- *
- *  Created on: Apr 10, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include <getopt.h>
 #include "framework/components/SystemController/ssm/stateMachine/include/CSystemStateMachine.hpp"

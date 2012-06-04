@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpComponentManager.hpp
- * @brief            Header file for CPMPComponentManager class (PMP Component manager library)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPCOMPONENTMANAGER_HPP_
 #define CPMPCOMPONENTMANAGER_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoServerClb.hpp
- * @brief            Header file for CProfileRepoServerClb class (part of Profile Repository Process)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEREPOSERVERCLB_HPP_
 #define CPROFILEREPOSERVERCLB_HPP_

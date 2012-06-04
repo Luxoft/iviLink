@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTcpAutoConnectionFinder.hpp
- * @brief            CTcpAutoConnectionFinder class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CTCPAUTOCONNECTIONFINDER_HPP_
 #define CTCPAUTOCONNECTIONFINDER_HPP_

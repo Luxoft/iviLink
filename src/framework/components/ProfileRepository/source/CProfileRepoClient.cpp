@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoClient.cpp
- * @brief            Source file for CProfileRepoClient class (part of Profile Repository Library)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cstring>
 #include <cassert>

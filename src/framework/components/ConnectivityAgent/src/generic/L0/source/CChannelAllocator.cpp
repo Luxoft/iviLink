@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CChannelAllocator.cpp
-* @brief            The CChannelAllocator class implementation file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

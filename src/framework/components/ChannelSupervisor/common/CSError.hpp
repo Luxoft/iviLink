@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CSError.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef CSERROR_HPP_
 #define CSERROR_HPP_

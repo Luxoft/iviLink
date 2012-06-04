@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IAppManHandler.hpp
- * @brief            Header file for AppMan callbacks
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IAPPMANHANDLER_HPP_
 #define IAPPMANHANDLER_HPP_

@@ -23,12 +23,9 @@
  * 
  */
 
-/* 
- * File:   IChannelSupervisorObserver.h
- * Author: mprosuntsov
- *
- * Created on January 26, 2012, 5:01 PM
- */
+
+
+
 
 
 #ifndef CHANNEL_SUPERVISOR_TUBE_H

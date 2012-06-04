@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CMutex.hpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CMUTEX_HPP
 #define CMUTEX_HPP
 

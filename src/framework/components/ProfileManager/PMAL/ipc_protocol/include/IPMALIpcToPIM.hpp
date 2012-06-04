@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IIpcToPIM.hpp
- *
- *  Created on: Feb 16, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef IIPCTOPIM_HPP_
 #define IIPCTOPIM_HPP_

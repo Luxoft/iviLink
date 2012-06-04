@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             UID.hpp
- * @brief            UID.hpp header file for UID data types
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef UID_HPP_
 #define UID_HPP_

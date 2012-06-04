@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CCondVar.hpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef COND_VAR_HPP
 #define COND_VAR_HPP
 

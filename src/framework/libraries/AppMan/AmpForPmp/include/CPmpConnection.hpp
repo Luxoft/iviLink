@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpConnection.hpp
- * @brief            Header file for CPmpConnection class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPCONNECTION_HPP_
 #define CPMPCONNECTION_HPP_

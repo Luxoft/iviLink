@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorStates.cpp
- *
- *  Created on: Apr 3, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #include <map>
 #include <iostream>

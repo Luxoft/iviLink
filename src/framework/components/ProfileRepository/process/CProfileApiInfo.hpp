@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileApiInfo.hpp
- * @brief            Header file for CProfileApiInfo class (part of Profile Repository Process)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEAPIINFO_HPP_
 #define CPROFILEAPIINFO_HPP_

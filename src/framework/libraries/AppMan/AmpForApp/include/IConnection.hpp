@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IConnection.hpp
- * @brief            Header file for AppMan-Protocol Interface for connection managing
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef ICONNECTION_HPP_
 #define ICONNECTION_HPP_

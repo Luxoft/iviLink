@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CIpcProtocol.cpp
- *
- *  Created on: Mar 12, 2012
- *      Author: pilin
- */
+
+
+
 
 #include <cassert>
 

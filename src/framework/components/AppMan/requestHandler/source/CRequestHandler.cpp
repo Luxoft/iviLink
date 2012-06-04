@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRequestHandler.cpp
- * @brief            Source file for CRequestHandler class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 

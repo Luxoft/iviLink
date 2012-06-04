@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpRequest.hpp
- * @brief            Header file for PMP requests interface to AppMan
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPREQUEST_HPP_
 #define IPMPREQUEST_HPP_

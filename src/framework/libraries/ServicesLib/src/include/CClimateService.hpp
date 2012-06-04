@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CClimateService.hpp
-* @brief            The CClimateService class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CCLIMATE_SERVICE_HPP
 #define CCLIMATE_SERVICE_HPP
 /********************************************************************

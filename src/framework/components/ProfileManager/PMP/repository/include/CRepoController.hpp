@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRepoController.hpp
- * @brief            Header file for CProfileRepoController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CREPOCONTROLLER_HPP_
 #define CREPOCONTROLLER_HPP_

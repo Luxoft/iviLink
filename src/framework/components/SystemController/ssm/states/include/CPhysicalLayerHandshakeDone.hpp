@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * PhysicalLayerHandshakeDone.hpp
- *
- *  Created on: Apr 6, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef PHYSICALLAYERHANDSHAKEDONE_HPP
 #define PHYSICALLAYERHANDSHAKEDONE_HPP

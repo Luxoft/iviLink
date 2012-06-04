@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CDataAccessor.hpp
-* @brief            The CDataAccessor class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CDATA_ACCESSOR_HPP
 #define CDATA_ACCESSOR_HPP
 /********************************************************************

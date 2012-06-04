@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoInternalTypes.hpp
- * @brief            Header file contains data types needed to make IPC between Process and Library
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef PROFILEREPOINTERNALTYPES_HPP_
 #define PROFILEREPOINTERNALTYPES_HPP_

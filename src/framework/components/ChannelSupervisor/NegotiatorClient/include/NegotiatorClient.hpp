@@ -23,6 +23,8 @@
  * 
  */
 
+
+
 #ifndef NEGOTIATORCLIENT_HPP
 #define  NEGOTIATORCLIENT_HPP
 

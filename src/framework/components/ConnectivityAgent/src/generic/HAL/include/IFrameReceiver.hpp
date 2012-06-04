@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              IFrameReceiver.hpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 
 #ifndef IFRAMERECEIVER_HPP_
 #define IFRAMERECEIVER_HPP_

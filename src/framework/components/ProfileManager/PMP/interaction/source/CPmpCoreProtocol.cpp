@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpCoreProtocol.hpp
- * @brief            Source file for CPmpCoreProtocol class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 #include <cstring>

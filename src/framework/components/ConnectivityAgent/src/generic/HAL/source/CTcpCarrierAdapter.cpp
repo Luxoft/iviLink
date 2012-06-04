@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * File              CTcpCarrierAdapter.cpp
- * Description
- * @Author           VPlachkov
- ***************************************************************************/
+
+
+
 
 /*
  * Includes for using tcp sockets

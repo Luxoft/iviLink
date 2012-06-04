@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * File              CThreadPool.hpp
- * Description       The CThreadPool class header file
- * @Author           KSkidanov
- ***************************************************************************/
+
+
+
 #ifndef THREAD_POOL_HPP
 #define THREAD_POOL_HPP
 /********************************************************************

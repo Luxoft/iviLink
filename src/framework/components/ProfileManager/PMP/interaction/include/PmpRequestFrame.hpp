@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             PmpRequestFrame.hpp
- * @brief            Header file for PMP protocol frame
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef PMPREQUESTFRAME_HPP_
 #define PMPREQUESTFRAME_HPP_

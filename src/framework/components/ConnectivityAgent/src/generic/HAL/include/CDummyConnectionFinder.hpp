@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CDummyConnectionFinder.hpp
- * @brief            CDummyConnectionFinder class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CDUMMYCONNECTIONFINDER_HPP_
 #define CDUMMYCONNECTIONFINDER_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpHandler.hpp
- * @brief            Header file for PMP handler interface of AppMan requests
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPHANDLER_HPP_
 #define IPMPHANDLER_HPP_

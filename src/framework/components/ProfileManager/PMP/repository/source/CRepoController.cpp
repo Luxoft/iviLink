@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRepoController.cpp
- * @brief            Source file for CProfileRepoController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/ProfileManager/PMP/repository/include/CRepoController.hpp"
 

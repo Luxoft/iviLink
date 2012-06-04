@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelSupervisorMsgProxy.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel, VPlachkov
- */
+
+
+
 
 #ifndef APP_MAP_MSG_PROXY_HPP
 #define APP_MAN_MSG_PROXY_HPP

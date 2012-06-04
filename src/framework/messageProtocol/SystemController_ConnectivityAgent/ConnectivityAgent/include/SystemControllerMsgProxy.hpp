@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SystemControllerMsgProxy.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef SYSTEM_CONTROLLER_MSG_PROXY_HPP
 #define SYSTEM_CONTROLLER_MSG_PROXY_HPP

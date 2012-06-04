@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CSource.hpp
- * @brief            CSource class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 #ifndef SOURCE_H_
 #define SOURCE_H_
 

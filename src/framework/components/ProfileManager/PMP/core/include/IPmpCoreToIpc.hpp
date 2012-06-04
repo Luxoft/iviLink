@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpCoreToIpc.hpp
- * @brief            Header file with PMP Core interface to IPC library
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPCORETOIPC_HPP_
 #define IPMPCORETOIPC_HPP_

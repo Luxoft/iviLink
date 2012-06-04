@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             SystemControllerMsg.hpp
- * @brief            Header file for SystemControllerMsg
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef SYSTEMCONTROLLERMSG_AM_HPP_
 #define SYSTEMCONTROLLERMSG_AM_HPP_

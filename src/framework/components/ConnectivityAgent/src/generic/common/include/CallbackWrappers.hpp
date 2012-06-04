@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CallbackWrappers.hpp
-* @brief            The CallbackWrappers  header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CALLBACK_WRAPPERS_HPP
 #define CALLBACK_WRAPPERS_HPP
 /********************************************************************

@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SSMTriggers.hpp
- *
- *  Created on: Mar 30, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef SSM_TRIGGERS_HPP_
 #define SSM_TRIGGERS_HPP_

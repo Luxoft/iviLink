@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpCoreClb.hpp
- * @brief            PMP Core Callback interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPCORECLB_HPP_
 #define IPMPCORECLB_HPP_

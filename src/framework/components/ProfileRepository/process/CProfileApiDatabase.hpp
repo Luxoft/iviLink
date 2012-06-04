@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileApiDatabase.hpp
- * @brief            Header file for CProfileApiDatabase class (part of Profile Repository Process)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEAPIDATABASE_HPP_
 #define CPROFILEAPIDATABASE_HPP_

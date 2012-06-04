@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             SystemControllerMsg.cpp
- * @brief            Source file for SystemControllerMsg
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cstdlib>
 #include <cassert>

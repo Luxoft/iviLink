@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             config.hpp
-* @brief            Common cnfiguration variables
-* @author           PIlin
-***************************************************************************/
+
+
+
 
 
 #ifndef CONFIG_HPP

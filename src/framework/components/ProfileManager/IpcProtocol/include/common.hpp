@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * common.hpp
- *
- *  Created on: Feb 16, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef PMAL_IPCPROTOCOL_COMMON_HPP_
 #define PMAL_IPCPROTOCOL_COMMON_HPP_

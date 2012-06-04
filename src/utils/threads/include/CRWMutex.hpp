@@ -23,16 +23,11 @@
  * 
  */
 
+
+
 #ifndef CRWMUTEX_HPP
 #define CRWMUTEX_HPP
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CRWMutex.hpp
- * @brief            The CRWMutex class header file
- * @author           KSkidanov
- ***************************************************************************/
+
 /********************************************************************
  *
  * System includes

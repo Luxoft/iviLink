@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * File              CCarrierAdapter.cpp
- * Description
- * @Author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CCARRIERADAPTER_HPP_
 #define CCARRIERADAPTER_HPP_

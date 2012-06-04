@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * File              byteOrder.hpp
- * Description
- * @Author           Pilin
- ***************************************************************************/
+
+
+
 
 #ifndef BYTE_ORDER_HPP_
 #define BYTE_ORDER_HPP_

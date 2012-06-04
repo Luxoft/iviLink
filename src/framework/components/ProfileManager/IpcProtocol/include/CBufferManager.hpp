@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CBufferManager.hpp
- * @brief            
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CBUFFERMANAGER_HPP_
 #define CBUFFERMANAGER_HPP_

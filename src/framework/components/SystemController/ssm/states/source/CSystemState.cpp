@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SystemState.cpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include "framework/components/SystemController/ssm/states/include/CSystemState.hpp"
 #include "framework/components/SystemController/ssm/stateMachine/include/CSystemStateMachine.hpp"

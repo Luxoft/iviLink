@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CTransmitDispatcher.hpp
-* @brief            The CTransmitDispatcher class header file  
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 
 #ifndef CTRANSMIT_DISPATCHER_HPP
 #define CTRANSMIT_DISPATCHER_HPP

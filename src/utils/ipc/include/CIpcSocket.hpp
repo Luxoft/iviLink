@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CIpcSocket.hpp
- * @brief            Header for CIpcSocket class
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 
 #ifndef CIPCSOCKET_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CIpcError.hpp
- * @brief            Header for CIpcError class
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CIPCERROR_HPP_
 #define CIPCERROR_HPP_

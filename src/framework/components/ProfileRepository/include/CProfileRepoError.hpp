@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoError.hpp
- * @brief            Header file that contains CProfileRepoError class (part of Profile Repository Lib)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEREPOERROR_HPP_
 #define CPROFILEREPOERROR_HPP_

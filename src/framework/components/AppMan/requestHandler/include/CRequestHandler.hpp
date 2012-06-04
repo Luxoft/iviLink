@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRequestHandler.hpp
- * @brief            Header file for CRequestHandler class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CREQUESTHANDLER_HPP_
 #define CREQUESTHANDLER_HPP_

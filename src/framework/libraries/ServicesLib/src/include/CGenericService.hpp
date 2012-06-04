@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             CGenericService.hpp
-* @brief            The CGenericService class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CGENERIC_SERVICE_HPP
 #define CGENERIC_SERVICE_HPP
 /********************************************************************

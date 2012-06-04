@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CRunApp.hpp
- * @brief            Header file for CRunApp class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/AppMan/requestHandler/include/CRunApp.hpp"
 

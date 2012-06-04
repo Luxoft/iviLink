@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CController.hpp
- * @brief            Header file for AppMan controller class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CCONTROLLER_HPP_
 #define CCONTROLLER_HPP_

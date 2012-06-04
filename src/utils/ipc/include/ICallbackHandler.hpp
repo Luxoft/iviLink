@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             ICallbackHandler.hpp
- * @brief            Header for ICallbackHandler interface
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef ICALLBACKHANDLER_HPP_
 #define ICALLBACKHANDLER_HPP_

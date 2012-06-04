@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             ConnectivityAgentMain.cpp
- * @brief            Main func of ConnectivityAgent Process
- * @author           KSkidanov
- ***************************************************************************/
+
+
+
 
 #include <time.h>
 #include <unistd.h>

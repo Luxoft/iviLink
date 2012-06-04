@@ -24,14 +24,9 @@
  */
 
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IProfileRepoClient.hpp
- * @brief            Header file for IProfileRepoClient interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPROFILEREPOCLIENT_HPP_
 #define IPROFILEREPOCLIENT_HPP_

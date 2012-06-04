@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IReqHandlerForAppCom.hpp
- * @brief            Header file for request handler interface for CReqHandlerForAppCom
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IREQHANDLERFORAPPCOM_HPP_
 #define IREQHANDLERFORAPPCOM_HPP_

@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * Negotiator.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef NEGOTIATOR_HPP_
 #define NEGOTIATOR_HPP_

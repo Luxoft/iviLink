@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SystemStateMachine.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef SYSTEMSTATEMACHINE_HPP
 #define SYSTEMSTATEMACHINE_HPP

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             ITimeoutSubscriber.hpp
- * @brief            ITimeoutSubscriber interface header file
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef ITIMEOUTSUBSCRIBER_HPP_
 #define ITIMEOUTSUBSCRIBER_HPP_

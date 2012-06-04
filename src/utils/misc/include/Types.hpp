@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              Types.hpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 
 #ifndef TYPES_HPP
 #define TYPES_HPP

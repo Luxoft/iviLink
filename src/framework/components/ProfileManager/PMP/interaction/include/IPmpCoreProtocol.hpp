@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpCoreProtocol.hp
- * @brief            Header file for IPmpCoreProtocol interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPCOREPROTOCOL_HPP_
 #define IPMPCOREPROTOCOL_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             API.cpp
-* @brief            The Connectivity Agent API implementation file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

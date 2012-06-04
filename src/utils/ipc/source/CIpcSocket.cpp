@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CIpcSocket.cpp
- *
- *  Created on: Jan 25, 2012
- *      Author: pilin
- */
+
+
+
 
 #include <algorithm>
 #include <cassert>

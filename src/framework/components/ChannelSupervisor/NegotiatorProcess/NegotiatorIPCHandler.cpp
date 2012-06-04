@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorIPCHandler.cpp
- *
- *  Created on: Mar 19, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #include "../common/Messages/pugixml.hpp"
 #include "../common/Messages/Notification.hpp"

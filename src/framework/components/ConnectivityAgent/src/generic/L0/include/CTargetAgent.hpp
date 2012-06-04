@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CTargetAgent.hpp
-* @brief            The CTargetAgent class header file
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CTARGETAGENT_HPP
 #define CTARGETAGENT_HPP
 /********************************************************************

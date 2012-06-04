@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CAppManProtoServer.cpp
- * @brief            Source file for server of AppMan-Protocol (AppMan-App interaction)
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/libraries/AppMan/AmpForApp/include/CAppManProtoServer.hpp"
 #include "framework/components/ProfileRepository/include/Serialize.hpp"

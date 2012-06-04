@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTimeoutManager.hpp
- * @brief            CTimeoutManager class header file
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CTIMEOUTMANAGER_HPP_
 #define CTIMEOUTMANAGER_HPP_

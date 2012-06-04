@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPIM.hpp
- * @brief            Header file for IPIM interface.
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef PMAL_IPIM_HPP_
 #define PMAL_IPIM_HPP_

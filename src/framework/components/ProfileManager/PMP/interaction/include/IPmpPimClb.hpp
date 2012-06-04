@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpPimClb.hpp
- * @brief            PMP PIM Callback interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IPMPPIMCLB_HPP_
 #define IPMPPIMCLB_HPP_

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CRWMutex.cpp
- * @brief            The CRWMutex class implementation file
- * @author           KSkidanov
- ***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

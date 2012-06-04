@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CClimateService.cpp
- * @brief            The CClimateService class implementation file
- * @author           KSkidanov
- ***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

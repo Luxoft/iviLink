@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * File              CThreadPoolJob.hpp
- * Description       The CThreadPoolJob.hpp class header file
- * @Author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CTHREADPOOLJOB_HPP_
 #define CTHREADPOOLJOB_HPP_

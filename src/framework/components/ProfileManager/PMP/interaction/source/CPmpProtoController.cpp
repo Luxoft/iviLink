@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpProtoController.cpp
- * @brief            Source file for CPmpProtoController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/ProfileManager/PMP/interaction/include/CPmpProtoController.hpp"
 

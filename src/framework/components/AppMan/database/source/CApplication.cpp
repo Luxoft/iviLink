@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CApplication.cpp
- * @brief            Source file for application representation in AppMan
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/AppMan/database/include/CApplication.hpp"
 

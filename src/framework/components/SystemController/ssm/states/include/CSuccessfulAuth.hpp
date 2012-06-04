@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SuccessfulAuth.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef SUCCESSFULAUTH_HPP_
 #define SUCCESSFULAUTH_HPP_

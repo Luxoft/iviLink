@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             main.cpp
- * @brief            Source file for main function Profile Manager Process
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cstdlib>
 #include <cstring>

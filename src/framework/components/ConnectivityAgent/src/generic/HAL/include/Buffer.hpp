@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              Buffer.hpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 #ifndef BUFFER_HPP_
 #define BUFFER_HPP_
 

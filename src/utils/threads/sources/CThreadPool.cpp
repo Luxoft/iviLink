@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CThreadPool.cpp
-* Description       The CThreadPool class implementation file  
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 /********************************************************************
  *
  * System includes

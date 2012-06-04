@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorTube.cpp
- *
- *  Created on: Apr 2, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #include <cassert>
 #include "../Tube/include/ChannelSupervisorTube.hpp"

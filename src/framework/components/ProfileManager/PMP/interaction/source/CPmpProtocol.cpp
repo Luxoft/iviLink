@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpProtocol.cpp
- * @brief            Source file for CPmpProtocol class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <unistd.h>
 

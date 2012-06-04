@@ -20,8 +20,6 @@
 # 
 # 
 # 
-###############################################################################
-# Autodetection of config.mk and includes
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
 include $(AXIS_CONFIG_MK)

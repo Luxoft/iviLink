@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * PhysicalLayerHandshakeDone.cpp
- *
- *  Created on: Apr 6, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include "framework/components/SystemController/ssm/states/include/CPhysicalLayerHandshakeDone.hpp"
 #include "framework/components/SystemController/ssm/states/include/CChannelLayerReady.hpp"

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CIpc.hpp
- * @brief            Main header file for IPC library. Contains CIpc class.
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CIPC_HPP_
 #define CIPC_HPP_

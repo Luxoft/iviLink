@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * AllocateChannelRequest.hpp
- *
- *  Created on: Mar 16, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef CAALLOCATEDONEREQUEST_HPP_
 #define CAALLOCATEDONEREQUEST_HPP_

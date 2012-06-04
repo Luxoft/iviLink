@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CSignalSemaphore.hpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef SIGNALSEMAPHORE_HPP
 #define SIGNALSEMAPHORE_HPP
 

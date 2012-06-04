@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpPimClbCtrl.cpp
- * @brief            Source file for CPmpPimClbCtrl class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include <cassert>
 

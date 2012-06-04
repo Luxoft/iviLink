@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * AllocateResponse.cpp
- *
- *  Created on: Mar 13, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #include <cstdio>
 #include <cstdlib>

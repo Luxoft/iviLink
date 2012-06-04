@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CSignalSemaphore.cpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 
 #include <errno.h>
 #include <string.h>

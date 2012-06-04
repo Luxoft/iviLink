@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IVILinkLogger.hpp
- * @brief
- * @author           Kramchaninov Pavel
- ***************************************************************************/
+
+
+
 
 #ifndef IVI_LINK_LOGGER_HPP_
 #define IVI_LINK_LOGGER_HPP_

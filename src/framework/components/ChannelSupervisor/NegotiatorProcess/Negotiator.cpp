@@ -23,20 +23,10 @@
  * 
  */
 
-/*
- * Negotiator.cpp
- *
- *  Created on: Mar 27, 2012
- *      Author: mprosuntsov
- */
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* @file             Negotiator.cpp
-* @brief            The Negotiator class implementation file
-* @author           MProsuntsov
-***************************************************************************/
+
+
+
+
 /********************************************************************
  *
  * System includes

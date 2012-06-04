@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IPMPPIMToIpc.hpp
- *
- *  Created on: Mar 12, 2012
- *      Author: pilin
- */
+
+
+
 
 #ifndef IPMPPIMTOIPC_HPP_
 #define IPMPPIMTOIPC_HPP_

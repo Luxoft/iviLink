@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * InitialState.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef INITIALSTATE_HPP
 #define INITIALSTATE_HPP

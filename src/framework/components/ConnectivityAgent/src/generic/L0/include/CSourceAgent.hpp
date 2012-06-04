@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* @file             CSourceAgent.hpp
-* @brief            The CSourceAgent class header file  
-* @author           KSkidanov
-***************************************************************************/
+
+
+
 #ifndef CSOURCEAGENT_HPP
 #define CSOURCEAGENT_HPP
 /********************************************************************

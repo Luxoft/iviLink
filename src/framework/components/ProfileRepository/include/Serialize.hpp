@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             Serialize.hpp
- * @brief            Header file for serialization functionality
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef SERIALISE_HPP_
 #define SERIALISE_HPP_

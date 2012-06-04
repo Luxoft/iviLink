@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelLayerHandshakeDone.h
- *
- *  Created on: May 14, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef CHANNELLAYERHANDSHAKEDONE_HPP
 #define CHANNELLAYERHANDSHAKEDONE_HPP

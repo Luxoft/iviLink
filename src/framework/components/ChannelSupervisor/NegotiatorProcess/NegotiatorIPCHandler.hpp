@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * NegotiatorIPCHandler.hpp
- *
- *  Created on: Mar 19, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef NEGOTIATORIPCHANDLER_HPP_
 #define NEGOTIATORIPCHANDLER_HPP_

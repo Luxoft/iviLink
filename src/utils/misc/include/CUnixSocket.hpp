@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CUnixSocket.hpp
- * @brief            CUnixSocket.hpp class header file
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 #ifndef CUNIXSOCKET_HPP_
 #define CUNIXSOCKET_HPP_

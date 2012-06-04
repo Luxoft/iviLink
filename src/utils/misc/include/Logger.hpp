@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             Logger.hpp
- * @brief
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef LOGGER_HPP_
 #define LOGGER_HPP_

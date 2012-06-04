@@ -23,12 +23,9 @@
  * 
  */
 
-/* 
- * File:   ChannelSupervisorTubeApi.h
- * Author: mprosuntsov
- *
- * Created on January 26, 2012, 5:01 PM
- */
+
+
+
 
 #ifndef CHANNELSUPERVISORTUBE_H
 #define	CHANNELSUPERVISORTUBE_H

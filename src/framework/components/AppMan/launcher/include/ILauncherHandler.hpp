@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IDatabase.hpp
- * @brief            Header file for AppMan launcher interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef ILAUNCHERHANDLER_HPP_
 #define ILAUNCHERHANDLER_HPP_

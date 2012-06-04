@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * SystemState.hpp
- *
- *  Created on: Mar 27, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef SYSTEMSTATE_HPP_
 #define SYSTEMSTATE_HPP_

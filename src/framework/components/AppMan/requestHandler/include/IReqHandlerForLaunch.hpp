@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IReqHandlerForLauncher.hpp
- * @brief            Header file for request handler interface for CLaunchThread
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IREQHANDLERFORLAUNCH_HPP_
 #define IREQHANDLERFORLAUNCH_HPP_

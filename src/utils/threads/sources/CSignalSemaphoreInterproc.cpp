@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2012
-* Company           LUXOFT
-* File              CSignalSemaphoreInterproc.cpp
-* Description
-* @Author           PIlin
-***************************************************************************/
+
+
+
 
 #include <cerrno>
 #include <cstdio>

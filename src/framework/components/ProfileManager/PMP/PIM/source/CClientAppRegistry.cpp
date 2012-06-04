@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CClientAppRegistry.cpp
- * @brief            
- * @author           pilin
- ***************************************************************************/
+
+
+
 
 #include <algorithm>
 #include <cassert>

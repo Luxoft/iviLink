@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ComponentLauncher.h
- *
- *  Created on: Mar 5, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef COMPONENTLAUNCHER_HPP
 #define COMPONENTLAUNCHER_HPP

@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoConnection.hpp
- * @brief            Header file for CProfileRepoConnection class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPROFILEREPOCONNECTION_HPP_
 #define CPROFILEREPOCONNECTION_HPP_

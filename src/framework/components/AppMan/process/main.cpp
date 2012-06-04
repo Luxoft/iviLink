@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             main.cpp
- * @brief            Source file for main function Application Manager Process
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 #include <climits>
 #include <cstdlib>
 #include <string>

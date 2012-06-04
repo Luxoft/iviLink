@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * CommandRejectResponse.hpp
- *
- *  Created on: Mar 14, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef COMMANDREJECTRESPONSE_HPP_
 #define COMMANDREJECTRESPONSE_HPP_

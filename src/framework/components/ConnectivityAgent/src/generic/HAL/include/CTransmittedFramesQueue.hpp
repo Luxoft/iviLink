@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2011
- * Company           LUXOFT
- * @file             CTransmittedFramesQueue.hpp
- * @brief            The CTransmittedFramesQueue class header file
- * @author           KSkidanov
- ***************************************************************************/
+
+
+
 #ifndef CTRANSMITTED_FRAMES_QUEUE_HPP
 #define CTRANSMITTED_FRAMES_QUEUE_HPP
 

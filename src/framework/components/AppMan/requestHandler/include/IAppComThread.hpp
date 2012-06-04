@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IAppComThread.hpp
- * @brief            Header file for  ILaunchThread interface
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef IAPPCOMTHREAD_HPP_
 #define IAPPCOMTHREAD_HPP_

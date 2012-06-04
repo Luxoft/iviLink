@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             RepoTypes.hpp
- * @brief            Header file Contains data types used by Profile Repository and its clients
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef AXISTYPES_HPP_
 #define AXISTYPES_HPP_

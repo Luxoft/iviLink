@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CPmpProtoController.hpp
- * @brief            Header file for CPmpProtoController class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #ifndef CPMPPROTOCONTROLLER_HPP_
 #define CPMPPROTOCONTROLLER_HPP_

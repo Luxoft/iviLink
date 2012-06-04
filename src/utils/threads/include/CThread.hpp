@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
-* Project           AXIS
-* (c) copyright     2011
-* Company           LUXOFT
-* File              CThread.hpp
-* Description
-* @Author           KSkidanov
-***************************************************************************/
+
+
+
 
 #ifndef THREAD_HPP
 #define THREAD_HPP

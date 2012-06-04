@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * message.hpp
- *
- *  Created on: Mar 14, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #ifndef MESSAGE_HPP_
 #define MESSAGE_HPP_

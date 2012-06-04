@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * ChannelSupervisorMsgProxy.cpp
- *
- *  Created on: Mar 19, 2012
- *      Author: Kramchaninov Pavel, VPlachkov
- */
+
+
+
 
 #include <cassert>
 

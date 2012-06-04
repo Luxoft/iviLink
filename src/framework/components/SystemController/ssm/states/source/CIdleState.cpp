@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * IdleState.cpp
- *
- *  Created on: Mar 28, 2012
- *      Author: Kramchaninov Pavel
- */
+
+
+
 
 #include "framework/components/SystemController/ssm/states/include/CIdleState.hpp"
 

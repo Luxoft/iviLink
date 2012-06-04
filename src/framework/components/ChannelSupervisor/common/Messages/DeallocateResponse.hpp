@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * DeallocateResponse.hpp
- *
- *  Created on: Mar 14, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef DEALLOCATERESPONSE_HPP_
 #define DEALLOCATERESPONSE_HPP_

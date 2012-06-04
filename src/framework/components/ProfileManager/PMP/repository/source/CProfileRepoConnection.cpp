@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             CProfileRepoConnection.hpp
- * @brief            Source file for CProfileRepoConnection class
- * @author           VPlachkov
- ***************************************************************************/
+
+
+
 
 #include "framework/components/ProfileManager/PMP/repository/include/CProfileRepoConnection.hpp"
 #include "framework/components/ProfileRepository/include/CProfileRepoClient.hpp"

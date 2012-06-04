@@ -23,14 +23,9 @@
  * 
  */
 
-/***************************************************************************
- * Project           AXIS
- * (c) copyright     2012
- * Company           LUXOFT
- * @file             IPmpPimProtocol.hpp
- * @brief            Header file for IPmpPimProtocol interface
- * @author           PIlin
- ***************************************************************************/
+
+
+
 
 
 #ifndef IPMPPIMPROTOCOL_HPP_

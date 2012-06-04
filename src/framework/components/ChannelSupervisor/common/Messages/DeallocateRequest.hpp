@@ -23,12 +23,9 @@
  * 
  */
 
-/*
- * DeallocateRequest.hpp
- *
- *  Created on: Mar 14, 2012
- *      Author: mprosuntsov
- */
+
+
+
 
 #ifndef DEALLOCATEREQUEST_HPP_
 #define DEALLOCATEREQUEST_HPP_
