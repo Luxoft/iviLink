@@ -24,16 +24,6 @@
  */
 
 
-
-/*
-*
-*
-*	Oxana Dolmatova
-*	Luxoft, TSC, 2012
-*
-*
-*/
-
 #ifndef CONFIGURATOR_H
 #define CONFIGURATOR_H
 

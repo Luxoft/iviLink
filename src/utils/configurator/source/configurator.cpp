@@ -25,15 +25,6 @@
 
 
 
-/*
-*
-*
-*	Oxana Dolmatova
-*	Luxoft, TSC, 2012
-*
-*	Some functions have been developed by Konstantin Khait
-*/
-
 
 #include <string>
 #include <fstream>
