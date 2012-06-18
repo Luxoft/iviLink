@@ -9,7 +9,8 @@ I. Preconditions
 	   sudo apt-get install gcc g++ make .
         c) Qt framework shall be installed. You may install Qt with using the following command:
            sudo apt-get install qt4-dev-tools qt4-qmakeg++ .
-        
+	d) Development files for multimedia framework from KDE shall be installed. You may install it using the following command: 
+	   sudo apt-get install libphonon-dev .
 
 II. Installing IVILink SDK and  Packages
 
