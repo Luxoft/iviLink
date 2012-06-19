@@ -5,10 +5,10 @@ I. Preconditions
 	a) The trusted host platform for iviLINK SDK v0.9 is Ubuntu version 10.10 or higher. It is possible to build SDK
            on another Linux OS, but some or all items of this instruction maybe inactual there. Luxoft doesn't test the
            build procedure on operating systems other than Ubuntu of versions mentioned above.
-	b) GCC version <NN> shall be installed. Ensure you have compiler prepared with using the following command:
+	b) GCC version 4.6.1 shall be installed. Ensure you have compiler prepared with using the following command:
 	   sudo apt-get install gcc g++ make .
         c) Qt framework shall be installed. You may install Qt with using the following command:
-           sudo apt-get install qt4-dev-tools qt4-qmakeg++ .
+           sudo apt-get install qt4-dev-tools qt4-qmake g++ .
 	d) Development files for multimedia framework from KDE shall be installed. You may install it using the following command: 
 	   sudo apt-get install libphonon-dev .
 
