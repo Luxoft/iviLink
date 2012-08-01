@@ -1,0 +1,13 @@
+<device name="HeadUnit">
+	<service name="ClimateServiceHUI" />
+    <service name="ClimateServiceClient" />
+    <service name="VehicleSystemHUI" />
+    <service name="VehicleSystemClient" />
+    <service name="ClimateClientService" />
+    <service name="ClimateHUService" />
+    <service name="SeatClientService" />
+    <service name="SeatHUService" />
+	<service name="BasicSampleServiceHUI" />
+    <service name="BasicSampleServiceClient" />
+    <service name="AuthenticationService" />
+</device>

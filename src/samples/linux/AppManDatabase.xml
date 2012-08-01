@@ -3,20 +3,41 @@
 <app-man>
    <applications>
       <app>
-         <launch-info>./sample_app</launch-info>
+         <launch-info>./BasicSample</launch-info>
          <services>
-            <service uid="ClimateServiceHUI" />
-            <service uid="VehicleSystemHUI" />
-            <service uid="ClimateServiceClient" />
-            <service uid="VehicleSystemClient" />
+            <service uid="BasicSampleServiceHUI" />
+            <service uid="BasicSampleServiceClient" />
          </services>
       </app>
-<!--       <app>
-         <launch-info>../../../../applications/linux/test06_seat_app</launch-info>
+      <app>
+         <launch-info>./AuthenticationApplication</launch-info>
          <services>
-            <service uid="ClimateServiceClient" />
-            <service uid="VehicleSystemClient" />
+            <service uid="AuthenticationService" />
          </services>
-      </app> -->
+      </app>
+      <app>
+         <launch-info>./ClimateHU_App</launch-info>
+         <services>
+            <service uid="ClimateHUService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./ClimateClient_App</launch-info>
+         <services>
+            <service uid="ClimateClientService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./SeatHU_App</launch-info>
+         <services>
+            <service uid="SeatHUService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./SeatClient_App</launch-info>
+         <services>
+            <service uid="SeatClientService" />
+         </services>
+      </app>
    </applications>
 </app-man>

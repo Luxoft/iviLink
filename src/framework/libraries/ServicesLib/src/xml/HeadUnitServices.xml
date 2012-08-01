@@ -1,6 +1,0 @@
-<device name="HeadUnit">
-	<service name="ClimateServiceHUI" />
-    <service name="ClimateServiceClient" />
-    <service name="VehicleSystemHUI" />
-    <service name="VehicleSystemClient" />
-</device>

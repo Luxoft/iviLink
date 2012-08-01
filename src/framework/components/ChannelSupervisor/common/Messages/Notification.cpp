@@ -1,27 +1,28 @@
 /* 
- *  iviLINK SDK, version 0.9 (for preview only)                                      
- *    http://www.ivilink.net                                                         
- *  Cross Platform Application Communication Stack for In-Vehicle Applications       
- *                                                                                   
- *  Copyright (C) 2012, Luxoft Professional Corp., member of IBS group               
- *                                                                                   
- *  This library is free software; you can redistribute it and/or                    
- *  modify it under the terms of the GNU Lesser General Public                       
- *  License as published by the Free Software Foundation; version 2.1.               
- *                                                                                   
- *  This library is distributed in the hope that it will be useful,                  
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of                   
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU                
- *  Lesser General Public License for more details.                                  
- *                                                                                   
- *  You should have received a copy of the GNU Lesser General Public                 
- *  License along with this library; if not, write to the Free Software              
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA   
  * 
+ * iviLINK SDK, version 1.0
+ * http://www.ivilink.net
+ * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; version 2.1.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
  * 
  */
+
+
 
 
 
@@ -30,6 +31,9 @@
 #include <iostream>
 #include <string>
 #include "Notification.hpp"
+
+using namespace iviLink::ChannelSupervisor::Messages;
+
 
 NotificationTypeMap Notification::m_notificationTypeMap;
 
@@ -152,8 +156,11 @@ char* Notification::ExtractCharNode(pugi::xml_node node)
 
 
 Notification::Notification(const char * tag, NotificationType notificationType) :
-      Message(), m_notificationType(notificationType), m_tag(tag), m_errorCode(ERRORCODE_SUCCESS),
-      m_errorStr("")
+      Message(),
+      m_errorCode(ERRORCODE_SUCCESS),
+      m_errorStr(""),
+      m_notificationType(notificationType),
+      m_tag(tag)
 {
    if (m_notificationType != NOTIFICATIONTTYPE_UNKNOWN)
    {
@@ -183,7 +190,7 @@ Notification::Notification(pugi::xml_document* doc, NotificationType notificatio
       {
          if (notificationType != NOTIFICATIONTTYPE_UNKNOWN)
          {
-            pugi::xml_attribute queryName = m_messageDocMainNode.attribute("name");
+            //pugi::xml_attribute queryName = m_messageDocMainNode.attribute("name");
          }
          pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
 

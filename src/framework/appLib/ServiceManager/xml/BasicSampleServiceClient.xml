@@ -1,0 +1,5 @@
+<service name= "BasicSampleServiceClient">
+    <pair name= "BasicSampleServiceHUI"/>
+    <profile api="BasicSampleProfile_PAPI_UID">
+    </profile>
+</service>

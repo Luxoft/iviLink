@@ -33,7 +33,7 @@ export PROFILE_REPOSITORY := $(PREFIX)/profile_repository
 export SERVICE_REPOSITORY := $(PREFIX)/service_repository
 export APPLICATION_MANAGER_REPOSITORY := $(PREFIX)/application_manager_repository
 
-GLOBAL_CFLAGS   := -I$(ROOT_DIR) -Wall -pthread -ggdb -fPIC -I$(3RD_PARTY_DIR)/include 
+GLOBAL_CFLAGS   := -I$(ROOT_DIR) -Wall -pthread -ggdb -fPIC -I$(3RD_PARTY_DIR)/include #-Werror
 
 #NONUNIQUE_AXIS_QUEUE:=true
 ifeq ($(NONUNIQUE_AXIS_QUEUE),true) 

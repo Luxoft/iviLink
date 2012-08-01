@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>pin/0-01.png</file>
+        <file>pin/00-01.png</file>
+        <file>pin/1-01.png</file>
+        <file>pin/2-01.png</file>
+        <file>pin/3-01.png</file>
+        <file>pin/4-01.png</file>
+        <file>pin/5-01.png</file>
+        <file>pin/6-01.png</file>
+        <file>pin/7-01.png</file>
+        <file>pin/8-01.png</file>
+        <file>pin/9-01.png</file>
+        <file>pin/can-01.png</file>
+        <file>pin/enter_4_digits_msg.png</file>
+        <file>pin/ok-01.png</file>
+        <file>pin/pin-b-01.png</file>
+        <file>pin/pol-01.png</file>
+        <file>pin/str-01.png</file>
+        <file>pin/auth_failed.png</file>
+    </qresource>
+</RCC>

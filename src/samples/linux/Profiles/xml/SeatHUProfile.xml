@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>SeatHUProfile_UID</uid>
+   <name>SeatHUProfile</name>
+   <version>1</version>
+   <api uid ="SeatHUProfile_API_UID" />
+   <complement>SeatClientProfile_UID</complement>
+
+</profile>

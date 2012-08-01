@@ -1,0 +1,5 @@
+<service name= "SeatClientService">
+    <pair name= "SeatHUService"/>
+    <profile api="SeatClientProfile_API_UID">
+     </profile>
+</service>

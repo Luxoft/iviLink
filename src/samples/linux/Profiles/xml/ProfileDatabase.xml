@@ -1,24 +1,41 @@
 <?xml version="1.0"?>
 <profiles>
-
 	<profile>
-		<manifest-path>ClimateProfile_Impl.xml</manifest-path>
+		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
 		<libs>
-			<lib platform="Ubuntu" path="Profiles/ClimateProfileImpl/libClimateProfileImpl.so" />
+			<lib platform="Ubuntu" path="Profiles/BasicSampleProfileImpl/libBasicSampleProfileImpl.so" />
 		</libs>
 	</profile>
 	<profile>
-		<manifest-path>SeatProfile_Impl.xml</manifest-path>
+		<manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
 		<libs>
-			<lib platform="Ubuntu" path="Profiles/SeatProfileImpl/libSeatProfileImpl.so" />
+			<lib platform="Ubuntu" path="Profiles/AuthenticationProfileImpl/libAuthenticationProfileImpl.so" />
 		</libs>
-	</profile>
-	<profile>
-		<manifest-path>VNCProfile_Impl.xml</manifest-path>
-		<libs>
-			<lib platform="Ubuntu" path="Profiles/VNCProfileImpl/libVNCProfileImpl.so" />
-		</libs>
-	</profile>	
+	</profile> 
+   <profile>
+      <manifest-path>ClimateClientProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="Profiles/ClimateClientProfile/libClimateClientProfile.so" />
+      </libs>
+   </profile> 
+   <profile>
+      <manifest-path>ClimateHUProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="Profiles/ClimateHUProfile/libClimateHUProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>SeatClientProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="Profiles/SeatClientProfile/libSeatClientProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>SeatHUProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="Profiles/SeatHUProfile/libSeatHUProfile.so" />
+      </libs>
+   </profile>
 
 </profiles>
 

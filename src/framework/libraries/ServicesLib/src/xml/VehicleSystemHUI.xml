@@ -1,7 +1,0 @@
-<service name= "VehicleSystemHUI">
-    <pair name= "VehicleSystemClient"/>
-    <profile api="SeatProfile_PAPI_UID" alias="SeatProfile">
-      	<!-- <param name="Heat" lowbound="Yes" upbound="No" optimal="Yes"/> -->
-      	<!-- <param name="AnglesCount" lowbound="2" upbound="6" optimal="4"/> -->
-    </profile>
-</service>

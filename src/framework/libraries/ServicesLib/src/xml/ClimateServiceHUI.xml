@@ -1,7 +1,0 @@
-<service name= "ClimateServiceHUI">
-    <pair name= "ClimateServiceClient"/>
-    <profile api="ClimateProfile_PAPI_UID" alias="ClimateProfile">
-    	<!-- <param name="Speed" lowbound="1300" upbound="5000" optimal="3000"/> -->
-      	<!-- <param name="Fan" lowbound="low" upbound="high" optimal="middle"/>    	 -->
-     </profile>
-</service>

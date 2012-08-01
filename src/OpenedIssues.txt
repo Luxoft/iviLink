@@ -1,0 +1,14 @@
+Opened Issues
+
+- Functions  
+        sendBuffer(iviLink::Channel::tChannelId channel, void const* pBuffer, UInt32 bufferSize) and 
+        sendBuffer(iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
+        (src/framework/libraries/profileLib/Channel.hpp) send data only limited by 4084 bytes.
+
+
+- Sometimes SeatClient can't be closed by [x] after SeatHU exit
+- Incorrect initialization of ClimateClient_App UI
+- ChannelSupervisor. It is possible to send data to the Zero channel.
+- ChannelSupervisor. It is possible to send 0-size data without any error messages.
+- ChannelSupervisor. Null pointer to Data is being processed without any errors.
+- ConnectivityAgent. Unable to allocate the channel with id=UINT_MAX-1

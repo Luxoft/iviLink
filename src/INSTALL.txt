@@ -1,38 +1,74 @@
-iviLINK SDK build and run
-This instruction describes how to install, build and run the iviLINK SDK v0.9 Technology Preview.
+1. Software installation
 
-I. Preconditions
-	a) The trusted host platform for iviLINK SDK v0.9 is Ubuntu version 10.10 or higher. It is possible to build SDK
-           on another Linux OS, but some or all items of this instruction maybe inactual there. Luxoft doesn't test the
-           build procedure on operating systems other than Ubuntu of versions mentioned above.
-	b) GCC version 4.6.1 shall be installed. Ensure you have compiler prepared with using the following command:
-	   sudo apt-get install gcc g++ make .
-        c) Qt framework shall be installed. You may install Qt with using the following command:
-           sudo apt-get install qt4-dev-tools qt4-qmake g++ .
-	d) Development files for multimedia framework from KDE shall be installed. You may install it using the following command: 
-	   sudo apt-get install libphonon-dev .
 
-II. Installing IVILink SDK and  Packages
+1.1 Distribution
 
-	a) Clone iviLINK repository from github	
-	b) Enter the src directory
-	c) Run the following command to build all the SDK components:
+	iviLink is distributed as source codes via github private repository (https://github.com/Luxoft/iviLink)
+
+	Source codes may downloaded directly from teh github web-site as zip or tar.qz archive (https://github.com/Luxoft/iviLink/downloads)
+	As a second option sources may be obtained by clonning the ivilink repository from the github.
+
+1.2 System requirements
+	
+	Version 1.0 of the iviLink SDK is intended to be build and used under Ubuntu OS x86, version 10.10 or higher. Ubuntu 11.10 x86 was used as development and testing platform for iviLink version 1.0.
+
+
+1.2 Installation order
+
+1.2.1 Prerequisites
+	
+	a) gcc version 4.6.1 should be installed. The following command may be used in order to install the required development tools:
+	   sudo apt-get install gcc g++ make
+        
+	b) Qt framework is required for iviLink SDK. It may be installed with the following command:
+           sudo apt-get install qt4-dev-tools qt4-qmake
+
+
+1.2.2 Building and deploying the iviLink SDK
+
+	a) Enter the src folder
+
+	b) Run the following command to build the SDK components:
 		make
-           Ensure there're no build errors in the log.
-	d) Run the following command to deploy built SDK on the local system:
+
+	Make sure there are no build errors occurred
+
+	c)  Run the following command to deploy the SDK to the local system:
 		make install
 
+	After the deployment library and executable files to be copied to the src_install folder.
 
-III. Run SDK and demo applications
+1.3 Executing the demo applications
 	
-	Pay attention: you should have two computers connected to the same IP network with no NAT to run this technology
-        preview sample apps. The following actions must be performed on both of PCs.
-	a) Enter src_install directory
-	b) run "IVILinkSystemController -g client" on one of the PCs and "IVILinkSystemController -g server" on another
-	c) run sample_app on one of the hosts
+	The applications available together with the iviLink SDK are for demonstration purposes only. iviLink SDK is intended to be used as a communication technology between in-car Headunit and Android or iOs based mobile phone/tablet. Release 1.0  supports only Ubuntu as host platform, however there should be two parties with the SDK installed in order to use the demonstration application. One of the PC is playing role of the in-car Headunit, the second PC is substituting mobile phone/tablet. Applications containing "HU" suffix in their names are intended to be used on the Headuint side, appropriate applications with the "Client" suffix are for the mobile side (example. ClimateHU_App - Climeate application for Headunit, ClimateClient_App is the application for mobile side).
 
-        You should see sample app GUI and be able to manage the remote side.
+	Before demo applications execution make sure two PCs have iviLink SDK installed, moreover both PCs are connected to the same IP network with no NAT and the communication over the IP network between the PCs may be established. There should be not more than 2 PCs with iviLink SDK running connected to the same IP network.
 
-Contact kkhait@luxoft.com in case of issues.
+	To execute the demo application please follow the steps below:
+		
+		a) Enter src_install directory on both PCs
+
+		b) Run IVILinkSystemController on both PCs - System controller to be executed on each of the PCs. System controller executes the Connectivity agent which connects to the Connectivity agent on the other party. After communication is established sample application may be executed.
+		
+		c) First of all Authentication application to be started automotically. It required 4-digit pin-code. Exactly the same pin-code should be entered on both sides in order to proceed.
+		
+		d) Run ClimateHU_App or SeatHU_App on the one of the PCs. Climate or Seat headunit application to be started. Appropriate client application to started automatically on the other side. 
 
 
+1.4 Deinstallation
+
+	In case it is required to clean up the installation please run
+		make clean
+	from the src folder.
+
+	For complete source code files removal please remove the iviLink folder. In this case all teh build libraries and executable files to be removed as well.
+
+1.5 Getting help
+
+	If you have any questions or comments regarding the SDK feel free to contact us via iviLink web-site (http://www.ivilink.net/contact/) and we will do our best to help you.
+
+
+	
+	
+
+	

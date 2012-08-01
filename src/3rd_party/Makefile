@@ -15,8 +15,9 @@ include $(COMMON_MK)
 # Subfolders
 define SUBFOLDERS
 $(MAKE) -C log4cplus $@
+$(MAKE) -C cppunit $@
+$(MAKE) -C cryptopp $@
 endef
-
 ###############################################################################
 # Rules
 debug:
@@ -35,4 +36,5 @@ clean:
 
 
 .PHONY: debug release clean
+
 
