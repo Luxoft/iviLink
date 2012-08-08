@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -36,7 +36,7 @@ define SUBFOLDERS
 $(MAKE) -C messageProtocol $@
 $(MAKE) -C libraries $@
 $(MAKE) -C components $@
-$(MAKE) -C appLib $@
+$(MAKE) -C public $@
 endef
 ###############################################################################
 # Rules
@@ -55,6 +55,7 @@ doc:
 	rm -Rf docs
 	mkdir docs
 	doxygen
+
 
 
 .PHONY: debug release clean

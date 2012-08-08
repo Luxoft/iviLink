@@ -27,10 +27,6 @@ debug: all
 
 release: all
 
-test: all
-
-runtest: all
-
 all: install
 
 $(SOURCE_DIR)/Makefile:

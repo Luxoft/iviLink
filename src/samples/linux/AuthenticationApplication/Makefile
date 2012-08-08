@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -59,7 +59,7 @@ LIBS += -L$(3RD_PARTY_DIR)/lib -llog4cplus
 LIBS += -L$(RESULT_DIR)/framework/messageProtocol/SystemController_Authentication/Authentication -lSystemCtrlMsgs
 LIBS += -L$(RESULT_DIR)/utils/shared_lib -lIviLinkUtils
 LIBS += -L$(RESULT_DIR)/framework/components/ChannelSupervisor/ChannelLib -lIviLinkChannel
-LIBS += -L$(RESULT_DIR)/framework/appLib/sharedLib -lIviLinkApp
+LIBS += -L$(RESULT_DIR)/framework/public/appLib/sharedLib -lIviLinkApp
 LIBS += -lrt
 LIBS += -Wl,--end-group 
 LIBS += -Wl,-rpath=./

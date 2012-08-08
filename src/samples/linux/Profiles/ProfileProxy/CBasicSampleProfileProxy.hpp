@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,13 +24,15 @@
 
 
 
+
+
 #ifndef CBASICSAMPLEPROFILEPROXY_HPP_
 #define CBASICSAMPLEPROFILEPROXY_HPP_
 
 //abstract profile API class header, must be included
 #include "samples/linux/Profiles/ProfileAPI/IBasicSampleProfileAPI.hpp"
 //profile proxy header, must be included
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+#include "framework/public/appLib/CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IBasicSampleProfile_API
 #define CURRENT_PROFILE_PROXY CBasicSampleProfileProxy

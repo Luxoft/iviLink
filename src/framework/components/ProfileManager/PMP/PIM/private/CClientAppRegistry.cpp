@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -373,6 +375,24 @@ void CClientAppRegistry::findInstancesOf(iviLink::Profile::Uid const& uid, std::
             }
          } // for dsit
       } // for it
+   }
+   mAppProfilesMutex.unlock();
+}
+
+void CClientAppRegistry::getProfilesOfApp(CUid const& appId, std::vector<iviLink::Profile::IUid> & result) const
+{
+   mAppProfilesMutex.lock();
+   {
+      for (tAppProfiles::const_iterator it = mAppProfiles.begin(); it != mAppProfiles.end(); ++it)
+      {
+         tProfileDataSet const& ds = it->second;
+
+         for (tProfileDataSet::const_iterator dsit = ds.begin(); dsit != ds.end(); ++dsit)
+         {
+            CProfileData const& pd = *dsit;
+            result.push_back(pd.piuid);
+         }
+      }
    }
    mAppProfilesMutex.unlock();
 }

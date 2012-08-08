@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
@@ -231,6 +233,12 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 31
         }
+        
+        Timer {
+            id: timer_start
+            interval: 1000; running: true; repeat: false
+            onTriggered: CStateUpdater.onQmlVisible();
+       }
 
         MouseArea {
             id: mode_top_mouse

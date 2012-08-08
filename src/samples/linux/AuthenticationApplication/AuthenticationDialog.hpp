@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,6 +24,8 @@
 
 
 
+
+
 #ifndef CAUTHENTICATION_DIALOG_HPP
 #define CAUTHENTICATION_DIALOG_HPP
 
@@ -34,7 +36,7 @@
 #include "utils/misc/Logger.hpp"
 #include "samples/linux/AuthenticationApplication/CPINCode.hpp"
 #include "framework/messageProtocol/SystemController_Authentication/Authentication/SystemControllerMsgProxy.hpp"
-#include "framework/appLib/appLib/CApp.hpp"
+#include "framework/public/appLib/CApp.hpp"
 #include "samples/linux/Profiles/ProfileProxy/CAuthenticationProxy.hpp"
 
 namespace authentication
@@ -107,6 +109,8 @@ private:
    QDialog *msgBox;
    QWidget *msgBoxWidget;
    QWidget* mParent;
+
+   bool isThisAppAuthMaster;
 
 private slots:
    void closePopup();

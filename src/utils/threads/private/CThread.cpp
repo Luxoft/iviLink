@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -140,20 +142,20 @@ bool CThread::join()
    {
       if (isThisThread())
       {
-//          LOG4CPLUS_FATAL(logger, "CThread::join(" + string(mpThreadName) + ") : joining oneself" );
+          LOG4CPLUS_FATAL(logger, "CThread::join(" + string(mpThreadName) + ") : joining oneself" );
 //        pthread_detach(mThread);
 //        pthread_exit(0);
       }
       
-//      LOG4CPLUS_INFO(logger, "CThread::join() " + convertIntegerToString(pthread_self())
-//                           + " -> " + convertIntegerToString(mThread));
+      LOG4CPLUS_INFO(logger, "CThread::join() " + convertIntegerToString(pthread_self())
+                           + " -> " + convertIntegerToString(mThread));
       int rc = pthread_join(mThread, 0);
       if (0 == rc)
          return true;
       else
       {
-//         LOG4CPLUS_INFO(logger, "CThread::join() Unable to join thread " + string(mpThreadName)
-//                              + " error:" + convertIntegerToString(rc) + strerror(rc));
+         LOG4CPLUS_INFO(logger, "CThread::join() Unable to join thread " + string(mpThreadName)
+                              + " error:" + convertIntegerToString(rc) + strerror(rc));
       }
    }
    return false;

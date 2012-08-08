@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -80,6 +82,8 @@ public:
    bool hasInstancesOf(iviLink::Profile::Uid const& uid) const;
 
    void findInstancesOf(iviLink::Profile::Uid const& uid, std::vector<CProfileInstanceData> & result) const;
+
+   void getProfilesOfApp(CUid const& appId, std::vector<iviLink::Profile::IUid> & result) const;
 
    bool isAppHaveService(iviLink::CUid const& appId, iviLink::Service::Uid const& sid) const;
 

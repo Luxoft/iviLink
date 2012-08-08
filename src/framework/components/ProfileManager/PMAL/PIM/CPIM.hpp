@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -28,6 +28,8 @@
 
 
 
+
+
 #ifndef CPIM_HPP_
 #define CPIM_HPP_
 
@@ -39,7 +41,7 @@
 #include "utils/threads/CMutex.hpp"
 
 #include "framework/components/ProfileManager/PMAL/IPMALPIM.hpp"
-#include "framework/appLib/ApplicationManager/IAppManHandler.hpp"
+#include "framework/libraries/AppMan/App/IAppManHandler.hpp"
 
 #include "IPMALPIMToIpc.hpp"
 #include "framework/components/ProfileManager/PMAL/PIM/private/CProfileInstanceMap.hpp"

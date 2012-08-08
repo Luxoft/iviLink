@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -183,7 +185,7 @@ void CPmpPim::createProfile(iviLink::CUid const& profileUid,
 
 
 void CPmpPim::profileDied(iviLink::Profile::IUid const& piuid,
-   iviLink::Ipc::DirectionID const& dirId)
+   iviLink::Ipc::DirectionID const&/* dirId*/)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -284,6 +286,13 @@ void CPmpPim::onConnectionLost(iviLink::Ipc::DirectionID const& dirId)
    CError err = mpRegistry->findAppByDirId(dirId, appId);
    assert(err.isNoError());
 
+   std::vector<iviLink::Profile::IUid> profiles;
+   mpRegistry->getProfilesOfApp(appId, profiles);
+   for (std::vector<iviLink::Profile::IUid>::const_iterator it = profiles.begin(); it != profiles.end(); ++it)
+   {
+      profileDied((*it), -1);
+   }
+
    err = mpRegistry->unregisterApp(appId);
 }
 
@@ -298,16 +307,21 @@ void CPmpPim::unloadInstances(Profile::Uid const& profileId)
 
    mpRegistry->findInstancesOf(profileId, profiles);
 
-   /// @todo implement direction id search
-   LOG4CPLUS_INFO(msLogger, "todo implement direction id search");
-
    iviLink::Ipc::DirectionID dirId = -1;
 
    for (std::vector<CProfileInstanceData>::iterator it = profiles.begin(); it != profiles.end(); ++it)
    {
       CProfileInstanceData const& data = *it;
 
-      CError err = mpProtocol->profileDied(data.piuid, data.sid);
+      CError err = mpRegistry->findDirIdByApp(data.appId, dirId);
+      if (!err.isNoError())
+      {
+         dirId = -1;
+
+         LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+      }
+
+      err = mpProtocol->profileDied(data.piuid, data.sid);
       if (!err.isNoError())
       {
          /// @todo error check
@@ -315,12 +329,15 @@ void CPmpPim::unloadInstances(Profile::Uid const& profileId)
          LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
       }
 
-      err = mpIpc->profileDied(data.piuid, dirId);
-      if (!err.isNoError())
+      if (dirId != -1)
       {
-         /// @todo error check
-         LOG4CPLUS_INFO(msLogger, "todo: error check");
-         LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+         err = mpIpc->profileDied(data.piuid, dirId);
+         if (!err.isNoError())
+         {
+            /// @todo error check
+            LOG4CPLUS_INFO(msLogger, "todo: error check");
+            LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+         }
       }
 
       err = mpRegistry->unregisterProfile(data.piuid);
@@ -417,14 +434,24 @@ void CPmpPim::onProfileDied(iviLink::Profile::IUid const& piuid,
       iviLink::Service::Uid const& sid)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   LOG4CPLUS_INFO(msLogger, "todo find app");
+
    CUid appId;
+   CError err = mpRegistry->findAppByPIUID(piuid, appId);
+   if (!err.isNoError())
+   {
+      LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+      return;
+   }
 
-   LOG4CPLUS_INFO(msLogger, "todo implement");
+   err = mpRegistry->unregisterProfile(piuid);
+   if (!err.isNoError())
+   {
+      LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+      return;
+   }
+
    iviLink::Ipc::DirectionID dirId = -1;
-
-   CError err = mpRegistry->unregisterProfile(piuid);
-
+   err = mpRegistry->findDirIdByApp(appId, dirId);
    if (!err.isNoError())
    {
       LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CAUTHENTICATIONPROXY_HPP_
 #define CAUTHENTICATIONPROXY_HPP_
 
 #include "samples/linux/Profiles/ProfileAPI/IAuthenticationProfileAPI.hpp"
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+#include "framework/public/appLib/CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IAuthenticationProfile_API
 #define CURRENT_PROFILE_PROXY CAuthenticationProxy

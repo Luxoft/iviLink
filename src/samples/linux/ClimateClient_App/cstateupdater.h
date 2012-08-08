@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,6 +24,8 @@
 
 
 
+
+
 #ifndef CSTATEUPDATER_H
 #define CSTATEUPDATER_H
 
@@ -32,7 +34,7 @@
 #include "crequestprocessor.h"
 #include "cclimateclientprofilecallbacks.hpp"
 
-#include "framework/appLib/appLib/CApp.hpp"
+#include "framework/public/appLib/CApp.hpp"
 
 #define SERVICE_NAME "ClimateClientService"
 #define PROFILE_API_NAME "ClimateClientProfile_API_UID"
@@ -54,7 +56,7 @@ public:
 
     virtual void initDone(iviLink::ELaunchInfo launcher);
 
-    virtual void incomingServiceAfterLoading(const iviLink::Service::Uid &service);
+    //virtual void incomingServiceAfterLoading(const iviLink::Service::Uid &service);
 
 
     //From IProfileObserver
@@ -64,6 +66,14 @@ public:
      * @param condState current state of conditioner
      */
     virtual void incomingNotification(Json::Value condState);
+
+private:
+    bool isInitDone;
+    bool isQmlReady;
+
+
+public slots:
+    void onQmlVisible();
 
 signals:
  

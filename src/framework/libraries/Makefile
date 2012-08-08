@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -33,8 +33,8 @@ include $(COMMON_MK)
 ###############################################################################
 # Subfolders
 define SUBFOLDERS
+$(MAKE) -C ServiceManager $@
 $(MAKE) -C AppMan $@
-$(MAKE) -C profileLib $@
 $(MAKE) -C trust_list $@
 endef
 ###############################################################################

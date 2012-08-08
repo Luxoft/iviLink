@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -28,6 +28,8 @@
 
 
 
+
+
 #ifndef IAPPMANPROTO_HPP_
 #define IAPPMANPROTO_HPP_
 
@@ -38,7 +40,7 @@
 #include "utils/misc/UID.hpp"
 #include "utils/misc/CError.hpp"
 
-#include "framework/appLib/ApplicationManager/IAppMan.hpp"
+#include "framework/libraries/AppMan/App/IAppMan.hpp"
 
 namespace iviLink
 {

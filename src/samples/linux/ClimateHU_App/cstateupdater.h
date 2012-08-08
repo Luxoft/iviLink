@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,6 +24,8 @@
 
 
 
+
+
 #ifndef CSTATEUPDATER_H
 #define CSTATEUPDATER_H
 
@@ -32,7 +34,7 @@
 #include "cclimatehuprofilecallbacks.hpp"
 #include "cclimatecond.h"
 
-#include "framework/appLib/appLib/CApp.hpp"
+#include "framework/public/appLib/CApp.hpp"
 
 #define SERVICE_NAME "ClimateHUService"
 #define PROFILE_API_NAME "ClimateHUProfile_API_UID"

@@ -7,7 +7,6 @@ Opened Issues
 
 
 - Sometimes SeatClient can't be closed by [x] after SeatHU exit
-- Incorrect initialization of ClimateClient_App UI
 - ChannelSupervisor. It is possible to send data to the Zero channel.
 - ChannelSupervisor. It is possible to send 0-size data without any error messages.
 - ChannelSupervisor. Null pointer to Data is being processed without any errors.

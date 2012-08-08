@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -139,10 +139,6 @@ debug: #build
 	$(SUBFOLDERS)
 
 release: #build
-	$(SUBFOLDERS)
-
-clean:
-	-rm -rf $(ALL_OUT_DIRS)
 	$(SUBFOLDERS)
 
 .PHONY: debug release clean qmake xml_profile_repo xml_service_repo

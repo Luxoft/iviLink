@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -53,8 +53,6 @@ doc:
 	rm -Rf docs
 	mkdir docs
 	doxygen
-
-
 
 .PHONY: debug release clean
  

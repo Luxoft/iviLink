@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CBASICSAMPLE_HPP_
 #define CBASICSAMPLE_HPP_
 
 //CApp header, must be included for interaction with apllication manager
-#include "framework/appLib/appLib/CApp.hpp"
+#include "framework/public/appLib/CApp.hpp"
 #include "utils/misc/Logger.hpp"
 //basic sample api profile header, must be included for implementing callbacks
 #include "samples/linux/Profiles/ProfileAPI/IBasicSampleProfileAPI.hpp"

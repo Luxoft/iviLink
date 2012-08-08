@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CSEATHUPROXY_HPP_
 #define CSEATHUPROXY_HPP_
 
 #include "samples/linux/Profiles/ProfileAPI/ISeatHUProfile.hpp"
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+#include "framework/public/appLib/CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API ISeatHUProfile
 #define CURRENT_PROFILE_PROXY CSeatHUProxy

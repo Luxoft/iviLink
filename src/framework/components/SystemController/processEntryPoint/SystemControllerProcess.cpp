@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,9 +27,12 @@
 
 
 
+
+
 #include <cstdio>
 #include <cstdlib>
 #include <getopt.h>
+#include <unistd.h>
 #include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
 
 #include "utils/misc/Logger.hpp"

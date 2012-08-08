@@ -20,6 +20,14 @@ PKGVER      :=1.0.4
 SOURCE_DIR  :=$(PKGNAME)-$(PKGVER)
 INSTALL_DIR :=$(3RD_PARTY_DIR)
 
+LIB_NAME := liblog4cplus.a
+LIB_SO_NAME := liblog4cplus.so
+
+LIB_INST_PATH := $(3RD_PARTY_DIR)/lib/$(LIB_NAME)
+LIB_SO_INST_PATH := $(3RD_PARTY_DIR)/lib/$(LIB_SO_NAME)
+
+LIBS = $(LIB_INST_PATH) $(LIB_SO_INST_PATH)
+
 ###############################################################################
 # Rules
 
@@ -27,14 +35,10 @@ debug: all
 
 release: all
 
-test: all
-
-runtest: all
-
 all: install
 
 $(SOURCE_DIR)/Makefile:
-	cd $(SOURCE_DIR); ./configure --prefix=$(INSTALL_DIR) --disable-shared --enable-static
+	cd $(SOURCE_DIR); ./configure --prefix=$(INSTALL_DIR) --enable-static
 
 # Target will build package and create file 'build' to remember the time of build -
 # this prevents the build of package every time we run make
@@ -47,7 +51,7 @@ $(3RD_PARTY_DIR)/lib/liblog4cplus.a: build
 
 # Target will install package and create file 'install' to remember the time of install -
 # this prevents the isntall of package every time we run make
-install: $(3RD_PARTY_DIR)/lib/liblog4cplus.a
+install: $(LIBS)
 	touch install
 
 clean:

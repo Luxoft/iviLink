@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef IBASIC_SAMPLE_PROFILE_API_HPP
 #define IBASIC_SAMPLE_PROFILE_API_HPP
 
 //Profile Api Base header, must be included
-#include "framework/appLib/appLib/CProfileApiBase.hpp"
+#include "framework/public/appLib/CProfileApiBase.hpp"
 
 // IBasicSampleProfile_API class (abstract class describing profile API) inherits CProfileApiBase class
 class IBasicSampleProfile_API : public iviLink::CProfileApiBase

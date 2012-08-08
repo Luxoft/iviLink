@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,6 +24,8 @@
 
 
 
+
+
 #ifndef CSTATEUPDATER_H
 #define CSTATEUPDATER_H
 
@@ -39,7 +41,7 @@
 #include "samples/linux/SeatClient_App/IProfileObserver.hpp"
 
 #include "utils/json/include/json/json.h"
-#include "framework/appLib/appLib/CApp.hpp"
+#include "framework/public/appLib/CApp.hpp"
 #include "utils/misc/Logger.hpp"
 #include "samples/linux/Profiles/ProfileAPI/ISeatClientProfile.hpp"
 

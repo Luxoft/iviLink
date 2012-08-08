@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -67,7 +67,7 @@ OBJS        := $(OBJS:.c=.o)
 OBJS        := $(addprefix $(OBJ_FULLDIR)/,$(notdir $(OBJS)))
 DEPS        := $(OBJS:.o=.d)
 
-###############################################################################
+
 # Rules
 $(OUT_FULLDIR):
 	mkdir -p $@

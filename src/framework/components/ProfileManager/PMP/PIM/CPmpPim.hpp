@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -76,7 +78,7 @@ public:
       iviLink::Ipc::DirectionID const& dirId);
 
    virtual void profileDied(iviLink::Profile::IUid const& piuid,
-      iviLink::Ipc::DirectionID const& dirId);
+      iviLink::Ipc::DirectionID const&/* dirId*/);
 
    virtual void readyToServe(iviLink::Service::SessionUid const& sesUid,
       iviLink::Ipc::DirectionID const& dirId);

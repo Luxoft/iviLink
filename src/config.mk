@@ -44,10 +44,15 @@ endif
 GLOBAL_LDFLAGS  := -L$(ROOT_DIR) -lrt -pthread -L$(3RD_PARTY_DIR)/lib -Wl,-rpath,$(PREFIX)
 
 export  USELOG4CPLUS:=true
+export  USELOG4CPLUS_DYNAMIC:=true
 ifeq ($(USELOG4CPLUS),true)
 GLOBAL_CFLAGS += -DUSELOG4CPLUS
-GLOBAL_LDFLAGS += -llog4cplus
-endif
+ifeq ($(USELOG4CPLUS_DYNAMIC),true)
+GLOBAL_LDFLAGS += -llog4cplus -Wl,-rpath,$(3RD_PARTY_DIR)/lib
+else
+GLOBAL_LDFLAGS += -Wl,-Bstatic -llog4cplus -Wl,-Bdynamic
+endif # USELOG4CPLUS_DYNAMIC
+endif # USELOG4CPLUS
 
 GLOBAL_CFLAGS += -DPREFIX='"$(PREFIX)/"'
 

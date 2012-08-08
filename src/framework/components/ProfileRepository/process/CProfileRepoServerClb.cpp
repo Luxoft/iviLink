@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -123,6 +125,8 @@ namespace iviLink
             {
                LOG4CPLUS_INFO(msLogger,"CProfileRepoServerClb::loop() :: *** client connected to server ***");
                mConLostSem.wait();
+               LOG4CPLUS_INFO(msLogger,"CProfileRepoServerClb::loop() :: *** connection lost, exiting ***");
+               return 0;
             }
             else
             {

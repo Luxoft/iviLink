@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -52,7 +52,7 @@ LIBS :=
 DLIBS := 
 DLIBS += utils/shared_lib/libIviLinkUtils.so
 DLIBS += framework/components/ChannelSupervisor/ChannelLib/libIviLinkChannel.so
-DLIBS += framework/appLib/sharedLib/libIviLinkApp.so
+DLIBS += framework/public/appLib/sharedLib/libIviLinkApp.so
 
 ###############################################################################
 # Variables

@@ -34,7 +34,6 @@ clean:
 3rdp_clean:
 	$(SUBFOLDERS)
 
-
 .PHONY: debug release clean
 
 

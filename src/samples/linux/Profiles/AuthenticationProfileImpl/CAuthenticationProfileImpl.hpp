@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CAUTHENTICATION_PROFILE_IMPL_HPP
 #define CAUTHENTICATION_PROFILE_IMPL_HPP
 
 #include "utils/misc/Logger.hpp"
-#include "framework/libraries/profileLib/profileLib.hpp"
+#include "framework/public/profileLib/profileLib.hpp"
 #include "samples/linux/Profiles/ProfileAPI/IAuthenticationProfileAPI.hpp"
 #include "framework/libraries/trust_list/CTrustList.hpp"
 #include "CRSAEncryptDecrypt.hpp"

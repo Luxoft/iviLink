@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,6 +24,8 @@
 
 
 
+
+
 #include "samples/linux/AuthenticationApplication/AuthenticationDialog.hpp"
 
 namespace authentication
@@ -37,6 +39,7 @@ AuthenticationDialog::AuthenticationDialog(QWidget *parent)
    , SystemControllerMsgProxy("SysCtrl_AuthApp")
    , mAuthenticationProxy(iviLink::Service::Uid("AuthenticationService"))
    , mParent(parent)
+   , isThisAppAuthMaster(false)
 {
    registerProfileCallbacks(iviLink::Profile::ApiUid("AuthenticationProfile_PAPI_UID"),this);
    setupUi(this);
@@ -105,10 +108,13 @@ bool AuthenticationDialog::checkPINs()
       {
          LOG4CPLUS_WARN(sLogger, "Authentication failed!!! PINs aren't equal");
 
-         sLocalPIN.clear();
-         pinEditLine->clear();
+         if (!isThisAppAuthMaster)
+         {
+             sLocalPIN.clear();
+             pinEditLine->clear();
 
-         emit showPopup(authentication::incorrectPin, QString("Authentication failed!!! PINs aren't equal. Try again."));
+             emit showPopup(authentication::incorrectPin, QString("Authentication failed!!! PINs aren't equal. Try again."));
+         }
 
          return false;
       }
@@ -229,6 +235,13 @@ void AuthenticationDialog::on_OKButton_clicked()
 
    if(sLocalPIN.isPINSet())
    {
+	  if (!sRemotePIN.isPINSet() )
+	  {
+         isThisAppAuthMaster = true;
+		 backspaceButton->setEnabled(false);
+		 backspaceButton->setVisible(false);
+	  }
+
       mAuthenticationProxy.sendPIN(sLocalPIN.getFirstDigit(),
                                    sLocalPIN.getSecondDigit(),
                                    sLocalPIN.getThirdDigit(),

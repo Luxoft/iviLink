@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CSEATHUPROFILE_HPP_
 #define CSEATHUPROFILE_HPP_
 
 #include "utils/misc/Logger.hpp"
-#include "framework/libraries/profileLib/profileLib.hpp"
+#include "framework/public/profileLib/profileLib.hpp"
 #include "samples/linux/Profiles/ProfileAPI/ISeatHUProfile.hpp"
 #include "samples/linux/Profiles/SeatClientProfile/ISender.hpp"
 #include "samples/linux/Profiles/SeatHUProfile/EReqType.hpp"

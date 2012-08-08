@@ -1,5 +1,28 @@
 What’s new?
 
+=====================================================
+
+1.0.1 release changes:
+
+Fix crash on onProfileDied event.
+
+Fix incorrect initialization of client Climate UI.
+
+Fix crash in cryptopp library
+
+Fix segmentation fault on closing BasicSample application.
+
+Fix misbehavior on wrong PIN-code is entered.
+
+Folder structure changed:
+	- introduce public folder for client application related files.
+
+Fix impossibility of running the same application more than one time.
+
+Fix shutdown for ProfileRepository.
+
+=====================================================
+
 1.0 release changes:
 
 Profile library added

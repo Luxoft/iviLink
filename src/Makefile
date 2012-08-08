@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0
+# iviLINK SDK, version 1.0.1
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -63,6 +63,8 @@ install:
 	mkdir -p $(APPLICATION_MANAGER_REPOSITORY)
 	mkdir -p $(QML_DIR)
 	
+	cp -u "$(RESULT_DIR)/3rd_party/lib/liblog4cplus.so" "$(PREFIX)"
+	
 	cp -u "$(RESULT_DIR)/framework/components/SystemController/processEntryPoint/$(SYSTEM_CONTROLLER_PROCESS_NAME)" "$(PREFIX)"
 	cp -u "$(RESULT_DIR)/framework/components/ConnectivityAgent/linux/$(CONNECTIVITY_AGENT_PROCESS_NAME)" "$(PREFIX)"
 	cp -u "$(RESULT_DIR)/framework/components/ProfileManager/PMP/process/$(PROFILE_MANAGER_PROCESS_NAME)" "$(PREFIX)"
@@ -73,9 +75,9 @@ install:
 
 	cp -u "$(RESULT_DIR)/utils/shared_lib/libIviLinkUtils.so" "$(PREFIX)"
 	cp -u "$(RESULT_DIR)/framework/components/ChannelSupervisor/ChannelLib/libIviLinkChannel.so" "$(PREFIX)"
-	cp -u "$(RESULT_DIR)/framework/appLib/sharedLib/libIviLinkApp.so" "$(PREFIX)"
+	cp -u "$(RESULT_DIR)/framework/public/appLib/sharedLib/libIviLinkApp.so" "$(PREFIX)"
 	
-	cp -u "$(ROOT_DIR)framework/appLib/ServiceManager/xml/"*.xml "$(SERVICE_REPOSITORY)"
+	cp -u "$(ROOT_DIR)framework/libraries/ServiceManager/xml/"*.xml "$(SERVICE_REPOSITORY)"
 	cp -u "$(ROOT_DIR)/samples/linux/Profiles/xml/"*.xml "$(PROFILE_REPOSITORY)"
 	cp -u "$(ROOT_DIR)/samples/linux/AppManDatabase.xml" "$(APPLICATION_MANAGER_REPOSITORY)"
 	

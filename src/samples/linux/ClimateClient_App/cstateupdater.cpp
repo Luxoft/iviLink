@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -23,6 +23,8 @@
  */
 
 
+
+
 #include "cstateupdater.h"
 #include "samples/linux/Profiles/ProfileProxy/CClimateClientProxy.hpp"
 
@@ -31,11 +33,14 @@ CStateUpdater::CStateUpdater(CRequestProcessor * pCRequestProcessor)
    , mpCRequestProcessor (pCRequestProcessor)
    , mClimateClientCallbacks(this)
 {
+	isQmlReady = false;
+	isInitDone = false;
     registerProfileCallbacks(iviLink::Profile::ApiUid(PROFILE_API_NAME),&mClimateClientCallbacks);
 }
 
 void CStateUpdater::initDone(iviLink::ELaunchInfo launcher)
 {
+	/*
    if (iviLink::LAUNCHED_BY_USER == launcher)
    {
       if (loadService(iviLink::Service::Uid(SERVICE_NAME)))
@@ -44,13 +49,49 @@ void CStateUpdater::initDone(iviLink::ELaunchInfo launcher)
          climateClient.initRequest();
       }
    }
+   */
+
+   if (iviLink::LAUNCHED_BY_USER == launcher)
+   {
+      if (loadService(iviLink::Service::Uid(SERVICE_NAME)))
+      {
+         isInitDone = true;
+      }
+      else
+      {
+         return;
+      }
+   }
+   else
+   {
+      isInitDone = true;
+   }
+
+   CClimateClientProxy climateClient(iviLink::Service::Uid(SERVICE_NAME));
+   climateClient.initRequest();
+
+   if(isQmlReady)
+   {
+      mpCRequestProcessor->initRequest();
+   }
 }
 
+void CStateUpdater::onQmlVisible()
+{
+   isQmlReady = true;
+   if(isInitDone)
+   {
+      mpCRequestProcessor->initRequest();
+   }
+}
+
+/*
 void CStateUpdater::incomingServiceAfterLoading(const iviLink::Service::Uid &service)
 {
    CClimateClientProxy climateClient(iviLink::Service::Uid(SERVICE_NAME));
    climateClient.initRequest();
 }
+*/
 
 CStateUpdater::~CStateUpdater()
 {

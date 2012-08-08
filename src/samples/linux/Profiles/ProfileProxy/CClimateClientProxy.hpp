@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -24,11 +24,13 @@
 
 
 
+
+
 #ifndef CCLIMATECLIENTPROXY_HPP_
 #define CCLIMATECLIENTPROXY_HPP_
 
 #include "samples/linux/Profiles/ProfileAPI/IClimateClientProfile.hpp"
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+#include "framework/public/appLib/CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IClimateClientProfile
 #define CURRENT_PROFILE_PROXY CClimateClientProxy

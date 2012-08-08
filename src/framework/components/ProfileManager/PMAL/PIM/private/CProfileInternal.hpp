@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0
+ * iviLINK SDK, version 1.0.1
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -26,6 +26,8 @@
 
 
 
+
+
 #ifndef CPROFILEINTERNAL_HPP__
 #define CPROFILEINTERNAL_HPP__
 
@@ -35,7 +37,7 @@
 #include "utils/misc/UID.hpp"
 #include "utils/misc/CError.hpp"
 
-#include "framework/appLib/appLib/CProfileApiBase.hpp"
+#include "framework/public/appLib/CProfileApiBase.hpp"
 
 namespace iviLink
 {
