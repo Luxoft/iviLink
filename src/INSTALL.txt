@@ -5,7 +5,7 @@
 
 	iviLink is distributed as source codes via github private repository (https://github.com/Luxoft/iviLink)
 
-	Source codes may downloaded directly from teh github web-site as zip or tar.qz archive (https://github.com/Luxoft/iviLink/downloads)
+	Source codes may downloaded directly from the github web-site as zip or tar.qz archive (https://github.com/Luxoft/iviLink/downloads)
 	As a second option sources may be obtained by clonning the ivilink repository from the github.
 
 1.2 System requirements
