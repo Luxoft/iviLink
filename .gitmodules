@@ -1,0 +1,3 @@
+[submodule "src/tools/copyrightcons"]
+	path = src/tools/copyrightcons
+	url = https://github.com/ivilink/copyrightcons.git
