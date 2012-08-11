@@ -4,3 +4,6 @@
 [submodule "www"]
 	path = www
 	url = https://github.com/ivilink/ivilink.github.com.git
+[submodule "3rd_party/log4cplus/log4cplus"]
+	path = 3rd_party/log4cplus/log4cplus
+	url = https://github.com/ivilink/log4cplus.git

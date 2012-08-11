@@ -17,7 +17,7 @@ include $(COMMON_MK)
 PKGNAME     :=log4cplus
 PKGVER      :=1.0.4
 
-SOURCE_DIR  :=$(PKGNAME)-$(PKGVER)
+SOURCE_DIR  :=$(PKGNAME)
 INSTALL_DIR :=$(3RD_PARTY_DIR)
 
 LIB_NAME := liblog4cplus.a
