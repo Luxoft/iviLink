@@ -17,7 +17,7 @@ include $(COMMON_MK)
 PKGNAME     :=cppunit
 PKGVER      :=1.12.1
 
-SOURCE_DIR  :=$(PKGNAME)-$(PKGVER)
+SOURCE_DIR  :=$(PKGNAME)/$(PKGNAME)
 INSTALL_DIR :=$(3RD_PARTY_DIR)
 
 ###############################################################################

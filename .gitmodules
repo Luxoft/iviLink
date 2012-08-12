@@ -10,3 +10,6 @@
 [submodule "3rd_party/cryptopp/cryptopp"]
 	path = 3rd_party/cryptopp/cryptopp
 	url = https://github.com/ivilink/cryptopp.git
+[submodule "3rd_party/cppunit/cppunit"]
+	path = 3rd_party/cppunit/cppunit
+	url = https://github.com/ivilink/cppunit.git
