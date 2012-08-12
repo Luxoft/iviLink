@@ -17,7 +17,7 @@ include $(COMMON_MK)
 PKGNAME     :=cryptopp
 PKGVER      :=5.6.1
 
-SOURCE_DIR  :=$(PKGNAME)-$(PKGVER)
+SOURCE_DIR  :=$(PKGNAME)
 INSTALL_DIR :=$(3RD_PARTY_DIR)
 
 #LIB_NAME := libcryptopp.a
