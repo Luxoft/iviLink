@@ -31,7 +31,7 @@
 
 #include <stdlib.h>
 #include <cstring>
-#include "3rd_party/cryptopp/cryptopp-5.6.1/queue.h"
+#include "3rd_party/cryptopp/cryptopp/queue.h"
 #include "CAuthenticationProfileImpl.hpp"
 #include "CRSAEncryptDecrypt.hpp"
 

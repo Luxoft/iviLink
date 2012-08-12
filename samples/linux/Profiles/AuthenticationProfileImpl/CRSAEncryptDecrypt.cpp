@@ -28,13 +28,13 @@
 
 #include "CRSAEncryptDecrypt.hpp"
 
-#include "3rd_party/cryptopp/cryptopp-5.6.1/filters.h"
+#include "3rd_party/cryptopp/cryptopp/filters.h"
 using CryptoPP::PK_EncryptorFilter;
 using CryptoPP::PK_DecryptorFilter;
 using CryptoPP::StringSink;
 using CryptoPP::StringSource;
 
-#include "3rd_party/cryptopp/cryptopp-5.6.1/osrng.h"
+#include "3rd_party/cryptopp/cryptopp/osrng.h"
 using CryptoPP::AutoSeededRandomPool;
 
 using CryptoPP::RSAES_OAEP_SHA_Encryptor;

@@ -31,8 +31,8 @@
 
 #include <string>
 #include "utils/misc/Logger.hpp"
-#include "3rd_party/cryptopp/cryptopp-5.6.1/rsa.h"
-#include "3rd_party/cryptopp/cryptopp-5.6.1/integer.h"
+#include "3rd_party/cryptopp/cryptopp/rsa.h"
+#include "3rd_party/cryptopp/cryptopp/integer.h"
 
 using CryptoPP::Integer;
 using CryptoPP::RSA;
