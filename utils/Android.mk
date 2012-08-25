@@ -5,23 +5,44 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := LIB
 
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/THREADS/include
-LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/THREADS/include $(LOCAL_PATH)/..
+LOCAL_C_INCLUDES := $(LOCAL_PATH) \
+                    $(LOCAL_PATH)/THREADS/include \
+                    $(LOCAL_PATH)/misc
 
 LOCAL_CFLAGS        := -pthread
 LOCAL_EXPORT_CFLAGS := -pthread
 
-LOCAL_SRC_FILES := CUnixSocket.cpp
-LOCAL_SRC_FILES += byteOrder.cpp
-LOCAL_SRC_FILES += logging.cpp
-LOCAL_SRC_FILES += THREADS/sources/CCondVar.cpp
-LOCAL_SRC_FILES += THREADS/sources/CMutex.cpp
-#LOCAL_SRC_FILES += THREADS/sources/CRWMutex.cpp
-LOCAL_SRC_FILES += THREADS/sources/CSignalSemaphore.cpp
-LOCAL_SRC_FILES += THREADS/sources/CThread.cpp
-LOCAL_SRC_FILES += THREADS/sources/CTimeoutManager.cpp
+LOCAL_SRC_FILES := ./misc/private/byteOrder.cpp \
+                   ./misc/private/IVILinkLogger.cpp \
+                   ./misc/private/CUid.cpp \
+                   ./misc/private/CUnixSocket.cpp \
+                   ./misc/private/logging.cpp \
+                   \
+                   ./threads/private/CThreadPool.cpp \
+                   ./threads/private/CTimeoutManager.cpp \
+                   ./threads/private/CThread.cpp \
+                   ./threads/private/CSignalSemaphore.cpp \
+                   ./threads/private/CSignalSemaphoreInterproc.cpp \
+                   ./threads/private/CMutex.cpp \
+                   ./threads/private/CThreadPoolJob.cpp \
+                   ./threads/private/CCondVar.cpp \
+                   \
+                   ./json/src/lib_json/json_reader.cpp \
+                   ./json/src/lib_json/json_value.cpp \
+                   ./json/src/lib_json/json_writer.cpp \
+                   \
+                   ./seialize/private/Serialize.cpp \
+                   \
+                   ./ipc/helpers/private/buffer_helpers.cpp \
+                   ./ipc/helpers/private/CBufferManager.cpp \
+                   ./ipc/private/CIpc.cpp \
+                   ./ipc/private/CIpcSocket.cpp \
+                   \
+                   ./configuator/private/configurator.cpp \
+                   \
+                   ./xml/private/pugixml.cpp
 
+#LOCAL_SRC_FILES += ./threads/private/CRWMutex.cpp
 
 LOCAL_LDLIBS := -llog
 
