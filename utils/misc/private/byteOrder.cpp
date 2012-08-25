@@ -22,15 +22,20 @@
  * 
  */
 
-
-
-
-
+#include "byteOrder.hpp"
 
 // Here we are using non-standard set of functions for byte endianess conversion
 #include <endian.h>
-#include "byteOrder.hpp"
 
+// see issue http://code.google.com/p/android/issues/detail?id=24320
+#ifdef __BIONIC__
+#  define be64toh betoh64
+#  define be32toh betoh32
+#  define be16toh betoh16
+#  define le64toh letoh64
+#  define le32toh letoh32
+#  define le16toh letoh16
+#endif
 
 UInt16 ByteOrder::hton16(UInt16 data)
 {
