@@ -6,8 +6,10 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := LIB
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
-                    $(LOCAL_PATH)/THREADS/include \
-                    $(LOCAL_PATH)/misc
+                    $(LOCAL_PATH)/.. \
+                    $(LOCAL_PATH)/json/include \
+                    $(LOCAL_PATH)/misc \
+                    $(LOCAL_PATH)/threads
 
 LOCAL_CFLAGS        := -pthread
 LOCAL_EXPORT_CFLAGS := -pthread
