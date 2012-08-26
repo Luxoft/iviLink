@@ -2,4 +2,9 @@ src_products
 src_install
 .cproject
 .project
+.settings
+Debug
+docs
+axis.sublime-project
+axis.sublime-workspace
 *~

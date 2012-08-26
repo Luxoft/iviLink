@@ -1,0 +1,15 @@
+[submodule "tools/copyrightcons"]
+	path = tools/copyrightcons
+	url = https://github.com/ivilink/copyrightcons.git
+[submodule "www"]
+	path = www
+	url = https://github.com/ivilink/ivilink.github.com.git
+[submodule "3rd_party/log4cplus/log4cplus"]
+	path = 3rd_party/log4cplus/log4cplus
+	url = https://github.com/ivilink/log4cplus.git
+[submodule "3rd_party/cryptopp/cryptopp"]
+	path = 3rd_party/cryptopp/cryptopp
+	url = https://github.com/ivilink/cryptopp.git
+[submodule "3rd_party/cppunit/cppunit"]
+	path = 3rd_party/cppunit/cppunit
+	url = https://github.com/ivilink/cppunit.git
