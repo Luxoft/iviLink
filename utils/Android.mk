@@ -7,12 +7,14 @@ LOCAL_MODULE := LIB
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/.. \
+                    $(LOCAL_PATH)/configurator \
                     $(LOCAL_PATH)/ipc \
                     $(LOCAL_PATH)/ipc/helpers \
                     $(LOCAL_PATH)/json/include \
                     $(LOCAL_PATH)/misc \
                     $(LOCAL_PATH)/serialize \
-                    $(LOCAL_PATH)/threads
+                    $(LOCAL_PATH)/threads \
+                    $(LOCAL_PATH)/xml
 
 LOCAL_CPPFLAGS      += -fexceptions
 LOCAL_CFLAGS        := -pthread
@@ -44,7 +46,7 @@ LOCAL_SRC_FILES := ./misc/private/byteOrder.cpp \
                    ./ipc/private/CIpc.cpp \
                    ./ipc/private/CIpcSocket.cpp \
                    \
-                   ./configuator/private/configurator.cpp \
+                   ./configurator/private/configurator.cpp \
                    \
                    ./xml/private/pugixml.cpp
 
