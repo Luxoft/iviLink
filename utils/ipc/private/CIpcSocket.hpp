@@ -39,6 +39,7 @@
  * System includes
  *
  ********************************************************************/
+#include <sys/socket.h> // define sa_family_t type required by <sys/un.h>
 #include <sys/un.h>
 #include <queue>
 #include <vector>
