@@ -1,9 +1,9 @@
 LOCAL_PATH := $(call my-dir)
 
-###### LIB Module ######
+###### IviLinkUtils Module ######
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := LIB
+LOCAL_MODULE := IviLinkUtils
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/.. \
