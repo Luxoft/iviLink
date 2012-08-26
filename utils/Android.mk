@@ -7,8 +7,11 @@ LOCAL_MODULE := LIB
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/.. \
+                    $(LOCAL_PATH)/ipc \
+                    $(LOCAL_PATH)/ipc/helpers \
                     $(LOCAL_PATH)/json/include \
                     $(LOCAL_PATH)/misc \
+                    $(LOCAL_PATH)/serialize \
                     $(LOCAL_PATH)/threads
 
 LOCAL_CPPFLAGS      += -fexceptions
@@ -34,7 +37,7 @@ LOCAL_SRC_FILES := ./misc/private/byteOrder.cpp \
                    ./json/src/lib_json/json_value.cpp \
                    ./json/src/lib_json/json_writer.cpp \
                    \
-                   ./seialize/private/Serialize.cpp \
+                   ./serialize/private/Serialize.cpp \
                    \
                    ./ipc/helpers/private/buffer_helpers.cpp \
                    ./ipc/helpers/private/CBufferManager.cpp \
