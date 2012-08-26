@@ -11,6 +11,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/misc \
                     $(LOCAL_PATH)/threads
 
+LOCAL_CPPFLAGS      += -fexceptions
 LOCAL_CFLAGS        := -pthread
 LOCAL_EXPORT_CFLAGS := -pthread
 
