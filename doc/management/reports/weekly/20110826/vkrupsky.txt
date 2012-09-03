@@ -1,0 +1,20 @@
+22 Aug 2011 - 26 Aug 2011
+
+MP4 converter moved to Android side, so, created VideoView class that plays any MP4 file and standard HTTP server can be used for media streaming.
+Problem with simple HTTP server found and fixed. Jetty server not needed.
+HTTP server for devkit built (by Oksana). It works well for media streaming.
+MPlayer built for devkit (by Oksana). It works well with HTTP server on Android.
+
+Open issues:
+---
+
+Plan for the next week:
+Test all listed above with MP3 audio.
+Inplement remote control of MPlayer.
+Study Android IDL.
+
+Help not needed
+--
+
+Other activities
+--

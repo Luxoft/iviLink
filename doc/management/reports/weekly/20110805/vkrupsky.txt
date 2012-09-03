@@ -1,0 +1,17 @@
+1 Aug 2011 - 5 Aug 2011
+
+Investigation of porting live555 to Android finished. MoboPlayer on Android works well with live555 server on PS and VLS player on PS workd well with live555 server on Android. In both cases MPEG1/2 used because live555 doesn't support MPEG4. MP3 works well too.
+Live555 modified for abstract access to media file. Can be used for tranfering media by any serial protocol (AXIS). Perhaps, not actual already.
+No simple open source MPEG4 RTSP server found.
+
+Open issues:
+--
+
+Plan for the next week:
+Put the results into SVN. Consult with Kostya ans Yura about future plans.
+
+Help not needed
+--
+
+Other activities
+--

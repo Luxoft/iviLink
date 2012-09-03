@@ -1,0 +1,17 @@
+1.	Time frame
+8 Aug 2011 - 12 Aug 2011
+
+2.	What was done this week
+- Refined PAD architecture
+- Added functionality for send/receive frames, RPC callbacks processing within thread pool
+
+3.	Open issues
+- discuss with DLobashevskiy multimedia transfer and PAD interfaces with upper level
+
+4.	Plan for the next week
+- finish PAD implementation
+- PAD testing
+
+5.	Help don’t need
+
+6.	No other activity

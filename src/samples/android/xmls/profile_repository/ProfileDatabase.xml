@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<profiles>
+	<profile>
+		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Android" path="profileImpls/libBasicProfile.so" />
+		</libs>
+	</profile>
+	<profile>
+    <manifest-path>SeatSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libSeatSenderProfile.so" />
+      </libs>
+   </profile> 
+	<profile>
+    <manifest-path>SeatReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libSeatReceiverProfile.so" />
+      </libs>
+   </profile> 
+   <profile>
+      <manifest-path>ClimateSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libClimateSenderProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>ClimateReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libClimateReceiverProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+    <manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libauthenticationProfile.so" />
+      </libs>
+   </profile> 
+</profiles>
+

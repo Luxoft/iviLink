@@ -1,0 +1,7 @@
+<device name="HeadUnit">
+    <service name="SeatService" />
+    <service name="ClimateService" />
+	 <service name="BasicSampleServiceHUI" />
+    <service name="BasicSampleServiceClient" />
+	 <service name="AuthenticationService" />
+</device>

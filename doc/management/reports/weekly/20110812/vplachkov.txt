@@ -1,0 +1,13 @@
+1.	Time frame
+	8 Aug 2011 - 12 Aug 2011
+
+2.	What was done this week
+	- Refined some details of PAD architecture
+	- Added classes to work with income frames, timeout for response frames, timeout for request and one-way frames
+3.	Open issues
+	- finishing PAD 
+4.	Plan for the next week
+	- finish PAD
+	- test PAD
+5.	Help don’t need
+6.	No other activity

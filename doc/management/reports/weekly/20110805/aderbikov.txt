@@ -1,0 +1,19 @@
+time frame:
+1 - 5 Aug
+
+summary:
+A2DP SINK prototype application for DevKit. The application uses kernel BT functionality and alsa.  Basic A2DP functionality and streaming is done
+
+open issues:
+Audio playback on the target is bad
+Still no svn access
+
+plan:
+Get rid of open issues and start work on BlueZ (d-bus)-  based A2DP SINK version.
+
+help:
+n/a
+
+other:
+5-aug: 8.5hrs blackout in SPb office
+

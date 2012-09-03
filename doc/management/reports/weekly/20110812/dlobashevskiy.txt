@@ -1,0 +1,32 @@
+$Id$
+
+weekly report
+
+8 Aug 2011 - 12 Aug 2011
+
+What was done this week
+Test RPC compiler.
+Investigate possibility of using fuse-based filesystems for masquerade AXIS sockets under Berkeley interface.
+Results are negative - FUSE file system is attractive but unfortunately Linux-specific.
+We can use FUSE only on Linux boxes with loaded appropriate kernel module.
+Start write specification of axis.queue
+Start write interface for high level PAD interaction
+
+Open issues:
+test matrix:
+test type		marshaller		marshaller+RPC
+simple types		passed			passed
+compound types		passed			minor bugs found
+buggy stream		passed			not run
+
+
+Plan for the next week:
+Fix bugs in RPC code for IDL-defined data types with arbitrary complexity.
+Specification for resource manager and profile repository.
+Finish specification for axis.queue protocol.
+
+Help not needed
+
+Other activities:
+Finish reinstalling Linux on my workstation.
+Lost 1 working day on medical care.

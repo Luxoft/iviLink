@@ -1,0 +1,21 @@
+Time frame covered by the report 
+2011-08-01 - 2011-08-05
+
+What was done this week
+1) Completed the example of application, controlled by dbus calls over the network. This example must show one of usecases for axis technology. 
+2) Created the prototype of Axis ServiceManager. ServiceManager must be the part of Axis Daemon, but now it is a standalone application. It:
+   a) allows to manage the life cycle of Services 
+   b) allows to make calls to services on remote platform. This is performed by direct calls through ServiceManager or with the help of local Service set to "proxy" state. Proxy service will pass the call to ServiceManager. For the caller, such call will not differ from local call.
+
+Open issues
+1) Workability of cretated prototype on Android
+2) Funcionality of ServiceManager
+2) Rules for services and applications interaction
+
+Plan for the next week
+1) Further development of ServiceManager.
+2) Research the AllJoyn technology.
+
+No help needed
+
+No other activities

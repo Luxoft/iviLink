@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<profile-apis>
+	<profile-api>
+		<uid>BasicSampleProfile_PAPI_UID</uid>
+		<src>BasicSampleProfile_API.xml</src>
+	</profile-api>
+   <profile-api>
+      <uid>SeatSenderProfile_API_UID</uid>
+      <src>SeatSenderProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>SeatReceiverProfile_API_UID</uid>
+      <src>SeatReceiverProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>ClimateSenderProfile_API_UID</uid>
+      <src>ClimateSenderProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>ClimateReceiverProfile_API_UID</uid>
+      <src>ClimateReceiverProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>AuthenticationProfile_PAPI_UID</uid>
+      <src>AuthenticationProfile_API.xml</src>
+   </profile-api>   
+</profile-apis>

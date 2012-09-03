@@ -1,0 +1,12 @@
+1. Time frame covered by the report 
+                22.08.2011 –26.08.2011
+
+2. What was done this week
+
+- RPC/ Axis Daemon bunch implementation for prototype
+
+3. Open issues
+	- Architecture and design of Profiles, Services and applicetions
+
+4. Plan for the next week
+                 -finish RPC/ Axis Daemon bunch implementation

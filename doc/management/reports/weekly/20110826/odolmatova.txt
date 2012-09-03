@@ -1,0 +1,12 @@
+1.	Time frame covered by the report (start date – end date)
+22.08 - 26.08
+
+2.	What was done this week
+Started VNC client (directvnc), http server (boa) and media player (Mplayer, with help of Andrey Derbikov) on DevKit
+
+3.	Open issues
+4.	Plan for the next week
+Research compression for images
+
+5.	Help needed
+6.	Other activities (sick leaves, trainings, vacations etc.)

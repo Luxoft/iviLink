@@ -1,0 +1,20 @@
+time frame:
+8 - 12 Aug
+
+summary:
+A2DP SINK prototype application for DevKit on kernel BT and alsa basis is done.
+Some testing activities
+ 
+ open issues:
+ n/a
+
+ plan:
+ Get A2DP / pulseaudio playing.
+ Get involved in dlna activities.
+
+ help:
+ n/a
+
+ other:
+ n/a
+

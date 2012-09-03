@@ -1,0 +1,14 @@
+1. Time frame
+	22 Aug 2011 - 26 Aug 2011
+2. What was done this week
+	- definition of architecture details of prototype
+	- installing Android SDK and VM
+	- getting familiar with Android SDK and VM
+3. Open issues
+	- Connecting of HAL+L0+PAD+RPC
+4. Plan for the next week
+	- defining of all levels of AXIS architecture
+	- working with prototype
+5. Help don’t need
+6. Other activity
+	- learning Java

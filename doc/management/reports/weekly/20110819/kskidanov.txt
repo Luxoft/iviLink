@@ -1,0 +1,15 @@
+1.	Time frame
+	15 Aug 2011 - 19 Aug 2011
+
+2.	What was done this week
+	- Finished PAD implementation
+
+3.	Open issues
+	- Profiles design and implementation
+
+4.	Plan for the next week
+	- First AXIS prototype building and testing
+
+5.	Help don’t need
+
+6.	No other activity

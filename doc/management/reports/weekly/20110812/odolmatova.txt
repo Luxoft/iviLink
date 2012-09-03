@@ -1,0 +1,13 @@
+1.	Time frame covered by the report (start date – end date)
+08.08 - 12.08
+
+2.	What was done this week
+Start Xorg and Matchbox on DevKit
+
+3.	Open issues
+
+4.	Plan for the next week
+Start VNC 
+
+5.	Help needed
+6.	Other activities (sick leaves, trainings, vacations etc.)

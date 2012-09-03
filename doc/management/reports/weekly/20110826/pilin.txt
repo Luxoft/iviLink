@@ -1,0 +1,16 @@
+Time frame covered by the report 
+2011-08-22 - 2011-08-26
+
+What was done this week
+Researched Android capabilities, needed to implement android part of axis daemon.
+Checked the possible solutions of the proble of restricted user rghts and file permissions.
+Researched the ways of IPC on android.
+
+Open issues
+Architecture of axis on android. How it will be differ from linux.
+
+Plan for the next week
+
+No help needed
+
+No other activities

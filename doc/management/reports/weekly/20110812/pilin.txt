@@ -1,0 +1,22 @@
+Time frame covered by the report 
+2011-08-08 - 2011-08-12
+
+What was done this week
+Researched AllJoyn.
+Prepeared to work on Android: installed SDK and NDK.
+Found open source VNC client. Tested it on the virtual machine.
+Made a research of Live555 MP4 streaming problem.
+Checked the streaming of MP4 media with the gtreamer rtsp server - working. Seeking was not tested.
+Made some testing of the speed of HAL and L0.
+
+Open issues
+1) What to do with the found VNC client?
+2) There is speed and stability issues with the HAL and L0.
+
+Plan for the next week
+1) Fix the problems with the HAL and L0.
+
+No help needed
+
+No other activities
+Spend half of tuesday on military institute activities.

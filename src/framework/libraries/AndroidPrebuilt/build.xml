@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Prebuilts" default="build">
+
+   <target name="build">
+      <exec executable="ndk-build" failonerror="true"/>
+   </target>
+
+   <target name="clean">
+      <exec executable="ndk-build" failonerror="true">
+         <arg value="clean"/>
+      </exec>
+   </target>
+   
+   <target name="setup">
+      <exec executable="ndk-build" failonerror="true">
+         <arg value="SETUPIVI=true"/>
+      </exec>
+   </target>
+   
+</project>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>SeatReceiverProfile_UID</uid>
+   <name>SeatReceiverProfile</name>
+   <version>1</version>
+   <api uid ="SeatReceiverProfile_PAPI_UID" />
+   <complement>SeatSenderProfile_UID</complement>
+</profile>

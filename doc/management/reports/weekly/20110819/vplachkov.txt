@@ -1,0 +1,10 @@
+1. Time frame: 15 Aug 2011 - 19 Aug 2011
+2. What was done this week
+	- Finished main PAD functionality
+	- Tested main PAD functionality
+3. Open issues
+	- definition of architecture details of system and prototype
+4. Plan for the next week
+	- Prototype making and testing
+5. Help don’t need
+6. No other activity

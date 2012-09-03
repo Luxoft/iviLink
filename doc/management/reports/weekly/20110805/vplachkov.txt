@@ -1,0 +1,9 @@
+1. Time frame: 01.08.2011 - 05.08.2011
+2. What was done this week:
+Timeout manager for calling callbacks by timeouts
+3. Open issues:
+PAD. CPadManager is finished. CPad and CPadChannel aren't finished yet.
+4. Plan for the next week:
+Finish PAD, test it with IDL.
+5. Help not needed.
+6. Other activities: don't have.

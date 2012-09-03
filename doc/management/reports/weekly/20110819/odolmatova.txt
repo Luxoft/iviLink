@@ -1,0 +1,14 @@
+1.	Time frame covered by the report (start date – end date)
+15.08 - 19.08
+
+2.	What was done this week
+Start vnc server and some  tests of vnc client on DevKit
+
+3.	Open issues
+Start vnc client
+
+4.	Plan for the next week
+Start VNC client and http server on DevKit
+
+5.	Help needed
+6.	Other activities (sick leaves, trainings, vacations etc.)

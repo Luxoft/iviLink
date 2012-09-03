@@ -1,0 +1,19 @@
+15 Aug 2011 - 19 Aug 2011
+
+Managed to run standard Android mediaplayer using HTTP protocol. Normally it plays only "right" mp4 files where metadata preceds data. Simple HTTP server on Java modified to convert "wrong" mp4 files to "right" ones on the fly.
+Remote control of standard Android mediaplayer tested. ok.
+
+Open issues:
+VLC player (on Windows) doesn't work well with this simple HTTP server, however it works well with Apache Tomcat server.
+
+Plan for the next week:
+Find the problem with simple HTTP server streaming to VLC player.
+Try Jetty HTTP server for Android.
+Discover HTTP servers on dashboard and try to use them with Android player.
+Discover mediaplayers on dashboard and try to use them with HTTP servers on Android.
+
+Help not needed
+--
+
+Other activities
+--

@@ -1,0 +1,17 @@
+8 Aug 2011 - 12 Aug 2011
+
+Tried to use livemp4. It is modified live555 for streaming mp4 format. It works but it first converts mp4 file into two files (video and audio) with mp4creator utility and then streams these two files. The second problem is no seeking supported.
+
+FFMpeg built for Android. Tried FFServer on Linux. FFServer can stream audio and video but it seems it cannot stream MP4 without transcodind.
+
+Open issues:
+--
+
+Plan for the next week:
+Search for ffmpeg open source player for android and try to substitute file access with network requests.
+
+Help not needed
+--
+
+Other activities
+--

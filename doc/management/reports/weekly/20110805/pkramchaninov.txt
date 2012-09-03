@@ -1,0 +1,16 @@
+1. Time frame covered by the report 
+	01.08.2011 – 05.08.2011
+
+2. What was done this week
+	- Implementation of final version Ganesha prototype. Done.
+	- Porting Python prototype for Linux which uses D-Bus as IPC. 
+	  In general using Python on Android is possible however looks like D-Bus is not supported. 
+	- Investigation if it’s possible to use D-Bus from Java or C++ code on Android platform in order to communicate with Linux-side implemented by Python.
+	  Currently issue isn’t completely clear however AllJoyn project gives some hope. 
+
+3. Open issues
+	- Still not clear how D-Bus can be used on Android platform.
+
+4. Plan for the next week
+	- Find out if it’s possible to use D-Bus on Android platform  from Java or C++. Look through AllJoyn sources for some hints.
+	- If using D-Bus isn’t possible – think about alternatives.

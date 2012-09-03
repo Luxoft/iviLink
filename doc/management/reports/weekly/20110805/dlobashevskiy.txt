@@ -1,0 +1,27 @@
+$Id$
+
+weekly report
+
+1 Aug 2011 - 5 Aug 2011
+
+IDL compiler prototype finished, basic tests passed.
+Prototype work on real interfaces with full RPC power.
+PAD interfaces fixed.
+Investigate dbus interfaces.
+
+Open issues:
+Vulnerability tests of generated code not finished.
+Tests for data types with arbitrary complexity.
+
+Plan for the next week:
+Vulnerability tests of RPC code.
+Pass tests for IDL-defined data types with arbitrary complexity.
+Specification for resource manager and profile repository.
+Investigate possibility of using fuse-based filesystems for masquerade AXIS sockets under Berkeley interface.
+
+
+Help not needed
+
+Other activities:
+Reinstall Linux on my workstation.
+

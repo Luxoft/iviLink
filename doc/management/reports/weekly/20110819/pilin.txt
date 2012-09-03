@@ -1,0 +1,17 @@
+Time frame covered by the report 
+2011-08-15 - 2011-08-19
+
+What was done this week
+Researched VNC client and server on Android. Prepeared code to launch them both.
+Participated in testing HAL and L0 on Android.
+
+
+Open issues
+1) HAL and L0 working on Android.
+
+Plan for the next week
+Begin to write VNC profile on Android.
+
+No help needed
+
+No other activities

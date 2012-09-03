@@ -1,0 +1,12 @@
+1. Time frame covered by the report 
+	15.08.2011 – 19.08.2011
+
+2. What was done this week
+	- Complete porting HAL & L0 for Android platform; 
+	- Implementation of test application for Android in order to test HAL & L0;
+	- Testing HAL & L0 on Android. Currently some issues still pending.
+
+3. Open issues
+	- Make HAL & L0 successfully communicate between Linux and Android.
+4. Plan for the next week
+	- Make HAL & L0 successfully communicate between Linux and Android.

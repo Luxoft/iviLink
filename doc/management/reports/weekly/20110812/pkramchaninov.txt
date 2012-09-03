@@ -1,0 +1,14 @@
+1. Time frame covered by the report 
+	08.08.2011 – 12.08.2011
+
+2. What was done this week
+	- Exploring of D-Bus or D-Bus-like mechanisms for Android platform (about 1.5 day was spent – ultimately task was canceled);
+	- General design of system on profile and axis daemon level in general and for Android platform (currently without much progress – should be complete next week);
+	- Adaptation of Head Revision of Head Revision of HAL and L0 for Android platform and running test program (almost complete – some run-time problems occur – about 1 day left to run tests and get first results for Android).
+
+3. Open issues
+	- Run HAL and L0 on Android and try to test the system.
+	- Design the system on profile and axis daemon level.
+4. Plan for the next week
+	- Run HAL and L0 on Android and try to test the system.
+	- Design the system on profile and axis daemon level.

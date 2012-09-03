@@ -1,0 +1,17 @@
+Time frame:
+
+1.08 - 4.08
+
+What was done:
+
+Sdb_GrphicInterface, Sdb_DataServer, Sdb_AudioManager, email, media  porting to DevKit.
+
+Open issues:
+
+Playing mp3 files from MediaPlayer
+
+Plan for the next week:
+
+AXIS porting to Linux
+
+

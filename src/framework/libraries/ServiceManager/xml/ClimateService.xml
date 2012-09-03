@@ -1,0 +1,5 @@
+<service name= "ClimateService">
+    <pair name= "ClimateService"/>
+    <profile api="ClimateSenderProfile_PAPI_UID" />
+    <profile api="ClimateReceiverProfile_PAPI_UID" />
+</service>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AndroidCommonLib" default="build">
+
+     
+    <target name="setup" >
+      <!-- version-tag: 1 -->
+      <exec executable="android" failonerror="true">
+         <arg value="update"/>
+         <arg value="project"/>
+         <arg value="--path"/>
+         <arg value="."/>
+      </exec>
+    </target>
+
+   <target name="build" depends="clean">
+      <property file="local.properties" />
+      <loadproperties srcFile="project.properties" />
+      <mkdir dir="bin/classes"/>
+      <javac srcdir="src"
+         destdir="bin/classes"
+         classpath="${sdk.dir}/platforms/android-16/android.jar"
+         includeantruntime="false"
+         target="1.6"
+         source="1.6"
+      />
+      <jar destfile="iviLib.jar"
+           basedir="bin/classes"
+      />
+  </target>
+  
+  
+  <target name="clean">
+      <property file="local.properties" />
+      <loadproperties srcFile="project.properties" />
+      <delete dir="bin/classes"/>
+      <delete file="iviLib.jar"/>
+  </target>
+  
+  
+</project>
