@@ -3,3 +3,25 @@ src_install
 .cproject
 .project
 *~
+
+# ignore QtCreator temporary files
+##################################
+
+*-build-desktop
+*.pro.user
+
+bin
+obj
+gen
+libs
+*.so
+*.jar
+*.o
+*.o.d
+*.a
+
+.metadata/*
+
+local.properties
+
+platform_external_protobuf
