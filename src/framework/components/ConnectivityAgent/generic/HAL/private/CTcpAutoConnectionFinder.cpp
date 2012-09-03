@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,6 +27,8 @@
 
 
 
+
+
 /********************************************************************
  *
  * System includes
@@ -39,6 +41,14 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <linux/rtnetlink.h>
+
+#ifndef ANDROID
+#else
+#include <limits>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#endif //ANDROID 
 
 /********************************************************************
  *
@@ -78,7 +88,11 @@ CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& hand
 
    mpNetlinkSocket = new CNetlinkSocket;
 
+   #ifndef ANDROID
    mBroadcastSock = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+   #else
+   mBroadcastSock = socket(AF_INET, SOCK_DGRAM, 0);
+   #endif //ANDROID
    if (!mBroadcastSock)
    {
       LOG4CPLUS_ERROR(msLogger, "CTcpAutoConnectionFinder socket error: " + string(strerror(errno)));

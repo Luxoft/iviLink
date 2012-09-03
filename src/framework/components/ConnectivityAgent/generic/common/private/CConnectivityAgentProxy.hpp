@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -109,7 +111,7 @@ public:
    /**
     * Interface function to destroy the singleton instance
     */
-   void deleteInstance();
+   static void deleteInstance();
 
    /**
     * Allocates duplex channel with given number and priority
@@ -155,6 +157,13 @@ public:
     */
    ERROR_CODE getFreeSize(UInt32 channel_id, UInt32& free_size) const;
 
+
+   /**
+    * Returns adresses of connection.
+    * See getConnectionAddr() from API.hpp
+    */
+   ERROR_CODE getConnectionAddr(char** pType, char** pLocalAddr, char** pRemoteAddr);
+
 public:
    // From AXIS::Ipc::ICallbackHandler
 
@@ -175,6 +184,8 @@ public:
 private:
 
    // Methods section
+
+   void receiveAllocateChannelResponse(iviLink::ConnectivityAgent::CDataAccessor & accessor);
 
    /**
     * Receives the nofication about arrived data from Connectivity Agent and adds it to channel buffer.
@@ -238,10 +249,22 @@ private:
    tChannelOnDeallocSet                   mChannelOnDeallocSet;
 
 
-   typedef std::map<UInt32, iviLink::ConnectivityAgent::CDataAccessor> tRequestResultMap;
-   CCondVar                               mAllocateRequestResultCond;
-   tRequestResultMap                      mAllocateRequestResultMap;
+   struct AllocateRequestInfo
+   {
+      AllocateRequestInfo(TChannelPriority type, IChannelObserver* pClient, bool requestDone, ERROR_CODE result) :
+         mType(type), mpClient(pClient), mRequestDone(requestDone), mResult(result)
+      {}
 
+      TChannelPriority                    mType;
+      IChannelObserver*                   mpClient;
+      bool                                mRequestDone;
+      ERROR_CODE                          mResult;
+   };
+   typedef std::map<UInt32, AllocateRequestInfo>   tAllocateRequestMap;
+   CCondVar                               mAllocateRequestCond;
+   tAllocateRequestMap                    mAllocateRequestMap;
+
+   typedef std::map<UInt32, iviLink::ConnectivityAgent::CDataAccessor> tRequestResultMap;
    CCondVar                               mDeallocateRequestResultCond;
    tRequestResultMap                      mDeallocateRequestResultMap;
 

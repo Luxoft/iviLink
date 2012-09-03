@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -25,6 +25,8 @@
 
 
 
+
+
  
 /**
  * \file CProfileProxy.hpp
@@ -42,6 +44,11 @@
 #include "macro.hpp"
 #include "framework/public/appLib/CProfileApiBase.hpp"
 
+#ifndef ANDROID
+#else
+#include "utils/android/AppInfo.hpp"
+#endif //ANDROID
+
 namespace iviLink
 {
    namespace App
@@ -52,8 +59,13 @@ namespace iviLink
       class CProfileGetter
       {
          template <typename ProfileApi> friend class CProfileProxy;
+         #ifndef ANDROID
          static CProfileApiBase * getBaseProfile(const Service::Uid & service, const Profile::ApiUid & api);
          static void releaseProfile(const Service::Uid & service, const Profile::ApiUid & api);
+         #else
+         static CProfileApiBase * getBaseProfile(const Service::Uid & service, const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo);
+         static void releaseProfile(const Service::Uid & service, const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo);
+         #endif //ANDROID
       };
       
       
@@ -69,11 +81,19 @@ namespace iviLink
       class CProfileProxy
       {
       public:
+         #ifndef ANDROID
          CProfileProxy(const Service::Uid & service, const Profile::ApiUid & api)
             : mService(service)
             , mApi(api)
+         #else
+         CProfileProxy(const Service::Uid & service, const Profile::ApiUid & api,iviLink::Android::AppInfo appInfo)
+            : mService(service)
+            , mApi(api)
+            , mAppInfo(appInfo)
+         #endif //ANDROID   
          {
          }
+         
          virtual ~CProfileProxy()
          {
          }
@@ -81,18 +101,31 @@ namespace iviLink
       protected:
          ProfileApi * getProfile() const
          {
+            #ifndef ANDROID
             return static_cast<ProfileApi*>(CProfileGetter::getBaseProfile(mService,mApi));
+            #else
+            return static_cast<ProfileApi*>(CProfileGetter::getBaseProfile(mService,mApi, mAppInfo));
+            #endif //ANDROID
          }
 
          void releaseProfile() const
          {
+            #ifndef ANDROID
             CProfileGetter::releaseProfile(mService, mApi);
+            #else
+            CProfileGetter::releaseProfile(mService, mApi, mAppInfo);
+            #endif //ANDROID
          }
 
       private:
 
          Service::Uid mService;
          Profile::ApiUid mApi;
+         
+         #ifndef ANDROID
+         #else
+         iviLink::Android::AppInfo mAppInfo;
+         #endif //ANDROID
       };
    }
 

@@ -1,5 +1,0 @@
-<service name= "ClimateClientService">
-    <pair name= "ClimateHUService"/>
-    <profile api="ClimateClientProfile_API_UID">
-     </profile>
-</service>

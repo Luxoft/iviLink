@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -81,9 +83,7 @@ bool read(std::fstream& file, Json::Value& root)
 
 bool write(std::fstream& file, Json::Value const& root)
 {
-   //Json::StyledStreamWriter writer;
    Json::StyledWriter writer;
-   //writer.write(file, root);
    std::string val = writer.write(root);
    LOG4CPLUS_DEBUG(CFileStorage::msLogger, val);
    file << val;

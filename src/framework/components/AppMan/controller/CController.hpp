@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,10 +30,17 @@
 
 
 
+
+
 #ifndef CCONTROLLER_HPP_
 #define CCONTROLLER_HPP_
 
 #include "utils/misc/Logger.hpp"
+
+#ifndef ANDROID
+#else
+#include <jni.h>
+#endif //ANDROID
 
 namespace iviLink
 {
@@ -73,8 +80,12 @@ namespace iviLink
             /**
              * Function is used to init AMP
              */
+            #ifndef ANDROID
             void init();
-
+            #else
+            void init(std::string pathToDatabase, JavaVM * jm, jclass launchClass, jmethodID launchMethod);
+            #endif //ANDROID
+            
             /**
              * Function is used to make uninit AMP
              */

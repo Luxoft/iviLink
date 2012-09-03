@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -40,8 +40,10 @@
    using namespace log4cplus;
    using namespace log4cplus::helpers;
 #else
+   #ifdef ANDROID
    #include "IVILinkLogger.hpp"
    using namespace IVILinkLog;
+   #endif //ANDROID
 #endif
 
 #endif /* LOGGER_HPP_ */

@@ -1,0 +1,2 @@
+libvlc and libavcodec needed for correct work of vlc server and media application.
+Try to install libavcodec-extra-53 and libvlc-dev (1.1.12-2~oneiric1 version).

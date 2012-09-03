@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -116,22 +118,6 @@ ERROR_CODE CSourceAgent::returnBufferBack(iviLink::ConnectivityAgent::Buffer* bu
    return ERR_OK;
 }
 
-void CSourceAgent::sendData()
-{
-   if (mpBufferConsumer)
-   {
-      Buffer* buf = NULL;
-      mBufferQueueMutex.lock();
-
-      buf = mBufferQueue.front();
-      mBufferQueue.pop_front();
-
-      mBufferQueueMutex.unlock();
-
-      mpBufferConsumer->consumeBuffer(buf);
-   }
-}
-
 void CSourceAgent::destroy()
 {
    this->~CSourceAgent();
@@ -141,19 +127,27 @@ ERROR_CODE CSourceAgent::fillBuffer(iviLink::ConnectivityAgent::Buffer& buffer)
 {
    ERROR_CODE ret = ERR_FAIL;
 
-   if (!mBufferQueue.empty())
+   if (mpBufferConsumer)
    {
-      if (memcpy(mBufferQueue.front(), &buffer, sizeof(iviLink::ConnectivityAgent::Buffer)))
+      mBufferQueueMutex.lock();
+
+      if (!mBufferQueue.empty())
       {
+         Buffer* buf = mBufferQueue.front();
+         mBufferQueue.pop_front();
+         assert(buf);
+
+         memcpy(buf, &buffer, sizeof(iviLink::ConnectivityAgent::Buffer));
          buffer.forgetData();
-         sendData();
+
+         mpBufferConsumer->consumeBuffer(buf);
+
          ret = ERR_OK;
       }
+
+      mBufferQueueMutex.unlock();
    }
-   else
-   {
-      assert(false);
-   }
+
    return ret;
 }
 

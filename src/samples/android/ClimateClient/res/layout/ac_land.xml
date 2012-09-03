@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/land_big_back" >
+
+    <LinearLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="13"
+        android:orientation="vertical" >
+
+        <!-- upper row of buttons -->
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="2"
+            android:gravity="bottom" >
+
+            <Button
+                android:id="@+id/auto"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@drawable/auto_false_selector" />
+
+            <Button
+                android:id="@+id/recirc"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@drawable/rec_false_selector" />
+
+            <Button
+                android:id="@+id/ac"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@drawable/ac_false_selector" />
+
+            <Button
+                android:id="@+id/front"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@drawable/front_false_selector" />
+
+            <Button
+                android:id="@+id/rear"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@drawable/rear_false_selector" />
+        </LinearLayout>
+        <!-- central part: left slider, middle section and right slider -->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="9.5"
+            android:background="@drawable/land_small_back"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="0.25" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="7.5"
+                android:baselineAligned="false"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.25" />
+
+                <!-- left slider -->
+
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/drvTempUp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"
+                        android:background="@drawable/temp_up_selector" />
+
+                    <RelativeLayout
+                        android:id="@+id/tempDBar"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="3"
+                        android:background="@drawable/port_temp_bar" >
+
+                        <ImageView
+                            android:id="@+id/tempDThumb"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/thumb" />
+
+                        <TextView
+                            android:id="@+id/tempDVal"
+                            android:layout_width="fill_parent"
+                            android:layout_height="30dip"
+                            android:layout_alignBottom="@+id/tempDThumb"
+                            android:layout_alignLeft="@+id/tempDThumb"
+                            android:layout_alignRight="@+id/tempDThumb"
+                            android:layout_alignTop="@+id/tempDThumb"
+                            android:gravity="center_vertical|center_horizontal" />
+                    </RelativeLayout>
+
+                    <Button
+                        android:id="@+id/drvTempDown"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"
+                        android:background="@drawable/temp_down_selector" />
+                </LinearLayout>
+                <!-- central section -->
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="11.5"
+                    android:orientation="horizontal" >
+
+                    <LinearLayout
+                        android:layout_width="0px"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.75" >
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0px"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="3.5"
+                        android:orientation="vertical" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="1.3" >
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:weightSum="4" >
+
+                            <Button
+                                android:id="@+id/fanDown"
+                                android:layout_width="0px"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/fan_down_false_selector" />
+
+                            <LinearLayout
+                                android:layout_width="0px"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="0.5" >
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/fanMiddle"
+                                android:layout_width="0px"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/fan_middle_false_selector" />
+
+                            <LinearLayout
+                                android:layout_width="0px"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="0.5" >
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/fanTop"
+                                android:layout_width="0px"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/fan_top_false_selector" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="1.3" >
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0px"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.75" >
+                    </LinearLayout>
+                </LinearLayout>
+                <!-- right slider -->
+
+                <LinearLayout
+                    android:id="@+id/linearLayout4"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/passTempUp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"
+                        android:background="@drawable/temp_up_selector" />
+
+                    <RelativeLayout
+                        android:id="@+id/tempPBar"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="3"
+                        android:background="@drawable/port_temp_bar" >
+
+                        <ImageView
+                            android:id="@+id/tempPThumb"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="0px"
+                            android:layout_marginTop="0px"
+                            android:background="@drawable/thumb" />
+
+                        <TextView
+                            android:id="@+id/tempPVal"
+                            android:layout_width="fill_parent"
+                            android:layout_height="30dip"
+                            android:layout_alignBottom="@+id/tempPThumb"
+                            android:layout_alignLeft="@+id/tempPThumb"
+                            android:layout_alignRight="@+id/tempPThumb"
+                            android:layout_alignTop="@+id/tempPThumb"
+                            android:gravity="center_vertical|center_horizontal" />
+                    </RelativeLayout>
+
+                    <Button
+                        android:id="@+id/passTempDown"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"
+                        android:background="@drawable/temp_down_selector" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.3" />
+            </LinearLayout>
+            <!-- bottom section -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="0.15" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="2"
+                android:gravity="bottom"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.15" />
+
+                <Button
+                    android:id="@+id/off"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/off_false_selector" />
+                
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.05" />
+
+                <Button
+                    android:id="@+id/fanDecrease"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/fan_decr_selector" />
+
+                <ImageView
+                    android:id="@+id/fan1"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan2"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan3"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan4"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan5"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan6"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <ImageView
+                    android:id="@+id/fan7"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/fan_point_inactive" />
+
+                <Button
+                    android:id="@+id/fanIncrease"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/fan_incr_selector" />
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.05" />
+
+                <Button
+                    android:id="@+id/dual"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/dual_false_selector" />
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="0.25" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

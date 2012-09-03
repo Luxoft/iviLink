@@ -4,4 +4,8 @@ docs
 .settings
 axis.sublime-project
 axis.sublime-workspace
+
+#### emacs temporary files ####
 *~
+\#*
+.\#*

@@ -1,0 +1,46 @@
+// We will use lite protobuf version
+option optimize_for = LITE_RUNTIME;
+
+
+import "timestamp.proto";
+
+package iviLink;
+
+message SeatState {
+
+  enum Limits {
+    HEATER_MIN = 0;
+    HEATER_MAX = 3;
+    MIN_ANGLE  = -40;
+    MAX_ANGLE  = 70;
+    ANGLE_STEP = 10;
+    SEAT_STEP  = 5;
+
+    LIM_BOTTOM_LEFT = 454;
+    LIM_BOTTOM_RIGHT = 494;
+    LIM_BOTTOM_DOWN = 342;
+    LIM_BOTTOM_UP = 302;
+  }
+
+  message Seat {
+    required int32 bottom_x      = 1  [ default = 474, deprecated = true ]; // ToDo: avoid using of screen coords in future versions
+    required int32 bottom_y      = 2  [ default = 322, deprecated = true ]; // ^^^
+    required int32 back_x        = 3  [ default = 535, deprecated = true ]; // ^^^
+    required int32 back_y        = 4  [ default = 197, deprecated = true ]; // ^^^
+    required int32 back_angle    = 5  [ default = 0 ];
+    required int32 heater        = 6  [ default = 0 ];
+  }
+
+  required Seat driver  = 1;
+  required Seat pass    = 2;
+
+// This is a view but not a model data. Are you shure???
+  enum ViewSeat {
+    DRIVER = 0;
+    PASS   = 1;
+  }
+  required ViewSeat current_seat = 3 [ default = DRIVER ];
+
+  required Timestamp timestamp = 4;
+}
+

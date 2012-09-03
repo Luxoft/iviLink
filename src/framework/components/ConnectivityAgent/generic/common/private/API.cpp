@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -73,3 +75,12 @@ ERROR_CODE getFreeSize(UInt32 channel_id, UInt32& free_size)
    return CConnectivityAgentProxy::getInstance()->getFreeSize(channel_id, free_size);
 }
 
+ERROR_CODE getConnectionAddr(char** pType, char** pLocalAddr, char** pRemoteAddr)
+{
+	return CConnectivityAgentProxy::getInstance()->getConnectionAddr(pType, pLocalAddr, pRemoteAddr);
+}
+
+void destroyConnectivityAgent()
+{
+	CConnectivityAgentProxy::deleteInstance();
+}

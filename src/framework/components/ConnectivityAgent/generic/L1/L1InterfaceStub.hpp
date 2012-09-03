@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -78,7 +80,7 @@ namespace iviLink
           * The L1InterfaceStub implemented as Singleton. It's task is to manage the channels allocation and deallocation
           * and data flow requests from Client application. The only exclusion is creating of service channel which is
           * initiated by HAL when physical connection is established.
-          * It uses UNIX Sockets to connect to client application and uses DataAccessors to pack data flow
+          * It uses CIpc class to connect to client application and uses DataAccessors to pack data flow
           */
   
          class  L1InterfaceStub : 
@@ -95,17 +97,10 @@ namespace iviLink
              */
             enum tChannelState
             {
-               E_UNDEFINED,  //!< eUNDEFINED
-               E_TRANSITION, //!< eTRANSITION
-               E_OPERATIONAL //!< eOPERATIONAL
-            };
-            /**
-             * Message Sender
-             */
-            enum tMessageSender
-            {
-               E_CLIENT,
-               E_AGENT
+               E_UNDEFINED,         //!< eUNDEFINED
+               E_TRANSITION_CLIENT, //!< eTRANSITION_CLIENT - channel requested from this side
+               E_TRANSITION_AGENT,  //!< eTRANSITION_AGENT  - channel requested from other side
+               E_OPERATIONAL        //!< eOPERATIONAL - channel operational
             };
 
             /**
@@ -126,8 +121,8 @@ namespace iviLink
              */
             struct tRequestedChannelInfo
             {
-               TChannelPriority       mType;
-               tMessageSender         mSender;
+               TChannelPriority          mType;
+               tChannelState             mState;
                iviLink::Ipc::DirectionID mClientDir;
             };
             /**
@@ -141,9 +136,27 @@ namespace iviLink
             typedef std::map<UInt32,tRequestedChannelInfo> tRequestedChannelsMap;
 
             /**
-             * Request processor callback type
-            */
-            typedef ERROR_CODE (L1InterfaceStub::* process_func)(CDataAccessor& );
+             * Client request processor callback type
+             * @retval true - accessor has been changed and need to be send back
+             * @retval false - nothing to be send in response, make it empty
+             */
+            typedef bool (L1InterfaceStub::* process_client_func)(CDataAccessor&, iviLink::Ipc::DirectionID);
+
+            /**
+             * Service request processor callback type
+             */
+            typedef void (L1InterfaceStub::* process_service_func)(CDataAccessor&);
+
+            /**
+             * Type for map of callbacks for client requests received from CIpc
+             */
+            typedef std::map<tOpCode, process_client_func> tClientsCallbacksMap;
+
+            /**
+             * Type for map of callbacks for service requests received from CA
+             * on other side by SERVICE_CHANNEL.
+             */
+            typedef std::map<tOpCode, process_service_func> tServiceCallbacksMap;
 
             // Methods section
 
@@ -265,15 +278,84 @@ namespace iviLink
              */
             ERROR_CODE allocateChannel(TChannelPriority prio, UInt32 channel_id);
 
-            /**
-             * Request to allocate duplex channel with given number and priority and sends the allocation request to the
-             * other side Connectivity Agent process. Or in case the channel was already requested -set it to reassign
-             * @param prio channel priority
-             * @param channel_id channel number
-             * @return ERR_OK if it's allright, ERR_NUMBER_BUSY or ERR_FAIL if it's not
-             */
 
-            ERROR_CODE tryAllocateChannel(TChannelPriority prio, UInt32 channel_id);
+            /**
+             * This methods processes channel allocation request.
+             * Updates mRequestedMap.
+             *
+             * Method <b>MUST BE CALLED</b> inside critical section of mutexes
+             * mRequestedMapMutex and mRegistryMutex (in that order). 
+             *
+             * @param prio priority of requested channel.
+             * @param channel_id number of requested channel
+             * @param client_side if called from processClientAllocateRequest()
+             *    must be set to @c true
+             * @param[in,out] dirId used for setting/getting direction id.
+             *    If @c client_side == true, it sets direction id.
+             *    If @c client_side == false, it returns direction id.
+             *
+             * @retval ERR_OK all ok, see diagram SEQ_A and SEQ_B
+             * @retval ERR_DEFERRED all ok, need to wait channel allocation 
+             *    request from one of clients on this side. See diagram SEQ_A
+             * @retval ERR_NUMBER_BUSY there is channel with specified 
+             *    @c channel_id in the mRegistry
+             * @reval ERR_IN_PROGRESS attempt to make the second request for the
+             *    same channel, while the first request is not ended yet. 
+             *    Please, be patient.
+             * @return there can be other errors from allocateChannelLocally()
+             */
+            ERROR_CODE beginAllocateChannel(const TChannelPriority prio, const UInt32 channel_id, const bool client_side, iviLink::Ipc::DirectionID& dirId);
+
+            /**
+             * Performs channel allocation using CChannelAllocator.
+             * Updates mRegistry.
+             *
+             * Method <b>MUST BE CALLED</b> inside critical section of mutexes
+             * mRequestedMapMutex and mRegistryMutex (in that order). 
+             *
+             * @param channel_id number of requested channel
+             * @param req_info information about requested channel
+             *
+             * @return result of channel allocation
+             * @retval ERR_OK channel successfully allocated
+             */
+            ERROR_CODE allocateChannelLocally(const UInt32 channel_id, tRequestedChannelInfo const& req_info);
+
+            /**
+             * This method finishes channel allocation.
+             * Updates mRegistry.
+             *
+             * @param channel_id number of requested channel
+             * @param[out] dirId returns directionId of client which requested 
+             *    the channel.
+             *
+             * @retval ERR_OK all ok, channel successfully allocated
+             * @retval ERR_DEFERRED all ok, channel allocated, but need to send
+             *    message to the other side
+             * @retval ERR_NOTFOUND channel is not found in mRegistry. This is 
+             *    legit in case when L1interfaceStub is being destroyed. Or it 
+             *    can be some bug.
+             */
+            ERROR_CODE endAllocateChannel(const UInt32 channel_id, iviLink::Ipc::DirectionID& dirId);
+
+            /**
+             * Called in case of failed channel allocation.
+             * Can be called because of error received from other side or because
+             * of error on our side.
+             * Erases channel data from mRequestedMap and mRegistry. Deallocates
+             * the channel using CChannelAllocator.
+             * 
+             * @param channel_id number of requested channel
+             * @param[out] dirId returns directionId of client which requested 
+             *    the channel.
+             *
+             * @retval ERR_OK
+             *
+             * @todo see message in processServiceAllocateResponse(). PIlin, 31.08.12
+             */
+            ERROR_CODE failAllocateChannel(const UInt32 channel_id, iviLink::Ipc::DirectionID& dirId);
+
+
             /**
              * Deallocates duplex channel with given number and sends the allocation request to the other side Connectivity Agent process
              * @param channel_id channel number
@@ -292,55 +374,60 @@ namespace iviLink
              * Sends service requests for channel allocation/deallocation to the other side Connectivity Agent process
              * @param Accessor data accessor contained request
              */
-            void sendRequest(CDataAccessor & accessor);
+            ERROR_CODE sendRequest(CDataAccessor & accessor);
 
             /**
              * Service Allocate request processing function
              * @param accessor refernce to data accessor contained request related data
              */
-            ERROR_CODE processServiceAllocateRequest(CDataAccessor & accessor);
+            void processServiceAllocateRequest(CDataAccessor & accessor);
 
             /**
              * Service Deallocate request processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processServiceDeallocateRequest(CDataAccessor & accessor);
+            void processServiceDeallocateRequest(CDataAccessor & accessor);
 
             /**
              * Service Allocate response processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processServiceAllocateResponse(CDataAccessor & accessor);
+            void processServiceAllocateResponse(CDataAccessor & accessor);
 
             /**
              * Service Deallocate response processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processServiceDeallocateResponse(CDataAccessor & accessor);
+            void processServiceDeallocateResponse(CDataAccessor & accessor);
 
             /**
              * CLient Allocate request processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processClientAllocateRequest(CDataAccessor & accessor);
+            bool processClientAllocateRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
 
             /**
              * Client Deallocate request processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processClientDeallocateRequest(CDataAccessor & accessor);
+            bool processClientDeallocateRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
 
             /**
              * Client Send request processing function
              * @param accessor reference to data accessor contained request related data
              */
-            ERROR_CODE processClientSendRequest(CDataAccessor & accessor);
+            bool processClientSendRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
+
+
+            bool processClientGetConnectionAddrRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
 
             /**
              * Fills callback maps for service and clients requests processing.
              * Should be called at startup
              */
             void fillCallbacks();
+
+            void sendIpcNotification(CDataAccessor & accessor, iviLink::Ipc::DirectionID dirId);
 
             /**
              * Constructor is private to provide sigleton behavior
@@ -374,21 +461,29 @@ namespace iviLink
             // Members section
 
             //> Map of callbacks that serves requests from client applications
-            std::map<tOpCode, process_func>                    mClientsCallbacksMap;
+            tClientsCallbacksMap                               mClientsCallbacksMap;
 
             //> Map of callbacks that serves requests from other side Connectivity agent
-            std::map<tOpCode, process_func>                    mServiceCallbacksMap;
+            tServiceCallbacksMap                               mServiceCallbacksMap;
 
             //> Map of allocated channels
             tChannelsRegistryMap                               mRegistry;
 
-            //> mutex for map of allocated channels
+            /**
+             * Mutex for map of allocated channels.
+             * Be sure to preserve the order of mRequestedMapMutex and mRegistryMutex
+             * locking, if they are both used. mRequestedMapMutex must be the first one.
+             */
             CMutex                                             mRegistryMutex;
 
             //> Map of requested but not yet allocated channels
             tRequestedChannelsMap                              mRequestedMap;
 
-            //> mutex for map of requested channels
+            /**
+             * Mutex for map of requested channels.
+             * Be sure to preserve the order of mRequestedMapMutex and mRegistryMutex
+             * locking, if they are both used. mRequestedMapMutex must be the first one.
+             */
             CMutex                                             mRequestedMapMutex;
 
             //> server ipc for connection with Proxies on clients sides
@@ -400,7 +495,7 @@ namespace iviLink
 
             //> type for mClientDirections
             typedef std::vector<iviLink::Ipc::DirectionID>        tClientDirections;
-            //> socket for data transfer with Proxies on clients sides
+            //> ipc direction id for data transfer with Proxies on clients sides
             std::vector<iviLink::Ipc::DirectionID>                mClientDirections;
 
             //> singleton mutex in case of concurrent calls

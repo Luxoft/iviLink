@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,6 +30,8 @@
 
 
 
+
+
 #include <unistd.h>
 
 #include "CAppManProtoClient.hpp"
@@ -49,6 +51,7 @@ namespace iviLink
          : mpHandler(0)
          , mpIpc(new iviLink::Ipc::CIpc(iviLink::Ipc::Address("AppManApp"), *this))
          , mId(0)
+         , mAppInited(false)
          {
             LOG4CPLUS_TRACE(msLogger,"CAppManProtoClient()");
          }
@@ -143,7 +146,14 @@ namespace iviLink
                pos += stringInBufSize(session.value());
                Service::Uid service(bufferToString(pPayload+pos,false));
 
-               mpHandler->sessionRequest(pid,session,service);
+               if (mAppInited)
+               {
+                  mpHandler->sessionRequest(pid,session,service);
+               }
+               else
+               {
+                  mSessionReqsList.push_back(tSessionRequestInfo(pid,session,service));
+               }
                memcpy(pResponseBuffer,&type,sizeof(type));
                bufferSize = sizeof(type);
             }
@@ -192,6 +202,7 @@ namespace iviLink
             EInitResult result;
             UInt32 rSize = sizeof(result);
             CError err = mpIpc->request(genId(),buf,size,reinterpret_cast<UInt8*>(&result),rSize);
+            mAppInited = true;
             delete [] buf;
             if (err.isNoError())
             {
@@ -263,6 +274,16 @@ namespace iviLink
          {
             LOG4CPLUS_TRACE(msLogger,"genId()");
             return ++mId;
+         }
+
+         void CAppManProtoClient::checkSessionRequest()
+         {
+            for (tSessionRequestList::iterator it = mSessionReqsList.begin();
+                  mSessionReqsList.end() != it; ++it)
+            {
+               mpHandler->sessionRequest(it->mPid,it->mSession,it->mUid);
+            }
+            mSessionReqsList.clear();
          }
 
       }

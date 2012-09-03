@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -52,6 +54,12 @@ virtual void sendPublicKey()
 virtual void writeRemoteUIDToTrustList()
 {
    IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,writeRemoteUIDToTrustList)
+}
+
+
+virtual void sendExternalState(int state)
+{
+   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,sendExternalState, state)
 }
 
 IVILINK_PROFILE_PROXY_END

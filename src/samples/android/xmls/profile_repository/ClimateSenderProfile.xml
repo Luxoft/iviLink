@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>ClimateSenderProfile_UID</uid>
+   <name>ClimateSenderProfile</name>
+   <version>1</version>
+   <api uid ="ClimateSenderProfile_PAPI_UID" />
+   <complement>ClimateReceiverProfile_UID</complement>
+</profile>

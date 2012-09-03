@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -94,7 +96,7 @@ CError NegotiaterStates::ProcessTubeNotification(UInt8* rawNotification)
             LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::ProcessTubeNotification()=>Go to the NEGOTIATED STATE");
             mStateCond.broadcast();
 
-            m_mapMutex.unlock();
+            m_mapMutex.unlockWrite();
             mStateCond.unlock();
          }   //change state only if current state is IDLE
          break;
@@ -120,7 +122,7 @@ CError NegotiaterStates::ProcessTubeNotification(UInt8* rawNotification)
                (*it).second.second = new MapCheckNotification(doc);
                mStateCond.broadcast();
             }
-            m_mapMutex.unlock();
+            m_mapMutex.unlockWrite();
             mStateCond.unlock();
          }
          break;
@@ -147,7 +149,7 @@ CError NegotiaterStates::ProcessTubeNotification(UInt8* rawNotification)
                (*it).second.second = new CAAllocationNotification(doc);
                mStateCond.broadcast();
             }
-            m_mapMutex.unlock();
+            m_mapMutex.unlockWrite();
             mStateCond.unlock();
          }
          break;      
@@ -175,7 +177,7 @@ CError NegotiaterStates::ProcessTubeNotification(UInt8* rawNotification)
                LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::ProcessTubeNotification()=>Go to the ALLOCDONE/IDLE STATE");
                mStateCond.broadcast();
             }
-            m_mapMutex.unlock();
+            m_mapMutex.unlockWrite();
             mStateCond.unlock();
          }
          break;
@@ -203,7 +205,7 @@ CError NegotiaterStates::ProcessTubeNotification(UInt8* rawNotification)
                LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::ProcessTubeNotification()=>Go to the IDLE STATE");
                mStateCond.broadcast();
             }
-            m_mapMutex.unlock();
+            m_mapMutex.unlockWrite();
             mStateCond.unlock();
          }
          break;
@@ -233,12 +235,13 @@ NegotiaterStates::STATE NegotiaterStates::GetTagState(const char * tag)
    {
       LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::GetTagState()=>ERROR!! State not found!");
    }
-   m_mapMutex.unlock();
+   m_mapMutex.unlockRead();
    return ret;
 }
 
 Notification * NegotiaterStates::GetNotification(const char * tag)
 {
+   LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::GetNotification(): tag = "+(std::string)tag);
    Notification* ret = NULL;
 
    m_mapMutex.lockRead();
@@ -252,7 +255,7 @@ Notification * NegotiaterStates::GetNotification(const char * tag)
    {
       LOG4CPLUS_TRACE(msLogger, "NegotiaterStates::GetNotification()=>Notification not found!!!");
    }
-   m_mapMutex.unlock();
+   m_mapMutex.unlockRead();
 
    return ret;
 }

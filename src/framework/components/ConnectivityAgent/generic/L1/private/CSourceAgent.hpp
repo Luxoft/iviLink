@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -144,11 +146,6 @@ namespace iviLink
              * @param classRef The reference to the object the class is assiging from
              */   
             CSourceAgent& operator=(const CSourceAgent& );
-
-            /**
-             * Function provides the filled buffer from buffer queue to the Sender i.e CSource and removes the buffer from queue
-             */   
-            void sendData();
 
          private:
 

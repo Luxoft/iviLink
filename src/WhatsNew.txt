@@ -2,24 +2,33 @@ What’s new?
 
 =====================================================
 
+1.1.2 release changes:
+
+Android version of iviLink core and applications added (Android versions from 2.2 to 4.1 supported);
+
+Media Profiles added (Ubuntu version only);
+
+SeatApp and ClimateApp are now symmetric (the same on both sides).
+
+=====================================================
+
 1.0.1 release changes:
 
-Fix crash on onProfileDied event.
+Fix: crash on onProfileDied event;
 
-Fix incorrect initialization of client Climate UI.
+Fix: incorrect initialization of client Climate UI;
 
-Fix crash in cryptopp library
+Fix: crash in cryptopp library;
 
-Fix segmentation fault on closing BasicSample application.
+Fix: segmentation fault on closing BasicSample application;
 
-Fix misbehavior on wrong PIN-code is entered.
+Fix: misbehavior on wrong PIN-code is entered;
 
-Folder structure changed:
-	- introduce public folder for client application related files.
+Slightly change the folder structure;
 
-Fix impossibility of running the same application more than one time.
+Fix: impossibility of running the same application more than one time;
 
-Fix shutdown for ProfileRepository.
+Fix: shutdown for ProfileRepository.
 
 =====================================================
 

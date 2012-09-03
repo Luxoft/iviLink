@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -79,7 +81,11 @@ public:
    CTrustListError getKnownUids(tUidVector& result) const;
 
 public:
+   #ifndef ANDROID
    CTrustList();
+   #else
+   CTrustList(std::string pathToTrlist);
+   #endif //ANDROID
 
    ~CTrustList();
 

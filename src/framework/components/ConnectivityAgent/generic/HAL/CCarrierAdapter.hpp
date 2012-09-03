@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,6 +30,8 @@
 
 
 
+
+
 #ifndef CCARRIERADAPTER_HPP_
 #define CCARRIERADAPTER_HPP_
 
@@ -37,6 +39,8 @@
 #include "utils/threads/CMutex.hpp"
 #include "Frame.hpp"
 #include "EGenderType.hpp"
+#include "utils/misc/Logger.hpp"
+
 
 namespace iviLink
 {
@@ -101,6 +105,14 @@ namespace iviLink
             * NULL if there is no such address.
             */
            virtual const char* getLocalAddress() const;
+
+           /**
+            * Returns string representation of carrier type.
+            * String must be statically allocated and used to determine type of
+            * address that will be returned by getRemoteAddress() and getLocalAddress().
+            * @return type string, not NULL
+            */
+           virtual const char* getTypeName() const = 0;
 
            void resendACK(UInt32 channel_id, UInt32 frame_number);
 

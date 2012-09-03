@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -133,7 +135,7 @@ bool CIpcSocket::isConnected() const
    bool res = false;
    mSocketMutex.lockRead();
    res = mIsConnected;
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
    return res;
 }
 
@@ -204,7 +206,7 @@ CError CIpcSocket::connect()
          }
       }
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 
    return err;
 }
@@ -296,7 +298,7 @@ void CIpcSocket::acceptConnection()
          LOG4CPLUS_WARN(logger, CError::FormErrnoDescr(errno).c_str());
       }
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 }
 
 void CIpcSocket::closeAllSockets()
@@ -318,7 +320,7 @@ void CIpcSocket::closeAllSockets()
 
       mSockets.clear();
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 }
 
 bool CIpcSocket::closeClientSocket(int sock)
@@ -347,7 +349,7 @@ bool CIpcSocket::closeClientSocket(int sock)
 
       empty = mSockets.empty();
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 
    mIpc.onConnectionLost(dirId);
    closeSocket(sock);
@@ -369,7 +371,7 @@ void CIpcSocket::closeListenSocket(bool needLock)
    }
 
    if (needLock)
-      mSocketMutex.unlock();
+      mSocketMutex.unlockWrite();
 }
 
 void CIpcSocket::closeSocket(int sock)
@@ -551,7 +553,7 @@ void CIpcSocket::threadFunc()
             }
          } // if res < -1
       }
-      mSocketMutex.unlock();
+      mSocketMutex.unlockRead();
 
       if (needExit)
          break;
@@ -882,7 +884,7 @@ CError CIpcSocket::receive(UInt8* pBuffer, UInt32& bufferSize, bool peek/* = fal
 
       savedErrno = errno;
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
 
    if (n > 0)
    {
@@ -979,7 +981,7 @@ CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 
       mSendMutex.unlock();
 
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
 
    return err;
 }

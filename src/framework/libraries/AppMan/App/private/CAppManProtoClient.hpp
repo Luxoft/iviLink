@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -55,6 +57,18 @@ namespace iviLink
          class CAppManProtoClient   : public IAppManProto
                                     , public iviLink::Ipc::ICallbackHandler
          {
+            struct tSessionRequestInfo
+            {
+               pid_t mPid;
+               Service::SessionUid mSession;
+               Service::Uid mUid;
+               tSessionRequestInfo(pid_t pid, Service::SessionUid session, Service::Uid service)
+               : mPid(pid)
+               , mSession(session)
+               , mUid(service)
+               {}
+            };
+            typedef std::list<tSessionRequestInfo> tSessionRequestList;
          public:
             /**
              * Constructor
@@ -85,6 +99,13 @@ namespace iviLink
              * Returns true if connection is OK
              */
             bool checkConnection() const;
+
+            /**
+             * Is used only in CAppManProtoClient. If sesssionRequest() was made
+             * before initDone(), waits initDone
+             * and after it will be called to proceed session request
+             */
+            virtual void checkSessionRequest();
 
          private:
             /**
@@ -127,13 +148,15 @@ namespace iviLink
             iviLink::Ipc::MsgID genId();
 
             IAppManProtoAmpToApp * mpHandler;   ///< handles incoming requests
-            iviLink::Ipc::CIpc * mpIpc;            ///< object of IPC
-            iviLink::Ipc::MsgID mId;               ///< ID of last message in IPC
+            iviLink::Ipc::CIpc * mpIpc;         ///< object of IPC
+            iviLink::Ipc::MsgID mId;            ///< ID of last message in IPC
             CSignalSemaphore mConLostSem;       ///< signals in case of connection problems
             bool mBe;                           ///< is false if needs to stop  communication with AMP
             volatile bool mNoConnection;        ///< is true in case of connection problems
+            bool mAppInited;                    ///< true if app inited
+            tSessionRequestList mSessionReqsList;///< list of session requests that were received before initDone()
 
-            static Logger msLogger;              ///< object of logger
+            static Logger msLogger;             ///< object of logger
          };
 
       }

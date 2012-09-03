@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -39,7 +39,11 @@ UInt16 ByteOrder::hton16(UInt16 data)
 
 UInt16 ByteOrder::ntoh16(UInt16 data)
 {
+   #ifndef ANDROID
    return be16toh(data);
+   #else
+   return betoh16(data);
+   #endif //ANDROID
 }
 
 UInt32 ByteOrder::hton32(UInt32 data)
@@ -49,7 +53,11 @@ UInt32 ByteOrder::hton32(UInt32 data)
 
 UInt32 ByteOrder::ntoh32(UInt32 data)
 {
+   #ifndef ANDROID
    return be32toh(data);
+   #else
+   return betoh32(data);
+   #endif //ANDROID
 }
 
 UInt64 ByteOrder::hton64(UInt64 data)
@@ -59,5 +67,9 @@ UInt64 ByteOrder::hton64(UInt64 data)
 
 UInt64 ByteOrder::ntoh64(UInt64 data)
 {
+   #ifndef ANDROID
    return be64toh(data);
+   #else
+   return betoh64(data);
+   #endif //ANDROID
 }

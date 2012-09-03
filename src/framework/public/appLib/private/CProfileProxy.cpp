@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,6 +27,8 @@
 
 
 
+
+
 #include "framework/public/appLib/CProfileProxy.hpp"
 #include "framework/libraries/ServiceManager/CServiceManager.hpp"
 #include "CLogger.hpp"
@@ -35,17 +37,34 @@ namespace iviLink
 {
    namespace App
    {
+      #ifndef ANDROID
       CProfileApiBase * CProfileGetter::getBaseProfile(const Service::Uid & service, const Profile::ApiUid & api)
       {
          LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
          return Service::CServiceManager::getInstance()->getProfile(service, api);
       }
-
+      #else
+      CProfileApiBase * CProfileGetter::getBaseProfile(const Service::Uid & service, const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo)
+      {
+         LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+         return Service::CServiceManager::getInstance(appInfo)->getProfile(service, api);
+      }
+      #endif //ANDROID
+      
+      
+      #ifndef ANDROID
       void CProfileGetter::releaseProfile(const Service::Uid & service, const Profile::ApiUid & api)
       {
          LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
          Service::CServiceManager::getInstance()->releaseProfile(service, api);
       }
+      #else
+      void CProfileGetter::releaseProfile(const Service::Uid & service, const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo)
+      {
+         LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+         Service::CServiceManager::getInstance(appInfo)->releaseProfile(service, api);
+      }
+      #endif //ANDROID
 
    }
 }

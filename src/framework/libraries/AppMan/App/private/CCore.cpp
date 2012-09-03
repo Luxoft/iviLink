@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,6 +30,8 @@
 
 
 
+
+
 #include <unistd.h>
 #include <cstdlib>
 #include <cstdio>
@@ -47,13 +49,21 @@ namespace iviLink
       {
          Logger CCore::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("AppMan.Ipc.App.Core"));
 
+         #ifndef ANDROID
          CCore::CCore()
+         #else
+         CCore::CCore(std::string launchInfo)
+         #endif //ANDROID
             : mpHandler(0)
             , mpProto(0)
          {
             LOG4CPLUS_TRACE(msLogger,"CCore()");
             mPid = getpid();
+            #ifndef ANDROID
             getExeName();
+            #else
+            mLaunchInfo = launchInfo;
+            #endif //ANDROID
          }
 
          CCore::~CCore()
@@ -130,6 +140,7 @@ namespace iviLink
             return CError::NoError("AppMan","No Error in CCore::getAppLaunchInfo()");
          }
 
+         #ifndef ANDROID
          void CCore::getExeName()
          {
             LOG4CPLUS_TRACE(msLogger,"getExeName()");
@@ -160,6 +171,7 @@ namespace iviLink
             mLaunchInfo = buf;
             LOG4CPLUS_INFO(msLogger, "Launch info: " + mLaunchInfo);
          }
+         #endif //ANDROID
 
       }
 

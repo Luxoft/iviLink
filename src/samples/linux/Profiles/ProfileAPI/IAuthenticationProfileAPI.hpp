@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,6 +29,8 @@
 
 
 
+
+
 #ifndef IAUTHENTICATION_PROFILE_API_HPP
 #define IAUTHENTICATION_PROFILE_API_HPP
 
@@ -45,11 +47,17 @@ class IAuthenticationProfile_API : public iviLink::CProfileApiBase
          virtual void gotPIN(int first_digit, int second_digit, int third_digit, int fourth_digit) = 0;
          virtual void onAuthenticationIsNotRequired() = 0;
          virtual void onAuthenticationIsRequired() = 0;
+         virtual void onExternalStateCame(int state) = 0;
+         #ifndef ANDROID
+         #else
+         virtual std::string getPathToTrlist() = 0;
+         #endif //ANDROID
       };
 
       virtual void sendPIN(int first_digit, int second_digit, int third_digit, int fourth_digit) = 0;
       virtual void sendPublicKey() = 0;
       virtual void writeRemoteUIDToTrustList() = 0;
+      virtual void sendExternalState(int state) = 0;
 };
 
 

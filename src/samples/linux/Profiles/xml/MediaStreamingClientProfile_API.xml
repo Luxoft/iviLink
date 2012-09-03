@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profileApi>
+	<version>1</version>
+	<role>MediaStreamingClientProfile_API_Role</role>
+	<uid>MediaStreamingClientProfile_API_UID</uid>
+</profileApi>

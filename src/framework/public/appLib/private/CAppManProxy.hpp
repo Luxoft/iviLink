@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -54,7 +56,11 @@ namespace iviLink
       class CAppManProxy : public CThread
       {
       public:
+         #ifndef ANDROID
          CAppManProxy(CApp * pApp);
+         #else
+         CAppManProxy(CApp * pApp, std::string launchInfo);
+         #endif //ANDROID
          virtual ~CAppManProxy();
 
          void finish();
@@ -79,6 +85,10 @@ namespace iviLink
          CSignalSemaphore * mpRequestSemaphore;
          tUseServiceList mUseList;
          CMutex * mpUseListMutex;
+         #ifndef ANDROID
+         #else
+         std::string mLaunchInfo;
+         #endif //ANDROID
       };
 
    }

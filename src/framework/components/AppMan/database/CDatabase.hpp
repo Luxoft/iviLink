@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -65,7 +67,11 @@ namespace iviLink
           * @retval true if success
           * @retval false if fail
           */
+         #ifndef ANDROID
          bool load();
+         #else
+         bool load(std::string pathToDatabase);
+         #endif
 
          /**
           * Saves database to XML file
@@ -191,6 +197,10 @@ namespace iviLink
 
          std::map<int, CApplication> mApplications;
          std::string mDBPath;
+         #ifndef ANDROID
+         #else
+         std::string mDirPath; //path to directory with Database on device
+         #endif //ANDROID
          CMutex * mpMutex;
          int mIdCounter;
 

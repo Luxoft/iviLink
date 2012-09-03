@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -63,6 +65,7 @@ CDataAccessor::CDataAccessor():
 mOperation(0),
 mChannelID(0),
 mDataSize(0),
+mErrorCode(0),
 mpData(NULL)
 {
 }
@@ -71,6 +74,7 @@ CDataAccessor::CDataAccessor(const UInt8* pData, const UInt32 size):
 mOperation(0),
 mChannelID(0),
 mDataSize(0),
+mErrorCode(0),
 mpData(NULL)
 {
    assert(size >= 12);
@@ -81,6 +85,8 @@ mpData(NULL)
       memcpy(&mChannelID,pData, sizeof(UInt32) );
       pData+= sizeof(UInt32);
       memcpy(&mDataSize,pData, sizeof(UInt32) );
+      pData+= sizeof(UInt32);
+      memcpy(&mErrorCode,pData, sizeof(UInt32) );
       pData+= sizeof(UInt32);
       LOG4CPLUS_INFO(logger, "CDataAccessor::CDataAccessor(): mDataSize = "
             + convertIntegerToString(mDataSize) + "  size = "
@@ -109,6 +115,7 @@ CDataAccessor::CDataAccessor(const CDataAccessor& accessor) :
    mOperation(accessor.mOperation),
    mChannelID(accessor.mChannelID),
    mDataSize(accessor.mDataSize),
+   mErrorCode(accessor.mErrorCode),
    mpData(NULL)
 {
    if (mDataSize)
@@ -125,6 +132,7 @@ CDataAccessor& CDataAccessor::operator=(const CDataAccessor& accessor)
       mOperation = accessor.mOperation;
       mChannelID = accessor.mChannelID;
       mDataSize = accessor.mDataSize;
+      mErrorCode = accessor.mErrorCode;
       if (mpData != NULL)
       {
          delete[] mpData;
@@ -159,6 +167,13 @@ void CDataAccessor::setData(UInt8 const* pData, UInt32 size)
    }
 }
 
+void CDataAccessor::resetData()
+{
+   mDataSize = 0;
+   delete[] mpData;
+   mpData = NULL;
+}
+
 void CDataAccessor::copyToRawArray(UInt8* pBuf)
 {
       memcpy(pBuf, &mOperation, sizeof(UInt32) );
@@ -167,6 +182,8 @@ void CDataAccessor::copyToRawArray(UInt8* pBuf)
       pBuf+= sizeof(UInt32);
       memcpy(pBuf, &mDataSize, sizeof(UInt32) );
       pBuf+= sizeof(UInt32);
+      memcpy(pBuf, &mErrorCode, sizeof(UInt32) );
+      pBuf+= sizeof(UInt32);
       if (mDataSize > 0)
       {
          memcpy(pBuf,mpData,mDataSize );
@@ -174,14 +191,16 @@ void CDataAccessor::copyToRawArray(UInt8* pBuf)
 }
 void CDataAccessor::printContent()
 {
-   LOG4CPLUS_INFO(logger, "========CDataAccessor::printContent()==============");
-   LOG4CPLUS_INFO(logger, "Operation = " + convertIntegerToString(mOperation) + " \n "
-           "Channel ID = " + convertIntegerToString(mChannelID) + " \n "
-           "Data size = " + convertIntegerToString(mDataSize));
-   if (mDataSize < 1024)
-   {
-      LOG4CPLUS_INFO(logger, "Data:  ");
-   }
+   LOG4CPLUS_DEBUG(logger, "========CDataAccessor::printContent()==============");
+   LOG4CPLUS_DEBUG(logger, 
+      "Operation  = " + convertIntegerToString(mOperation) + " \n "
+      "Error code = " + convertIntegerToString(mErrorCode) + " \n "
+      "Channel ID = " + convertIntegerToString(mChannelID) + " \n "
+      "Data size  = " + convertIntegerToString(mDataSize));
+   // if (mDataSize < 1024)
+   // {
+   //    LOG4CPLUS_INFO(logger, "Data:  ");
+   // }
 
-   LOG4CPLUS_INFO(logger, "=======================END=========================");
+   LOG4CPLUS_DEBUG(logger, "=======================END=========================");
 }

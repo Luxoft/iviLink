@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -28,6 +28,8 @@
 
 
 
+
+
 #ifndef CONNECTIVITY_AGENT_API_HPP
 #define CONNECTIVITY_AGENT_API_HPP
 
@@ -37,7 +39,7 @@ class IChannelObserver;
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 /**
  * Proxy/Stub control protocol messages
  */
@@ -53,7 +55,10 @@ enum tOpCode
    E_SYNC_RESP                = 8,     //> Syncronize  response
    E_RECEIVE_DATA_NTF         = 9,     //> Data received  notification
    E_CONNECTION_LOST_NTF      = 10,    //> Connection Lost notification
-   E_DEALLOCATE_CHANNEL_NTF   = 11     //> Channel deallocation notification
+   E_DEALLOCATE_CHANNEL_NTF   = 11,    //> Channel deallocation notification
+
+   //
+   E_GET_CONNECTION_ADDR      = 100
 };
 
 enum MessageSender
@@ -114,9 +119,33 @@ const UInt32 getMaxBufSize();
  */
 ERROR_CODE getFreeSize(UInt32 channel_id, UInt32& free_size);
 
+
+void destroyConnectivityAgent();
+
+// Unstable API
+
+
+/**
+ * Retrieves adresses of local and remote sides of connection.
+ * <b>THIS IS UNSTABLE API</b>
+ *
+ * Memory for all results of this function will be allocated dynamically using
+ * malloc() call and need to be freed using free() call.
+ * All results guaranteed to be zero-terminated C-style strings or NULL.
+ *
+ * @param[out] pType connection type identifier
+ * @param[out] pLocalAddr local address
+ * @param[out] pRemoteAddr remote address
+ *
+ * @retval ERR_OK all ok, data obtained
+ * @eetval ERR_FAIL some error, arguments were not changed
+ */
+ERROR_CODE getConnectionAddr(char** pType, char** pLocalAddr, char** pRemoteAddr);
+
+
 #ifdef __cplusplus
 }
-#endif
+#endif // __cplusplus
 
-#endif
+#endif // CONNECTIVITY_AGENT_API_HPP
 

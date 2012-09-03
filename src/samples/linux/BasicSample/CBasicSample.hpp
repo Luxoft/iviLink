@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -26,6 +26,8 @@
 
 
 
+
+
 #ifndef CBASICSAMPLE_HPP_
 #define CBASICSAMPLE_HPP_
 
@@ -36,6 +38,13 @@
 #include "samples/linux/Profiles/ProfileAPI/IBasicSampleProfileAPI.hpp"
 #include "utils/threads/CSignalSemaphore.hpp"
 
+#ifndef ANDROID
+#else
+#include <jni.h>
+#include "utils/android/AppInfo.hpp"
+#include "utils/android/JniThreadHelper.hpp"
+#endif //ANDROID
+
 // CBasicSample class inherits CApp class
 class CBasicSample : public iviLink::CApp
 {
@@ -44,37 +53,75 @@ class CBasicSample : public iviLink::CApp
    {
       CSignalSemaphore * mpSemaphore;
       public:
+         #ifndef ANDROID
          explicit BasicSampleProfileCallbacks(CSignalSemaphore & semaphore)
             : mpSemaphore(&semaphore)
          {}
+         #else
+         explicit BasicSampleProfileCallbacks(CSignalSemaphore & semaphore, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result)
+            : mpSemaphore(&semaphore),
+              mpJM(pJm),
+              jCallbacks(callbacks),
+              jOnOperands(operands),
+              jOnResult(result)
+         {}
+         #endif //ANDROID
+
 
          virtual void handleError(CError const & error)
          {
          }
 
-	 /**
+	      /**
           * Callback that should be invoked when paired profile requested from other side
           * @param a, b - operands
           * @return none
           */
          virtual void operandsReceived(int a, int b)
          {
+            #ifndef ANDROID
+            #else
+            JNIEnv *env;
+            iviLink::Android::JniThreadHelper jth(mpJM);
+            env = jth.getEnv();
+            env->CallVoidMethod(jCallbacks, jOnOperands, a,b);
+            #endif //ANDROID
             mpSemaphore->signal();
          }
 
-	 /**
+	      /**
           * Callback that should be invoked when paired profile requested from other side 
           * @param a - result of operation
           * @return none
           */
          virtual void resultReceived(int a)
          {
+            #ifndef ANDROID
+            #else
+            JNIEnv *env;
+            iviLink::Android::JniThreadHelper jth(mpJM);
+            env = jth.getEnv();
+            env->CallVoidMethod(jCallbacks, jOnResult, a);
+            #endif //ANDROID
             mpSemaphore->signal();
          }
+        
+         private:
+            #ifndef ANDROID
+            #else
+            JavaVM* mpJM;
+            jmethodID jOnOperands;
+            jmethodID jOnResult;
+            jobject jCallbacks;
+            #endif //ANDROID
    };
 
 public:
+   #ifndef ANDROID
    CBasicSample(CSignalSemaphore & semaphore);
+   #else
+   CBasicSample(CSignalSemaphore & semaphore, iviLink::Android::AppInfo appInfo, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result);
+   #endif //ANDROID
    virtual ~CBasicSample();
 
    /**
@@ -92,7 +139,14 @@ private:
    IBasicSampleProfile_API* mpBasicSampleAPI;
 
    static Logger msLogger;
-   CSignalSemaphore * mpSemaphore;
+   CSignalSemaphore * mpSemaphore;  
+    
+   #ifndef ANDROID
+   #else
+   // this is a structure with additional info needed for android version
+   // see utils/android/AppInfo.hpp and documentation
+   iviLink::Android::AppInfo mAppInfo;
+   #endif //ANDROID
 };
 
 #endif /* CBASICSAMPLE_HPP_ */

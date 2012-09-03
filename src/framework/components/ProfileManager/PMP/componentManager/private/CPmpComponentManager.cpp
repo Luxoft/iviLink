@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,8 +30,11 @@
 
 
 
+
+
 #include <cassert>
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <limits.h>
@@ -51,6 +54,11 @@
 #include "framework/components/ProfileManager/PMP/repository/CRepoController.hpp"
 #include "framework/components/ProfileManager/PMP/ipc_protocol/CIpcProtocol.hpp"
 #include "framework/libraries/AppMan/Pmp/CAppManPmpController.hpp"
+
+#ifndef ANDROID
+#else
+#include "utils/android/MakeRequest.hpp"
+#endif //ANDROID
 
 namespace iviLink
 {
@@ -94,6 +102,7 @@ namespace iviLink
       bool CPmpComponentManager::initProfileRepository()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+         #ifndef ANDROID
          char rpath[PATH_MAX] = "";
          char ipc_addr[PATH_MAX] = "";
          char * params[] = { rpath, 0, 0, 0 };
@@ -123,11 +132,9 @@ namespace iviLink
             return false;
             break;
          case 0:
-            LOG4CPLUS_ERROR(msLogger, "launching '" + std::string(rpath) + "'");
-
-
             if (mpConfig)
             {
+               // be sure that mpConfig->getParam() has no lock/unlock
                std::string addr = mpConfig->getParam("pmp_repo_ipc_address");
                if (!addr.empty())
                {
@@ -139,7 +146,8 @@ namespace iviLink
 
             if (execv(rpath, params) == -1)
             {
-               LOG4CPLUS_FATAL(msLogger, "Exec of ProfileRepository failed");
+               fputs("Exec of ProfileRepository failed",
+                  stderr);
                exit(1);
             }
             break;
@@ -147,6 +155,10 @@ namespace iviLink
             LOG4CPLUS_INFO(msLogger, "mRepoPid = " + convertIntegerToString(static_cast<int>(mRepoPid)));
             break;
          }
+         #else
+         iviLink::Android::makeRequest(iviLink::Android::eLaunchProfileRepository);
+         LOG4CPLUS_FATAL(msLogger, "Started profile repository");
+         #endif //ANDROID
          return true;
       }
 
@@ -227,7 +239,11 @@ namespace iviLink
             LOG4CPLUS_FATAL(msLogger, "Error while initializing Profile Repository Client");
             exit(1);
          }
+         #ifndef ANDROID
          std::string platform = "Ubuntu"; ///todo: change way of setting name of current platform
+         #else
+         std::string platform = "Android";
+         #endif //ANDROID
          LOG4CPLUS_INFO(msLogger, "todo: change way of setting name of current platform");
          mpCore = new CPmpCore(CRepoController::instance()->repository(), platform);
          mpPim = new CPmpPim(mpPimProtocol);

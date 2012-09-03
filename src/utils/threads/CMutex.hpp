@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,21 +29,18 @@
 
 
 
+
+
 #ifndef CMUTEX_HPP
 #define CMUTEX_HPP
 
 #include <pthread.h>
 #include <string>
 
-#include "utils/misc/Logger.hpp"
-
 using namespace std;
 
 class CMutex
 {
-private:
-   static Logger logger;
-
 public:
 	CMutex();
    ~CMutex();
@@ -71,6 +68,24 @@ private:
 	CMutex& operator=(const CMutex& );
 
    pthread_mutex_t	mMutex;
+};
+
+class noncopyable {
+protected:
+    noncopyable() {}
+    ~noncopyable() {}
+private:
+    noncopyable( const noncopyable& );
+    noncopyable& operator=( const noncopyable& );
+};
+
+
+class lock : noncopyable {
+public:
+    explicit lock( CMutex& m ) : m(m) { m.lock(); }
+    ~lock() { m.unlock(); }
+private:
+    CMutex& m;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -71,12 +73,21 @@ namespace iviLink
 
       Logger CService::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("ServicesLib.GenericService"));
       
+      #ifndef ANDROID
       CService::CService(const std::string &xmlPath, const Service::Uid & service)
          : mXmlPath(xmlPath)
          , mUid(service)
          , mpProfilesMapMutex(new CMutex())
          , mpCbMapMutex(new CMutex())
          , mCorrect(true)
+      #else
+      CService::CService(iviLink::Android::AppInfo appInfo, const Service::Uid & service)
+         : mAppInfo(appInfo)
+         , mUid(service)
+         , mpProfilesMapMutex(new CMutex())
+         , mpCbMapMutex(new CMutex())
+         , mCorrect(true)
+      #endif //ANDROID
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
       }
@@ -95,7 +106,11 @@ namespace iviLink
 
       bool CService::load(tCallbacksMap & cbMap)
       {
+         #ifndef ANDROID
          mManifestPath = mXmlPath + mUid.value() + ".xml";
+         #else
+         mManifestPath = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
+         #endif //ANDROID
          LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML filename = '" +
             mManifestPath + "'");
 
@@ -155,7 +170,11 @@ namespace iviLink
                {
                   LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML() callbacks found, loding profile....");
                   Profile::IProfileCallbackProxy* pCallback = iter->second;
+                  #ifndef ANDROID
                   err = pPim->loadProfile(prfUid, mPairUid, pCallback, pProfile);
+                  #else
+                  err = pPim->loadProfile(prfUid, mPairUid, pCallback, pProfile, mAppInfo.privateDirPath);
+                  #endif //ANDROID
                   if (err.isNoError())
                   {
                      mpProfilesMapMutex->lock();
@@ -214,7 +233,11 @@ namespace iviLink
 
       bool CService::incomingLoad(tCallbacksMap & cbMap)
       {
+         #ifndef ANDROID
          mManifestPath = mXmlPath + mUid.value() + ".xml";
+         #else
+         mManifestPath = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
+         #endif //ANDROID
          LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML filename = '" +
             mManifestPath + "'");
 
@@ -274,7 +297,11 @@ namespace iviLink
          LOG4CPLUS_TRACE(msLogger, "CService::incomingProfileRequest() " + uid.value()
             + " api = " + papiUid.value());
          ERROR_CODE ret = ERR_FAIL;
+         #ifndef ANDROID
          std::string path = mXmlPath + mUid.value() + ".xml";
+         #else
+         std::string path = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
+         #endif //ANDROID
          pugi::xml_document doc;
          pugi::xml_parse_result result = doc.load_file(path.c_str());
          if (result)
@@ -302,7 +329,11 @@ namespace iviLink
                LOG4CPLUS_TRACE(msLogger,
                      "CService::incomingProfileRequest() callbacks found, loding profile....");
                iviLink::Profile::IProfileCallbackProxy* pCallback = iter->second;
+               #ifndef ANDROID
                err = pPim->loadProfile(prfUid, mUid, pCallback, pProfile);
+               #else
+               err = pPim->loadProfile(prfUid, mUid, pCallback, pProfile, mAppInfo.privateDirPath);
+               #endif //ANDROID
                mpProfilesMapMutex->lock();
                mProfilesMap[profile_api] = pProfile;
                mpProfilesMapMutex->unlock();

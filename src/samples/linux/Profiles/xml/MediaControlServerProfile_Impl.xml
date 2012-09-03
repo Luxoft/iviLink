@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>MediaControlServerProfileImpl_UID</uid>
+   <name>MediaControlServerProfileImpl</name>
+   <version>1</version>
+   <api uid ="MediaControlServerProfile_API_UID" />
+   <complement>MediaControlClientProfileImpl_UID</complement>
+</profile>

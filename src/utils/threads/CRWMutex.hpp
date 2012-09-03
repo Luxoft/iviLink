@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -28,6 +28,8 @@
 
 
 
+
+
 #ifndef CRWMUTEX_HPP
 #define CRWMUTEX_HPP
 
@@ -37,23 +39,22 @@
  *
  ********************************************************************/
 #include <pthread.h>
-
 /********************************************************************
  *
  * Other includes
  *
  ********************************************************************/
 
-#if defined(ANDROID)
-
-#include "CMutex.hpp"
-
-typedef CMutex CRWMutex;
-
-#else
-
- 
- 
+/* Implementation of RWMutex for Android 2.2 and earlier from:
+   http://stackoverflow.com/questions/244316/reader-writer-locks-in-c/244376#244376
+*/
+#ifdef ANDROID
+struct rwlock {
+    pthread_mutex_t lock;
+    pthread_cond_t read, write;
+    unsigned readers, writers, read_waiters, write_waiters;
+};
+#endif //ANDROID
  
 /// CRWMutex class
 /**
@@ -90,9 +91,14 @@ public:
    void lockRead();
 
    /**
-    * Unlocks the mutex
+    * Unlocks the mutex on writings
     */
-   void unlock();
+   void unlockWrite();
+
+   /**
+    * Unlocks the mutex on readings
+    */
+   void unlockRead();
 
 private:
    // Methods section
@@ -116,10 +122,12 @@ private:
    CRWMutex& operator=(const CRWMutex& classRef);
 
    // Members section
+#ifdef ANDROID
+   rwlock                  mMutex;
+#else
    pthread_rwlockattr_t    mAttr;
    pthread_rwlock_t        mMutex;
+#endif //ANDROID
 };
-
-#endif // ANDROID
 
 #endif // CRWMUTEX_HPP

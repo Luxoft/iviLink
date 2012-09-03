@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,12 +30,20 @@
 
 
 
+
+
 #include "CSystemStateMachine.hpp"
 #include "CTriggerQueue.hpp"
 #include "framework/components/SystemController/ssm/states/CSystemState.hpp"
 #include "framework/components/SystemController/ssm/states/CInitialState.hpp"
 #include "framework/components/SystemController/ssm/states/CIdleState.hpp"
 #include "framework/components/SystemController/processEntryPoint/reset.hpp"
+#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
+
+#ifndef ANDROID
+#else
+#include "utils/android/MakeRequest.hpp"
+#endif //ANDROID
 
 using namespace SystemControllerMsgProtocol;
 
@@ -131,10 +139,18 @@ void CSystemStateMachine::startTriggerHandler()
          LOG4CPLUS_WARN(sLogger, "Unlock all profiles and switch to idle state");
          unlockProfiles();
          AuthenticationAppMsgProxy::requestShutDown();
+         #ifndef ANDROID
+         #else
+         iviLink::Android::makeRequest(iviLink::Android::eIdle);
+         #endif //ANDROID
          break;
       case AUTHENTICATION_CANCELED:
          AuthenticationAppMsgProxy::requestShutDown();
+         #ifndef ANDROID
          hardReset(true);
+         #else
+         iviLink::Android::makeRequest(iviLink::Android::eReset);
+         #endif //ANDROID
          break;
       }
    }
@@ -193,7 +209,11 @@ CError CSystemStateMachine::onCounterCADisconnected()
 {
    LOG4CPLUS_TRACE(sLogger, __PRETTY_FUNCTION__);
 
+   #ifndef ANDROID
    hardReset(true);
+   #else
+   iviLink::Android::makeRequest(iviLink::Android::eReset);
+   #endif //ANDROID
    
    return CError(CError::NO_ERROR, "SystemStateMachine");
 }

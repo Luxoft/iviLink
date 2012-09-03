@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,7 +30,10 @@
 
 
 
+
+
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
 #include <limits.h>
 #include <unistd.h>
@@ -62,16 +65,27 @@ namespace iviLink
          LOG4CPLUS_TRACE(sLogger, "~CLauncher()");
       }
 
+      #ifndef ANDROID
       void CLauncher::init(ILauncherHandler * pHandler)
+      #else
+      void CLauncher::init(ILauncherHandler * pHandler, JavaVM * jm, jclass launchClass, jmethodID launchMethod)
+      #endif
       {
          LOG4CPLUS_TRACE(sLogger, "init()");
          mpHandler = pHandler;
+         #ifndef ANDROID
+         #else
+         pJm = jm;
+         jLauncher = launchClass;
+         jLaunchMethod = launchMethod;
+         #endif //ANDROID
       }
 
       void CLauncher::launche(const std::string & launchInfo)
       {
          LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__ );
          LOG4CPLUS_INFO(sLogger, "launch info: " + launchInfo);
+         #ifndef ANDROID
          char rpath[PATH_MAX] = "";
          char * params[] = { rpath, 0, 0, 0 };
 
@@ -109,20 +123,20 @@ namespace iviLink
             if (-1 == chdir(dir.c_str()))
             {
                int saved_errno = errno;
-               LOG4CPLUS_WARN(sLogger, "chdir failed: " + convertIntegerToString(saved_errno) + strerror(saved_errno));
+               fputs(("chdir failed: " + convertIntegerToString(saved_errno) + strerror(saved_errno)).c_str(),
+                  stderr);
+               exit(1);
             }
 
             // starting application
-            if (execv(rpath, params) == -1)
+            execv(rpath, params);
             {
-               LOG4CPLUS_ERROR(sLogger, "Exec of App failed");
+               int saved_errno = errno;
+               fputs(("execv failed: " + convertIntegerToString(saved_errno) + strerror(saved_errno)).c_str(),
+                  stderr);
                exit(1);
             }
-            else
-            {
-               // never will be here
-               LOG4CPLUS_INFO(sLogger, "Exec success");
-            }
+
             break;
          default:
             LOG4CPLUS_INFO(sLogger, "app launched");
@@ -133,8 +147,39 @@ namespace iviLink
             }
             break;
          }
+         #else 
+         JNIEnv *env;
+         iviLink::Android::JniThreadHelper jth(pJm);
+         env = jth.getEnv();
+	      jstring param = env->NewStringUTF(launchInfo.c_str());
+	      pid_t pid=(pid_t)(env->CallStaticIntMethod(jLauncher, jLaunchMethod, param)); // int Launcher.startApplication(String) is invoked
+         if(pid == -1)
+         {
+            LOG4CPLUS_FATAL(sLogger, "app not launched: "+launchInfo);
+            return; // should I do exit(1) too?
+         }	      
+         LOG4CPLUS_INFO(sLogger, "app launched: ");
+	      LOG4CPLUS_INFO(sLogger, "        launchInfo: "+launchInfo);
+	      LOG4CPLUS_INFO(sLogger, "                 pid: "+convertIntegerToString(pid));
+	      if (mpHandler)
+	      {
+	         LOG4CPLUS_INFO(sLogger, "make callback: mpHandler->launchedApp(launchinfo, pid)");
+            mpHandler->launchedApp(launchInfo,pid);
+         }
+         #endif // ANDROID
       }
+      
+      #ifndef ANDROID
+      #else
+      void CLauncher::uninit()
+      {
+         mpHandler = 0;
+         pJm = 0;
+         jLauncher = 0;
+         jLaunchMethod = 0;
+      }
+      #endif //ANDROID
 
-   }
+   } // AMP
 
-}
+} // iviLink

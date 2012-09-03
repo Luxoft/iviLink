@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -105,7 +107,7 @@ void NegotiatorIPCHandler::OnRequest(MsgID id, UInt8 const* pPayload, UInt32 pay
       UInt32& bufferSize, DirectionID dirId)
 {
    std::string response;
-   ProcessIPCClientMessage(std::string((const Int8*) pPayload), response);
+   ProcessIPCClientMessage(std::string((const Int8*) pPayload).substr(0, payloadSize), response);
 
    //put the response to the buffer
    bufferSize = response.size();
@@ -291,7 +293,7 @@ CError NegotiatorIPCHandler::NegotiateChannel(std::string tag, UInt32 & cid)
 
    LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>WAIT FOR NEGOTIATED");
    m_negotiatorStates->mStateCond.lock();
-   if(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::NEGOTIATED)
+   while(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::NEGOTIATED)
    {
       m_negotiatorStates->mStateCond.wait();
    }
@@ -308,40 +310,43 @@ CError NegotiatorIPCHandler::NegotiateChannel(std::string tag, UInt32 & cid)
 
    ErrorCode errc;
    const char * errstr;
+   if(remoteNotification){
+      remoteNotification->GetError(errc, errstr);
+      LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>remote notification error"+(std::string)(errstr));
 
-   remoteNotification->GetError(errc, errstr);
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>remote notification error"+(std::string)(errstr));
-
-   if (errc == ERRORCODE_SUCCESS)
-   {
-      remoteCid = remoteNotification->GetChannelId();
-      if (remoteCid >= channelId)   //use remote
+      if (errc == ERRORCODE_SUCCESS)
       {
-         if (!m_map->isChannelok(remoteCid))
+         remoteCid = remoteNotification->GetChannelId();
+         if (remoteCid >= channelId)   //use remote
          {
-            if (noti)
-               delete noti;
-            noti = 0;
-            return err;
+            if (!m_map->isChannelok(remoteCid))
+            {
+               if (noti)
+                  delete noti;
+               noti = 0;
+               return err;
+            }
+
+            else
+               channelId = remoteCid;
          }
-
-         else
-            channelId = remoteCid;
       }
-   }
-   else
-   {
-      if (noti)
-         delete noti;
-      noti = 0;
+      else
+      {
+         if (noti)
+            delete noti;
+         noti = 0;
 
-      return err;
+         return err;
+      }
+   } else {
+      LOG4CPLUS_ERROR(msLogger, "(AllocateNotification *) m_negotiatorStates->GetNotification returned NULL!" );
    }
 
    if (noti)
       delete noti;
    noti = 0;
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()=>Map Check...."+(std::string)(errstr));
+   //LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()=>Map Check...."+(std::string)(errstr)); - may cause crash
 
    //create map Notification message
    noti = new MapCheckNotification(tag.c_str(), channelId);
@@ -356,7 +361,7 @@ CError NegotiatorIPCHandler::NegotiateChannel(std::string tag, UInt32 & cid)
    LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>WAIT FOR CHECKEDINMAP");
 
    m_negotiatorStates->mStateCond.lock();
-   if(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::CHECKEDINMAP)
+   while(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::CHECKEDINMAP)
    {
       m_negotiatorStates->mStateCond.wait();    
    }
@@ -369,21 +374,25 @@ CError NegotiatorIPCHandler::NegotiateChannel(std::string tag, UInt32 & cid)
    MapCheckNotification * mapRemoteNotification = 
                (MapCheckNotification *) m_negotiatorStates->GetNotification(tag.c_str());
 
-   mapRemoteNotification->GetError(errc, errstr);
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>remote Error"
+   if(mapRemoteNotification) {
+      mapRemoteNotification->GetError(errc, errstr);
+      LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>remote Error"
                         + convertIntegerToString((int)errc)+(std::string)(errstr));
    
-   if (errc == ERRORCODE_SUCCESS)
-   {
-      cid = channelId;
-      err = CError(CError::NO_ERROR, "ChannelSupervisorProcess");
+      if (errc == ERRORCODE_SUCCESS)
+      {
+         cid = channelId;
+         err = CError(CError::NO_ERROR, "ChannelSupervisorProcess");
+      }
+      else
+      {
+         err = CSError(CSError::ERROR_OTHER);
+      }
+      if (noti)
+         delete noti;
+   } else {
+      LOG4CPLUS_ERROR(msLogger, "(MapCheckNotification *) m_negotiatorStates->GetNotification returned NULL!" );
    }
-   else
-   {
-      err = CSError(CSError::ERROR_OTHER);
-   }
-   if (noti)
-      delete noti;
    return err;
 }
 
@@ -468,7 +477,7 @@ CError NegotiatorIPCHandler::UpdateMap(std::string tag, UInt32 cid)
    LOG4CPLUS_TRACE(msLogger, "NegotiatorIPCHandler::NegotiateChannel()==>WAIT FOR CAALLOCATED");
 
    m_negotiatorStates->mStateCond.lock();
-   if(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::CAALLOCATED)
+   while(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::CAALLOCATED)
    {
       m_negotiatorStates->mStateCond.wait();
    }
@@ -496,7 +505,7 @@ CError NegotiatorIPCHandler::UpdateMap(std::string tag, UInt32 cid)
 
    m_negotiatorStates->mStateCond.lock();
    //if(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::ALLOCDONE)
-   if(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::IDLE)
+   while(m_negotiatorStates->GetTagState(tag.c_str()) != NegotiaterStates::IDLE)
    {
       m_negotiatorStates->mStateCond.wait();
    }
@@ -510,13 +519,17 @@ CError NegotiatorIPCHandler::UpdateMap(std::string tag, UInt32 cid)
 
    ErrorCode errc;
    const char * errstr;
-   remoteNotification->GetError(errc, errstr);
+   if(remoteNotification){
+      remoteNotification->GetError(errc, errstr);
 
-   if (errc == ERRORCODE_SUCCESS)
-   {
-      err = CSError::NoCSError("no error");
+      if (errc == ERRORCODE_SUCCESS)
+      {
+         err = CSError::NoCSError("no error");
+      }
+      if (noti) delete noti;
+   } else {
+      LOG4CPLUS_ERROR(msLogger, "(UpdateMapNotification *) m_negotiatorStates->GetNotification returned NULL!");
    }
-   if (noti) delete noti;
    return err;
 }
 void iviLink::ChannelSupervisor::ParseResponse(pugi::xml_document* doc, char* responseStr)

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -63,8 +65,13 @@ void CProfileManagerHandshakeDone::launchApplicationManager(CSystemStateMachine*
 {
    LOG4CPLUS_TRACE(sLogger, "launchAplicationManager()");
 
+   #ifndef ANDROID
    CComponentLauncher::getInstance()->launchApplicationManager();
    stateMachine->connectApplicationManager();
+   #else
+   stateMachine->connectApplicationManager();
+   iviLink::Android::makeRequest(iviLink::Android::eLaunchApplicationManager);
+   #endif //ANDROID
 }
 
 void CProfileManagerHandshakeDone::onApplicationManagerAvailable(CSystemStateMachine* stateMachine)

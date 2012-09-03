@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,6 +27,8 @@
 
 
 
+
+#ifndef ANDROID // not used anyway, no reason to include in build
 
 
 #include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
@@ -79,3 +81,4 @@ void CSuccessfulAuth::onProfileManagerAvailable(CSystemStateMachine* stateMachin
 
 
 } /* namespace SystemController */
+#endif //ANDROID

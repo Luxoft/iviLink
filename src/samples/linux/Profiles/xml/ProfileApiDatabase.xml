@@ -9,19 +9,43 @@
       <src>AuthenticationProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>ClimateClientProfile_API_UID</uid>
-      <src>ClimateClientProfile_API.xml</src>
+      <uid>ClimateSenderProfile_API_UID</uid>
+      <src>ClimateSenderProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>ClimateHUProfile_API_UID</uid>
-      <src>ClimateHUProfile_API.xml</src>
+      <uid>ClimateReceiverProfile_API_UID</uid>
+      <src>ClimateReceiverProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>SeatClientProfile_API_UID</uid>
-      <src>SeatClientProfile_API.xml</src>
+      <uid>SeatSenderProfile_API_UID</uid>
+      <src>SeatSenderProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>SeatHUProfile_API_UID</uid>
-      <src>SeatHUProfile_API.xml</src>
+      <uid>SeatReceiverProfile_API_UID</uid>
+      <src>SeatReceiverProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaControlClientProfile_API_UID</uid>
+      <src>MediaControlClientProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaStreamingClientProfile_API_UID</uid>
+      <src>MediaStreamingClientProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaSourceClientProfile_API_UID</uid>
+      <src>MediaSourceClientProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaControlServerProfile_API_UID</uid>
+      <src>MediaControlServerProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaStreamingServerProfile_API_UID</uid>
+      <src>MediaStreamingServerProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>MediaSourceServerProfile_API_UID</uid>
+      <src>MediaSourceServerProfile_API.xml</src>
    </profile-api>
 </profile-apis>

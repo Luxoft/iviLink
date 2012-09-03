@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,10 +27,11 @@
 
 
 
-
-
+#ifndef ANDROID
+#else
 
 #include "IVILinkLogger.hpp"
+#include "Types.hpp"
 
 namespace PropertyConfigurator
 {
@@ -38,4 +39,21 @@ namespace PropertyConfigurator
    {
 
    }
+   
+   void doConfigure(const char *)
+   {
+   
+   }
 }
+
+namespace IVILinkLog{
+
+   std::string convertIntegerToString(UInt32 intVal)
+   {
+      std::stringstream ss;//create a stringstream
+      ss << intVal;//add number to the stream
+      return ss.str();//return a string with the contents of the stream
+   }
+}
+
+#endif

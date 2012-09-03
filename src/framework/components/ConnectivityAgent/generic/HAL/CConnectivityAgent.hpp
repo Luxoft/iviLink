@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,14 +30,24 @@
 
 
 
+
+
 #ifndef CCONNECTIVITYAGENT_HPP_
 #define CCONNECTIVITYAGENT_HPP_
 
 /********************************************************************
  *
+ * System includes
+ *
+ ********************************************************************/
+#include <vector>
+/********************************************************************
+ *
  * Other includes
  *
  ********************************************************************/
+
+#include <vector>
 
 #include "utils/threads/CThread.hpp"
 #include "utils/threads/CMutex.hpp"

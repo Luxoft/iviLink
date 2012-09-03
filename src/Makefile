@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0.1
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -80,19 +80,20 @@ install:
 	cp -u "$(ROOT_DIR)framework/libraries/ServiceManager/xml/"*.xml "$(SERVICE_REPOSITORY)"
 	cp -u "$(ROOT_DIR)/samples/linux/Profiles/xml/"*.xml "$(PROFILE_REPOSITORY)"
 	cp -u "$(ROOT_DIR)/samples/linux/AppManDatabase.xml" "$(APPLICATION_MANAGER_REPOSITORY)"
-	
+
 	cp -ur "$(RESULT_DIR)/samples/linux/Profiles/" "$(PREFIX)"
 
 	cp -u "$(RESULT_DIR)/samples/linux/BasicSample/BasicSample" "$(PREFIX)"
-	cp -u "$(RESULT_DIR)/samples/linux/ClimateClient_App/ClimateClient_App" "$(PREFIX)"
-	cp -u "$(RESULT_DIR)/samples/linux/ClimateHU_App/ClimateHU_App" "$(PREFIX)"
-	cp -ur "$(RESULT_DIR)/samples/linux/ClimateClient_App/obj/qml/ClimateClient_App" "$(QML_DIR)"
-	cp -ur "$(RESULT_DIR)/samples/linux/ClimateHU_App/obj/qml/ClimateHU_App" "$(QML_DIR)"
-	cp -u "$(RESULT_DIR)/samples/linux/SeatHU_App/SeatHU_App" "$(PREFIX)"
-	cp -ur "$(RESULT_DIR)/samples/linux/SeatHU_App/obj/qml/SeatHU_App" "$(QML_DIR)"
-	cp -u "$(RESULT_DIR)/samples/linux/SeatClient_App/SeatClient_App" "$(PREFIX)"
-	cp -ur "$(RESULT_DIR)/samples/linux/SeatClient_App/obj/qml/SeatClient_App" "$(QML_DIR)"
+
+	cp -u "$(RESULT_DIR)/samples/linux/Profiles/ProfileAPI/ClimateState/libClimateState.so" "$(PREFIX)"
+	cp -u "$(RESULT_DIR)/samples/linux/Climate_App/Climate_App" "$(PREFIX)"
+	cp -ur "$(RESULT_DIR)/samples/linux/Climate_App/obj/qml/Climate_App" "$(QML_DIR)"
+	cp -u "$(RESULT_DIR)/samples/linux/Profiles/ProfileAPI/SeatState/libSeatState.so" "$(PREFIX)"
+	cp -u "$(RESULT_DIR)/samples/linux/Seat_App/Seat_App" "$(PREFIX)"
+	cp -ur "$(RESULT_DIR)/samples/linux/Seat_App/obj/qml/Seat_App" "$(QML_DIR)"
+
 	cp -u "$(RESULT_DIR)/samples/linux/AuthenticationApplication/AuthenticationApplication" "$(PREFIX)"
+
 
 .PHONY: debug release clean 3rdp_clean install
 

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -32,8 +32,13 @@
 
 #ifndef TRIGGERQUEUE_HPP_
 #define TRIGGERQUEUE_HPP_
-
+#ifndef ANDROID
 #include <mqueue.h>
+#else
+#include "utils/threads/CCondVar.hpp"
+#include "utils/threads/CMutex.hpp"
+#include <deque>
+#endif //ANDROID
 #include <string>
 #include "SSMTriggers.hpp"
 #include "utils/misc/Logger.hpp"
@@ -46,10 +51,18 @@ class CTriggerQueue
 private:
    static Logger sLogger;
 
+   #ifndef ANDROID
    static const std::string QUEUE_NAME;
    static mqd_t Q_DESCRIPTOR;
 
    static mqd_t getQueueDescriptor();
+   
+   #else
+   static CCondVar mCondVar;
+   static CMutex mQueueMutex;
+   static std::deque<eSSMTriggers> mQueue;
+   static bool isQueueEmpty;
+   #endif //ANDROID
 
    CTriggerQueue();
    virtual ~CTriggerQueue();

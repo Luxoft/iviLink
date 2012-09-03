@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0.1
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -39,10 +39,8 @@ define SUBFOLDERS
 $(MAKE) -C Profiles $@
 $(MAKE) -C BasicSample $@
 $(MAKE) -C AuthenticationApplication $@
-$(MAKE) -C ClimateClient_App $@
-$(MAKE) -C ClimateHU_App $@
-$(MAKE) -C SeatHU_App $@
-$(MAKE) -C SeatClient_App $@
+$(MAKE) -C Climate_App $@
+$(MAKE) -C Seat_App $@
 endef
 ###############################################################################
 # This target
@@ -51,7 +49,7 @@ SRC_DIR := .
 RESOURCES_DIR := QTClient/qml
 RESOURCES := $(patsubst $(RESOURCES_DIR)/%,%,$(wildcard $(RESOURCES_DIR)/*))
 LDFLAGS := $(GLOBAL_LDFLAGS) -rdynamic
-#LDFLAGS := 
+#LDFLAGS :=
 CFLAGS := $(GLOBAL_CFLAGS)
 CXXFLAGS := $(GLOBAL_CXXFLAGS)
 
@@ -78,7 +76,7 @@ LIBS += -Wl,--start-group
 LIBS += -L$(3RD_PARTY_DIR)/lib -llog4cplus
 LIBS += -L$(RESULT_DIR)/framework/appLib/staticLib -liviLink
 LIBS += -lrt
-LIBS += -Wl,--end-group 
+LIBS += -Wl,--end-group
 LIBS+= -Wl,-rpath=./
 
 RESOURCES_FULLDIR:=$(OUT_PATH)
@@ -119,7 +117,7 @@ $(OUT_APPMAN_DB_DIR)/%.xml: $(APPMAN_DB_DIR)/%.xml | $(OUT_APPMAN_DB_DIR)
 	cp $< $@
 
 #copy_res: $(RESOURCES_OUT_FULL)
-copy_res: 
+copy_res:
 	cp -r qml $(OUT_PATH)
 
 qmake: $(ALL_OUT_DIRS)

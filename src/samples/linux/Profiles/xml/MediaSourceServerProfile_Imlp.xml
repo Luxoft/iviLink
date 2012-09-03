@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>MediaSourceServerProfileImpl_UID</uid>
+   <name>MediaSourceServerProfileImpl</name>
+   <version>1</version>
+   <api uid ="MediaSourceServerProfile_API_UID" />
+   <complement>MediaSourceClientProfileImpl_UID</complement>
+</profile>
