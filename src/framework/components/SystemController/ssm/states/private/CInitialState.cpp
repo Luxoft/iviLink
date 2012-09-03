@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -61,8 +63,13 @@ void CInitialState::launchPhysicalLayer(CSystemStateMachine* stateMachine)
 {
    LOG4CPLUS_TRACE(sLogger, "launchPhysicalLayer()");
 
+   #ifndef ANDROID
    CComponentLauncher::getInstance()->launchConnectivityAgent();
    stateMachine->connectConnectivityAgent();
+   #else
+   stateMachine->connectConnectivityAgent();
+   iviLink::Android::makeRequest(iviLink::Android::eLaunchAgent);
+   #endif //ANDROID
 }
 
 void CInitialState::onConnectivityAgentAvailable(CSystemStateMachine* stateMachine)

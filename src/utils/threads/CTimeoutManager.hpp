@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -68,6 +70,21 @@ private:
 /// CTimeoutManager class
 /**
  * CTimeoutManager is used for calling onTimeout() function in subscribers when time is passed
+ *
+ * @todo Reimplement timeout manager. PIlin, 31.08.12
+ * 1) Timeout manager can quickly create a lot of threads and creation of new threads
+ *    will be blocked by the system. It is dangerous for applicaton execution. There 
+ *    must be fixed number of threads dedicated to timeout execution.
+ *    ConnectivityAgent 
+ *
+ *    I propose next arcithecture: one thread with sorted queue of timeout subscribers.
+ *    They can be called from this thread or from the threads of thread pool.
+ *
+ * 2) It will be good, if it will be possible to remove timeouts before time.
+ *    It will decrease load.
+ *
+ * 3) Current implementation uses sleep(). sleep() can exit before actual sleeping
+ *    time alarmed by some signal. It must be fixed.
  */
 
 class CTimeoutManager : public CThread

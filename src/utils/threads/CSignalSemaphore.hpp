@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,22 +29,15 @@
 
 
 
+
+
 #ifndef SIGNALSEMAPHORE_HPP
 #define SIGNALSEMAPHORE_HPP
 
 #include <pthread.h>
 #include <semaphore.h>
 
-#ifdef USELOG4CPLUS
-   #include "log4cplus/logger.h"
-   #include "log4cplus/helpers/stringhelper.h"
-
-   using namespace log4cplus;
-   using namespace log4cplus::helpers;
-#else
-   #include "utils/misc/IVILinkLogger.hpp"
-   using namespace IVILinkLog;
-#endif
+#include "utils/misc/Logger.hpp"
 
 class CSignalSemaphore
 {

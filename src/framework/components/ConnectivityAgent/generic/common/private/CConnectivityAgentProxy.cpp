@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,12 +29,15 @@
 
 
 
+
+
 /********************************************************************
  *
  * System includes
  *
  ********************************************************************/
-#include <assert.h>
+#include <cassert>
+#include <cstdlib>
 #include <utility>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -115,7 +118,7 @@ CConnectivityAgentProxy::CConnectivityAgentProxy():
 
 CConnectivityAgentProxy::~CConnectivityAgentProxy()
 {
-   setStopFlag();
+   stop(&mCallbackSema);
    delete mpIpc;
 }
 
@@ -133,7 +136,7 @@ CConnectivityAgentProxy* CConnectivityAgentProxy::getInstance()
 
 void CConnectivityAgentProxy::deleteInstance()
 {
-   delete this;
+   delete mSelf;
    mSelf = NULL;
 }
 
@@ -161,10 +164,29 @@ ERROR_CODE CConnectivityAgentProxy::allocateChannel(TChannelPriority prio, UInt3
    {
       mRegistryMutex.lockWrite();
       bool channel_unknown = mRegistry.find(channel_id) == mRegistry.end();
-      mRegistryMutex.unlock();
+      mRegistryMutex.unlockWrite();
+
       if (channel_unknown)
       {
-         CDataAccessor requestDA;   
+         mAllocateRequestCond.lock();
+         bool channel_requested = mAllocateRequestMap.find(channel_id) != mAllocateRequestMap.end();
+         if (channel_requested)
+         {
+            ret = ERR_IN_PROGRESS;
+            channel_unknown = false;
+            LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::allocateChannel() => ERROR: channel allocation in progress!");
+         }
+         else
+         {
+            LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel() => insert request");
+            mAllocateRequestMap.insert(std::make_pair(channel_id, AllocateRequestInfo(prio, observer, false, ERR_UNKNOWN)));
+         }         
+         mAllocateRequestCond.unlock();
+      }
+
+      if (channel_unknown)
+      {
+         CDataAccessor requestDA;
          requestDA.setChannelID(channel_id);
          requestDA.setOpCode(E_ALLOCATE_CHANNEL);
          UInt32 data = prio;
@@ -176,65 +198,62 @@ ERROR_CODE CConnectivityAgentProxy::allocateChannel(TChannelPriority prio, UInt3
          UInt32 respSize = sizeof(respBuf);
          CError err = mpIpc->request(mMsgIdGen.next(), buf, requestDA.getObjectSize(), respBuf, respSize);
          delete [] buf;
+         
          if (!err.isNoError())
          {
             LOG4CPLUS_WARN(logger, static_cast<std::string>(err));
             ret = ERR_FAIL;
+
+            mAllocateRequestCond.lock();
+            mAllocateRequestMap.erase(channel_id);
+            mAllocateRequestCond.unlock();
+
+            LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::allocateChannel() => ERROR: failed to send request");
          }
          else
          {
             CDataAccessor responseDA;
 
-            // Answer can be sent right in this response or later as a specific 
-            // request
-            if (respSize == 0)
+            if (respSize > 0)
             {
-               mAllocateRequestResultCond.lock();
-               LOG4CPLUS_TRACE(logger, "CConnectivityAgentProxy::allocateChannel waiting for mLastRequestResultDA");
-               while (mAllocateRequestResultMap.find(channel_id) == mAllocateRequestResultMap.end())
-                  mAllocateRequestResultCond.wait();
-
-               responseDA = mAllocateRequestResultMap[channel_id];
-               mAllocateRequestResultMap.erase(channel_id);
-               mAllocateRequestResultCond.unlock();
-            }
-            else
-            {
-               // Answer is ready
                responseDA = CDataAccessor(respBuf, respSize);
-            }
+               ret = static_cast<ERROR_CODE>(responseDA.getErrorCode());
 
-            LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel(type = "
-               + convertIntegerToString((int)prio) + ", id = "
-               + convertIntegerToString(channel_id) + ") after wait");
-            responseDA.printContent();
+               mAllocateRequestCond.lock();
+               mAllocateRequestMap.erase(channel_id);
+               mAllocateRequestCond.unlock();
 
-            if((E_ALLOCATE_CHANNEL_RESP == responseDA.getOpCode())
-               && (channel_id == responseDA.getChannelID()))
-            {
-               //ret  = static_cast<ERROR_CODE> (ByteOrder::ntoh32(*reinterpret_cast<UInt32*> ( mLastRequestResultDA.getData())));
-               memcpy(&data, responseDA.getData(),sizeof(UInt32) );
-               responseDA.resetAll();
-               ret =  static_cast<ERROR_CODE>(data);
+               LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::allocateChannel() => ERROR: got error response");
             }
             else
             {
-               LOG4CPLUS_ERROR(logger, "CConnectivityAgentProxy::allocateChannel() => ERROR: wrong response type from Agent !!! ");
-               ret = ERR_WRONG_SEQUENCE;
-            }
-            LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel(): Unlock last request result...");
+               mAllocateRequestCond.lock();
+               while (true)
+               {
+                  tAllocateRequestMap::iterator it = mAllocateRequestMap.find(channel_id);
+                  if (it == mAllocateRequestMap.end())
+                  {
+                     ret = ERR_FAIL;
+                     LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::allocateChannel() => ERROR: request was removed");
+                     break;
+                  }
 
-            if(ret == ERR_OK)
-            {
-               mRegistryMutex.lockWrite();
-               mRegistry[channel_id].mType = prio;
-               mRegistry[channel_id].mpClient = observer;
-               mRegistry[channel_id].mChannelBuffer.reserveSize(MAX_SIZE);
-               mRegistryMutex.unlock();
-            }
-         }
+                  AllocateRequestInfo & info = it->second;
+                  if (info.mRequestDone)
+                  {
+                     LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel() => request done");
+                     ret = info.mResult;
+                     mAllocateRequestMap.erase(it);
+                     break;
+                  }
 
-
+                  LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel() => before wait");
+                  mAllocateRequestCond.wait();
+                  LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::allocateChannel() => after wait");
+               }
+               mAllocateRequestCond.unlock();
+            } // if response empty
+         } // if no ipc err
 
       }
       else
@@ -271,7 +290,7 @@ ERROR_CODE CConnectivityAgentProxy::deallocateChannel(UInt32 channel_id)
       mRegistry.erase(iter);
       mChannelOnDeallocSet.insert(channel_id);
    }
-   mRegistryMutex.unlock();
+   mRegistryMutex.unlockWrite();
 
    if (ret != ERR_OK)
       return ret;
@@ -356,12 +375,12 @@ ERROR_CODE CConnectivityAgentProxy::deallocateChannel(UInt32 channel_id)
             "unable to delete channel " + convertIntegerToString(channel_id) + ", so channel info is restored");
       }
 
-      mRegistryMutex.unlock();
+      mRegistryMutex.unlockWrite();
    }
 
    mRegistryMutex.lockWrite();
    mChannelOnDeallocSet.erase(channel_id);
-   mRegistryMutex.unlock();
+   mRegistryMutex.unlockWrite();
 
    return ret;
 }
@@ -383,12 +402,7 @@ void CConnectivityAgentProxy::OnRequest(iviLink::Ipc::MsgID id,
    {
       case E_ALLOCATE_CHANNEL_RESP:
       {
-         LOG4CPLUS_INFO(logger, "eAllocateChannelResp");
-         mAllocateRequestResultCond.lock();
-         mAllocateRequestResultMap[channel_id] = responceDA;
-         LOG4CPLUS_TRACE(logger, "broadcasting about channel " + convertIntegerToString(channel_id));
-         mAllocateRequestResultCond.broadcast();
-         mAllocateRequestResultCond.unlock();
+         receiveAllocateChannelResponse(responceDA);
          break;
       }
       case E_DEALLOCATE_CHANNEL_RESP:
@@ -470,11 +484,47 @@ ERROR_CODE CConnectivityAgentProxy::receiveData(UInt32 channel_id, UInt8* data, 
       {
          ret = ERR_NOTFOUND;
       }
-      mRegistryMutex.unlock();
+      mRegistryMutex.unlockRead();
    }
    return ret;
 }
 
+void CConnectivityAgentProxy::receiveAllocateChannelResponse(CDataAccessor & accessor)
+{
+   UInt32 channel_id = accessor.getChannelID();
+   ERROR_CODE err = static_cast<ERROR_CODE>(accessor.getErrorCode());
+
+   LOG4CPLUS_TRACE_METHOD(logger, "CConnectivityAgentProxy::receiveAllocateChannelResponse"
+      " channel_id = " + convertIntegerToString(channel_id) + 
+      " err = " + convertIntegerToString((int)err));
+
+   mAllocateRequestCond.lock();
+   {
+      tAllocateRequestMap::iterator it = mAllocateRequestMap.find(channel_id);
+      if (it == mAllocateRequestMap.end())
+      {
+         LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::receiveAllocateChannelResponse() => channel is not requested");
+      }
+      else
+      {
+         AllocateRequestInfo & info = it->second;
+         info.mRequestDone = true;
+         info.mResult = err;
+
+         if (ERR_OK == err)
+         {
+            mRegistryMutex.lockWrite();
+            mRegistry[channel_id].mType = info.mType;
+            mRegistry[channel_id].mpClient = info.mpClient;
+            mRegistry[channel_id].mChannelBuffer.reserveSize(MAX_SIZE);
+            mRegistryMutex.unlockWrite();
+         }
+
+         mAllocateRequestCond.broadcast();
+      }
+   }
+   mAllocateRequestCond.unlock();
+}
 
 void CConnectivityAgentProxy::receiveDataNotification(CDataAccessor & accessor)
 {
@@ -519,7 +569,11 @@ void CConnectivityAgentProxy::receiveDataNotification(CDataAccessor & accessor)
          mCallbackSema.signal();
       }
    }
-   mRegistryMutex.unlock();
+   else
+   {
+      LOG4CPLUS_WARN(logger, "CConnectivityAgentProxy::receiveDataNotification() => unknown channel!");
+   }
+   mRegistryMutex.unlockRead();
 }
 
 void CConnectivityAgentProxy::channelDeletedNotification(CDataAccessor & accessor)
@@ -559,7 +613,7 @@ void CConnectivityAgentProxy::channelDeletedNotification(CDataAccessor & accesso
       }
 
    }
-   mRegistryMutex.unlock();
+   mRegistryMutex.unlockWrite();
 }
 
 ERROR_CODE CConnectivityAgentProxy::sendData(UInt32 channel_id, UInt8 const* data, UInt32 size)
@@ -572,7 +626,7 @@ ERROR_CODE CConnectivityAgentProxy::sendData(UInt32 channel_id, UInt8 const* dat
    {
       mRegistryMutex.lockRead();
       bool found = (mRegistry.find(channel_id) != mRegistry.end());
-      mRegistryMutex.unlock();
+      mRegistryMutex.unlockRead();
 
       if(found)
       {
@@ -627,10 +681,75 @@ ERROR_CODE CConnectivityAgentProxy::getFreeSize(UInt32 channel_id, UInt32& free_
          res = ERR_NOTFOUND;
       }
    }
-   mRegistryMutex.unlock();
+   mRegistryMutex.unlockRead();
 
    return res;
 }
+
+
+
+ERROR_CODE CConnectivityAgentProxy::getConnectionAddr(char** pType, char** pLocalAddr, char** pRemoteAddr)
+{
+   LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy::getConnectionAddr()");
+   ERROR_CODE ret = ERR_FAIL;
+
+   CDataAccessor requestDA;
+   requestDA.setOpCode(E_GET_CONNECTION_ADDR);
+   UInt8* buf = new UInt8[requestDA.getObjectSize()];
+   requestDA.copyToRawArray(buf);
+
+   UInt32 respSize = 4096;
+   UInt8 resp[respSize];
+
+   CError err = mpIpc->request(mMsgIdGen.next(), buf, requestDA.getObjectSize(), resp, respSize);
+   if (err.isNoError())
+   {
+      if (respSize)
+      {
+         CDataAccessor response(resp, respSize);
+
+         if (response.getDataSize() > 0)
+         {
+#define cpy(dst, src, n) ( memcpy((dst), (src), (n)), (src) + (n) )
+
+            UInt8* p = response.getData();
+            UInt32 typ_len = 0;
+            UInt32 loc_len = 0;
+            UInt32 rem_len = 0;
+
+            p = cpy(&typ_len, p, sizeof(typ_len));
+            *pType = (char*)malloc(typ_len);
+            p = cpy(*pType, p, typ_len);
+
+            p = cpy(&loc_len, p, sizeof(loc_len));
+            *pLocalAddr = (char*)malloc(loc_len);
+            p = cpy(*pLocalAddr, p, loc_len);
+
+            p = cpy(&rem_len, p, sizeof(rem_len));
+            *pRemoteAddr = (char*)malloc(rem_len);
+            p = cpy(*pRemoteAddr, p, rem_len);
+
+            assert(p == response.getData() + response.getDataSize());
+#undef cpy
+
+            ret = ERR_OK;
+         }
+      }
+   }
+   else
+   {
+      LOG4CPLUS_WARN(logger, static_cast<std::string>(err));
+   }
+
+   delete[] buf;
+
+   return ret;
+}
+
+
+
+
+
 
 void CConnectivityAgentProxy::OnDisconnected()
 {
@@ -646,7 +765,7 @@ void CConnectivityAgentProxy::OnDisconnected()
       mCallbackSema.signal();
    }
    mCallbackListMutex.unlock();
-   mRegistryMutex.unlock();
+   mRegistryMutex.unlockWrite();
 }
 
 void CConnectivityAgentProxy::threadFunc()

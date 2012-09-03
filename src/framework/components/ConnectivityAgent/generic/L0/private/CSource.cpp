@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -115,16 +117,20 @@ ERROR_CODE CSource::flushBuffers()
    assert(mpBufferProducer);
 
    mBufferQueueMutex.lock();
-   for (std::list<Buffer*>::iterator it = mBuffersQueue.begin();
-         it != mBuffersQueue.end();
+
+   std::list<Buffer*> qcopy(mBuffersQueue.begin(), mBuffersQueue.end());
+   mBuffersQueue.clear();
+   
+   mBufferQueueMutex.unlock();
+
+   for (std::list<Buffer*>::iterator it = qcopy.begin();
+         it != qcopy.end();
          ++it)
    {
       assert(*it);
       mpBufferProducer->returnBufferBack(*it);
    }
 
-   mBuffersQueue.clear();
-   mBufferQueueMutex.unlock();
 
    return ERR_OK;
 }
@@ -156,6 +162,8 @@ ERROR_CODE CSource::OnDispatch(iviLink::ConnectivityAgent::HAL::Frame& frame_to_
    // and OnDispatch().
    if (mBuffersQueue.empty())
    {
+      mBufferQueueMutex.unlock();
+
       return ERR_FAIL;
    }
 
@@ -169,13 +177,17 @@ ERROR_CODE CSource::OnDispatch(iviLink::ConnectivityAgent::HAL::Frame& frame_to_
       // Removing released buffer from queue
       assert(q_it != mBuffersQueue.end() && *q_it == *it);
       q_it = mBuffersQueue.erase(q_it);
-
-      assert(mpBufferProducer);
-      // And telling that to channel agent
-      mpBufferProducer->returnBufferBack(*it);
    }
 
    mBufferQueueMutex.unlock();
+
+   assert(mpBufferProducer);
+
+   for (std::list<Buffer*>::iterator it = released_buffers.begin();
+         it != released_buffers.end(); ++it)
+   {
+      mpBufferProducer->returnBufferBack(*it);
+   }
 
    return ERR_OK;
 }

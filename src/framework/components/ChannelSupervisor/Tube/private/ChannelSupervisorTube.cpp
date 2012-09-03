@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,6 +29,8 @@
 
 
 
+
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <map>
@@ -43,6 +45,8 @@
 #include "framework/components/ChannelSupervisor/common/Common.hpp"
 #include "framework/components/ChannelSupervisor/common/CSError.hpp"
 
+#include "utils/threads/CMutex.hpp"
+
 
 const char defErrMsg[] = "no error occurred";
 static Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("ChannelSupervisor.ChannelSupervisorTube"));
@@ -56,6 +60,8 @@ static std::map<int, IChannelObserver*> observerMap;
 
 static int channel = 0;
 
+static CMutex gMutex;
+
 /**
  * Negotiates channel id with other party and allocates the channel
  * @param observer   - registration of the observer for Channel supervisor events receiving
@@ -65,6 +71,8 @@ static int channel = 0;
  */
 CError allocateChannel( IChannelSupervisorTubeObserver* observer, std::string tag, UInt32 & channelId )
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   gMutex.lock();
    LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::AllocateChannel()=>tag"+ tag);
 
    CError err = CSError(CSError::ERROR_OTHER);
@@ -124,7 +132,8 @@ CError allocateChannel( IChannelSupervisorTubeObserver* observer, std::string ta
 
    //delete negotiator
    negotiatorClient->deleteInstance(); //should be deleted on deallocation
-
+   
+   gMutex.unlock();
    return err;
  }
 
@@ -275,6 +284,31 @@ CError allocateZeroChannel( IChannelSupervisorTubeObserver* observer, std::strin
    }
    return err;
  }
+
+
+namespace UnstableAPI
+{
+
+CError getConnectionAddr(std::string& type, std::string& localAddr, std::string& remoteAddr)
+{
+   char *ptype, *plocal, *premote;
+   if (ERR_OK == ::getConnectionAddr(&ptype, &plocal, &premote))
+   {
+      type.assign(ptype);
+      localAddr.assign(plocal);
+      remoteAddr.assign(premote);
+
+      free(ptype);
+      free(plocal);
+      free(premote);
+
+      return CSError::NoCSError("");
+   }
+
+   return CSError(CSError::ERROR_OTHER);
+}
+
+} // namespace UnstableAPI
 
 } //namespace ChannelSupervisor
 } //namespace AXIS

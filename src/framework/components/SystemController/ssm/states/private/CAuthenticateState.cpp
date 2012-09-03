@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -69,7 +71,11 @@ void CAuthenticateState::startAuthentication(CSystemStateMachine* stateMachine)
 
       if (stateMachine->mSystemGender == 1)
       {
+         #ifndef ANDROID
          CComponentLauncher::getInstance()->launchAuthenticationApp();
+         #else
+         iviLink::Android::makeRequest(iviLink::Android::eStartAuth);
+         #endif //ANDROID
       }
    }
    else

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -102,6 +104,7 @@ namespace iviLink
                mChannelID = 0;
                mOperation = 0;
                mDataSize  = 0;
+               mErrorCode = 0;
                if(mpData) delete[] mpData;
                mpData = NULL;
             }
@@ -123,6 +126,11 @@ namespace iviLink
                mOperation = id;
             }
 
+            inline void setErrorCode(const UInt32 err)
+            {
+                mErrorCode = err;
+            }
+
             /**
              * gets current channel number
              * @return  current channel number
@@ -141,6 +149,11 @@ namespace iviLink
                return mOperation;
             }
 
+            inline UInt32 getErrorCode() const 
+            {
+                return mErrorCode;
+            }
+
             /**
              * gets  internal data buffer size in bytes
              * @return  current data size
@@ -156,7 +169,7 @@ namespace iviLink
              */
             inline UInt32 getObjectSize() const
             {
-               return mDataSize + 3*(sizeof(UInt32));
+               return mDataSize + 4*(sizeof(UInt32));
             }
 
             /**
@@ -172,6 +185,8 @@ namespace iviLink
              */
             void setData(UInt8 const* pData, UInt32 size);
 
+            void resetData();
+
             /**
              * Prints content of DataAccessor for debug purposes
              */
@@ -186,6 +201,7 @@ namespace iviLink
             UInt32                           mOperation;
             UInt32                           mChannelID;
             UInt32                           mDataSize;
+            UInt32                           mErrorCode;
             UInt8*                           mpData;
          };
 

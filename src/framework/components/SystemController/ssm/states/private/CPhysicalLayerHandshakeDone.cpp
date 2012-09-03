@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -62,8 +64,13 @@ void CPhysicalLayerHandshakeDone::launchChannelLayer(CSystemStateMachine* stateM
 {
    LOG4CPLUS_TRACE(sLogger, "launchChannelLayer()");
 
+   #ifndef ANDROID
    CComponentLauncher::getInstance()->launchChannelSupervisor();
    stateMachine->connectChannelSupervisor();
+   #else 
+   stateMachine->connectChannelSupervisor();
+   iviLink::Android::makeRequest(iviLink::Android::eLaunchNegotiator);
+   #endif //ANDROID
 }
 
 void CPhysicalLayerHandshakeDone::onChannelSupervisorAvailable(CSystemStateMachine* stateMachine)

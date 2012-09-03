@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -108,6 +110,9 @@ ERROR_CODE CChannelAllocator::allocateChannel(TChannelPriority prio, UInt32 chan
    LOG4CPLUS_TRACE(logger, "CChannelAllocator::allocateOutgoingChannel()");
 
    ERROR_CODE ret = ERR_FAIL;
+
+   /// @todo correct processing of error code and return values. PIlin, 31.08.12
+   LOG4CPLUS_WARN(logger, "@todo correct processing of error code and return values. PIlin, 31.08.12");
 
    if (mpL0Interface)
    {

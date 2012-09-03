@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -111,7 +113,23 @@ CError kickWatchdog(const UInt32 channelId, std::string tag);
  */
 CError allocateZeroChannel(IChannelSupervisorTubeObserver* observer, std::string tag);
 
-}//namespace ChannelSupervisor
+
+
+namespace UnstableAPI
+{
+
+/**
+ * Returns type and adresses of underlying carrier.
+ * @param[out] type
+ * @param[out] localAddr
+ * @param[out] remoteAddr
+ * @retval NO_ERROR all ok
+ * @retval ERROR_OTHER some error, parrameters were not changed
+ */
+CError getConnectionAddr(std::string& type, std::string& localAddr, std::string& remoteAddr);
+
+} // namespace UnstableAPI
+} //namespace ChannelSupervisor
 } //namespace AXIS
 
 #endif	/* CHANNELSUPERVISORTUBE_H */

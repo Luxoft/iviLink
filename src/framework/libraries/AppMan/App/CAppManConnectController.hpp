@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -63,7 +65,11 @@ namespace iviLink
          /**
           * Returns instance of controller
           */
+         #ifndef ANDROID
          static CAppManConnectController * instance();
+         #else
+         static CAppManConnectController * instance(std::string launchInfo);
+         #endif //ANDROID
          static void deleteInstance();
 
          /**
@@ -86,11 +92,20 @@ namespace iviLink
           */
          bool checkConnection () const;
 
+         /**
+          * Is used to get call same function in AppManProto
+          */
+         void checkSessionRequest();
+
       private:
          /**
           * Private constructor because of singleton object
           */
+         #ifndef ANDROID
          CAppManConnectController();
+         #else
+         CAppManConnectController(std::string launchInfo);
+         #endif //ANDROID
 
          /**
           * Virtual destructor

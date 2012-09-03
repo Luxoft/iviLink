@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,7 +29,10 @@
 
 
 
+
+
 #include <cerrno>
+#include <cstdio>
 #include <unistd.h>
 #include <sys/prctl.h>
 
@@ -221,15 +224,15 @@ pid_t CComponentLauncher::launchComponent(Components component)
    }
    else if(0 == componentProcessPID)
    {
-      LOG4CPLUS_INFO(sLogger, "Child PID = " + convertIntegerToString(componentProcessPID));
-
-     setpgid(0, 0);
+      setpgid(0, 0);
       prctl(PR_SET_PDEATHSIG,SIGTERM);
 
       execvp(mComponentLocation.at(component).c_str(), componentArguments);
 
-      LOG4CPLUS_ERROR(sLogger, "Couldn't launch the component " + mComponentLocation.at(component)
-                               + ": " + string(strerror(errno)));
+      fputs(("Couldn't launch the component " + mComponentLocation.at(component)
+         + ": " + string(strerror(errno))).c_str(),
+         stderr);
+      exit(1);
    }
    else
    {

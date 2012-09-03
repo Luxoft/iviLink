@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -60,11 +62,21 @@ class CPIM : public IPMALPIM, public IPMALPIMToIpc, public AppMan::IAppManHandle
    
 public:
    // from IPMALPIM
-
+   #ifndef ANDROID
    virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
-      iviLink::Service::Uid const& sid,
-      iviLink::Profile::IProfileCallbackProxy* const pProxy,
-      Profile::CProfile*& pProfile);
+         iviLink::Service::Uid const& sid,
+         iviLink::Profile::IProfileCallbackProxy* const pProxy,
+         Profile::CProfile*& pProfile);
+   #else
+   virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
+         iviLink::Service::Uid const& sid,
+         iviLink::Profile::IProfileCallbackProxy* const pProxy,
+         Profile::CProfile*& pProfile, std::string backupPath);  
+         /*
+          * we copy profiles' *.so to the backupPath and load them from there,
+          * otherwise on Android 2.2 devices (and maybe on others) fail is imminent
+          */
+   #endif //ANDROID
 
    virtual CPMALError unloadProfile(Profile::CProfile*& profile);
 

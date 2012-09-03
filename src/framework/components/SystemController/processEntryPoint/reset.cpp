@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -108,22 +110,28 @@ void hardReset(bool internal_reset)
    }
    if (pid > 0)
    {
+      // parent
+
       LOG4CPLUS_INFO(gsLogger, "fork successful, child = " +
          convertIntegerToString(pid));
 
       exit(0);
    }
 
+   // child
+
    sid = setsid();
    if (sid < 0)
    {
-      LOG4CPLUS_FATAL(gsLogger, "setsid error: " + CError::FormErrnoDescr(errno));
+      fputs(("setsid error: " + CError::FormErrnoDescr(errno)).c_str(),
+         stderr);
       exit(1);
    }
 
    execl(gsArgv0, gsArgv0, NULL);
    
-   LOG4CPLUS_FATAL(gsLogger, "execl error: " + CError::FormErrnoDescr(errno));
+   fputs(("execl error: " + CError::FormErrnoDescr(errno)).c_str(),
+      stderr);
    exit(1);
 }
 

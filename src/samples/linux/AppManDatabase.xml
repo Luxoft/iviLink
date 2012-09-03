@@ -16,27 +16,15 @@
          </services>
       </app>
       <app>
-         <launch-info>./ClimateHU_App</launch-info>
+         <launch-info>./Climate_App</launch-info>
          <services>
-            <service uid="ClimateHUService" />
+            <service uid="ClimateService" />
          </services>
       </app>
       <app>
-         <launch-info>./ClimateClient_App</launch-info>
+         <launch-info>./Seat_App</launch-info>
          <services>
-            <service uid="ClimateClientService" />
-         </services>
-      </app>
-      <app>
-         <launch-info>./SeatHU_App</launch-info>
-         <services>
-            <service uid="SeatHUService" />
-         </services>
-      </app>
-      <app>
-         <launch-info>./SeatClient_App</launch-info>
-         <services>
-            <service uid="SeatClientService" />
+            <service uid="SeatService" />
          </services>
       </app>
    </applications>

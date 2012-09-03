@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -157,11 +159,17 @@ public:
 };
 
 ////
-
+#ifndef ANDROID
 CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
             iviLink::Service::Uid const& sid,
             iviLink::Profile::IProfileCallbackProxy* const pProxy,
             Profile::CProfile*& pProfile)
+#else
+CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
+            iviLink::Service::Uid const& sid,
+            iviLink::Profile::IProfileCallbackProxy* const pProxy,
+            Profile::CProfile*& pProfile, std::string backupPath)
+#endif //ANDROID
 {
    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__ + (" uid" + profileUid.value()));
 
@@ -215,7 +223,11 @@ CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
    LOG4CPLUS_INFO(logger, "creating profile '" + path + "'with piuid '" + piuid.value() + "'");
    Profile::CProfileInternal* pProfInt = NULL;
    PIM::ProfileInitData initData(piuid, sid, pProxy);
+   #ifndef ANDROID
    err = PIM::createProfileImpl(path.c_str(), initData, pProfInt);
+   #else
+   err = PIM::createProfileImpl(path.c_str(), initData, pProfInt, backupPath);
+   #endif //ANDROID
 
    if (!err.isNoError())
    {

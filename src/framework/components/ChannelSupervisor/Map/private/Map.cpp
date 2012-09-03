@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -84,7 +86,7 @@ bool Map::getChannelInfo( UInt32 const channelId, ChannelInfo& result )
       result = it->second;
       res = true;
    }
-   m_mapMutex.unlock();
+   m_mapMutex.unlockRead();
    return res;
 }
 
@@ -103,7 +105,7 @@ void Map::addChannelInfo( UInt32 const channelId, ChannelInfo const& channelInfo
    m_channelMap.insert(std::make_pair(channelId, channelInfo));
    updateFreeChannel(channelId);
 
-   m_mapMutex.unlock();
+   m_mapMutex.unlockWrite();
 }
 
 void Map::updateChannelInfo( UInt32 const channelId, ChannelInfo const& channelInfo )
@@ -120,7 +122,7 @@ void Map::updateChannelInfo( UInt32 const channelId, ChannelInfo const& channelI
    }
 
    m_channelMap[channelId] = channelInfo;
-   m_mapMutex.unlock();
+   m_mapMutex.unlockWrite();
 }
 
 UInt32 Map::getNextFreeChannelId(UInt32 channelId)

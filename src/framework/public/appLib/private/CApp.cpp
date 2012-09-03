@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,6 +27,8 @@
 
 
 
+
+
 #include <cassert>
 
 #include "CAppManProxy.hpp"
@@ -36,39 +38,74 @@
 #include "framework/libraries/ServiceManager/CServiceManager.hpp"
 #include "CLogger.hpp"
 
+ #include "framework/components/ConnectivityAgent/generic/common/API.hpp"
+
 namespace iviLink
 {
    using Service::CServiceManager;
 
+   #ifndef ANDROID
    CApp::CApp()
       : mpAppManProxy(new App::CAppManProxy(this))
       , mpServManProxy(new App::CServManProxy(this))
+   #else
+   CApp::CApp(iviLink::Android::AppInfo appInfo)
+      : mpAppManProxy(new App::CAppManProxy(this,appInfo.launchInfo))
+      , mpServManProxy(new App::CServManProxy(this))
+   #endif //ANDROID
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       CServiceManager::getInstance()->registerClient(mpServManProxy);
+      #else
+      mAppInfo = appInfo;
+      CServiceManager::getInstance(mAppInfo)->registerClient(mpServManProxy);
+      #endif //ANDROID
       mpAppManProxy->start();
       Service::ListOfUids services;
       mpAppManProxy->init(services);
    }
 
+   #ifndef ANDROID
    CApp::CApp(const Service::Uid &service)
       : mpAppManProxy(new App::CAppManProxy(this))
       , mpServManProxy(new App::CServManProxy(this))
+   #else
+   CApp::CApp(const Service::Uid &service, iviLink::Android::AppInfo appInfo)
+      : mpAppManProxy(new App::CAppManProxy(this, appInfo.launchInfo))
+      , mpServManProxy(new App::CServManProxy(this))
+   #endif //ANDROID
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       CServiceManager::getInstance()->registerClient(mpServManProxy);
+      #else
+      mAppInfo = appInfo;
+      CServiceManager::getInstance(mAppInfo)->registerClient(mpServManProxy);
+      #endif //ANDROID
       mpAppManProxy->start();
       Service::ListOfUids services;
       services.push_back(service);
       mpAppManProxy->init(services);
    }
 
+   #ifndef ANDROID
    CApp::CApp(const Service::ListOfUids &services)
       : mpAppManProxy(new App::CAppManProxy(this))
       , mpServManProxy(new App::CServManProxy(this))
+   #else
+   CApp::CApp(const Service::ListOfUids &services, iviLink::Android::AppInfo appInfo)
+      : mpAppManProxy(new App::CAppManProxy(this, appInfo.launchInfo))
+      , mpServManProxy(new App::CServManProxy(this))
+   #endif //ANDROID 
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       CServiceManager::getInstance()->registerClient(mpServManProxy);
+      #else
+      mAppInfo = appInfo;
+      CServiceManager::getInstance(mAppInfo)->registerClient(mpServManProxy);
+      #endif //ANDROID
       mpAppManProxy->start();
       mpAppManProxy->init(services);
    }
@@ -80,6 +117,14 @@ namespace iviLink
       mpAppManProxy->finish();
       delete mpServManProxy;
       delete mpAppManProxy;
+
+      #ifndef ANDROID
+      #else
+      /*
+       * Deinit of ConnectivityAgent fixes segfault of BasicSample on SystemController shutdown
+      */
+      ::destroyConnectivityAgent();
+      #endif
    }
 
    void CApp::setEnabled(const Service::Uid &service, bool enable)
@@ -107,33 +152,53 @@ namespace iviLink
    void CApp::registerProfileCallbacks(const Profile::ApiUid &profileApi, Profile::IProfileCallbackProxy* pCallbacks)
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       CServiceManager::getInstance()->registerProfileCallbacks(profileApi, pCallbacks);
+      #else
+      CServiceManager::getInstance(mAppInfo)->registerProfileCallbacks(profileApi, pCallbacks);
+      #endif //ANDROID
    }
 
    bool CApp::loadService(const Service::Uid &service)
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       return CServiceManager::getInstance()->load(service);
+      #else
+      return CServiceManager::getInstance(mAppInfo)->load(service);
+      #endif //ANDROID
    }
 
    void CApp::unloadService(const Service::Uid &service)
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       CServiceManager::getInstance()->unload(service);
+      #else
+      CServiceManager::getInstance(mAppInfo)->unload(service);
+      #endif //ANDROID
    }
 
    Service::ListOfUids CApp::getActiveServices()
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
       Service::ListOfUids list;
+      #ifndef ANDROID
       CServiceManager::getInstance()->getActive(list);
+      #else
+      CServiceManager::getInstance(mAppInfo)->getActive(list);
+      #endif //ANDROID
       return list;
    }
 
    bool CApp::isActive(const Service::Uid &service)
    {
       LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+      #ifndef ANDROID
       return CServiceManager::getInstance()->isActive(service);
+      #else
+      return CServiceManager::getInstance(mAppInfo)->isActive(service);
+      #endif //ANDROID
    }
 
    void CApp::initDone(ELaunchInfo /*launcher*/)

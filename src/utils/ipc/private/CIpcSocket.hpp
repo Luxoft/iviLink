@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -31,6 +31,8 @@
 
 
 
+
+
 #ifndef CIPCSOCKET_HPP_
 #define CIPCSOCKET_HPP_
 
@@ -39,7 +41,12 @@
  * System includes
  *
  ********************************************************************/
+#ifndef ANDROID
 #include <sys/un.h>
+#else
+#include <sys/socket.h>
+#include <sys/un.h>
+#endif //ANDROID
 #include <queue>
 #include <vector>
 

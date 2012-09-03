@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -202,7 +204,7 @@ bool CConnectivityAgent::initAdapterHandshake(CCarrierAdapter* pAdapter)
       LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: replace Carrier in  Connectivity Manager");
       mpManager->replaceCarrier(pAdapter);
    }
-   mManagerMutex.unlock();
+   mManagerMutex.unlockWrite();
 
    return true;
 }
@@ -267,7 +269,7 @@ iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::getCurrent
    {
       pCA = mpManager->getCarrier();
    }
-   mManagerMutex.unlock();
+   mManagerMutex.unlockRead();
 
    return pCA;
 }
@@ -280,7 +282,7 @@ iviLink::ConnectivityAgent::L0::L0Interface * CConnectivityAgent::getL0Interface
    {
       pInterface = mpManager->getL0Interface();
    }
-   mManagerMutex.unlock();
+   mManagerMutex.unlockRead();
 
    return pInterface;
 }

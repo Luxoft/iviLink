@@ -1,13 +1,15 @@
 <device name="HeadUnit">
-	<service name="ClimateServiceHUI" />
-    <service name="ClimateServiceClient" />
     <service name="VehicleSystemHUI" />
     <service name="VehicleSystemClient" />
-    <service name="ClimateClientService" />
-    <service name="ClimateHUService" />
-    <service name="SeatClientService" />
-    <service name="SeatHUService" />
-	<service name="BasicSampleServiceHUI" />
+    <service name="ClimateService" />
+    <service name="SeatService" />
+    <service name="BasicSampleServiceHUI" />
     <service name="BasicSampleServiceClient" />
     <service name="AuthenticationService" />
+    <service name="MediaStreamingServerService" />
+    <service name="MediaControlServerService" />
+    <service name="MediaSourceServerService" />
+    <service name="MediaStreamingClientService" />
+    <service name="MediaControlClientService" />
+    <service name="MediaSourceClientService" />
 </device>

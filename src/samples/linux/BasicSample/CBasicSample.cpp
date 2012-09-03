@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -27,17 +27,29 @@
 
 
 
+
+
 #include "CBasicSample.hpp"
 //profile proxy header provides the access to profile API, must be included
 #include "samples/linux/Profiles/ProfileProxy/CBasicSampleProfileProxy.hpp"
 
 Logger CBasicSample::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Applications.BasicSample"));
 
+#ifndef ANDROID
 CBasicSample::CBasicSample(CSignalSemaphore & semaphore)
+#else
+CBasicSample::CBasicSample(CSignalSemaphore & semaphore, iviLink::Android::AppInfo appInfo, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result)
+#endif //ANDROID
 
    //informing iviLink that this app supports service with this UID
+   #ifndef ANDROID
    : CApp(iviLink::Service::Uid("BasicSampleServiceHUI"))
    , mBasicSampleCallbacks(semaphore)
+   #else
+   : CApp(iviLink::Service::Uid("BasicSampleServiceHUI"), appInfo)
+   , mBasicSampleCallbacks(semaphore,pJm,callbacks,operands,result)
+   , mAppInfo(appInfo)
+   #endif //ANDROID
    , mpSemaphore(&semaphore)
 {
    //registration profile callbacks for given profile API
@@ -67,7 +79,11 @@ void CBasicSample::initDone(iviLink::ELaunchInfo launcher)
          LOG4CPLUS_INFO(msLogger, "service started");
 
          //loading profile proxy which corresponds to given service UID
+         #ifndef ANDROID
          CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleServiceHUI"));
+         #else
+         CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleServiceHUI"), mAppInfo);
+         #endif //ANDROID
 
          //using method from profile API
          sampleProxy.sendOperands(8,21);

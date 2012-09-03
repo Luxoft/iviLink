@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -26,6 +26,8 @@
 
 
 
+
+
 #ifndef CCLIMATEHUPROXY_HPP_
 #define CCLIMATEHUPROXY_HPP_
 
@@ -38,7 +40,11 @@
 
 IVILINK_PROFILE_PROXY_BEGIN(CURRENT_PROFILE_PROXY, CURRENT_PROFILE_API, CURRENT_PROFILE_PROXY_API_UID)
 
+#ifndef ANDROID
 virtual void sendNotification(Json::Value state)
+#else
+virtual void sendNotification(std::string state)
+#endif //ANDROID
 {
    IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,sendNotification, state)
 }

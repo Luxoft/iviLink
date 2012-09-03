@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,6 +29,8 @@
 
 
 
+
+
 #include <stdlib.h>
 #include <cstring>
 #include "3rd_party/cryptopp/cryptopp-5.6.1/queue.h"
@@ -43,16 +45,15 @@ Logger CAuthenticationProfileImpl::msLogger = Logger::getInstance(LOG4CPLUS_TEXT
 void CAuthenticationProfileImpl::sendPublicKey()
 {
    RSA::PublicKey publicKey = CRSAEncryptDecrypt::getPublicKey();
-
    sendPublicKey(publicKey);
-   sendTrustListUID(mTrustList.getOurUid());
+
+   sendTrustListUID(mpTrustList->getOurUid());
 }
 
 void CAuthenticationProfileImpl::writeRemoteUIDToTrustList()
 {
-   LOG4CPLUS_INFO(msLogger, "CAuthenticationProfileImpl::writeRemoteUIDToTrustList()");
-
-   mTrustList.addUid(mRemoteUID);
+   LOG4CPLUS_INFO(msLogger, __PRETTY_FUNCTION__);
+   mpTrustList->addUid(mRemoteUID);
 }
 
 void CAuthenticationProfileImpl::sendPIN(int first_digit, int second_digit, int third_digit, int fourth_digit)
@@ -67,49 +68,67 @@ void CAuthenticationProfileImpl::sendPIN(int first_digit, int second_digit, int 
                      + convertIntegerToString(third_digit)
                      + convertIntegerToString(fourth_digit));
 
-   RSA::PublicKey publicKey = CRSAEncryptDecrypt::getPublicKey();
    string encryptedPIN = CRSAEncryptDecrypt::encrypt(PIN, remoteHostPublicKey);
 
    sendEncryptedPIN(encryptedPIN);
 }
 
+
+void CAuthenticationProfileImpl::sendExternalState(int extState)
+{
+
+   string state = string(convertIntegerToString(extState));
+   LOG4CPLUS_INFO(msLogger, "CAuthenticationProfileImpl::sendExternalState(" + state + ")");
+
+   string encryptedState = CRSAEncryptDecrypt::encrypt(state, remoteHostPublicKey);
+
+   sendEncryptedState(encryptedState);
+}
+
 void CAuthenticationProfileImpl::sendEncryptedPIN(string PIN)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+   sendEncryptedString(PIN, SEND_ENCRYPTED_PIN);
+}
 
-   UInt8* outgoingData = new UInt8[PIN.length() + 1];
 
-   outgoingData[0] = static_cast<UInt8>(SEND_ENCRYPTED_PIN);
+void CAuthenticationProfileImpl::sendEncryptedString(string toSend, PROCEDURES_IDS procID) 
+{
+   UInt8* outgoingData = new UInt8[toSend.length() + 1];
+   outgoingData[0] = static_cast<UInt8>(procID);
+   memcpy(outgoingData + 1, (void*)const_cast<char*>(toSend.c_str()), toSend.length() + 1);
+   iviLink::Channel::sendBuffer(mChannelID, outgoingData, toSend.length() + 1);
+   delete[] outgoingData;
+}
 
-   LOG4CPLUS_INFO(msLogger, "Engrypted PIN length = " + convertIntegerToString(PIN.length()));
-   LOG4CPLUS_INFO(msLogger, "Encrypted PIN  = " + PIN);
 
-   memcpy(outgoingData + 1, (void*)const_cast<char*>(PIN.c_str()), PIN.length() + 1);
+void CAuthenticationProfileImpl::sendEncryptedState(string state)
+{
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+   sendEncryptedString(state, SEND_STATE);
+}
 
-   iviLink::Channel::sendBuffer(mChannelID, outgoingData, PIN.length() + 1);
-
+void CAuthenticationProfileImpl::sendProcedureId(PROCEDURES_IDS id)
+{
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+   UInt8* outgoingData = new UInt8[1];
+   outgoingData[0] = static_cast<UInt8>(id);
+   iviLink::Channel::sendBuffer(mChannelID, outgoingData, 1);
    delete[] outgoingData;
 }
 
 void CAuthenticationProfileImpl::sendPublicKey(RSA::PublicKey publicKey)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
    CRSAEncryptDecrypt::printPublicKey(publicKey);
-
    ByteQueue queue;
    publicKey.Save(queue);
    UInt32 queueSize = queue.CurrentSize();
-
    UInt8* outgoingData = new UInt8[queueSize + 1];
-
    outgoingData[0] = static_cast<UInt8>(SEND_PUBLIC_KEY);
-
    queue.Get(outgoingData + 1, queueSize);
    LOG4CPLUS_INFO(msLogger, "***** " + convertIntegerToString(queueSize + 1) + " bytes sent");
-
    iviLink::Channel::sendBuffer(mChannelID, outgoingData, queueSize + 1);
-
    delete[] outgoingData;
 }
 
@@ -117,42 +136,24 @@ void CAuthenticationProfileImpl::sendTrustListUID(iviLink::CUid uid)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    LOG4CPLUS_INFO(msLogger, "uid = " + uid.value());
-
    UInt8* outgoingData = new UInt8[uid.value().length() + 1];
-
    outgoingData[0] = static_cast<UInt8>(SEND_UID);
-
    memcpy(outgoingData + 1, (void*)const_cast<char*>(uid.value().c_str()), uid.value().length() + 1);
-
    iviLink::Channel::sendBuffer(mChannelID, outgoingData, uid.value().length() + 1);
-
    delete[] outgoingData;
 }
 
 void CAuthenticationProfileImpl::sendYourUIDIsUnknown()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-   UInt8* outgoingData = new UInt8[1];
-
-   outgoingData[0] = static_cast<UInt8>(YOUR_UID_IS_NOK);
-
-   iviLink::Channel::sendBuffer(mChannelID, outgoingData, 1);
-
-   delete[] outgoingData;
-   }
+   sendProcedureId(YOUR_UID_IS_NOK);
+}
 
 void CAuthenticationProfileImpl::sendYourUIDIsKnow()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-   UInt8* outgoingData = new UInt8[1];
-
-   outgoingData[0] = static_cast<UInt8>(YOUR_UID_IS_OK);
-
-   iviLink::Channel::sendBuffer(mChannelID, outgoingData, 1);
-
-   delete[] outgoingData;}
+   sendProcedureId(YOUR_UID_IS_OK);
+}
 
 void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer)
 {
@@ -171,15 +172,10 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
    if(incomingData[0] == SEND_ENCRYPTED_PIN)
    {
       LOG4CPLUS_INFO(msLogger, "Encrypted PIN received");
-
       string encryptedPIN((char*)(incomingData + 1), read_size - 1);
-
       LOG4CPLUS_INFO(msLogger, "Engrypted PIN length = " + convertIntegerToString(encryptedPIN.length()));
       LOG4CPLUS_INFO(msLogger, "Encrypted PIN  = " + encryptedPIN);
-
-
       string decryptedRemotePIN = CRSAEncryptDecrypt::decrypt(encryptedPIN, CRSAEncryptDecrypt::getPrivateKey());
-
       LOG4CPLUS_INFO(msLogger, "Decrypted remote PIN = " + decryptedRemotePIN);
 
       mpAppCallbacks->gotPIN(decryptedRemotePIN[0] - '0',
@@ -188,32 +184,35 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
                              decryptedRemotePIN[3] - '0');
 
    }
+   else if(incomingData[0] == SEND_STATE)
+   {
+      LOG4CPLUS_INFO(msLogger, "Encrypted state received");
+      string encryptedState((char*)(incomingData + 1), read_size - 1);
+      LOG4CPLUS_INFO(msLogger, "Engrypted state length = " + convertIntegerToString(encryptedState.length()));
+      LOG4CPLUS_INFO(msLogger, "Encrypted state  = " + encryptedState);
+      string decryptedRemoteState = CRSAEncryptDecrypt::decrypt(encryptedState, CRSAEncryptDecrypt::getPrivateKey());
+      LOG4CPLUS_INFO(msLogger, "Decrypted remote state = " + decryptedRemoteState);
+      mpAppCallbacks->onExternalStateCame(decryptedRemoteState[0] - '0');
+
+   }
    else if(incomingData[0] == SEND_PUBLIC_KEY)
    {
       LOG4CPLUS_INFO(msLogger, "PublicKey received");
-
       UInt8* keyBytes = new UInt8[read_size - 1];
-
       memcpy(keyBytes, incomingData + 1, read_size - 1);
-
       ByteQueue queue;
       queue.Put(keyBytes, read_size - 1);
-
       remoteHostPublicKey.Load(queue);
-
       CRSAEncryptDecrypt::printPublicKey(remoteHostPublicKey);
    }
    else if(incomingData[0] == SEND_UID)
    {
       LOG4CPLUS_INFO(msLogger, "Remote UID received");
-
       string uid((char*)(incomingData + 1), read_size - 1);
-
       LOG4CPLUS_INFO(msLogger, "UID = " + uid);
-
       mRemoteUID = iviLink::CUid(uid);
 
-      if(mTrustList.isKnownUid(mRemoteUID))
+      if(mpTrustList->isKnownUid(mRemoteUID))
       {
           remoteUIDIsChecked = true;
           remoteUIDIsOK = true;
@@ -227,7 +226,7 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
          remoteUIDIsOK = false;
 
          sendYourUIDIsUnknown();
-         mpAppCallbacks->onAuthenticationIsRequired();
+         validateUIDs();
       }
    }
    else if(incomingData[0] == YOUR_UID_IS_OK)
@@ -241,8 +240,7 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
    {
       localUIDIsChecked = true;
       localUIDIsOK = false;
-
-      mpAppCallbacks->onAuthenticationIsRequired();
+      validateUIDs();
    }
 }
 
@@ -250,8 +248,7 @@ void CAuthenticationProfileImpl::channelDeletedCallback(const UInt32 channel_id)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
-   if (mChannelID == channel_id)
-      mChannelID = 0;
+   if (mChannelID == channel_id) mChannelID = 0;
 
    CError err = iviLink::Channel::deallocateChannel(channel_id);
    if (!err.isNoError())
@@ -267,19 +264,41 @@ void CAuthenticationProfileImpl::connectionLostCallback()
 
 void CAuthenticationProfileImpl::validateUIDs()
 {
-   LOG4CPLUS_INFO(msLogger, "validateUIDs()");
+   static bool authDecided = false;
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+   
+   if(authDecided) 
+   {
+      LOG4CPLUS_INFO(msLogger, "Auth was already decided");
+      return;
+   }
 
    if(localUIDIsChecked && remoteUIDIsChecked)
    {
       if(localUIDIsOK && remoteUIDIsOK)
       {
          LOG4CPLUS_INFO(msLogger, "Both UIDs were checked and are OK");
-         mpAppCallbacks->onAuthenticationIsNotRequired();
+         if(!authDecided) 
+         {
+            authDecided = true;
+            mpAppCallbacks->onAuthenticationIsNotRequired();
+         }
       }
       else
       {
-         mpAppCallbacks->onAuthenticationIsRequired();
+         LOG4CPLUS_INFO(msLogger, "Both UIDs are checked and one of them is not OK: ");
+         if(!localUIDIsOK) LOG4CPLUS_INFO(msLogger, "    ours is not OK");
+         if(!remoteUIDIsOK) LOG4CPLUS_INFO(msLogger, "    theirs is not OK");
+         if(!authDecided)
+         {
+            authDecided = true;
+            mpAppCallbacks->onAuthenticationIsRequired();
+         }
       }
+   } else {
+      LOG4CPLUS_INFO(msLogger, "One of UIDs is not checked yet: ");
+      if(!localUIDIsChecked) LOG4CPLUS_INFO(msLogger, "    ours is not checked yet");
+      if(!remoteUIDIsChecked) LOG4CPLUS_INFO(msLogger, "    theirs is not checked yet");
    }
 }
 
@@ -296,12 +315,18 @@ CAuthenticationProfileImpl::CAuthenticationProfileImpl(iviLink::Profile::IProfil
    Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("applications.Authentication"));
 
    PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
+   #ifndef ANDROID
+   mpTrustList = new CTrustList();
+   #else
+   mpTrustList = new CTrustList(mpAppCallbacks->getPathToTrlist());
+   #endif //ANDROID
 
    LOG4CPLUS_INFO(msLogger, "CAuthenticationProfileImpl::CAuthenticationProfileImpl");
 }
 
 CAuthenticationProfileImpl::~CAuthenticationProfileImpl()
 {
+   delete mpTrustList;
 }
 
 void CAuthenticationProfileImpl::onEnable()
@@ -320,6 +345,7 @@ void CAuthenticationProfileImpl::onEnable()
 
 void CAuthenticationProfileImpl::onDisable()
 {
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    CError err = iviLink::Channel::deallocateChannel(mChannelID);
    if (!err.isNoError())
    {

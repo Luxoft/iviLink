@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -28,12 +28,17 @@
 
 
 
+
+
 #include <cerrno>
 #include <cstring>
 
 #include "CMutex.hpp"
+#include "utils/misc/Logger.hpp"
 
-Logger CMutex::logger = Logger::getInstance(LOG4CPLUS_TEXT("utils.threads.CMutex"));
+namespace {
+  Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("utils.threads.CMutex"));
+}
 
 CMutex::CMutex()
 {
@@ -92,6 +97,7 @@ int CMutex::tryLock()
 
 int CMutex::timedLock(const time_t miliSec)
 {
+   #ifndef ANDROID
    const time_t sec = miliSec / 1000;
    const time_t msec = miliSec % 1000;
 
@@ -107,4 +113,8 @@ int CMutex::timedLock(const time_t miliSec)
       ts.tv_nsec  += msec * 1000000;
    }
    return pthread_mutex_timedlock(&mMutex, &ts);
+   #else
+   unsigned int microSec = miliSec*1000;
+   return pthread_mutex_lock_timeout_np(&mMutex, microSec);
+   #endif //ANDROID
 }

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -82,6 +84,9 @@ ERROR_CODE L0Interface::openTransmissionChannel(const UInt32 channel_id, const U
          + convertIntegerToString((intptr_t)&bufferProducer) + ", up_tres = "
          + convertIntegerToString(upper_threshold) + ", lo_tres = "
          + convertIntegerToString(lower_threshold));
+
+   /// @todo correct processing of error code and return values. PIlin, 31.08.12
+   LOG4CPLUS_WARN(logger, "@todo correct processing of error code and return values. PIlin, 31.08.12");
 
    if (mpTransmitDispatcher)
    {

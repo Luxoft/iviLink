@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -58,7 +60,11 @@ namespace iviLink
             /**
              * Constructor
              */
+            #ifndef ANDROID
             CCore();
+            #else
+            CCore(std::string launchInfo);
+            #endif //ANDROID
 
             /**
              * Virtual destructor
@@ -120,7 +126,10 @@ namespace iviLink
             /**
              * Function returns full name of app in filesystem
              */
+            #ifndef ANDROID
             void getExeName();
+            #endif //ANDROID - won't work on android as it will always return zygote's name and not app's name,
+                   // that's why we pass the launch string explicitly
 
             IAppManHandler * mpHandler;                  ///< Pointer to handler of incoming requests
             iviLink::AppMan::Ipc::IAppManProto * mpProto;   ///< Pointer to IPC protocol with AMP

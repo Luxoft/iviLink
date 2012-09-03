@@ -1,5 +1,5 @@
 # 
-# iviLINK SDK, version 1.0.1
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -34,12 +34,23 @@ include $(COMMON_MK)
 ###############################################################################
 # Subfolders
 define SUBFOLDERS
+# protobuf states - generate includes and shared libraries
 $(MAKE) -C BasicSampleProfileImpl $@
 $(MAKE) -C AuthenticationProfileImpl $@
-$(MAKE) -C ClimateClientProfile $@
-$(MAKE) -C ClimateHUProfile $@
-$(MAKE) -C SeatClientProfile $@
-$(MAKE) -C SeatHUProfile $@
+$(MAKE) -C ProfileAPI/SeatState $@
+$(MAKE) -C ProfileAPI/ClimateState $@
+# make symmetic samples
+$(MAKE) -C ClimateReceiverProfile $@
+$(MAKE) -C ClimateSenderProfile $@
+$(MAKE) -C SeatSenderProfile $@
+$(MAKE) -C SeatReceiverProfile $@
+#
+$(MAKE) -C MediaSourceClientProfile $@
+$(MAKE) -C MediaSourceServerProfile $@
+$(MAKE) -C MediaControlClientProfile $@
+$(MAKE) -C MediaControlServerProfile $@
+$(MAKE) -C MediaStreamingClientProfile $@
+$(MAKE) -C MediaStreamingServerProfile $@
 endef
 ###############################################################################
 # Rules

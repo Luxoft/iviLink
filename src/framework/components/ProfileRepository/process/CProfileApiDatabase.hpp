@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -108,6 +110,14 @@ namespace iviLink
           * This function is used for printing Database to standard output
           */
          void printDB();
+         
+         #ifndef ANDROID
+         #else
+         /**
+          * @param path - absolute path to database on Android device
+          */
+         void setDatabasePath(std::string path);
+         #endif //ANDROID
 
       private:
          /**
@@ -128,6 +138,10 @@ namespace iviLink
          bool saveChanges();
 
          std::string mDBPath; /// path of Profile API Database XML file
+         #ifndef ANDROID
+         #else
+         std::string mDirPath; /// path to folder containing Profile API Database XML file 
+         #endif //ANDROID
          std::map<UID,CProfileApiInfo> mApis; /// map with CProfileApiInfo structure, thar contains info about Profile APIs in Database
          EDatabaseState mDBState; /// state of CProfileApiDatabase object
          CMutex * mpDbMutex; /// mutex for file operations

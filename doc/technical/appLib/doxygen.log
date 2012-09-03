@@ -1,7 +1,0 @@
-/home/build/AXIS/src/framework/appLib/appLib/CProfileApiBase.hpp:62: warning: Compound iviLink::Profile::IProfileCallbackProxy is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/CProfileProxy.hpp:50: warning: Compound iviLink::App::CProfileGetter is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/common.hpp:74: warning: Member ListOfUids (typedef) of namespace iviLink::Service is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/CProfileApiBase.hpp:150: warning: Member setError(const CError &error) const  (function) of class iviLink::CProfileApiBase is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/CProfileProxy.hpp:72: warning: Member CProfileProxy(const Service::Uid &service, const Profile::ApiUid &api) (function) of class iviLink::App::CProfileProxy is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/CProfileProxy.hpp:80: warning: Member getProfile() const  (function) of class iviLink::App::CProfileProxy is not documented.
-/home/build/AXIS/src/framework/appLib/appLib/CProfileProxy.hpp:85: warning: Member releaseProfile() const  (function) of class iviLink::App::CProfileProxy is not documented.

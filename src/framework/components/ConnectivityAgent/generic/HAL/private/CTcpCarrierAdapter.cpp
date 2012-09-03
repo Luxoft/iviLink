@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -95,7 +97,7 @@ bool CTcpCarrierAdapter::isBroken() const
    bool res = false;
    mSocketMutex.lockRead();
    res = isBrokenUnprotected();
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
    return res;
 }
 
@@ -108,7 +110,7 @@ ERROR_CODE CTcpCarrierAdapter::connect()
 
    if (!isBrokenUnprotected())
    {
-      mSocketMutex.unlock();
+      mSocketMutex.unlockWrite();
       LOG4CPLUS_ERROR(logger, "CTcpCarrierAdapter::connect() !isBrokenUnprotected");
       return ERR_OK;
    }
@@ -189,7 +191,7 @@ ERROR_CODE CTcpCarrierAdapter::connect()
 
    freeaddrinfo(ressave);
 
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 
    if (found)
    {
@@ -221,7 +223,7 @@ ERROR_CODE CTcpCarrierAdapter::sendPrepearedArray(const UInt8* pArray, UInt32 si
       } while ((n != -1 && sent < size) || 
                (n == -1 && errno == EINTR));
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
 
    if (-1 == n)
    {
@@ -255,7 +257,7 @@ ERROR_CODE CTcpCarrierAdapter::receiveRawArray(UInt8* pArray, UInt32 & size)
 
       saved_errno = errno;
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockRead();
 
    if (n > 0)
    {
@@ -399,7 +401,7 @@ void CTcpCarrierAdapter::acceptConnection()
          delete [] addr;
       }      
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 
    free(sa);
 }
@@ -415,7 +417,7 @@ void CTcpCarrierAdapter::closeAllSockets()
       closeClientSocket();
 
    }
-   mSocketMutex.unlock();
+   mSocketMutex.unlockWrite();
 }
 
 void CTcpCarrierAdapter::closeClientSocket()
@@ -443,7 +445,7 @@ void CTcpCarrierAdapter::closeListenSocket(bool needLock)
    }
 
    if (needLock)
-      mSocketMutex.unlock();
+      mSocketMutex.unlockWrite();
 }
 
 void CTcpCarrierAdapter::closeSocket(int sock)
@@ -534,7 +536,7 @@ void CTcpCarrierAdapter::threadFunc()
             }
          } // if res < -1
       }
-      mSocketMutex.unlock();
+      mSocketMutex.unlockRead();
 
       if (needExit)
          break;
@@ -817,6 +819,11 @@ void CTcpCarrierAdapter::setLocalAddress(const char* const pAddress)
    {
       mpLocalAddress = strdup(pAddress);
    }
+}
+
+const char* CTcpCarrierAdapter::getTypeName() const
+{
+   return "TCP/IP";
 }
 
 bool CTcpCarrierAdapter::start()

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -25,6 +25,8 @@
 
 
 
+
+
  
 /**
  * \file macro.hpp
@@ -45,7 +47,8 @@
 #define IVILINK_PROXY_VOID_FUNCTION(API_CLASS,FUNC, ...) \
 		API_CLASS * pInstance = getProfile(); \
       if (pInstance) \
-      { pInstance->FUNC(__VA_ARGS__); } \
+      { setError(CError::NoError("ProfileProxy","no error")); \
+      pInstance->FUNC(__VA_ARGS__); } \
       else { setError(CError(1,"ProfileProxy",CError::ERROR, "No profile instance")); } \
       releaseProfile();
       
@@ -60,8 +63,9 @@
 #define IVILINK_PROXY_FUNCTION(API_CLASS,FUNC,RET_TYPE, ...) \
       API_CLASS * pInstance = getProfile(); \
       RET_TYPE res; \
-      if (!pInstance) \
-      { res = pInstance->FUNC(__VA_ARGS__); } \
+      if (pInstance) \
+      { setError(CError::NoError("ProfileProxy","no error")); \
+      res = pInstance->FUNC(__VA_ARGS__); } \
       else { setError(CError(1,"ProfileProxy",CError::ERROR, "No profile instance")); } \
       releaseProfile(); \
       return res;
@@ -73,8 +77,9 @@
 #define IVILINK_PROXY_FUNCTION_CONST(API_CLASS,FUNC,RET_TYPE, ...) \
       const API_CLASS * pInstance = getProfile(); \
       RET_TYPE res; \
-      if (!pInstance) \
-      { res = pInstance->FUNC(__VA_ARGS__); } \
+      if (pInstance) \
+      { setError(CError::NoError("ProfileProxy","no error")); \
+      res = pInstance->FUNC(__VA_ARGS__); } \
       else { setError(CError(1,"ProfileProxy",CError::ERROR, "No profile instance")); } \
       releaseProfile(); \
       return res;
@@ -87,6 +92,7 @@
  * @param PROFILE_API_UID UID of the profile API
  */
 
+#ifndef ANDROID
 #define IVILINK_PROFILE_PROXY_BEGIN(PROFILE_PROXY, PROFILE_API, PROFILE_API_UID) \
 class PROFILE_PROXY : public iviLink::App::CProfileProxy<PROFILE_API>, public PROFILE_API \
 { \
@@ -107,7 +113,30 @@ public: \
    { \
       IVILINK_PROXY_FUNCTION_CONST(PROFILE_API,getUid,iviLink::Profile::Uid) \
    }
-   
+#else
+#define IVILINK_PROFILE_PROXY_BEGIN(PROFILE_PROXY, PROFILE_API, PROFILE_API_UID) \
+class PROFILE_PROXY : public iviLink::App::CProfileProxy<PROFILE_API>, public PROFILE_API \
+{ \
+public: \
+   PROFILE_PROXY(const iviLink::Service::Uid & service, iviLink::Android::AppInfo appInfo) \
+      : iviLink::App::CProfileProxy<PROFILE_API>(service, \
+            iviLink::Profile::ApiUid(PROFILE_API_UID), appInfo) \
+   { } \
+   virtual std::string getName() const \
+   { \
+      IVILINK_PROXY_FUNCTION_CONST(PROFILE_API,getName,std::string) \
+   } \
+   virtual UInt32 getVersion() const \
+   { \
+      IVILINK_PROXY_FUNCTION_CONST(PROFILE_API,getVersion,UInt32) \
+   } \
+   virtual iviLink::Profile::Uid getUid() const \
+   { \
+      IVILINK_PROXY_FUNCTION_CONST(PROFILE_API,getUid,iviLink::Profile::Uid) \
+   }
+
+#endif //ANDROID      
+
 /**
  * This macro should be put at the end
  * of a profile proxy declaration.

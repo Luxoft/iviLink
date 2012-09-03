@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -80,7 +82,11 @@ namespace iviLink
          return res;
       }
 
+      #ifndef ANDROID
       bool CDatabase::load()
+      #else
+      bool CDatabase::load(std::string pathToDatabase)
+      #endif //ANDROID
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -88,7 +94,14 @@ namespace iviLink
          pugi::xml_document doc;
          // Get DOM structure from XML file
          LOG4CPLUS_INFO(msLogger, "DB path: " + mDBPath);
+         #ifndef ANDROID
          pugi::xml_parse_result res = doc.load_file(mDBPath.c_str());
+         #else
+         mDirPath = pathToDatabase;
+         LOG4CPLUS_INFO(msLogger, "DB directory path: " + mDirPath);
+         std::string fullPath = mDirPath + mDBPath;
+         pugi::xml_parse_result res = doc.load_file(fullPath.c_str());
+         #endif //ANDROID
          switch (res.status)
          {
          case pugi::status_ok:              // No error
@@ -197,7 +210,12 @@ namespace iviLink
             }
          }
 
+         #ifndef ANDROID
          bool result = doc.save_file(mDBPath.c_str());
+         #else
+         std::string fullPath = mDirPath + mDBPath;
+         bool result = doc.save_file(fullPath.c_str());
+         #endif
 
          mpMutex->unlock();
          return result;
@@ -466,7 +484,12 @@ namespace iviLink
       void CDatabase::printWithNoLocks() const
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+         #ifndef ANDROID
          LOG4CPLUS_INFO(msLogger, "Database path: %s" + mDBPath);
+         #else
+         std::string fullPath = mDirPath + mDBPath;
+         LOG4CPLUS_INFO(msLogger, "Database path: " + fullPath);
+         #endif
          for (std::map<int, CApplication>::const_iterator it = mApplications.begin();
                mApplications.end() != it; ++it)
          {

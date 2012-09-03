@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -76,10 +78,17 @@ public:
     *    instance creation
     * @retval ERROR_PROFILE_INIT error on profile instance init prevents it use
     */
+   #ifndef ANDROID
    virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
          iviLink::Service::Uid const& sid,
          iviLink::Profile::IProfileCallbackProxy* const pProxy,
          Profile::CProfile*& pProfile) = 0;
+   #else
+   virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
+         iviLink::Service::Uid const& sid,
+         iviLink::Profile::IProfileCallbackProxy* const pProxy,
+         Profile::CProfile*& pProfile, std::string backupPath) = 0;
+   #endif //ANDROID
 
    /**
     * Destroys loaded profile instance.

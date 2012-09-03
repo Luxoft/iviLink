@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -67,13 +69,21 @@ namespace iviLink
          delete mpRequestHandler;
       }
 
+      #ifndef ANDROID
       void CController::init()
+      #else
+      void CController::init(std::string pathToDatabase, JavaVM * jm, jclass launchClass, jmethodID launchMethod)
+      #endif //ANDROID
       {
          AppMan::Ipc::CPmpController::instance();
          mpAppComThread->start();
          mpLaunchThread->start();
 
+         #ifndef ANDROID
          mpDatabase->load();
+         #else
+         mpDatabase->load(pathToDatabase);
+         #endif //ANDROID
          mpDatabase->print();
 
          mpRequestHandler->initDatabase(mpDatabase);
@@ -95,7 +105,11 @@ namespace iviLink
          mpLaunchThread->initLauncher(mpLauncher);
          mpLaunchThread->initRequestHandler(mpRequestHandler);
 
+         #ifndef ANDROID
          mpLauncher->init(mpLaunchThread);
+         #else
+         mpLauncher->init(mpLaunchThread, jm, launchClass, launchMethod);
+         #endif
 
          mpAppManProtoServer->startWaitingForClients();
 
@@ -113,7 +127,11 @@ namespace iviLink
          mpAppManProtoServer->initConnectionHandler(0);
          mpAppComThread->uninit();
          mpLaunchThread->uninit();
+         #ifndef ANDROID
          mpLauncher->init(0);
+         #else
+         mpLauncher->uninit(); // for convenience
+         #endif //ANDROID
          mpRequestHandler->uninit();
       }
 

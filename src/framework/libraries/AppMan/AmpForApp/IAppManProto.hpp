@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -81,6 +83,13 @@ namespace iviLink
              * @param service is UID of service
              */
             virtual CError registerService(pid_t pid, Service::Uid service) = 0;
+
+            /**
+             * Is used only in CAppManProtoClient. If sesssionRequest() was made
+             * before initDone(), waits initDone
+             * and after it will be called to proceed session request
+             */
+            virtual void checkSessionRequest() {}
 
             /**
              * Virtual destructor

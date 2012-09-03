@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -55,11 +57,13 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
       SEND_PUBLIC_KEY,
       SEND_UID,
       YOUR_UID_IS_OK,
-      YOUR_UID_IS_NOK
+      YOUR_UID_IS_NOK,
+      SEND_STATE, 
    };
 
 // Profile domain section
    virtual void sendPIN(int first_digit, int second_digit, int third_digit, int fourth_digit);
+   virtual void sendExternalState(int state);
    virtual void sendPublicKey();
    virtual void writeRemoteUIDToTrustList();
 
@@ -76,6 +80,9 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    virtual ~CAuthenticationProfileImpl();
 
    void sendEncryptedPIN(string PIN);
+   void sendEncryptedState(string state);
+   void sendEncryptedString(string, PROCEDURES_IDS);
+   void sendProcedureId(PROCEDURES_IDS);
    void sendPublicKey(RSA::PublicKey publicKey);
    void sendTrustListUID(iviLink::CUid uid);
    void sendYourUIDIsKnow();
@@ -87,7 +94,9 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    UInt32 mChannelID;
    IAuthenticationProfile_API::Callbacks* mpAppCallbacks;
    RSA::PublicKey remoteHostPublicKey;
-   CTrustList mTrustList;
+
+   CTrustList * mpTrustList;
+
    iviLink::CUid mRemoteUID;
    bool remoteUIDIsChecked;
    bool remoteUIDIsOK;

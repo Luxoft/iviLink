@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,6 +29,8 @@
 
 
 
+
+
 #ifndef CINCOME_DISPATCHER_HPP
 #define CINCOME_DISPATCHER_HPP
 
@@ -49,6 +51,7 @@
 #include "IFrameReceiver.hpp"
 #include "utils/misc/Types.hpp"
 #include "utils/threads/CMutex.hpp"
+#include "utils/misc/Logger.hpp"
 
 namespace iviLink
 {

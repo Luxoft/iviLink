@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -26,10 +26,13 @@
 
 
 
+
+
 #ifndef CRSAENCRYPTDECRYPT_HPP_
 #define CRSAENCRYPTDECRYPT_HPP_
 
 #include <string>
+#include <iostream>
 #include "utils/misc/Logger.hpp"
 #include "3rd_party/cryptopp/cryptopp-5.6.1/rsa.h"
 #include "3rd_party/cryptopp/cryptopp-5.6.1/integer.h"

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -26,15 +26,26 @@
 
 
 
+
+
 #ifndef CAUTHENTICATION_DIALOG_HPP
 #define CAUTHENTICATION_DIALOG_HPP
 
+#ifndef ANDROID
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QTimer>
 #include "ui_auth.h"
-#include "utils/misc/Logger.hpp"
 #include "samples/linux/AuthenticationApplication/CPINCode.hpp"
+#else
+#include "utils/android/JniThreadHelper.hpp"
+#include <cassert>
+#include <jni.h>
+#endif //ANDROID
+
+#include "utils/misc/Logger.hpp"
+#include "AuthStates.hpp"
+#include "MutexLocker.hpp"
 #include "framework/messageProtocol/SystemController_Authentication/Authentication/SystemControllerMsgProxy.hpp"
 #include "framework/public/appLib/CApp.hpp"
 #include "samples/linux/Profiles/ProfileProxy/CAuthenticationProxy.hpp"
@@ -42,6 +53,7 @@
 namespace authentication
 {
 
+#ifndef ANDROID
 enum popupMessageTypes
 {
     tooShortPin = 0,
@@ -55,14 +67,28 @@ class AuthenticationDialog : public QWidget
                            , public AuthenticationAppMsgProtocol::SystemControllerMsgProxy
 {
    Q_OBJECT
+#else
+
+class AuthenticationDialog : private iviLink::CApp
+                           , public IAuthenticationProfile_API::Callbacks
+                           , public AuthenticationAppMsgProtocol::SystemControllerMsgProxy
+{
+#endif //ANDROID
 
 private:
    static Logger sLogger;
 
 public:
+
+  #ifndef ANDROID
    AuthenticationDialog(QWidget *parent = 0);
 
    virtual void closeEvent(QCloseEvent *event);
+   #else
+
+   AuthenticationDialog(iviLink::Android::AppInfo appInfo, JavaVM * pJm, jobject callbacksObj, std::string pathToTrlist);
+
+   #endif //ANDROID
 
    virtual void onRequestShutDown();
 
@@ -97,21 +123,31 @@ public:
    virtual void gotPIN(int first_digit, int second_digit, int third_digit, int fourth_digit);
    virtual void onAuthenticationIsNotRequired();
    virtual void onAuthenticationIsRequired();
+   virtual void onExternalStateCame(int state);
 
 private:
-   CAuthenticationProxy mAuthenticationProxy;
+   CAuthenticationProxy * mpAuthenticationProxy;
 
-   CPINCode sLocalPIN;
-   CPINCode sRemotePIN;
+  #ifndef ANDROID
+  CPINCode sLocalPIN;
+  CPINCode sRemotePIN;
+  QDialog *msgBox;
+  QWidget *msgBoxWidget;
+  QWidget* mParent;
+  #else
+  JavaVM * mpJm;
+  jobject jAppCallbacks;
+  iviLink::Android::AppInfo mAppInfo;
+   
+  std::string mPin;
+  std::string theirPin;
+  std::string mPathToTrlist;
+  #endif
 
-   bool checkPINs();
+  bool checkPINs();
+  int getIntFromStr(std::string str, int pos);
 
-   QDialog *msgBox;
-   QWidget *msgBoxWidget;
-   QWidget* mParent;
-
-   bool isThisAppAuthMaster;
-
+#ifndef ANDROID
 private slots:
    void closePopup();
    void on_OKButton_clicked();
@@ -135,6 +171,33 @@ private slots:
 signals:
    void showPopup(int popupType, QString message);
    void showPINCodeWindow();
+#else
+public:
+  void okButtonClicked();
+  void cancelButtonClicked();
+  void callJavaMethod(const char * methodName);
+  void setPin(std::string pin);   
+  std::string getPathToTrlist()
+   {
+      return mPathToTrlist;
+   }
+#endif //ANDROID
+   
+   
+private:
+   LocalStates mState;
+   CMutex mMutex;
+
+  void switch2INITIAL(); // initial state
+  void switch2WAITING_ANY_PIN();
+  void switch2WAITING_REMOTE_PIN(); // is master
+  void switch2WAITING_LOCAL_PIN(); // is slave
+  void switch2WAITING_PIN_CONFIRMATION();
+  void switch2WAITING_REMOTE_DEATH();
+  void switch2SUCCESS();
+   
+   void authenticationSuccess();
+   void sendExternalState(ExternalStates state);
 };
 
 } /* namespace authentication */

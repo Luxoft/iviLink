@@ -6,8 +6,9 @@ Opened Issues
         (src/framework/libraries/profileLib/Channel.hpp) send data only limited by 4084 bytes.
 
 
-- Sometimes SeatClient can't be closed by [x] after SeatHU exit
+- Sometimes SeatApp and ClimateApp can't be closed by [x];
 - ChannelSupervisor. It is possible to send data to the Zero channel.
 - ChannelSupervisor. It is possible to send 0-size data without any error messages.
 - ChannelSupervisor. Null pointer to Data is being processed without any errors.
 - ConnectivityAgent. Unable to allocate the channel with id=UINT_MAX-1
+- Symmetric applications state synchronization is based on devices local time, therefore incorrect behavior is possible.

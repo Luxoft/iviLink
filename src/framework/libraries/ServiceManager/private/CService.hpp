@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -29,12 +29,19 @@
 
 
 
+
+
 #ifndef C_SERVICE_HPP
 #define C_SERVICE_HPP
 
 #include "utils/misc/Logger.hpp"
 #include "framework/components/ProfileManager/PMAL/CProfile.hpp"
 #include "framework/libraries/ServiceManager/common.hpp"
+
+#ifndef ANDROID
+#else
+#include "utils/android/AppInfo.hpp"
+#endif //ANDROID
 
 class CMutex;
 
@@ -56,7 +63,11 @@ namespace iviLink
           * Constructor
           * @param xmlPath is location of services XMLs
           */
+         #ifndef ANDROID
          CService(const std::string &xmlPath, const Service::Uid & service);
+         #else
+         CService(iviLink::Android::AppInfo appInfo, const Service::Uid & service);
+         #endif //ANDROID
 
          /**
           * Destructor
@@ -156,8 +167,12 @@ namespace iviLink
          CService(const CService& rhs);
 
          // Members section
-         std::string                                  mXmlPath;         ///< path of XML location
          std::string                                  mManifestPath;    ///< path to XML manifest of Service
+         #ifndef ANDROID
+         std::string                                  mXmlPath;         ///< path of XML location
+         #else
+         iviLink::Android::AppInfo                    mAppInfo;
+         #endif //ANDORID
          iviLink::Service::Uid                        mUid;             ///< Service UID
          iviLink::Service::Uid                        mPairUid;         ///< Service pair UID
          tProfilesMap                                 mProfilesMap;     ///< Map with loaded profiles

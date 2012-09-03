@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -142,6 +144,7 @@ enum ERROR_CODE
    ERR_REASSIGN               = 12,
    ERR_XML_PARSING            = 13,
    ERR_RESEND_ACK             = 14,
+   ERR_DEFERRED               = 15,
    ERR_UNKNOWN                = 255
 };
 /**

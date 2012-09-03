@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -21,6 +21,8 @@
  * 
  * 
  */
+
+
 
 
 
@@ -57,6 +59,13 @@ namespace iviLink
          }
 
          mpIpc = new Ipc::CIpc(addr, *this);
+         
+         #ifndef ANDROID
+         #else
+         std::string dirPath = mConfig.getParam("path_to_database");
+         mProfileDB.setDatabasePath(dirPath);
+         mApiDB.setDatabasePath(dirPath);
+         #endif //ANDROID
       }
 
       CProfileRepoServerClb::~CProfileRepoServerClb()

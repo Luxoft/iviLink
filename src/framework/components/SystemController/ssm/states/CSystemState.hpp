@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,6 +30,8 @@
 
 
 
+
+
 #ifndef SYSTEMSTATE_HPP_
 #define SYSTEMSTATE_HPP_
 
@@ -37,6 +39,11 @@
 #include "framework/messageProtocol/SystemController_ChannelSupervisor/SystemController/ChannelSupervisorMsgProxy.hpp"
 #include "framework/messageProtocol/SystemController_ProfileManager/SystemController/ProfileManagerMsgProxy.hpp"
 #include <string>
+
+#ifndef ANDROID
+#else
+#include "utils/android/MakeRequest.hpp"
+#endif //ANDROID
 
 namespace SystemController
 {

@@ -1,6 +1,6 @@
 /* 
  * 
- * iviLINK SDK, version 1.0.1
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -30,6 +30,8 @@
 
 
 
+
+
 #include "CAppManConnectController.hpp"
 #include "CAppManProtoClient.hpp"
 #include "CAppManConnect.hpp"
@@ -49,10 +51,17 @@ namespace iviLink
       Logger CAppManConnectController::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("AppMan.Ipc.App.ConnectController"));
       CAppManConnectController * CAppManConnectController::mspInstance = 0;
 
+      #ifndef ANDROID
       CAppManConnectController::CAppManConnectController()
          : mpClient(new Ipc::CAppManProtoClient())
          , mpConnection(new Ipc::CAppManConnect(mpClient))
          , mpCore (new App::CCore())
+      #else
+      CAppManConnectController::CAppManConnectController(std::string launchInfo)
+         : mpClient(new Ipc::CAppManProtoClient())
+         , mpConnection(new Ipc::CAppManConnect(mpClient))
+         , mpCore (new App::CCore(launchInfo))
+      #endif //ANDROID
       {
          LOG4CPLUS_TRACE(msLogger,"CAppManConnectController()");
          assert(mpClient);
@@ -76,7 +85,11 @@ namespace iviLink
 
       static CMutex gInstanceMutex;
 
+      #ifndef ANDROID
       CAppManConnectController * CAppManConnectController::instance()
+      #else
+      CAppManConnectController * CAppManConnectController::instance(std::string launchInfo)
+      #endif //ANDROID
       {
          LOG4CPLUS_TRACE(msLogger,"instance()");
          if (!mspInstance)
@@ -84,7 +97,11 @@ namespace iviLink
             gInstanceMutex.lock();
             if (!mspInstance)
             {
+               #ifndef ANDROID
                mspInstance = new CAppManConnectController();
+               #else
+               mspInstance = new CAppManConnectController(launchInfo);
+               #endif //ANDROID
             }
             gInstanceMutex.unlock();
          }
@@ -123,6 +140,15 @@ namespace iviLink
       {
          LOG4CPLUS_TRACE(msLogger,"checkConnection()");
          return mpClient->checkConnection();
+      }
+
+      void CAppManConnectController::checkSessionRequest()
+      {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+         if (mpClient)
+         {
+            mpClient->checkSessionRequest();
+         }
       }
 
    }
