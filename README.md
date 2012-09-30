@@ -6,6 +6,6 @@ Please find the Quick Start Guide on the wiki (https://github.com/Luxoft/iviLink
 
 More useful information may be found on the wiki pages (https://github.com/Luxoft/iviLink/wiki) such as new build features, plans for future. 
 
-For development and testing convenience we have created virtual machine with Ubuntu and iviLink installed. It may be freely downladed. Here is the usage details: https://github.com/Luxoft/iviLink/wiki/Testing-with-Virtual-Machine
+For development and testing convenience we have created virtual machine with Ubuntu and iviLink installed. It may be freely downladed. Here are the usage details: https://github.com/Luxoft/iviLink/wiki/Testing-with-Virtual-Machine
 
 Even more details may be found on the Project web-site: http://www.ivilink.net
