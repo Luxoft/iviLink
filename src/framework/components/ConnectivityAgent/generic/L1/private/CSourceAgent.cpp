@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -45,8 +35,8 @@
  * Forward declaration includes
  *
  ********************************************************************/
-#include "framework/components/ConnectivityAgent/generic/common/Buffer.hpp"
-#include "framework/components/ConnectivityAgent/generic/L0/IBufferConsumer.hpp"
+#include "Buffer.hpp"
+#include "IBufferConsumer.hpp"
 
 /********************************************************************
  *
@@ -59,7 +49,7 @@
  * The other includes
  *
  ********************************************************************/
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
  
 using namespace iviLink::ConnectivityAgent::L1;
 Logger CSourceAgent::logger = Logger::getInstance(LOG4CPLUS_TEXT("ConnectivityAgent.L1.CSourceAgent"));
@@ -67,7 +57,7 @@ Logger CSourceAgent::logger = Logger::getInstance(LOG4CPLUS_TEXT("ConnectivityAg
 CSourceAgent::CSourceAgent(UInt32 channelID) :
    mChannelID(channelID), mpBufferConsumer(NULL)
 {
-   LOG4CPLUS_INFO(logger, "CSourceAgent::CSourceAgent(channelID = " + convertIntegerToString(channelID) + ")");
+   LOG4CPLUS_TRACE(logger, "CSourceAgent::CSourceAgent(channelID = " + convertIntegerToString(channelID) + ")");
    for (UInt32 i = 0; i < QUEUE_SIZE; ++i)
    {
       Buffer* buf = new Buffer();
@@ -77,6 +67,7 @@ CSourceAgent::CSourceAgent(UInt32 channelID) :
 
 CSourceAgent::~CSourceAgent()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    for (std::list<Buffer*>::iterator it = mBufferQueue.begin();
          it != mBufferQueue.end();
          ++it)
@@ -111,7 +102,7 @@ ERROR_CODE CSourceAgent::unregisterConsumer(IBufferConsumer* pConsumer)
 
 ERROR_CODE CSourceAgent::returnBufferBack(iviLink::ConnectivityAgent::Buffer* buffer)
 {
-   LOG4CPLUS_INFO(logger, "CSourceAgent::returnBufferBack " + convertIntegerToString((intptr_t)buffer));
+   LOG4CPLUS_TRACE(logger, "CSourceAgent::returnBufferBack " + convertIntegerToString((intptr_t)buffer));
    mBufferQueueMutex.lock();
    mBufferQueue.push_back(buffer);
    mBufferQueueMutex.unlock();

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-
-
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
+#include "CComponentLauncher.hpp"
+#include "CTriggerQueue.hpp"
+#include "CSystemStateMachine.hpp"
 #include "CPhysicalLayerReady.hpp"
 #include "CPhysicalLayerHandshakeDone.hpp"
 
@@ -62,7 +52,7 @@ CPhysicalLayerReady::~CPhysicalLayerReady()
 
 void CPhysicalLayerReady::onConnectivityAgentHandshakeDone(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onConnectivityAgentHandshakeDone()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CPhysicalLayerHandshakeDone::getInstance());
 

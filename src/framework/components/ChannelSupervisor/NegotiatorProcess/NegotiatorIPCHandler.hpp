@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NEGOTIATORIPCHANDLER_HPP_
 #define NEGOTIATORIPCHANDLER_HPP_
@@ -40,22 +29,24 @@
 #include <string>
 #include <sstream>
 
-#include "utils/xml/pugixml.hpp"
-#include "framework/components/ChannelSupervisor/common/CSError.hpp"
+#include "pugixml.hpp"
+#include "CSError.hpp"
+#include "NegotiatorStates.hpp"
 
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/ipc/CIpc.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
+#include "CSignalSemaphore.hpp"
+#include "CThread.hpp"
+#include "CMutex.hpp"
+#include "Types.hpp"
+#include "CIpc.hpp"
+#include "ICallbackHandler.hpp"
 
-#include "framework/components/ChannelSupervisor/Map/Map.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Map.hpp"
+#include "Logger.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 const char ipcNegotiatorId[] = "ipc-negotiator";
 
@@ -68,48 +59,55 @@ class NegotiatorIPCHandler: public iviLink::Ipc::ICallbackHandler
 {
 public:
 
-   NegotiatorIPCHandler(NegotiatorTube * tube, NegotiaterStates * states, std::string const& sock_addr);
+	NegotiatorIPCHandler(NegotiatorTube * tube, NegotiaterStates * states,
+			std::string const& sock_addr);
 
-   virtual ~NegotiatorIPCHandler();
+	virtual ~NegotiatorIPCHandler();
 
-   //IPC functionality
-   void IPCWait();
-   void IPCDisconnect();
-   bool IPCConnect();         //wait for incoming connection
-   virtual void OnConnection(iviLink::Ipc::DirectionID dirId){}
-   virtual void OnConnectionLost(iviLink::Ipc::DirectionID dirId);  //callback
-   virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
-               UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID dirId); //incoming data
+	//IPC functionality
+	void IPCWait();
+	void IPCDisconnect();
+	bool IPCConnect();         //wait for incoming connection
+	virtual void OnConnection(iviLink::Ipc::DirectionID dirId)
+	{
+	}
+	virtual void OnConnectionLost(iviLink::Ipc::DirectionID dirId);  //callback
+	virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+			UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID dirId); //incoming data
+	virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+			 iviLink::Ipc::DirectionID dirId);
 
-   void ProcessIPCClientMessage(std::string message, std::string & response);
+	void ProcessIPCClientMessage(std::string message, std::string & response);
 
-   CError NegotiateChannel(std::string tag, UInt32 &cid);
-   CError UpdateMap(std::string tag, UInt32 cid);
-   CError ChannelDeallocated(std::string tag, UInt32 cid);
-   void dismissSema();
+	CError NegotiateChannel(std::string tag, UInt32 &cid);
+	CError UpdateMap(std::string tag, UInt32 cid);
+	CError ChannelDeallocated(const UInt32 cid);
+	void dismissSema();
+
 private:
+	/**
+	 * Blocking call. Waits until there is the requested state for the specified tag in the
+	 * NegotiaterStates' map.
+	 * @param stateToWait state for the channel tag we are waiting for
+	 * @param tag channel tag
+	 * @param timeoutMillis will wait no longer than this time slot.
+	 */
+	void waitStateForTag(NegotiaterStates::STATE stateToWait, std::string tag,
+			UInt32 timeoutMillis);
 
-   enum State
-   {
-      IDLE,
-      NEGOTIATED,
-      COMPLETED
-   };
+	iviLink::Ipc::CIpc * m_ipc;            //ipc object
+	CSignalSemaphore m_connLostSem;    //ipc connection lost sema
+	iviLink::Ipc::MsgID m_id;             //ipc message id. is not used
+	CSignalSemaphore m_reqSem;         //sema: data is processed and response is sent
 
-   iviLink::Ipc::CIpc * m_ipc;            //ipc object
-   CSignalSemaphore  m_connLostSem;    //ipc connection lost sema
-   iviLink::Ipc::MsgID  m_id;             //ipc message id. is not used
-   CSignalSemaphore  m_reqSem;         //sema: data is processed and response is sent
+	NegotiatorTube * m_negotiatorTube; //tube 0
 
-   NegotiatorTube *  m_negotiatorTube; //tube 0
+	Map * m_map;            //map containing all the allocated channel ids and tags
 
-   Map *             m_map;            //map containing all the allocated channel ids and tags
+	NegotiaterStates* m_negotiatorStates;
 
-   NegotiaterStates* m_negotiatorStates;
-
-   State             m_state;
-   std::string       m_currentTag;
-   static Logger     msLogger;
+	std::string m_currentTag;
+	static Logger msLogger;
 };
 
 }  // namespace ChannelSupervisor

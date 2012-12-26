@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-
-
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
+#include "CComponentLauncher.hpp"
+#include "CTriggerQueue.hpp"
+#include "CSystemStateMachine.hpp"
 #include "CInitialState.hpp"
 #include "CPhysicalLayerReady.hpp"
 
@@ -61,20 +51,20 @@ CInitialState::~CInitialState()
 
 void CInitialState::launchPhysicalLayer(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "launchPhysicalLayer()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
-   #ifndef ANDROID
+#ifndef ANDROID
    CComponentLauncher::getInstance()->launchConnectivityAgent();
    stateMachine->connectConnectivityAgent();
-   #else
+#else
    stateMachine->connectConnectivityAgent();
    iviLink::Android::makeRequest(iviLink::Android::eLaunchAgent);
-   #endif //ANDROID
+#endif //ANDROID
 }
 
 void CInitialState::onConnectivityAgentAvailable(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onConnectivityAgentAvailable()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CPhysicalLayerReady::getInstance());
 

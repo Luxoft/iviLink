@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CIPCSOCKET_HPP_
 #define CIPCSOCKET_HPP_
@@ -55,9 +43,9 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/threads/CRWMutex.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CRWMutex.hpp"
+#include "CThread.hpp"
+#include "Logger.hpp"
 
 #include "CIpcError.hpp"
 #include "CIpc.hpp"
@@ -106,7 +94,6 @@ public:
    bool isConnected() const;
 
 
-
    bool checkThread() const;
 
    /**
@@ -147,7 +134,7 @@ public:
     * @retval ERROR_UNKNOWN_DIRECTION direction with specified @c dirId
     *    is unknown
     */
-   CError send(MsgID id, bool isRequest,
+   CError send(MsgID id, Type messageType,
       UInt8 const* pPayload, UInt32 payloadSize,
       DirectionID const * const pDirId);
 
@@ -158,7 +145,8 @@ private:
    {
       RECV_HEADER,     ///< receiving of header
       RECV_DATA_REQU,  ///< receiving of request
-      RECV_DATA_RESP   ///< receiving of response
+      RECV_DATA_RESP,   ///< receiving of response
+      RECV_DATA_TRIG,
    };
 
    /// Types of signals to working thread send through selfpipe
@@ -288,6 +276,13 @@ private:
     * @retval true otherwise. Always, if response is empty.
     */
    bool consumeResponseData();
+
+   /**
+    * Receives the trigger (asynchronous request) and passes it #mIpc and changes #mMode to header.
+    * @retval false if connection is lost and receive must be stopped
+    * @retval true otherwise
+    */
+   bool consumeTriggerData();
 
    /**
     * Receives data to #mpCurrentBuf

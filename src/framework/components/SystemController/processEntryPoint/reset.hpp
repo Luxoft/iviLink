@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef RESET_HPP
 #define RESET_HPP
+
+
+#define SIZE_OF_PIDOF_RET	15
+#define SIZE_OF_COMMAND_STR 33
 
 /**
  * Setup executable name for reset and stop procedure.
@@ -66,5 +63,26 @@ void hardReset(bool internal_reset);
  * @retval otherwise some error
  */
 int hardStop(bool internal_stop);
+
+/**
+ * Searches for running processes IVILinkSystemController and return number of
+ * runnign process with the same name.
+ */
+int getQuantityOfRunningIVILink();
+
+/**
+ * Searches for running iviLink processes and shutdown them.
+ */
+void shutdownIviProcesses();
+
+/**
+ * Searches for running process and shutdown it.
+ *
+ * @param proc_name - name of searching for shutdown process
+ *
+ * @retval true success
+ * @retval otherwise some error
+ */
+bool shutdownIviProcess(char* proc_name);
 
 #endif // RESET_HPP

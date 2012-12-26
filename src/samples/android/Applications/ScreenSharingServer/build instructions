@@ -1,0 +1,13 @@
+install sqlitegen_eclipse_site_0.1.18.jar as a software source and get all the stuff (see googlecode for android-vnc-viewer)
+
+add ZommerWithKeys to workspace
+
+Android demo build set-up:
+eclipse->java build path:
+Source: %ProjectFolder%/gen, %ProjectFolder%/src
+Projects: ZoomerWithKeys
+Libraries: com.antlersoft.android.db_0.1.6.jar, Android 2.2, Library Projects
+Order and Export: %ProjectFolder%/gen, %ProjectFolder%/src, Android 2.2, ZoomerWithKeys, Library Projects, com.antlersoft.android.db_0.1.6.jar
+
+SQLite gen annotation processing should be enabled for both projects
+

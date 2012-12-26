@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,28 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CHANNELSUPERVISORTUBE_H
 #define	CHANNELSUPERVISORTUBE_H
 
 #include <string>
-#include "utils/misc/Types.hpp"
-#include "framework/components/ChannelSupervisor/common/Common.hpp"
-#include "framework/components/ChannelSupervisor/common/CSError.hpp"
+#include "Types.hpp"
+#include "Common.hpp"
+#include "CSError.hpp"
 #include "IChannelSupervisorObserver.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 namespace iviLink
 {
@@ -49,13 +38,16 @@ namespace ChannelSupervisor
 
 /**
  * Negotiates channel id with other party and allocates the channel
- * @param observer	- registration of the observer for Channel supervisor events receiving
- * @param tag		- tag of the channel
- * @param channelId - channel id
+ * @param observer is registration of the observer for Channel supervisor events receiving
+ * @param tag is tag of the channel
+ * @param channelId is channel id
+ * @param priority is channel priority
  * @return CS_SUCCESS if channel successfully allocated, otherwise CS_ERR_OTHER
  */
-CError allocateChannel(IChannelSupervisorTubeObserver* observer, std::string tag,
-		UInt32 & channelId);
+CError allocateChannel(IChannelSupervisorTubeObserver* observer,
+                       std::string const& tag,
+                       UInt32 & channelId,
+                       TChannelPriority priority = ePlainData);
 
 /**
  * Deallocates the channel with the given id
@@ -63,7 +55,7 @@ CError allocateChannel(IChannelSupervisorTubeObserver* observer, std::string tag
  * @param tag		- tag of the channel
  * @return CS_SUCCESS if channel successfully deallocated, otherwise CS_ERR_OTHER
  */
-CError deallocateChannel(const UInt32 channelId, std::string tag);
+CError deallocateChannel(const UInt32 channelId);
 
 /**
  * Sends the data through the channel
@@ -73,7 +65,7 @@ CError deallocateChannel(const UInt32 channelId, std::string tag);
  * @param size		- data length
  * @return CS_SUCCESS if channel successfully sent, otherwise CS_ERR_OTHER
  */
-CError sendData(const UInt32 channelId, std::string tag, unsigned char const* data, UInt32 size);
+CError sendData(const UInt32 channelId, UInt8 const* data, const UInt32 size);
 
 /**
  * Receives the data from the channel
@@ -84,14 +76,14 @@ CError sendData(const UInt32 channelId, std::string tag, unsigned char const* da
  * @param maxSize		- size of the array the data will be read to
  * @return CS_SUCCESS if channel successfully read, otherwise CS_ERR_OTHER
  */
-CError receiveData(const UInt32 channelId, std::string tag, unsigned char * data,
-		UInt32 & receivedSize, UInt32 maxSize);
+CError receiveData(const UInt32 channelId, UInt8 * data, UInt32 & receivedSize,
+		const UInt32 maxSize);
 
 /**
  * Retrieve free size left in channel
  * @param channelId channel number
  * @param[out] freeSize free size left in channel. In case of error, value of
-    *    param is undefined.
+ *    param is undefined.
  * @retval NO_ERROR operation successful, result in @c freeSize param
  * @retval ERROR_OTHER something wrong
  */
@@ -103,32 +95,18 @@ CError getFreeSize(const UInt32 channelId, UInt32 & freeSize);
  * @param tag			- tag of the channel
  * @return CS_SUCCESS if channel successfully kicked, otherwise CS_ERR_OTHER
  */
-CError kickWatchdog(const UInt32 channelId, std::string tag);
+CError kickWatchdog(const UInt32 channelId, std::string const& tag);
 
 /**
- * Allocates the 0 channel
+ * Allocates the 256 channel
  * @param observer	- registration of the observer for Channel supervisor events receiving
  * @param tag		- tag of the channel
  * @return CS_SUCCESS if channel successfully allocated, otherwise CS_ERR_OTHER
  */
-CError allocateZeroChannel(IChannelSupervisorTubeObserver* observer, std::string tag);
+CError init(IChannelSupervisorTubeObserver* observer);
 
+bool isIdRestricted(const UInt32 numberToCheck);
 
-
-namespace UnstableAPI
-{
-
-/**
- * Returns type and adresses of underlying carrier.
- * @param[out] type
- * @param[out] localAddr
- * @param[out] remoteAddr
- * @retval NO_ERROR all ok
- * @retval ERROR_OTHER some error, parrameters were not changed
- */
-CError getConnectionAddr(std::string& type, std::string& localAddr, std::string& remoteAddr);
-
-} // namespace UnstableAPI
 } //namespace ChannelSupervisor
 } //namespace AXIS
 

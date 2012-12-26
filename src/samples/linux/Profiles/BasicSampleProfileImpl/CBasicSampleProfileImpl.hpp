@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CBASIC_SAMPLE_PROFILE_IMPL_HPP
 #define CBASIC_SAMPLE_PROFILE_IMPL_HPP
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 //profile library header, must be included
-#include "framework/public/profileLib/profileLib.hpp"
+#include "profileLib.hpp"
 //abstract profile API class header, must be included
-#include "samples/linux/Profiles/ProfileAPI/IBasicSampleProfileAPI.hpp"
+#include "IBasicSampleProfileAPI.hpp"
 
 //namespace required for reading data was sending by other side
 using iviLink::CBuffer;
@@ -90,20 +83,20 @@ class CBasicSampleProfileImpl: public IBasicSampleProfile_API
     * @param buffer - buffer with data
     * @return none
     */
-   virtual void bufferReceived(const tChannelId channel, CBuffer const& buffer);
+   virtual void onBufferReceived(const tChannelId channel, CBuffer const& buffer);
 
    /**
     * Callback that should be invoked when the channel is deleted
     * @param channel_id - channel ID
     * @return none
     */
-   virtual void channelDeletedCallback(const UInt32 channel_id);
+   virtual void onChannelDeleted(const UInt32 channel_id);
 
    /**
     * Callback that should be invoked when the connection is lost
     * @return none
     */
-   virtual void connectionLostCallback();
+   virtual void onConnectionLost();
 
    /**
     * Allocating channel

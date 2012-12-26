@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,35 +18,47 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
+
 import android.util.Log;
 import com.luxoft.ivilink.sdk.helpers.Common;
 
-/*
+/**
  * Encapsulates Application Manager
  */
 public class CApplicationManagerWrapper {
-	
+	static {
+		System.loadLibrary("ApplicationManager");
+	}
+
 	Thread mThread;
 	String mPathToDatabase;
 	AppLauncher mLauncher;
-	
-	public void start(String pathToDatabase, AppLauncher launcher){
+
+	/**
+	 * Start Application Manager
+	 * 
+	 * @param pathToDatabase
+	 *            path on device where the application manager database xml is
+	 *            located
+	 * @param launcher
+	 *            Instance of AppLauncher, used whenever an application is
+	 *            requested
+	 */
+	public void start(String pathToDatabase, AppLauncher launcher) {
 		mLauncher = launcher;
 		mPathToDatabase = pathToDatabase;
-		(mThread = new Thread(new Runnable(){
-			public void run(){
+		(mThread = new Thread(new Runnable() {
+			public void run() {
 				startAM(mPathToDatabase, mLauncher);
-				Log.e(Common.TAG+".ApplicationManager", "has died!");
+				Log.e(Common.TAG + ".ApplicationManager", "has died!");
 			}
 		})).start();
 	}
 
-	//code taken from AppMan/process/main.cpp
+	// code taken from AppMan/process/main.cpp
 	private native void startAM(String pathToDatabase, AppLauncher launcher);
 }

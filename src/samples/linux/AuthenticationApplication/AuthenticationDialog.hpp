@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAUTHENTICATION_DIALOG_HPP
 #define CAUTHENTICATION_DIALOG_HPP
@@ -36,19 +29,18 @@
 #include <QCloseEvent>
 #include <QTimer>
 #include "ui_auth.h"
-#include "samples/linux/AuthenticationApplication/CPINCode.hpp"
+#include "CPINCode.hpp"
 #else
-#include "utils/android/JniThreadHelper.hpp"
+#include "JniThreadHelper.hpp"
 #include <cassert>
 #include <jni.h>
 #endif //ANDROID
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 #include "AuthStates.hpp"
-#include "MutexLocker.hpp"
-#include "framework/messageProtocol/SystemController_Authentication/Authentication/SystemControllerMsgProxy.hpp"
-#include "framework/public/appLib/CApp.hpp"
-#include "samples/linux/Profiles/ProfileProxy/CAuthenticationProxy.hpp"
+#include "SystemControllerMsgProxy.hpp"
+#include "CApp.hpp"
+#include "CAuthenticationProxy.hpp"
 
 namespace authentication
 {
@@ -80,44 +72,50 @@ private:
 
 public:
 
-  #ifndef ANDROID
+#ifndef ANDROID
    AuthenticationDialog(QWidget *parent = 0);
 
    virtual void closeEvent(QCloseEvent *event);
-   #else
+#else
 
    AuthenticationDialog(iviLink::Android::AppInfo appInfo, JavaVM * pJm, jobject callbacksObj, std::string pathToTrlist);
 
-   #endif //ANDROID
+#endif //ANDROID
 
-   virtual void onRequestShutDown();
+   void init();
 
    /**
     * Callback is called after initing of app
     * @param launcher gives information who launched app (user of iviLink)
     */
-   virtual void initDone(iviLink::ELaunchInfo launcher);
+   virtual void onInitDone(iviLink::ELaunchInfo launcher);
 
    /**
     * Callback is called before loading incoming service
     * @param service is UID of service
     */
-   virtual void incomingServiceBeforeLoading(const iviLink::Service::Uid &service);
+   virtual void onIncomingServiceBeforeLoading(const iviLink::Service::Uid &service);
 
    /**
     * Callback is called after loading of incoming service
     */
-   virtual void incomingServiceAfterLoading(const iviLink::Service::Uid &service);
+   virtual void onIncomingServiceAfterLoading(const iviLink::Service::Uid &service);
 
    /**
     * Callback is called in case of and service session
     * @param service UID is uid of service
     */
-   virtual void serviceDropped(const iviLink::Service::Uid &service);
+   virtual void onServiceDropped(const iviLink::Service::Uid &service);
 
    virtual void handleError(CError const & error)
    {
-      LOG4CPLUS_INFO(sLogger,static_cast<std::string>(error));
+      LOG4CPLUS_ERROR(sLogger,static_cast<std::string>(error));
+   }
+
+
+  virtual std::string getInternalPath()
+   {
+      return mInternalPath;
    }
 
    virtual void gotPIN(int first_digit, int second_digit, int third_digit, int fourth_digit);
@@ -128,21 +126,22 @@ public:
 private:
    CAuthenticationProxy * mpAuthenticationProxy;
 
-  #ifndef ANDROID
+#ifndef ANDROID
   CPINCode sLocalPIN;
   CPINCode sRemotePIN;
   QDialog *msgBox;
   QWidget *msgBoxWidget;
   QWidget* mParent;
-  #else
+#else
   JavaVM * mpJm;
   jobject jAppCallbacks;
   iviLink::Android::AppInfo mAppInfo;
    
   std::string mPin;
   std::string theirPin;
-  std::string mPathToTrlist;
-  #endif
+#endif
+
+  std::string mInternalPath;
 
   bool checkPINs();
   int getIntFromStr(std::string str, int pos);
@@ -176,11 +175,7 @@ public:
   void okButtonClicked();
   void cancelButtonClicked();
   void callJavaMethod(const char * methodName);
-  void setPin(std::string pin);   
-  std::string getPathToTrlist()
-   {
-      return mPathToTrlist;
-   }
+  void setPin(std::string pin);  
 #endif //ANDROID
    
    

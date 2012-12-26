@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.authentication;
 
@@ -28,6 +27,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -44,6 +44,7 @@ import android.widget.Toast;
 import com.luxoft.ivilink.sdk.R;
 import com.luxoft.ivilink.sdk.android.lib.utils.ForApp;
 import com.luxoft.ivilink.sdk.helpers.Common;
+import com.luxoft.ivilink.sdk.helpers.StartupProgress;
 
 public class AuthenticationActivity extends Activity {
 
@@ -78,14 +79,12 @@ public class AuthenticationActivity extends Activity {
 			}
 		});
 	}
-	
-	public void hideDialog(){
-		poster.post(new Runnable(){
-			public void run(){
-				if(pinDialog!=null && pinDialog.isShowing()) pinDialog.dismiss();
-				Toast.makeText(AuthenticationActivity.this,
-						"Authentication successful! Waiting for OK from other side.", Toast.LENGTH_SHORT)
-						.show();
+
+	public void hideDialog() {
+		poster.post(new Runnable() {
+			public void run() {
+				if (pinDialog != null && pinDialog.isShowing())
+					pinDialog.dismiss();
 			}
 		});
 	}
@@ -97,27 +96,15 @@ public class AuthenticationActivity extends Activity {
 				Toast.makeText(AuthenticationActivity.this,
 						"PINs are not equal! Try again.", Toast.LENGTH_LONG)
 						.show();
-			}
-		});
-	}
-
-	public void shutDown() {
-		poster.post(new Runnable() {
-			public void run() {
-				if (pinDialog != null) {
-					if (pinDialog.isShowing())
-						pinDialog.dismiss();
-				}
-				Log.v(tag, "killing auth process");
-				android.os.Process.killProcess(android.os.Process.myPid());
+				connect.setEnabled(true);
 			}
 		});
 	}
 
 	public void lockText() {
 		Log.v(tag, "locking EditText");
-		poster.post(new Runnable(){
-			public void run(){
+		poster.post(new Runnable() {
+			public void run() {
 				// locking text for editing
 				eText.setFocusable(false);
 				eText.setKeyListener(null);
@@ -127,16 +114,20 @@ public class AuthenticationActivity extends Activity {
 				//
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(eText.getWindowToken(), 0);
-				Toast.makeText(AuthenticationActivity.this, "Waiting for PIN from other side!", Toast.LENGTH_LONG).show();
+				Toast.makeText(AuthenticationActivity.this,
+						"Waiting for PIN from other side!", Toast.LENGTH_LONG)
+						.show();
 			}
 		});
 	}
 
 	@Override
 	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);		
+		super.onCreate(icicle);
 		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.authLaunch));
+				StartupProgress.AUTHENTICATION.getMessage()).putExtra(
+				Common.progressValue,
+				StartupProgress.AUTHENTICATION.getProgress()));
 		ForApp.setWindowFlagsToKeepDeviceOn(this);
 
 		new Thread(new Runnable() {
@@ -145,10 +136,22 @@ public class AuthenticationActivity extends Activity {
 				start(ForApp.getServicePath(),
 						ForApp.getLaunchInfo(AuthenticationActivity.this),
 						ForApp.getInternalPath(AuthenticationActivity.this),
-						ForApp.getInternalPath(AuthenticationActivity.this) + "/trlist.db");
+						ForApp.getInternalPath(AuthenticationActivity.this));
 				Log.i(tag, "auth thread has finished");
 			}
 		}).start();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		Log.v(tag, "overriding onConfigurationChanged");
+		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 	public Dialog createEnterPinDialog() {
@@ -179,7 +182,7 @@ public class AuthenticationActivity extends Activity {
 
 		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
 				int arg3) {
-			/// empty stub
+			// / empty stub
 		}
 
 		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
@@ -193,25 +196,25 @@ public class AuthenticationActivity extends Activity {
 			switch (v.getId()) {
 			case R.id.cancel:
 				Log.v(tag, "Cancel clicked!");
-				new Thread(new Runnable(){
-					public void run(){
+				// may take some time to process
+				new Thread(new Runnable() {
+					public void run() {
 						cancelClicked();
-						Log.d(tag, "CancelClicked thread has finished");
+						Log.i(tag, "CancelClicked thread has finished");
 					}
 				}).start();
-				cancelClicked();
 				break;
 			case R.id.verify:
 				Log.v(tag, "OK clicked!");
-				new Thread(new Runnable(){
-					public void run(){
+				// may take some time to process
+				new Thread(new Runnable() {
+					public void run() {
 						connectClicked();
-						Log.d(tag, "ConnectClicked thread has finished");
+						Log.i(tag, "ConnectClicked thread has finished");
 					}
 				}).start();
 				break;
 			}
 		}
 	}
-
 }

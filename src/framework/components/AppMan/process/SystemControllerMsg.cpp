@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstdlib>
 #include <cassert>
 #include <unistd.h>
 
 #include "SystemControllerMsg.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
 
 namespace iviLink
 {
@@ -66,7 +56,7 @@ namespace iviLink
          if (!noError)
          {
             LOG4CPLUS_FATAL(msLogger, "Can't connect to system controller");
-            exit(1);
+            killProcess(1);
          }
       }
 
@@ -82,6 +72,23 @@ namespace iviLink
          return CError::NoError("","");
       }
 
-   }
+       using namespace std::tr1;
 
+       void SystemControllerMsg::setLinkCallbacks( function<void ()> link_up_,
+                                                     function<void ()> link_down_)
+       {
+           link_up= link_up_;
+           link_down= link_down_;
+       }
+
+       void SystemControllerMsg::onLinkUpNotification()
+       {
+           if( link_up ) link_up();
+       }
+
+       void SystemControllerMsg::onLinkDownNotification()
+       {
+           if( link_down ) link_down();
+       }
+   }
 }

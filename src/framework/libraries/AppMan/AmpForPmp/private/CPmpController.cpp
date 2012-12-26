@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CPmpController.hpp"
 #include "CAppManPmpIpcServer.hpp"
@@ -52,7 +41,7 @@ namespace iviLink
             : mpServer(new CAppManPmpIpcServer())
             , mpConnection(new CPmpConnection(mpServer))
          {
-            LOG4CPLUS_TRACE(msLogger,"CPmpController()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             assert(mpServer);
             assert(mpConnection);
 
@@ -62,7 +51,7 @@ namespace iviLink
 
          CPmpController::~CPmpController()
          {
-            LOG4CPLUS_TRACE(msLogger,"C~PmpController()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpServer->init(0,0);
             mpConnection->disconnect();
 
@@ -72,32 +61,32 @@ namespace iviLink
 
          CPmpController * CPmpController::instance()
          {
-            LOG4CPLUS_TRACE(msLogger,"instance()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             static CPmpController sInstance;
             return &sInstance;
          }
 
          IPmpHandler * CPmpController::pmpHandler()
          {
-            LOG4CPLUS_TRACE(msLogger,"pmpHandler()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return mpServer;
          }
 
          void CPmpController::init(IPmpRequest * pRequest, IPmpConnectionStatus * pConnectionStatus)
          {
-            LOG4CPLUS_TRACE(msLogger,"init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpServer->init(pRequest,pConnectionStatus);
          }
 
          void CPmpController::uninit()
          {
-            LOG4CPLUS_TRACE(msLogger,"uninit()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             init(0,0);
          }
 
          bool CPmpController::checkConnection() const
          {
-            LOG4CPLUS_TRACE(msLogger,"checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return mpServer->checkConnection();
          }
 

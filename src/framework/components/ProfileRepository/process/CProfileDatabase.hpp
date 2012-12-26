@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPROFILEDATABASE_HPP_
 #define CPROFILEDATABASE_HPP_
@@ -39,9 +28,9 @@
 #include <map>
 #include <list>
 
-#include "utils/misc/Logger.hpp"
-#include "framework/components/ProfileRepository/CProfileRepoError.hpp"
-#include "framework/components/ProfileRepository/RepoTypes.hpp"
+#include "Logger.hpp"
+#include "CProfileRepoError.hpp"
+#include "RepoTypes.hpp"
 #include "CProfileInfo.hpp"
 
 class CMutex;
@@ -149,13 +138,13 @@ namespace iviLink
          void printDB();
          
          
-         #ifndef ANDROID
-         #else
+#ifndef ANDROID
+#else
          /**
           * @param path - absolute path to database on device
           */
          void setDatabasePath(std::string path);
-         #endif
+#endif
 
       private:
          /**
@@ -183,10 +172,10 @@ namespace iviLink
          int getRelevance(const CProfileInfo & proInfo, const std::map<std::string, std::string> & profileArguments);
 
          std::string mDBPath;                   /// path to Database
-         #ifndef ANDROID
-         #else
+#ifndef ANDROID
+#else
          std::string mDirPath;                  /// contains directory where the Database is
-         #endif //ANDROID
+#endif //ANDROID
          std::map<UID,CProfileInfo> mProfiles;  /// map with CProfileInfo structures that have all needed information about profiles
          EDatabaseState mDBState;               /// state of database
          CMutex * mpDbMutex;                    /// mutex for file operations

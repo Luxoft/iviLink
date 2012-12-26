@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #ifndef CMEDIASTREAMINGSERVERPROFILEPROXY_HPP
 #define CMEDIASTREAMINGSERVERPROFILEPROXY_HPP
 
 #include <iostream>
-#include "samples/linux/Profiles/ProfileAPI/IMediaStreamingServerProfileAPI.hpp"
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+
+#include "IMediaStreamingServerProfileAPI.hpp"
+#include "CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IMediaStreamingServerProfile_API
 #define CURRENT_PROFILE_PROXY CMediaStreamingServerProfileProxy

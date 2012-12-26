@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,81 +18,85 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
+#include <strings.h>
+#include "ChannelSupervisorTube.hpp"
 #include "NegotiatorTube.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/misc/logging.hpp"
+#include "Types.hpp"
 
 using namespace iviLink::ChannelSupervisor;
 
-Logger NegotiatorTube::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("NegotiatorProcess.NegotiatorTube"));
+Logger NegotiatorTube::msLogger = Logger::getInstance(
+        LOG4CPLUS_TEXT("NegotiatorProcess.NegotiatorTube"));
 
 void NegotiatorTube::sendDataTube(const char * data)
 {
-   m_sender->sendDataRemote(data);
+    m_sender->sendDataRemote(data);
 }
 
-void NegotiatorTube::dataReceivedCallback(const unsigned int channel_id, const unsigned int read_size)
+void NegotiatorTube::onDataReceived(const unsigned int channel_id, const unsigned int read_size)
 {
-   assert(channel_id == CS_SERVICE_CHANNEL );
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::dataReceivedCallback()=> channel"
-            +convertIntegerToString(channel_id) + "size"+convertIntegerToString(read_size));
+    assert(channel_id == CS_SERVICE_CHANNEL);
+    LOG4CPLUS_TRACE(msLogger,
+            "NegotiatorTube::onDataReceived()=> channel" + convertIntegerToString(channel_id)
+                    + "size" + convertIntegerToString(read_size));
 
-   UInt8 * data = new UInt8[read_size];
-   memset(data, 0, read_size);
-   
-   unsigned int receivedSize = 0;
-   
-   std::string tag = "Channel supervisor";
+    UInt8 * data = new UInt8[read_size];
+    bzero(data, read_size);
 
-   CError err = iviLink::ChannelSupervisor::receiveData(channel_id, tag, data, receivedSize, read_size);
+    unsigned int receivedSize = 0;
 
-   if (err.isNoError())
-   {
-      m_negotiatorStates->ProcessTubeNotification(data);
-   }
-   else
-   {
-      LOG4CPLUS_WARN(msLogger, "NegotiatorTube::bufferOverflowCallback()=> fail: " + static_cast<std::string>(err));
-   }
+    CError err = iviLink::ChannelSupervisor::receiveData(channel_id, data, receivedSize, read_size);
 
-   delete [] data;
+    if (err.isNoError())
+    {
+        m_negotiatorStates->ProcessTubeNotification(data);
+    } else
+    {
+        LOG4CPLUS_WARN(msLogger,
+                "NegotiatorTube::bufferOverflowCallback()=> fail: "
+                        + static_cast<std::string>(err));
+    }
+
+    if (err.isNoError())
+    {
+        m_negotiatorStates->ProcessTubeNotification(data);
+    } else
+    {
+        LOG4CPLUS_WARN(msLogger,
+                "NegotiatorTube::bufferOverflowCallback()=> fail: "
+                        + static_cast<std::string>(err));
+    }
+
+    delete[] data;
 }
 
-void NegotiatorTube::bufferOverflowCallback(const unsigned int channel_id)
+void NegotiatorTube::onBufferOverflow(const unsigned int channel_id)
 {
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::bufferOverflowCallback()=> channel"
-         +convertIntegerToString(channel_id));
+    LOG4CPLUS_TRACE(msLogger,
+            "NegotiatorTube::bufferOverflowCallback()=> channel"
+                    + convertIntegerToString(channel_id));
 }
 
-void NegotiatorTube::channelDeletedCallback(const unsigned int channel_id)
+void NegotiatorTube::onChannelDeleted(const unsigned int channel_id)
 {
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::channelDeletedCallback()=> channel"
-         +convertIntegerToString(channel_id));
+    LOG4CPLUS_TRACE(msLogger,
+            "NegotiatorTube::channelDeletedCallback()=> channel"
+                    + convertIntegerToString(channel_id));
 }
 
-void NegotiatorTube::connectionLostCallback()
+void NegotiatorTube::onConnectionLost()
 {
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::connectionLostCallback()");
-   mpMsgProxy->sendConnectionLost();
+    LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::connectionLostCallback()");
+    mpMsgProxy->sendConnectionLost();
 }
 
-void NegotiatorTube::Sender::sendDataRemote(std::string data)
+void NegotiatorTube::Sender::sendDataRemote(std::string const& data)
 {
-   LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::sendDataRemote()");
-   iviLink::ChannelSupervisor::sendData(m_CSChannelID, m_CSTag, (UInt8 *) data.c_str(), data.length());
+    LOG4CPLUS_TRACE(msLogger, "NegotiatorTube::sendDataRemote()");
+    iviLink::ChannelSupervisor::sendData(m_CSChannelID,
+            reinterpret_cast<UInt8*>(const_cast<char*>(data.c_str())), data.length());
 }

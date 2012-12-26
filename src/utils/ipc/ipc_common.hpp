@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IPCLIB_COMMON_HPP_
 #define IPCLIB_COMMON_HPP_
 
 #include <string>
-#include "utils/misc/Types.hpp"
+#include "Types.hpp"
 
 namespace iviLink {
 namespace Ipc {
@@ -46,6 +35,14 @@ typedef UInt32 MsgID; ///< Type for message IDs
 typedef std::string Address; ///< Type for address
 
 typedef Int32 DirectionID;	///< Type for direction IDs
+
+
+enum Type
+{
+    REQUEST = 1,
+    RESPONSE,
+    TRIGGER, //async request
+};
 
 }  // namespace Ipc
 }  // namespace AXIS

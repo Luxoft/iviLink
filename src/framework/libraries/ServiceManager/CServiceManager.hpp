@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CSERVICE_MANAGER_HPP
 #define CSERVICE_MANAGER_HPP
@@ -43,16 +33,13 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/threads/CMutex.hpp"
-#include "framework/components/ProfileManager/PMAL/IProfileManagersCallbacks.hpp"
-#include "common.hpp"
-#include "framework/public/appLib/common.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CMutex.hpp"
+#include "IProfileManagersCallbacks.hpp"
+#include "ServiceManagerCommon.hpp"
+#include "AppLibCommon.hpp"
+#include "Logger.hpp"
 
-#ifndef ANDROID
-#else
-#include "utils/android/AppInfo.hpp"
-#endif //ANDROID
+#include "AppInfo.hpp"
 
 namespace iviLink
 {
@@ -111,11 +98,9 @@ namespace iviLink
           * Interface function to provide sigleton behavior
           * @return pointer to existing instance of singleton and creates it if not exists
           */
-         #ifndef ANDROID
-         static CServiceManager* getInstance();
-         #else
-         static CServiceManager* getInstance(iviLink::Android::AppInfo appInfo);
-         #endif
+
+         static CServiceManager* getInstance(
+                       iviLink::Android::AppInfo appInfo = iviLink::Android::AppInfo());
 
          /**
           * Interface function to destroy the singleton instance
@@ -207,11 +192,7 @@ namespace iviLink
          /**
           * Constructor is private to provide singleton behavior
           */
-         #ifndef ANDROID
-         CServiceManager();
-         #else
-         CServiceManager(iviLink::Android::AppInfo appInfo);
-         #endif
+         CServiceManager(iviLink::Android::AppInfo appInfo = iviLink::Android::AppInfo());
 
          /**
           * Destructor
@@ -227,11 +208,7 @@ namespace iviLink
           * Inits PMAL (Profile Manager Application Library)
           * @return CError::NoError() if success
           */
-         #ifndef ANDROID
          CError initPmal();
-         #else
-         CError initPmal(std::string launchInfo);
-         #endif
 
          /**
           * Function is used in case of incoming service request
@@ -258,6 +235,8 @@ namespace iviLink
           */
          CServiceManager& operator=(const CServiceManager& );
 
+         bool isServiceAlreadyLoaded(const Service::Uid & service);
+
       private:
 
          // Members section
@@ -271,11 +250,9 @@ namespace iviLink
          CMutex                     mActiveServicesMutex;   ///< mutex for map of active services
          tCallbacksMap              mCallbacks;             ///< map with profile callbacks
          CMutex                     mCallbacksMutex;        ///< mutex for map with profile callbacks
-         #ifndef ANDROID
          std::string                mXmlPath;               ///< path to folder with service manager XMLs
-         #else
          iviLink::Android::AppInfo  mAppInfo;
-         #endif //ANDROID
+         
       };
    }
 }

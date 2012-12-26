@@ -14,7 +14,7 @@
          <services>
             <service uid="AuthenticationService" />
          </services>
-      </app>
+      </app>      
       <app>
          <launch-info>./Climate_App</launch-info>
          <services>
@@ -25,6 +25,24 @@
          <launch-info>./Seat_App</launch-info>
          <services>
             <service uid="SeatService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./NaviClient</launch-info>
+         <services>
+            <service uid="NavigationVoiceService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./MediaApp</launch-info>
+         <services>
+            <service uid="MediaService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>./ScreenSharingViewer</launch-info>
+         <services>
+            <service uid="ScreenSharingViewerService" />
          </services>
       </app>
    </applications>

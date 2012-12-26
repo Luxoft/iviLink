@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -43,7 +41,19 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := $(PROFILE_MANAGER_PROCESS_NAME)
 
-INCLUDES      := 
+PMP_DIR		    := $(ROOT_DIR)framework/components/ProfileManager/PMP/
+
+INCLUDES      += 
+INCLUDES      += -I$(PMP_DIR)componentManager/
+INCLUDES      += -I$(PMP_DIR)core/
+INCLUDES      += -I$(ROOT_DIR)framework/messageProtocol/
+INCLUDES      += -I$(ROOT_DIR)framework/messageProtocol/SystemController_ProfileManager/
+INCLUDES      += -I$(ROOT_DIR)framework/messageProtocol/SystemController_ProfileManager/ProfileManager/
+INCLUDES      += -I$(PMP_DIR)componentManager/
+INCLUDES      += -I$(UTILS_DIR)configurator/
+INCLUDES      += -I$(ROOT_DIR)framework/libraries/AppMan/Pmp/
+INCLUDES      += -I$(UTILS_DIR)ipc/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 LDFLAGS       := $(GLOBAL_LDFLAGS)
 

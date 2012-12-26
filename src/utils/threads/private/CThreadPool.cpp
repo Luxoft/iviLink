@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -67,7 +57,6 @@ CThreadPool::CThreadPool(UInt32 num_threads): mAvailableJobs(0)
       char name[20] = "";
       sprintf(name, "WorkerThread %d", i);
       CWorkerThread* worker = new CWorkerThread(name,&mAvailableJobs, &mJobMutex, &mJobQueue);
-      worker->start();
       mThreadsQueue.push_back(worker);
    }
 }
@@ -115,7 +104,9 @@ CThreadPool::CWorkerThread::CWorkerThread(const char* pName,CSignalSemaphore * s
    mpJobMutex(jobMutex),
    mpJobQueue(jobQueue)
 {
-   LOG4CPLUS_TRACE(logger, "CWorkerThread::CWorkerThread()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   start();
+   mStartSemaphore.wait();
 }
 
 CThreadPool::CWorkerThread::~CWorkerThread()
@@ -126,6 +117,7 @@ CThreadPool::CWorkerThread::~CWorkerThread()
 void CThreadPool::CWorkerThread::threadFunc()
 {
    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   mStartSemaphore.signal();
    while (false == getStopFlag())
    {
       mpAvailableJobs->wait();

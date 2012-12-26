@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,27 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstdio>
 #include <cstdlib>
 #include <getopt.h>
 #include <unistd.h>
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
-
-#include "utils/misc/Logger.hpp"
-
+#include "Logger.hpp"
+#include "CSystemStateMachine.hpp"
+#include "CComponentLauncher.hpp"
 #include "reset.hpp"
+//void startSplashScreenProcess();
 
 using namespace SystemController;
 
@@ -94,11 +84,26 @@ int main(int argc, char* argv[])
          return hardStop(false);
       case 'n':
          authOn = false;
+		 LOG4CPLUS_INFO(logger, "SplashScreen started");
+         CComponentLauncher::getInstance()->launchSplashScreen();
          break;
       case '?':
          LOG4CPLUS_WARN(logger, "Wrong input");
          return 0;
       case -1:
+         if ( argc == 1 )
+         {
+            if (getQuantityOfRunningIVILink() == 1)
+            {
+               CComponentLauncher::getInstance()->launchSplashScreen();
+               LOG4CPLUS_INFO(logger, "SplashScreen started");
+            }
+            else
+            {
+               LOG4CPLUS_INFO(logger, "Resetting, stopping existing daemon");
+               hardReset(false);
+            }
+         }               
          break;
       }
    }
@@ -117,3 +122,21 @@ int main(int argc, char* argv[])
 
    return 0;
 }
+
+/*Launch SplashScreen process
+return SplashScreen pid
+*/
+/*void startSplashScreenProcess()
+{
+	Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("systemController.main.startSplashScreenProcess"));
+	pid_t pid;
+	if ((pid = fork()) < 0)
+	{
+    	LOG4CPLUS_ERROR(logger, "fork process error");
+	}
+	else if (pid == 0) 
+	{
+		execv("IVILinkProgressBar", NULL);
+	}
+}*/
+

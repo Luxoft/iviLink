@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cstring>
@@ -35,15 +28,15 @@
 #include <string>
 #include <tr1/array>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/threads/CSignalSemaphoreInterproc.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CThreadPool.hpp"
+#include "Logger.hpp"
+#include "CSignalSemaphore.hpp"
+#include "CSignalSemaphoreInterproc.hpp"
+#include "CMutex.hpp"
+#include "CThreadPool.hpp"
 
 
-#include "framework/components/ConnectivityAgent/generic/common/IChannelObserver.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/API.hpp"
+#include "IChannelObserver.hpp"
+#include "API.hpp"
 
 #define ASSERT_CERROR(err)                              \
    do { if (!err.isNoError()) {                         \
@@ -410,7 +403,6 @@ int main(int argc, char** argv)
    Test::mpSrvSyncSem = new CSignalSemaphoreInterproc("/connectivity_agent_test_server");
 
 
-   
    // {
    //    MultipleOpenCloseTest test; test.go();
    // }

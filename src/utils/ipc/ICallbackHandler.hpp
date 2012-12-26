@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ICALLBACKHANDLER_HPP_
 #define ICALLBACKHANDLER_HPP_
 
-#include "utils/misc/Types.hpp"
+#include "Types.hpp"
 #include "ipc_common.hpp"
 
 namespace iviLink {
@@ -97,6 +86,10 @@ public:
    virtual void OnRequest(iviLink::Ipc::MsgID id, 
       UInt8 const* pPayload, UInt32 payloadSize, 
       UInt8* const pResponseBuffer, UInt32& bufferSize,
+      DirectionID dirId) = 0;
+
+   virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, 
+      UInt8 const* pPayload, UInt32 payloadSize, 
       DirectionID dirId) = 0;
 
 protected:

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,27 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CCORE_HPP_
 #define CCORE_HPP_
 
-#include "utils/misc/Logger.hpp"
+#include "AppInfo.hpp"
+#include "Logger.hpp"
 #include "IAppMan.hpp"
 #include "IAppManHandler.hpp"
-#include "framework/libraries/AppMan/AmpForApp/IAppManProto.hpp"
-#include "framework/libraries/AppMan/AmpForApp/IAppManProtoAmpToApp.hpp"
+#include "IAppManProto.hpp"
+#include "IAppManProtoAmpToApp.hpp"
 
 namespace iviLink
 {
@@ -60,11 +50,7 @@ namespace iviLink
             /**
              * Constructor
              */
-            #ifndef ANDROID
-            CCore();
-            #else
-            CCore(std::string launchInfo);
-            #endif //ANDROID
+            CCore(Android::AppInfo appInfo);
 
             /**
              * Virtual destructor
@@ -82,6 +68,8 @@ namespace iviLink
              * @param pProto is pointer to IPC protocol object
              */
             void initIpc(iviLink::AppMan::Ipc::IAppManProto * pProto);
+
+            void init_callbacks(notify_t link_up, notify_t link_down);
 
             /**
              * Uninits core
@@ -123,12 +111,19 @@ namespace iviLink
              */
             virtual CError getAppLaunchInfo(pid_t pid, std::string & launchInfo);
 
+             // connectivity
+             bool isLinkAlive();
+             // connectivity callbacks
+             void onLinkUpNotify();
+             void onLinkDownNotify();
+
+             void setLinkCallbacks( notify_t link_up_, notify_t link_down_ );
             /**
              * Function returns full name of app in filesystem
              */
-            #ifndef ANDROID
+#ifndef ANDROID
             void getExeName();
-            #endif //ANDROID - won't work on android as it will always return zygote's name and not app's name,
+#endif //ANDROID - won't work on android as it will always return zygote's name and not app's name,
                    // that's why we pass the launch string explicitly
 
             IAppManHandler * mpHandler;                  ///< Pointer to handler of incoming requests
@@ -137,6 +132,9 @@ namespace iviLink
             std::string mLaunchInfo;                     ///< this string contains launch information
 
             static Logger msLogger;                       ///< object of logger
+
+             notify_t link_up, link_down;
+
          };
 
       }

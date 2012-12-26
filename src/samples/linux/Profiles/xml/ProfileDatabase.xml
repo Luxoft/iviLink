@@ -7,6 +7,12 @@
 		</libs>
 	</profile>
 	<profile>
+		<manifest-path>NaviReceiverProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="Profiles/NaviReceiver/libNaviReceiverProfileImpl.so" />
+		</libs>
+	</profile>
+	<profile>
 		<manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
 		<libs>
 			<lib platform="Ubuntu" path="Profiles/AuthenticationProfileImpl/libAuthenticationProfileImpl.so" />
@@ -74,6 +80,12 @@
       <manifest-path>MediaSourceServerProfile_Impl.xml</manifest-path>
       <libs>
          <lib platform="Ubuntu" path="Profiles/MediaSourceServerProfile/libMediaSourceServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>ScreenSharingProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="Profiles/ScreenSharingProfileImpl/libScreenSharingProfileImpl.so" />
       </libs>
    </profile>
 </profiles>

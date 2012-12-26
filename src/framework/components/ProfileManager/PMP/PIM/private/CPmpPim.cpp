@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <unistd.h>
@@ -42,14 +30,14 @@
 #include "helpers.hpp"
 #include "CClientAppRegistry.hpp"
 
-#include "framework/components/ProfileManager/PMP/interaction/IPmpPimProtocol.hpp"
-#include "framework/components/ProfileManager/PMP/ipc_protocol/IPMPIpcToPIM.hpp"
+#include "IPmpPimProtocol.hpp"
+#include "IPMPIpcToPIM.hpp"
 
-#include "framework/components/ProfileManager/PMP/componentManager/CPmpComponentManager.hpp"
+#include "CPmpComponentManager.hpp"
 
-#include "framework/libraries/AppMan/Pmp/IPmpRequest.hpp"
+#include "IPmpRequest.hpp"
 
-#include "utils/threads/CThreadPool.hpp"
+#include "CThreadPool.hpp"
 
 namespace iviLink {
 namespace PMP {
@@ -105,7 +93,6 @@ public:
       pim->processIncomingProfile(data->mAppId, data->mProfileUid, data->mPiuid, data->mSid);
    }
 };
-
 
 
 void CPmpPim::generatePIUID(iviLink::Profile::IUid& piuid,
@@ -327,7 +314,6 @@ void CPmpPim::unloadInstances(Profile::Uid const& profileId)
       if (!err.isNoError())
       {
          /// @todo error check
-         LOG4CPLUS_INFO(msLogger, "todo: error check");
          LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
       }
 
@@ -337,7 +323,6 @@ void CPmpPim::unloadInstances(Profile::Uid const& profileId)
          if (!err.isNoError())
          {
             /// @todo error check
-            LOG4CPLUS_INFO(msLogger, "todo: error check");
             LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
          }
       }
@@ -346,7 +331,6 @@ void CPmpPim::unloadInstances(Profile::Uid const& profileId)
       if (!err.isNoError())
       {
          /// @todo error check
-         LOG4CPLUS_INFO(msLogger, "todo: error check");
          LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
       }
    }
@@ -370,7 +354,6 @@ void CPmpPim::onCreateProfile(iviLink::Profile::Uid const& profileUid,
    CUid appId;
 
    /// @todo implement proper solution
-   LOG4CPLUS_INFO(msLogger, "todo implement proper solution");
 
    CSignalSemaphore semTimer;
    bool havePending = false;

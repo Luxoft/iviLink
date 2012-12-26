@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,46 +18,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.helpers;
+
 /*
  * contains String constants
  */
 public class Common {
-	public static String serviceBR; // = "launch"; //TODO generate this on start
-	/* constants for broadcast receiver - see CSystemController.java */
-	public static final String component = "component";
-	public static final String componentNameProfMan = "profilemanager";
-	public static final String componentNameAppMan = "appman";
-	public static final String componentNameProfRepo = "profilerepo";
-	public static final String componentNameConnAgnt = "connectivityagent";
-	public static final String componentNameChanSuperv = "channelsupervisor";
-	
+	public static String serviceBR;
+
 	public static final String misc = "misc";
 	public static final String reset = "reset";
 	public static final String idle = "ok";
 	public static final String shutdown = "shutdown all"; // for internal use
-	
-	
-	/*CSystemController's class name*/
+
+	/* CSystemController's class name */
 	public static String serviceClassName = null;
-	
+
 	// protocol between SystemControllerService and LauncherActivity
-	public static final String ifProgress = "show progress dialog";
+	// intent extra tags
 	public static final String message = "message";
-	public static final String conAgntLaunch = "Started ConnectivityAgent...";
-	public static final String negLaunch = "Started Negotiator...";
-	public static final String profmanLaunch = "Started Profile Manager...";
-	public static final String profrepoLaunch = "Started Profile Repository...";
-	public static final String appmanLaunch = "Started Application Manager...";
-	public static final String authLaunch = "Started Authentication...";
-	public static final String doneLaunch = "All done! iviLink is ready!";	
+	public static final String progressValue = "progress";
+	// intent filter
+	public static final String ifProgress = "show progress dialog";
+	// messages
+	public static final String doneLaunch = "All done! iviLink is ready!";
 	public static final String resetDialog = "show dialog";
-	
-	//TAG
+
+	// TAG
 	public static final String TAG = "iviLink.SystemController.";
 }

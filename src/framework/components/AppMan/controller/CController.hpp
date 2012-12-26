@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,28 +18,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CCONTROLLER_HPP_
 #define CCONTROLLER_HPP_
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 #ifndef ANDROID
 #else
 #include <jni.h>
 #endif //ANDROID
+
+#include <tr1/functional>
 
 namespace iviLink
 {
@@ -80,16 +71,20 @@ namespace iviLink
             /**
              * Function is used to init AMP
              */
-            #ifndef ANDROID
+#ifndef ANDROID
             void init();
-            #else
+#else
             void init(std::string pathToDatabase, JavaVM * jm, jclass launchClass, jmethodID launchMethod);
-            #endif //ANDROID
-            
+#endif //ANDROID
+
             /**
              * Function is used to make uninit AMP
              */
             void uninit();
+
+          void setLinkStateGetter( std::tr1::function<bool ()> getter );
+          void onLinkUpNotify();
+          void onLinkDownNotify();
 
          private:
             CAppComThread * mpAppComThread; ///< Pointer to object of AppComThread class instance
@@ -100,6 +95,7 @@ namespace iviLink
             CRequestHandler * mpRequestHandler; ///< Pointer to request handler instance
 
             static Logger msLogger; ///< object of logger
+
       };
 
    } /* namespace AMP */

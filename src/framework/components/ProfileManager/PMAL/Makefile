@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -45,7 +43,23 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libPMAL.a
 
-INCLUDES      := -I.
+PMAL_DIR	  := $(ROOT_DIR)framework/components/ProfileManager/PMAL/
+FW_DIR		  := $(ROOT_DIR)framework/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(PMAL_DIR)
+INCLUDES      += -I$(PMAL_DIR)PIM/
+INCLUDES      += -I$(PMAL_DIR)core/
+INCLUDES      += -I$(PMAL_DIR)ipc_protocol/
+INCLUDES      += -I$(UTILS_DIR)configurator/
+INCLUDES      += -I$(PMAL_DIR)PIM/private/
+INCLUDES      += -I$(FW_DIR)components/ProfileManager/
+INCLUDES      += -I$(FW_DIR)public/appLib/
+INCLUDES      += -I$(FW_DIR)libraries/AppMan/App/
+INCLUDES      += -I$(UTILS_DIR)android/
+INCLUDES      += -I$(UTILS_DIR)ipc/
+INCLUDES      += -I$(UTILS_DIR)ipc/helpers/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 
 ###############################################################################

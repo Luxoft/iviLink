@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,75 +18,60 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CHANNEL_SUPERVISOR_TUBE_H
 #define CHANNEL_SUPERVISOR_TUBE_H
 
 #include <string>
-#include "framework/components/ChannelSupervisor/common/Common.hpp"
-
-
+#include "Common.hpp"
 
 namespace iviLink
 {
-   namespace ChannelSupervisor
-   {
-      /// IChannelSupervisorTubeObserver interface
-      /**
-      * Proxy uses this observer interface to send the data flow control callbacks to the client.
-      * each call back should be implemented by the client
-      */
-      class IChannelSupervisorTubeObserver
-      {
-      public:
-         /**
+
+namespace ChannelSupervisor
+{
+/// IChannelSupervisorTubeObserver interface
+/**
+ * Proxy uses this observer interface to send the data flow control callbacks to the client.
+ * each call back should be implemented by the client
+ */
+class IChannelSupervisorTubeObserver
+{
+public:
+    /**
           * Callback informing client the data is ready to be received by the the client.
           * @param channelId id of the channel from where data may be read
           * @param readSize data size available for read
           * @param freeSize free size left
           */
-         virtual void dataReceivedCallback(const unsigned int channelId, const unsigned int readSize) = 0;
+         virtual void onDataReceived(const unsigned int channelId, const unsigned int readSize) = 0;
 
          /**
          * Callback indicating channel buffer overflow.
          * @param channelId channel number which data has been lost
          */
-         virtual void bufferOverflowCallback(const unsigned int channelId) = 0;
+         virtual void onBufferOverflow(const unsigned int channelId) = 0;
 
          /**
           * Callback indicating channel is deleted
           * @param channelId channel number which has been deallocated
           */
-         virtual void channelDeletedCallback(const unsigned int channelId) = 0;
+         virtual void onChannelDeleted(const unsigned int channelId) = 0;
 
          /**
           * Callback indicating connection between devices is lost
           * @param channelId channel number which has been deallocated
           */
-         virtual void connectionLostCallback() = 0;
+         virtual void onConnectionLost() = 0;
 
-      protected:
-         virtual ~IChannelSupervisorTubeObserver()
-         {
-         }
-      };
-   }
-}
-
-
+protected:
+    virtual ~IChannelSupervisorTubeObserver()
+    {
+    }
+};
+} // namespace ChannelSupervisor
+} // namespace iviLink
 
 #endif //CHANNEL_SUPERVISOR_TUBE_H
-

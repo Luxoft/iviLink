@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <Button
+        android:id="@+id/refresh"
+        android:layout_width="40dip"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:alpha=".3"
+        android:background="@android:color/darker_gray"
+        android:text="\u27F2"
+        android:textColor="@android:color/white"
+        android:textSize="20dip"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="0px"
+        android:layout_height="fill_parent"
+        android:layout_toLeftOf="@+id/forward"
+        android:layout_toRightOf="@id/refresh" />
+
+    <Button
+        android:id="@+id/forward"
+        android:layout_width="40dip"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:alpha=".3"
+        android:background="@android:color/darker_gray"
+        android:gravity="center"
+        android:text=">>"
+        android:textColor="@android:color/white"
+        android:textSize="25dip"
+        android:textStyle="bold" />
+
+</RelativeLayout>

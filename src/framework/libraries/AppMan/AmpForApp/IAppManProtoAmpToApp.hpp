@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,37 +18,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IAPPMANPROTOAMPTOAPP_HPP_
 #define IAPPMANPROTOAMPTOAPP_HPP_
 
 #include <sys/types.h>
 
-#include "utils/misc/UID.hpp"
-#include "utils/misc/CError.hpp"
+#include "UID.hpp"
+#include "CError.hpp"
 
 namespace iviLink
 {
    namespace AppMan
    {
+
+
       namespace Ipc
       {
 
          const UInt8 C_PROTO_SES_REQ = 0;
          const UInt8 C_PROTO_APP_LAN = 1;
          const UInt8 C_PROTO_CHK_CON = 2;
+
+          const UInt8 C_PROTO_LINK_UP_NOTIFY = 0x1E;
+          const UInt8 C_PROTO_LINK_DOWN_NOTIFY = 0x1F;
+
 
          /**
           * Interface of requests from AMP to app
@@ -69,6 +64,11 @@ namespace iviLink
              * Sends request to application to get launch information
              */
             virtual CError getAppLaunchInfo(pid_t pid, std::string & launchInfo) = 0;
+
+
+             // Connectivity callbacks
+             virtual void onLinkUpNotify() = 0;
+             virtual void onLinkDownNotify() = 0;
 
             /**
              * Virtual destructor

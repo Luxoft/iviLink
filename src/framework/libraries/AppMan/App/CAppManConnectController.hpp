@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAPPMANCONNECTCONTROLLER_HPP_
 #define CAPPMANCONNECTCONTROLLER_HPP_
 
-#include "utils/misc/Logger.hpp"
+#include "AppInfo.hpp"
+#include "Logger.hpp"
+#include <tr1/functional>
 
 namespace iviLink
 {
@@ -65,11 +56,8 @@ namespace iviLink
          /**
           * Returns instance of controller
           */
-         #ifndef ANDROID
-         static CAppManConnectController * instance();
-         #else
-         static CAppManConnectController * instance(std::string launchInfo);
-         #endif //ANDROID
+         static CAppManConnectController * instance(Android::AppInfo appInfo);
+
          static void deleteInstance();
 
          /**
@@ -80,7 +68,9 @@ namespace iviLink
          /**
           * Inits handler of requests from AMP
           */
-         void init(IAppManHandler * pHandler);
+          typedef std::tr1::function<void ()> notify_t;
+
+          void init(IAppManHandler * pHandler);
 
          /**
           * Uninits IPC
@@ -101,11 +91,7 @@ namespace iviLink
          /**
           * Private constructor because of singleton object
           */
-         #ifndef ANDROID
-         CAppManConnectController();
-         #else
-         CAppManConnectController(std::string launchInfo);
-         #endif //ANDROID
+         CAppManConnectController(Android::AppInfo appInfo);
 
          /**
           * Virtual destructor

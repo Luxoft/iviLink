@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 /* 
  * File:   CControlTest.h
@@ -100,8 +99,6 @@ class CMediaControlClientProfile {
 public:
     
     
-    
-   
     // from IMediaControlClientProfile_API
     virtual void prepareRequest(PROCEDURES_IDS proc, bool has_events, std::string const& event_f, std::string const& event_s);
 
@@ -122,7 +119,6 @@ public:
     std::string mTag;
     
     
-
 };
 
 
@@ -131,7 +127,6 @@ class CServerControl  {
 public:
 
 
-  
    CServerControl();
    virtual ~CServerControl();
 
@@ -158,10 +153,6 @@ public:
 };
 
 
-
-
-
- 
 #include <stdlib.h>
 #include <unistd.h>
 #include <string>
@@ -200,7 +191,6 @@ public:
    virtual ~CMediaControlServerProfile();
 
  
-
    Callbacks *  mpAppCallbacks;
 
    bool                                         mBe;
@@ -214,12 +204,5 @@ public:
    std::string                                  mStreamName;
    CServerControl *                             mpServControl;
 };
-
-
-
-
-
-
-
 
 

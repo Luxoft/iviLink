@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef MAP_H
 #define MAP_H
@@ -36,54 +27,54 @@
 #include <ctime>
 #include <map>
 #include <string>
-#include "utils/threads/CRWMutex.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CRWMutex.hpp"
+#include "CMutex.hpp"
+#include "Types.hpp"
+#include "Logger.hpp"
 
 #define CHANNEL_ID_START_NUMBER  100
 
-namespace iviLink {
-namespace ChannelSupervisor {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 struct ChannelInfo;
 typedef std::map<UInt32, ChannelInfo> ChannelMap;
 
 struct ChannelInfo
 {
-   time_t      timeStamp;  //timestamp when channel was 
-   std::string tag;        //tag of the profile using the channel
+    time_t timeStamp;  //timestamp when channel was
+    std::string tag;        //tag of the profile using the channel
 };
 
-
-class Map 
+class Map
 {
 public:
-   static Map* getInstance();
-   void deleteInstance();
+    static Map* getInstance();
+    void deleteInstance();
 
-   bool getChannelInfo( UInt32 const channelId, ChannelInfo & result);
-   void addChannelInfo( UInt32 const channelId, ChannelInfo const& channelInfo );
-   void updateChannelInfo( UInt32 const channelId, ChannelInfo const& channelInfo );
-   UInt32 getNextFreeChannelId(UInt32 channelId = 0);
-   void invalidateChannelInfo( UInt32 const channelId );
-   bool isChannelok(UInt32 channelId);
-
+    bool getChannelInfo(UInt32 const channelId, ChannelInfo & result);
+    void addChannelInfo(UInt32 const channelId, ChannelInfo const& channelInfo);
+    void updateChannelInfo(UInt32 const channelId, ChannelInfo const& channelInfo);
+    UInt32 getNextFreeChannelId(UInt32 channelId = 0);
+    void invalidateChannelInfo(UInt32 const channelId);
+    bool isChannelok(UInt32 channelId);
 
 private:
-   Map();
-   ~Map();
+    Map();
+    ~Map();
 
-   UInt32 getFreeChannelId();
-   void updateFreeChannel(UInt32 lastChannel);
+    UInt32 getFreeChannelId();
+    void updateFreeChannel(UInt32 lastChannel);
 
-   ChannelMap                    m_channelMap;
-   CRWMutex                      m_mapMutex;
-   static Map*                   m_MapInstance;
-   static CMutex                 m_SingletonMutex;
+    ChannelMap m_channelMap;
+    CRWMutex m_mapMutex;
+    static Map* m_MapInstance;
+    static CMutex m_SingletonMutex;
 
-   UInt32                        m_FreeChannelId;
-   static Logger                 msLogger;
+    UInt32 m_FreeChannelId;
+    static Logger msLogger;
 };
 
 }  // namespace ChannelSupervisor

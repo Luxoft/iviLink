@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <unistd.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+
+#include <tr1/functional>
+typedef std::tr1::function< void ()> notify_t;
+
 
 #include "CCore.hpp"
 
@@ -49,50 +42,46 @@ namespace iviLink
       {
          Logger CCore::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("AppMan.Ipc.App.Core"));
 
-         #ifndef ANDROID
-         CCore::CCore()
-         #else
-         CCore::CCore(std::string launchInfo)
-         #endif //ANDROID
+         CCore::CCore(Android::AppInfo appInfo)
             : mpHandler(0)
             , mpProto(0)
          {
-            LOG4CPLUS_TRACE(msLogger,"CCore()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mPid = getpid();
-            #ifndef ANDROID
+#ifndef ANDROID
             getExeName();
-            #else
-            mLaunchInfo = launchInfo;
-            #endif //ANDROID
+#else
+            mLaunchInfo = appInfo.launchInfo;
+#endif //ANDROID            
          }
 
          CCore::~CCore()
          {
-            LOG4CPLUS_TRACE(msLogger,"~CCore()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CCore::initHandler(IAppManHandler * pHandler)
          {
-            LOG4CPLUS_TRACE(msLogger,"initHandler()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpHandler = pHandler;
          }
 
          void CCore::initIpc(iviLink::AppMan::Ipc::IAppManProto * pProto)
          {
-            LOG4CPLUS_TRACE(msLogger,"initIpc()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpProto = pProto;
          }
 
          void CCore::unInit()
          {
-            LOG4CPLUS_TRACE(msLogger,"unInit()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpHandler = 0;
             mpProto = 0;
          }
 
          EInitResult  CCore::initApplication(std::list<Service::Uid> listOfSupportedServices)
          {
-            LOG4CPLUS_TRACE(msLogger,"initApplication()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (!mpProto)
             {
                return EInitResult(ERROR_NOT_INITED);
@@ -102,7 +91,7 @@ namespace iviLink
 
          CError CCore::useService(Service::Uid service, bool use)
          {
-            LOG4CPLUS_TRACE(msLogger,"useService()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (!mpProto)
             {
                return CError(CError::ErrorCode(1),"AppMan",CError::ERROR,"AppManCore hasn't been inited");
@@ -112,7 +101,7 @@ namespace iviLink
 
          CError CCore::registerService(Service::Uid service)
          {
-            LOG4CPLUS_TRACE(msLogger,"registerService()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (!mpProto)
             {
                return CError(CError::ErrorCode(1),"AppMan",CError::ERROR,"AppManCore hasn't been inited");
@@ -123,7 +112,7 @@ namespace iviLink
          CError CCore::sessionRequest(pid_t pid, iviLink::Service::SessionUid session,
                iviLink::Service::Uid service)
          {
-            LOG4CPLUS_TRACE(msLogger,"sessionRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             assert(mPid == pid);
             if (!mpHandler)
             {
@@ -140,10 +129,37 @@ namespace iviLink
             return CError::NoError("AppMan","No Error in CCore::getAppLaunchInfo()");
          }
 
-         #ifndef ANDROID
+          bool CCore::isLinkAlive()
+          {
+              assert( mpProto );
+              if( mpProto )
+                  return mpProto -> isLinkAlive();
+              return false;
+          }
+
+          void CCore::onLinkUpNotify()
+          {
+              if( link_up )
+                  link_up();
+          }
+
+          void CCore::onLinkDownNotify()
+          {
+              if( link_down )
+                  link_down();
+          }
+
+          void CCore::setLinkCallbacks( notify_t link_up_, notify_t link_down_ )
+          {
+              link_up = link_up_;
+              link_down = link_down_;
+          }
+
+
+#ifndef ANDROID
          void CCore::getExeName()
          {
-            LOG4CPLUS_TRACE(msLogger,"getExeName()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             char buf[1001];
             size_t size = 1000;
             char linkname[256]; /* /proc/<pid>/exe */
@@ -171,7 +187,7 @@ namespace iviLink
             mLaunchInfo = buf;
             LOG4CPLUS_INFO(msLogger, "Launch info: " + mLaunchInfo);
          }
-         #endif //ANDROID
+#endif //ANDROID
 
       }
 

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include "../CBuffer.hpp"
-#include "utils/misc/byteOrder.hpp"
+#include "byteOrder.hpp"
 
 using namespace iviLink;
 
 // In this file I had to broke some of our code style rules with the ntoh(),
 // hton(), read() and write() methods. I think, this helped to read code.
-
 
 
 /**

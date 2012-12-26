@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -52,7 +40,11 @@
 #include "CAdapterFactory.hpp"
 #include "CDummyConnectionFinder.hpp"
 #include "CTcpAutoConnectionFinder.hpp"
-#include "framework/components/ConnectivityAgent/generic/L0/CConnectivityManager.hpp"
+#ifndef ANDROID
+#else
+#include "CAndroidBluetoothConnectionFinder.hpp"
+#endif //ANDROID
+#include "CConnectivityManager.hpp"
 /********************************************************************
  *
  * The class includes
@@ -60,7 +52,7 @@
  ********************************************************************/
 #include "CConnectivityAgent.hpp"
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace iviLink::ConnectivityAgent::HAL;
 using iviLink::ConnectivityAgent::L0::CConnectivityManager;
@@ -74,7 +66,11 @@ CConnectivityAgent::CConnectivityAgent(bool isServer) :
    mGenderType(eAnyGender)
 {
    mFinders.push_back(new CTcpAutoConnectionFinder(*this, eAnyGender));
+   #ifndef ANDROID
    //mFinders.push_back(new CDummyConnectionFinder(*this, eAnyGender));
+   #else
+   mFinders.push_back(new CAndroidBluetoothConnectionFinder(*this, eAnyGender));
+   #endif //ANDROID
 }
 
 CConnectivityAgent::~CConnectivityAgent()
@@ -98,9 +94,7 @@ CConnectivityAgent::~CConnectivityAgent()
 
 void CConnectivityAgent::threadFunc()
 {
-   LOG4CPLUS_TRACE_METHOD(logger, "agent: threadFunc");
-
-
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    while (false == getStopFlag())
    {
@@ -119,13 +113,13 @@ void CConnectivityAgent::threadFunc()
 
          if (!pCarrier || pCarrier->isBroken())
          {
-            LOG4CPLUS_TRACE(logger, "agent: connection lost");
+            LOG4CPLUS_WARN(logger, "agent: connection lost");
             mConnectionEstablished = false;
             mGenderType = eAnyGender;
 
             if (this->mpManager)
             {
-               LOG4CPLUS_TRACE(logger, "agent: calling mpManager->OnDisconnected ");
+               LOG4CPLUS_INFO(logger, "agent: calling mpManager->OnDisconnected ");
                mpManager->OnDisconnected();
             }
          }
@@ -180,12 +174,13 @@ void CConnectivityAgent::connectionFound(CConnectionFinder* pFinder)
 
 bool CConnectivityAgent::initAdapterHandshake(CCarrierAdapter* pAdapter)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: begin handshake adapter = "
       + convertIntegerToString(reinterpret_cast<intptr_t>(pAdapter)));
 
    if (pAdapter->makeHandshake() != ERR_OK)
    {
-      LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: handshake failed");
+      LOG4CPLUS_WARN(logger, "CConnectivityAgent::initAdapterHandshake: handshake failed");
       return false;
    }
    LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: handshake successful");
@@ -211,7 +206,7 @@ bool CConnectivityAgent::initAdapterHandshake(CCarrierAdapter* pAdapter)
 
 void CConnectivityAgent::disconnect()
 {
-   LOG4CPLUS_INFO(logger, "agent: CConnectivityAgent::disconnect()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    if (mpManager)
    {
@@ -224,6 +219,7 @@ void CConnectivityAgent::disconnect()
 
 void CConnectivityAgent::onConnectionProblem(ECarrierType carrierType)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 //   LOG4CPLUS_INFO(logger, "agent: CHALController::onConnectionLost(" +
 //      convertIntegerToString((int)carrierType) + ")");
 //
@@ -243,6 +239,7 @@ void CConnectivityAgent::onConnectionProblem(ECarrierType carrierType)
 
 iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::tryToRecover(ECarrierType carrierType)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 //   CCarrierAdapter* pNewAdapter = 0;
 //   if (carrierType == eDummyTcpCarrier )
 //   {
@@ -261,6 +258,7 @@ iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::tryToRecov
 
    return 0;
 }
+
 iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::getCurrentCarrierAdapter()
 {
    CCarrierAdapter* pCA = NULL;

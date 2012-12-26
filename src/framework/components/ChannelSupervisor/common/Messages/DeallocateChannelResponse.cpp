@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstdio>
 #include <cstdlib>
@@ -46,47 +31,32 @@
 
 using namespace iviLink::ChannelSupervisor::Messages;
 
-DeallocateChannelResponse::DeallocateChannelResponse(const char* tag,const unsigned int channelId) :
-	Response(RESPONSETYPE_DEALLOCATE_CHANNEL)
+DeallocateChannelResponse::DeallocateChannelResponse(const UInt32 channelId)
+		: Response(RESPONSETYPE_DEALLOCATE_CHANNEL)
 {
-	m_tag = tag;
-	AppendCharStringNode(m_messageDocMainNode, "tag", m_tag.c_str());
-
 	m_offerredChId = channelId;
 	AppendIntegerNode(m_messageDocMainNode, "channel-id", m_offerredChId);
 }
 
-
-DeallocateChannelResponse::DeallocateChannelResponse(pugi::xml_document* doc) :
-	Response(doc)
+DeallocateChannelResponse::DeallocateChannelResponse(pugi::xml_document* doc)
+		: Response(doc)
 {
 	pugi::xml_attribute nameAttr = m_messageDocMainNode.attribute("name");
 	if (nameAttr)
 	{
 		if (strcmp(nameAttr.value(), GetMessageName()) == 0)
 		{
-         pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
-         if (tagNode)
-         {
-            const char* tag = tagNode.first_child().value();
-            if (tag != NULL && tag[0] != '\0')
-            {
-               m_tag = tag;
-            }
-         }
-         pugi::xml_node cidNode = m_messageDocMainNode.child("channel-id");
-         if (cidNode)
-         {
-            const char* cid = cidNode.first_child().value();
-            if (cid != NULL && cid[0] != '\0')
-            {
-               char *ptr;
-               m_offerredChId = strtol(cid, &ptr, 10);
-            }
-         }
+			pugi::xml_node cidNode = m_messageDocMainNode.child("channel-id");
+			if (cidNode)
+			{
+				const char* cid = cidNode.first_child().value();
+				if (cid != NULL && cid[0] != '\0')
+				{
+					char *ptr;
+					m_offerredChId = strtol(cid, &ptr, 10);
+				}
+			}
 		}
 	}
 }
-
-
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profileApi>
+	<version>1</version>
+	<role>NotificationsProfile_Role</role>
+	<uid>NotificationsProfile_PAPI_UID</uid>
+</profileApi>

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.helpers;
 
@@ -50,10 +49,10 @@ public class WakeUpHelper {
 		PowerManager pm = (PowerManager) context
 				.getSystemService(Context.POWER_SERVICE);
 		if (pm.isScreenOn()) {
-			Log.v(tag, "Screen is on, nothing needs to be done");
+			Log.i(tag, "Screen is on, nothing needs to be done");
 			return;
 		} else {
-			Log.v(tag, "Screen is off, will wake the device up now!");
+			Log.i(tag, "Screen is off, will wake the device up now!");
 		}
 		WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
 				| PowerManager.ACQUIRE_CAUSES_WAKEUP

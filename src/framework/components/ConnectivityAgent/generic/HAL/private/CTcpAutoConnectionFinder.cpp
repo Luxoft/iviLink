@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,15 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -70,8 +62,8 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Types.hpp"
+#include "Logger.hpp"
 #include "CAdapterFactory.hpp"
 #include "SocketUtils.hpp"
 
@@ -88,11 +80,11 @@ CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& hand
 
    mpNetlinkSocket = new CNetlinkSocket;
 
-   #ifndef ANDROID
+#ifndef ANDROID
    mBroadcastSock = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
-   #else
+#else
    mBroadcastSock = socket(AF_INET, SOCK_DGRAM, 0);
-   #endif //ANDROID
+#endif //ANDROID
    if (!mBroadcastSock)
    {
       LOG4CPLUS_ERROR(msLogger, "CTcpAutoConnectionFinder socket error: " + string(strerror(errno)));
@@ -113,7 +105,7 @@ CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& hand
    servaddr.sin_family = AF_INET;
    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
    servaddr.sin_port = htons(AXIS_TCP_AUTO_CONNECTION_FINDER_BRD_PORT);
-   if (!bind(mBroadcastSock, reinterpret_cast<sockaddr*>(&servaddr), sizeof(servaddr)))
+   if (bind(mBroadcastSock, reinterpret_cast<sockaddr*>(&servaddr), sizeof(servaddr)))
    {
       LOG4CPLUS_ERROR(msLogger, "CTcpAutoConnectionFinder bind error: " + std::string(strerror(errno)));
    }
@@ -123,6 +115,7 @@ CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& hand
 
 CTcpAutoConnectionFinder::~CTcpAutoConnectionFinder()
 {
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
    if (mBroadcastSock)
    {
       close(mBroadcastSock);
@@ -142,7 +135,7 @@ void CTcpAutoConnectionFinder::performSearch()
 
    mTurnRandomNumber = random() % std::numeric_limits<UInt8>::max();
 
-   LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::performSearch() random number = " + std::string(convertIntegerToString(mTurnRandomNumber)));
+   LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::performSearch() random number = " + std::string(convertIntegerToString(mTurnRandomNumber)));
 
    mBrdMsg.random = mTurnRandomNumber;
 
@@ -175,7 +168,7 @@ void CTcpAutoConnectionFinder::performSearch()
 
          if (!connected)
          {
-            LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::performSearch() connection failed, removing server");
+            LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::performSearch() connection failed, removing server");
             delete pSrvAdapter;
          }
       }
@@ -203,7 +196,7 @@ void CTcpAutoConnectionFinder::performSearch()
 
 CTcpAutoConnectionFinder::eMessageResult CTcpAutoConnectionFinder::waitForMessage(std::string& client_addr)
 {
-   LOG4CPLUS_TRACE_METHOD(msLogger, "CTcpAutoConnectionFinder::waitForMessage()");
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
    sockaddr_in cli_addr;
    sockaddr* const p_cli_addr_base = reinterpret_cast<sockaddr*>(&cli_addr);
@@ -254,23 +247,23 @@ CTcpAutoConnectionFinder::eMessageResult CTcpAutoConnectionFinder::waitForMessag
 
          if (isLocalAddress(*p_cli_addr_base) && mTurnRandomNumber == in_msg->random)
          {
-            LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::waitForMessage message was local and random number are equal");
+            LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::waitForMessage message was local and random number are equal");
             was_local = true;
          }
          else if (mTurnRandomNumber < in_msg->random)
          {
-            LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::waitForMessage will be server");
+            LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::waitForMessage will be server");
             ret = eSERVER;
          }
          else if (mTurnRandomNumber > in_msg->random)
          {
-            LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::waitForMessage will be client");
+            LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::waitForMessage will be client");
             client_addr = std::string(addr);
             ret = eCLIENT;
          }
          else
          {
-            LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder::waitForMessage random numbers are equal");
+            LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder::waitForMessage random numbers are equal");
             ret = eERROR;
          }
 
@@ -289,7 +282,7 @@ CTcpAutoConnectionFinder::eMessageResult CTcpAutoConnectionFinder::waitForMessag
 
 void CTcpAutoConnectionFinder::sendBroadcastMessage(const in_addr& brd_addr)
 {
-   LOG4CPLUS_TRACE(msLogger, "CTcpAutoConnectionFinder::sendBroadcastMessage");
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
    sockaddr_in addr;
    memset(&addr, 0, sizeof(addr));
@@ -320,9 +313,9 @@ void CTcpAutoConnectionFinder::nlmsgParse(nlmsghdr* pHdr)
    }
 }
 
-bool CTcpAutoConnectionFinder::parseIfaceMsg(const nlmsghdr* h)
+void CTcpAutoConnectionFinder::parseIfaceMsg(const nlmsghdr* h)
 {
-   LOG4CPLUS_INFO(msLogger, "finder: iface message");
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
    rtattr* rtAttr = 0;
    int rtLen = 0;
 
@@ -387,12 +380,11 @@ bool CTcpAutoConnectionFinder::parseIfaceMsg(const nlmsghdr* h)
    {
       mLocalAddresses.push_back(ifAddress);
    }
-   return false;
 }
 
 bool CTcpAutoConnectionFinder::checkInterfaces()
 {
-   LOG4CPLUS_TRACE(msLogger, "finder: checkInterfaces()");
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
    mBrdAddresses.clear();
    mLocalAddresses.clear();
@@ -428,6 +420,7 @@ bool CTcpAutoConnectionFinder::checkInterfaces()
 
 bool CTcpAutoConnectionFinder::createClientCarrierAdapter(std::string const& addr)
 {
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
    mConnectionInfo.serverSocket = false;
    mConnectionInfo.host = addr;
    mConnectionInfo.service = std::string(AXIS_PORT);
@@ -438,7 +431,7 @@ bool CTcpAutoConnectionFinder::createClientCarrierAdapter(std::string const& add
 
    if (ERR_OK != pAdapter->connect())
    {
-      LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder: client adapter failed");
+      LOG4CPLUS_ERROR(msLogger, "CTcpAutoConnectionFinder: client adapter failed");
       delete pAdapter;
       return false;
    }
@@ -451,16 +444,15 @@ bool CTcpAutoConnectionFinder::createClientCarrierAdapter(std::string const& add
 
 CCarrierAdapter* CTcpAutoConnectionFinder::createServerCarrierAdapter()
 {
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
    mConnectionInfo.serverSocket = true;
    mConnectionInfo.service = std::string(AXIS_PORT);
    mConnectionInfo.host = std::string("0.0.0.0");
 
-   LOG4CPLUS_INFO(msLogger, "CTcpAutoConnectionFinder: creating server adapter");
-
    CTcpCarrierAdapter* pAdapter = CAdapterFactory::CreateTcpAdapter(mConnectionInfo);
    if (ERR_OK != pAdapter->connect())
    {
-      LOG4CPLUS_DEBUG(msLogger, "CTcpAutoConnectionFinder: server adapter failed");
+      LOG4CPLUS_ERROR(msLogger, "CTcpAutoConnectionFinder: server adapter failed");
       delete pAdapter;
       pAdapter = NULL;
    }

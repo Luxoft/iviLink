@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+  
+    <condition property="result.dir" else="../../../../../src_install/android">
+      <isset property="result.dir"/>
+    </condition>
+
+    <target name="-pre-build" >
+      <exec executable="ndk-build" failonerror="true" dir="../../../../framework/libraries/AndroidPrebuilt/AndroidNativeAppLib"/>
+      <exec executable="ndk-build" failonerror="true"/> 
+      <copy todir="libs/armeabi/">
+         <fileset dir="../../../../framework/libraries/AndroidPrebuilt/vlc">
+            <include name="*.so"/>
+         </fileset>
+      </copy>
+    </target>
+
+    <target name = "-post-build">
+      <echo message="copying apk to: ${result.dir}" />
+      <copy file="bin/${ant.project.name}-debug.apk" tofile="${result.dir}/${ant.project.name}-debug.apk" overwrite="true" />
+      <move todir="../../xmls/profile_repository/profileImpls/">
+         <fileset dir="libs/armeabi">
+            <include name="**/*Profile.so"/>
+         </fileset>
+      </move>
+    </target>
+
+    <target name = "-pre-clean">
+      <exec executable="ndk-build" >
+         <arg value="clean"/>
+      </exec>
+    </target>
+</project>
+

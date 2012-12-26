@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CPmpConnection.hpp"
 
@@ -50,30 +39,30 @@ namespace iviLink
             :CThread("AppManPmpCon")
             , mpServer(pServer)
          {
-            LOG4CPLUS_TRACE(msLogger,"CPmpConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             assert(mpServer);
          }
 
          CPmpConnection::~CPmpConnection()
          {
-            LOG4CPLUS_TRACE(msLogger,"~CPmpConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CPmpConnection::disconnect()
          {
-            LOG4CPLUS_TRACE(msLogger,"disconnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpServer->disconnect();
          }
 
          void CPmpConnection::threadFunc()
          {
-            LOG4CPLUS_TRACE(msLogger,"threadFunc()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpServer->loop();
          }
 
          void CPmpConnection::connect()
          {
-            LOG4CPLUS_TRACE(msLogger,"connect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             start();
          }
 

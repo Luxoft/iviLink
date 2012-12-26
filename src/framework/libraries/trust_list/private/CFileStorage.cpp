@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include <set>
 
-#include "utils/json/include/json/json.h"
+#include "json/include/json/json.h"
 
 #include "CFileStorage.hpp"
 
 using namespace iviLink;
 using std::ios;
-// using std::ios_base;
 
 static const char gsModuleName[] = "CFileStorage";
 
@@ -85,7 +79,7 @@ bool write(std::fstream& file, Json::Value const& root)
 {
    Json::StyledWriter writer;
    std::string val = writer.write(root);
-   LOG4CPLUS_DEBUG(CFileStorage::msLogger, val);
+   LOG4CPLUS_INFO(CFileStorage::msLogger, val);
    file << val;
    file.flush();
    file.seekg(0, ios::beg);
@@ -282,8 +276,8 @@ CTrustListError CFileStorage::setOurUid(CUid const& uid)
    return CTrustListError::NoTLError(gsModuleName);;
 }
 
-CFileStorage::CFileStorage(std::string const& filename) :
-   mFilename(filename)
+CFileStorage::CFileStorage(std::string const& pathToStorage) :
+   mFilename(pathToStorage+"/trust.db")
 {
 }
 

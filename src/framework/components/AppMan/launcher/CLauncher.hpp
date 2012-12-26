@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,30 +18,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CLAUNCHER_HPP_
 #define CLAUNCHER_HPP_
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 #include "ILauncher.hpp"
 #include "ILauncherHandler.hpp"
+#include <sys/wait.h>
 
 #ifndef ANDROID
 #else
 #include <jni.h>
-#include "utils/android/JniThreadHelper.hpp"
+#include "JniThreadHelper.hpp"
 #endif //ANDROID
 
 namespace iviLink
@@ -72,9 +62,9 @@ namespace iviLink
           * Inits itself - sets handler for callbacks
           * @param pHandler is object with ILauncherHandler interface
           */
-         #ifndef ANDROID
+#ifndef ANDROID
          void init(ILauncherHandler * pHandler);
-         #else
+#else
          /**
           * Inits itself - sets handler for callbacks
           * @param pHandler is object with ILauncherHandler interface
@@ -85,7 +75,7 @@ namespace iviLink
          void init(ILauncherHandler * pHandler, JavaVM * jm, jclass launchClass, jmethodID launchMethod);
          
          void uninit();
-         #endif //ANDROID
+#endif //ANDROID
 
       private:
 
@@ -97,12 +87,15 @@ namespace iviLink
 
          ILauncherHandler * mpHandler; ///< pointer on handler of launcher callbacks
          
-         #ifndef ANDROID
-         #else
+#ifndef ANDROID
+#else
          JavaVM * pJm;           // pointer to jvm of SysCtrlAndr
          jclass jLauncher;       // Launcher class
          jmethodID jLaunchMethod;// int Launcher.launchApplication(String launchinfo) - starts an app and returns its pid
-         #endif //ANDROID
+#endif //ANDROID
+
+         static void onSIGCHLD(int signal_number);
+         static void setSIGCHLDHandler();
 
          static Logger sLogger; ///< logger object
       };

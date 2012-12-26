@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CLIMATE_SENDER_PROFILE_HPP
 #define CLIMATE_SENDER_PROFILE_HPP
 
 #include <queue>
 
-#include "utils/misc/Logger.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IClimateProfiles.hpp"
+#include "Logger.hpp"
+#include "IClimateProfiles.hpp"
 #include "ISender.hpp"
 #include "CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
 
 
-#include "framework/public/profileLib/profileLib.hpp"
+#include "profileLib.hpp"
 
 using iviLink::CBuffer;
 using iviLink::Channel::tChannelId;
@@ -70,9 +63,9 @@ class CClimateSenderProfile   : public iviLink::Channel::CChannelHandler
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
    //from ISender
    virtual void senderLoop();

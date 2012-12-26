@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,31 +18,41 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
+
 import android.util.Log;
 import com.luxoft.ivilink.sdk.helpers.Common;
-/*
+
+/**
  * Encapsulates System Controller
  */
 public class CWrapper {
+	static {
+		System.loadLibrary("SystemController");
+	}
 	Thread mThread;
 	ComponentLauncher mLauncher;
-	
-	public void start(ComponentLauncher comlauncher, final boolean isAuth){
+
+	/**
+	 * Starts System Controller's state machine
+	 * 
+	 * @param comlauncher
+	 *            ComponentLauncher instance, used to launch components
+	 * @param isAuth
+	 *            true if authentication should be used, false otherwise
+	 */
+	public void start(ComponentLauncher comlauncher, final boolean isAuth) {
 		mLauncher = comlauncher;
-		(mThread = new Thread(new Runnable(){
-			public void run(){
+		(mThread = new Thread(new Runnable() {
+			public void run() {
 				initSSM(mLauncher, isAuth);
-				Log.e(Common.TAG+".SSM", "has died!");
+				Log.e(Common.TAG + ".SSM", "has died!");
 			}
 		})).start();
 	}
-	
-	private native void initSSM(ComponentLauncher comlauncher, boolean isAuth); //is a blocking call
+
+	private native void initSSM(ComponentLauncher comlauncher, boolean isAuth);
 }

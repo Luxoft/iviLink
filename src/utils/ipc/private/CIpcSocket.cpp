@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <algorithm>
 #include <cassert>
@@ -44,21 +33,29 @@
 
 struct MsgHeader
 {
+
    UInt32 size;
    UInt32 msg_id;
-   UInt32 flags;
+   iviLink::Ipc::Type mType;
 
-   UInt32 isRequest() const
+   bool isRequest() const
    {
-      return flags & 1;
+      return mType == iviLink::Ipc::REQUEST;
    }
-   void setRequest()
+
+   bool isTrigger() const
    {
-      flags |= 1;
+      return mType == iviLink::Ipc::TRIGGER;
    }
-   void clearReuest()
+
+   bool isResponse() const
    {
-      flags &= ~1;
+      return mType == iviLink::Ipc::RESPONSE;
+   }
+
+   void setType(const iviLink::Ipc::Type type)
+   {
+      mType = type;
    }
 };
 
@@ -104,7 +101,7 @@ CIpcSocket::CIpcSocket(CIpc& ipc, bool listen) :
    mHaveInBuffer(0),
    mLeftToReceive(0)
 {
-   LOG4CPLUS_TRACE(logger, "CIpcSocket()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    mReadingSocket.sock = -1;
    mReadingSocket.dirId = -1;
@@ -114,7 +111,7 @@ CIpcSocket::CIpcSocket(CIpc& ipc, bool listen) :
 
 CIpcSocket::~CIpcSocket()
 {
-   LOG4CPLUS_TRACE(logger, "~CIpcSocket()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    signalSelfpipe();
 
    join();
@@ -126,7 +123,7 @@ CIpcSocket::~CIpcSocket()
 
 void CIpcSocket::stopOperations()
 {
-   LOG4CPLUS_TRACE(logger, "stopOperations()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    signalSelfpipe();
 }
 
@@ -146,7 +143,7 @@ bool CIpcSocket::checkThread() const
 
 CError CIpcSocket::connect()
 {
-   LOG4CPLUS_TRACE(logger, "connect()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    if (isConnected())
       return CIpcError::NoIpcError("Already connected");
@@ -194,7 +191,7 @@ CError CIpcSocket::connect()
                CSockInfo s = { sock, DirectionIdGen::next() };
                mSockets.push_back(s);
 
-               LOG4CPLUS_TRACE(logger, "connect socket = " + convertIntegerToString(s.sock)
+               LOG4CPLUS_INFO(logger, "connect socket = " + convertIntegerToString(s.sock)
             		                 + ", cli = " + convertIntegerToString(s.dirId));
 
                mIsConnected = true;
@@ -226,7 +223,7 @@ CError CIpcSocket::stopContinuousListen()
 
 bool CIpcSocket::prepareSocketPath()
 {
-   LOG4CPLUS_TRACE(logger, "prepareSocketPath()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    memset(&mAddress, 0, sizeof(mAddress));
 
    const bool isAbstract = true;
@@ -235,7 +232,7 @@ bool CIpcSocket::prepareSocketPath()
    if (addr.size() > sizeof(mAddress.sun_path) + 2)
       return false;
 
-   LOG4CPLUS_TRACE(logger, "addr = '" +  addr + "'");
+   LOG4CPLUS_INFO(logger, "Prepare socket path: addr = '" +  addr + "'");
    mAddress.sun_family = AF_UNIX;
    if (isAbstract)
    {
@@ -251,7 +248,7 @@ bool CIpcSocket::prepareSocketPath()
 
 CError CIpcSocket::listen()
 {
-   LOG4CPLUS_TRACE(logger, "listen()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    sockaddr const* addr = reinterpret_cast<sockaddr const*>(&mAddress);
    const socklen_t addrLen = sizeof(mAddress);
 
@@ -270,14 +267,14 @@ CError CIpcSocket::listen()
 
 void CIpcSocket::acceptConnection()
 {
-   LOG4CPLUS_TRACE(logger, "acceptConnection()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    mSocketMutex.lockWrite();
    {
       int newSock = ::accept(mLsnSocket, NULL, NULL);
       if (newSock != -1)
       {
-         LOG4CPLUS_DEBUG(logger, "CIpcSocket::acceptConnection() lsn " + convertIntegerToString(mLsnSocket)
+         LOG4CPLUS_INFO(logger, "CIpcSocket::acceptConnection() lsn " + convertIntegerToString(mLsnSocket)
                               + " new_sock " + convertIntegerToString(newSock));
          if (!mContinuousListen)
          {
@@ -303,7 +300,7 @@ void CIpcSocket::acceptConnection()
 
 void CIpcSocket::closeAllSockets()
 {
-   LOG4CPLUS_TRACE(logger, "closeAllSockets()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    mSocketMutex.lockWrite();
    {
@@ -325,7 +322,7 @@ void CIpcSocket::closeAllSockets()
 
 bool CIpcSocket::closeClientSocket(int sock)
 {
-   LOG4CPLUS_TRACE(logger, "closeClientSocket()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    DirectionID dirId = -1;
    bool empty = false;
@@ -359,6 +356,7 @@ bool CIpcSocket::closeClientSocket(int sock)
 
 void CIpcSocket::closeListenSocket(bool needLock)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (needLock)
       mSocketMutex.lockWrite();
 
@@ -376,8 +374,7 @@ void CIpcSocket::closeListenSocket(bool needLock)
 
 void CIpcSocket::closeSocket(int sock)
 {
-   LOG4CPLUS_TRACE(logger, "closeSocket()");
-   LOG4CPLUS_TRACE(logger, "sock " + convertIntegerToString(sock));
+   LOG4CPLUS_TRACE_METHOD(logger, "Close socket: sock " + convertIntegerToString(sock));
 
    int res = ::close(sock);
    if (res == -1)
@@ -390,7 +387,7 @@ void CIpcSocket::closeSocket(int sock)
 
 CError CIpcSocket::setupSelfpipe()
 {
-   LOG4CPLUS_TRACE(logger, "setupSelfpipe()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    int res = pipe(mSelfpipe);
    if (-1 == res)
    {
@@ -408,7 +405,7 @@ CError CIpcSocket::setupSelfpipe()
 
 void CIpcSocket::destroySelfpipe()
 {
-   LOG4CPLUS_TRACE(logger, "destroySelfpipe()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    /// @todo error handling
    close(mSelfpipe[0]);
    close(mSelfpipe[1]);
@@ -418,7 +415,7 @@ void CIpcSocket::destroySelfpipe()
 
 CError CIpcSocket::signalSelfpipe(SELFPIPE_SIGNALS sig/* = SPS_ENDALL*/)
 {
-   LOG4CPLUS_TRACE(logger, "signalSelfpipe()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    CError err = CIpcError::NoIpcError();
    ssize_t res = -1;
 
@@ -438,7 +435,7 @@ CError CIpcSocket::signalSelfpipe(SELFPIPE_SIGNALS sig/* = SPS_ENDALL*/)
 
 CIpcSocket::SELFPIPE_SIGNALS CIpcSocket::recvSelfpipeSignal()
 {
-   LOG4CPLUS_TRACE(logger, "recvSelfpipeSignal()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    ssize_t res = -1;
 
    char buf[1] = {0};
@@ -457,7 +454,7 @@ CIpcSocket::SELFPIPE_SIGNALS CIpcSocket::recvSelfpipeSignal()
 
 void CIpcSocket::threadFunc()
 {
-   LOG4CPLUS_TRACE(logger, "threadFunc()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    fd_set* const rSet = &mRFdSet;
 
    bool needExit = false;
@@ -465,7 +462,7 @@ void CIpcSocket::threadFunc()
 
    while (true)
    {
-      LOG4CPLUS_DEBUG(logger, "CIpcSocket::threadFunc() iteration");
+      LOG4CPLUS_INFO(logger, "CIpcSocket::threadFunc() iteration");
       bool sockSet = false;
       bool lsnSet  = false;
       bool pipeSet = false;
@@ -482,14 +479,14 @@ void CIpcSocket::threadFunc()
 
          if (mLsnSocket != -1)
          {
-            LOG4CPLUS_DEBUG(logger, "Setting mLsnSocket = " + convertIntegerToString(mLsnSocket));
+            LOG4CPLUS_INFO(logger, "Setting mLsnSocket = " + convertIntegerToString(mLsnSocket));
             FD_SET(mLsnSocket, rSet);
             maxFD = std::max(mLsnSocket, maxFD);
          }
 
          if (mReadingSocket.sock != -1)
          {
-            LOG4CPLUS_DEBUG(logger, "Setting mReadingSocket = " + convertIntegerToString(mReadingSocket.sock)
+            LOG4CPLUS_INFO(logger, "Setting mReadingSocket = " + convertIntegerToString(mReadingSocket.sock)
                                  + ", dir = " + convertIntegerToString(mReadingSocket.dirId));
             FD_SET(mReadingSocket.sock, rSet);
             maxFD = std::max(mReadingSocket.sock, maxFD);
@@ -499,7 +496,7 @@ void CIpcSocket::threadFunc()
             for (tSockets::const_iterator it = mSockets.begin(); it != mSockets.end(); ++it)
             {
                CSockInfo const& sock = *it;
-               LOG4CPLUS_DEBUG(logger, "Setting socket " + convertIntegerToString(sock.sock)
+               LOG4CPLUS_INFO(logger, "Setting socket " + convertIntegerToString(sock.sock)
             		                + " dir = " + convertIntegerToString(sock.dirId));
                FD_SET(sock.sock, rSet);
                maxFD = std::max(sock.sock, maxFD);
@@ -512,10 +509,10 @@ void CIpcSocket::threadFunc()
          int res = -1;
          do
          {
-            LOG4CPLUS_DEBUG(logger, "before select maxFD = " + convertIntegerToString(maxFD));
+            LOG4CPLUS_INFO(logger, "before select maxFD = " + convertIntegerToString(maxFD));
             res = ::select(maxFD, rSet, NULL, NULL, NULL);
          } while (res == -1 && errno == EINTR);
-         LOG4CPLUS_DEBUG(logger, "select res = " + convertIntegerToString(res));
+         LOG4CPLUS_INFO(logger, "select res = " + convertIntegerToString(res));
 
          if (res <= -1)
          {
@@ -581,7 +578,7 @@ void CIpcSocket::threadFunc()
                {
                   closedSock = mClosedSocketsQueue.front();
                   mClosedSocketsQueue.pop();
-                  LOG4CPLUS_DEBUG(logger, "closed direstion sock = " + convertIntegerToString(closedSock));
+                  LOG4CPLUS_INFO(logger, "closed direstion sock = " + convertIntegerToString(closedSock));
                }
                mClosedSocketsQueueMutex.unlock();
 
@@ -591,7 +588,7 @@ void CIpcSocket::threadFunc()
                      setMode(RECV_HEADER, MSG_HEADER_SIZE);
 
                   bool last = closeClientSocket(closedSock);
-                  LOG4CPLUS_DEBUG(logger, "is last sock = " + convertIntegerToString((int)last));
+                  LOG4CPLUS_INFO(logger, "is last sock = " + convertIntegerToString((int)last));
 
                   needExit = last && !mListen;
                }
@@ -615,7 +612,7 @@ void CIpcSocket::threadFunc()
       if (sockSet && !consumeData())
       {
          bool last = closeClientSocket(lastReadingSock);
-         LOG4CPLUS_DEBUG(logger, "is last sock = " + convertIntegerToString((int)last));
+         LOG4CPLUS_INFO(logger, "is last sock = " + convertIntegerToString((int)last));
 
          if (last && !mListen)
             break;
@@ -633,7 +630,7 @@ void CIpcSocket::threadFunc()
 
 bool CIpcSocket::consumeData()
 {
-   LOG4CPLUS_TRACE(logger, "consumeData()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    switch (mMode)
    {
@@ -643,6 +640,8 @@ bool CIpcSocket::consumeData()
       return consumeRequestData();
    case RECV_DATA_RESP:
       return consumeResponseData();
+   case RECV_DATA_TRIG:
+      return consumeTriggerData();
    default:
       return false;
    }
@@ -650,7 +649,7 @@ bool CIpcSocket::consumeData()
 
 bool CIpcSocket::consumeHeader()
 {
-   LOG4CPLUS_TRACE(logger, "consumeHeader()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    const UInt32 headerSize = sizeof(MsgHeader);
 
@@ -680,20 +679,20 @@ bool CIpcSocket::consumeHeader()
 
    mMsgID = hdr->msg_id;
 
-   LOG4CPLUS_DEBUG(logger, "got header id " + convertIntegerToString(mMsgID)
+   LOG4CPLUS_INFO(logger, "got header id " + convertIntegerToString(mMsgID)
                                 + ", req " + convertIntegerToString((int)hdr->isRequest())
                                  + ", ps " + convertIntegerToString(hdr->size));
 
-   if (hdr->isRequest())
+   if (hdr->isRequest() || hdr->isTrigger())
    {
-      setMode(RECV_DATA_REQU, hdr->size);
+      setMode((hdr->isRequest()? RECV_DATA_REQU : RECV_DATA_TRIG), hdr->size);
 
       /// @todo assign buffer
       assert(BUFFER_SIZE >= mLeftToReceive);
       mpCurrentBufBegin = mpCurrentBuf = mBuffer;
-      LOG4CPLUS_DEBUG(logger, "header request setting buf = " + convertIntegerToString(*mpCurrentBuf));
+      LOG4CPLUS_INFO(logger, "header request setting buf = " + convertIntegerToString(*mpCurrentBuf));
    }
-   else
+   else if(hdr->isResponse())
    {
       setMode(RECV_DATA_RESP, hdr->size);
 
@@ -705,14 +704,14 @@ bool CIpcSocket::consumeHeader()
       {
          mUnknownResponse = true;
          /// @todo message about small buffer
-         LOG4CPLUS_DEBUG(logger, "buffer is too small left " + convertIntegerToString(mLeftToReceive)
+         LOG4CPLUS_INFO(logger, "buffer is too small left " + convertIntegerToString(mLeftToReceive)
                                               + " bufSize " + convertIntegerToString(data.bufferSize));
       }
 
       if (mUnknownResponse)
       {
          mpCurrentBufBegin = mpCurrentBuf = mBuffer;
-         LOG4CPLUS_DEBUG(logger, "mUnknownResponse");
+         LOG4CPLUS_INFO(logger, "mUnknownResponse");
       }
       else
       {
@@ -725,9 +724,9 @@ bool CIpcSocket::consumeHeader()
          bool res = CIpcSocket::consumeResponseData();
          assert(res);
       }
-   }
+   } 
 
-   LOG4CPLUS_DEBUG(logger, "mMsgID " + convertIntegerToString(mMsgID)
+   LOG4CPLUS_INFO(logger, "mMsgID " + convertIntegerToString(mMsgID)
               + ", mLeftToReceive " + convertIntegerToString(mLeftToReceive)
                + ", mHaveInBuffer " + convertIntegerToString(mHaveInBuffer));
 
@@ -736,7 +735,7 @@ bool CIpcSocket::consumeHeader()
 
 bool CIpcSocket::consumeRequestData()
 {
-   LOG4CPLUS_TRACE(logger, "consumeRequestData()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    UInt32 size = mLeftToReceive;
 
@@ -745,7 +744,7 @@ bool CIpcSocket::consumeRequestData()
    if (recvRes > 0)
    {
       // data ready
-      LOG4CPLUS_DEBUG(logger, "request done data in buf " + convertIntegerToString(mHaveInBuffer));
+      LOG4CPLUS_INFO(logger, "request done data in buf " + convertIntegerToString(mHaveInBuffer));
 
       mIpc.incomingRequest(mMsgID, mpCurrentBufBegin, mHaveInBuffer, mReadingSocket.dirId);
    }
@@ -759,9 +758,34 @@ bool CIpcSocket::consumeRequestData()
    return recvRes >= 0;
 }
 
+bool CIpcSocket::consumeTriggerData()
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+
+   UInt32 size = mLeftToReceive;
+
+   int recvRes = recvReqRespData(size);
+
+   if (recvRes > 0)
+   {
+      // data ready
+      LOG4CPLUS_INFO(logger, "trigger done data in buf " + convertIntegerToString(mHaveInBuffer));
+
+      mIpc.incomingAsyncRequest(mMsgID, mpCurrentBufBegin, mHaveInBuffer, mReadingSocket.dirId);
+   }
+
+   if (recvRes != 0)
+   {
+      // Request ended or socket closed
+      setMode(RECV_HEADER, MSG_HEADER_SIZE);
+   }
+
+   return recvRes >= 0;
+}
+
 bool CIpcSocket::consumeResponseData()
 {
-   LOG4CPLUS_TRACE(logger, "consumeResponseData()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    UInt32 size = mLeftToReceive;
 
@@ -770,7 +794,7 @@ bool CIpcSocket::consumeResponseData()
    {
       // Response buffer has been deleted. Probably, timeout
       mUnknownResponse = true;
-      LOG4CPLUS_DEBUG(logger, "mUnknownResponse");
+      LOG4CPLUS_INFO(logger, "mUnknownResponse");
    }
 
    if (mUnknownResponse)
@@ -785,7 +809,7 @@ bool CIpcSocket::consumeResponseData()
    {
       // Response is not empty, need to read data from socket
       recvRes = recvReqRespData(size);
-      LOG4CPLUS_DEBUG(logger, "recvReqRespData = " + convertIntegerToString(recvRes));
+      LOG4CPLUS_INFO(logger, "recvReqRespData = " + convertIntegerToString(recvRes));
    }
 
    if (recvRes > 0)
@@ -793,7 +817,7 @@ bool CIpcSocket::consumeResponseData()
       // data is ready
       if (!mUnknownResponse)
       {
-         LOG4CPLUS_DEBUG(logger, "signaling about data in buf " + convertIntegerToString(mHaveInBuffer));
+         LOG4CPLUS_INFO(logger, "signaling about data in buf " + convertIntegerToString(mHaveInBuffer));
          data->bufferSize = mHaveInBuffer;
          data->recvSem->signal();
       }
@@ -829,7 +853,7 @@ bool CIpcSocket::consumeResponseData()
 
 int CIpcSocket::recvReqRespData(UInt32& size)
 {
-   LOG4CPLUS_TRACE(logger, "recvReqRespData");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    CError err = receive(mpCurrentBuf, size);
    if (!err.isNoError())
@@ -840,7 +864,7 @@ int CIpcSocket::recvReqRespData(UInt32& size)
       return -1;
    }
 
-   LOG4CPLUS_DEBUG(logger, "size " + convertIntegerToString(size)
+   LOG4CPLUS_INFO(logger, "size " + convertIntegerToString(size)
              + " mLeftToReceive " + convertIntegerToString(mLeftToReceive)
               + " mHaveInBuffer " + convertIntegerToString(mHaveInBuffer));
 
@@ -859,7 +883,7 @@ int CIpcSocket::recvReqRespData(UInt32& size)
    mHaveInBuffer += size;
    mLeftToReceive -= size;
 
-   LOG4CPLUS_DEBUG(logger, "size " + convertIntegerToString(size)
+   LOG4CPLUS_INFO(logger, "size " + convertIntegerToString(size)
              + " mLeftToReceive " + convertIntegerToString(mLeftToReceive)
               + " mHaveInBuffer " + convertIntegerToString(mHaveInBuffer));
 
@@ -868,7 +892,7 @@ int CIpcSocket::recvReqRespData(UInt32& size)
 
 CError CIpcSocket::receive(UInt8* pBuffer, UInt32& bufferSize, bool peek/* = false*/)
 {
-   LOG4CPLUS_TRACE(logger, "receive()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    ssize_t n = -1;
    int savedErrno = 0;
@@ -905,12 +929,10 @@ CError CIpcSocket::receive(UInt8* pBuffer, UInt32& bufferSize, bool peek/* = fal
 }
 
 
-CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 payloadSize, DirectionID const * const pDirId)
+CError CIpcSocket::send(MsgID id, Type msgType, UInt8 const* pPayload, UInt32 payloadSize, DirectionID const * const pDirId)
 {
-   LOG4CPLUS_TRACE(logger, "send()");
-
-   LOG4CPLUS_DEBUG(logger, "id " + convertIntegerToString(id)
-                     + ", req " + convertIntegerToString((int)isRequest)
+   LOG4CPLUS_TRACE_METHOD(logger, std::string(__PRETTY_FUNCTION__) + " id " + convertIntegerToString(id)
+                     + ", req " + convertIntegerToString((int)msgType)
                       + ", ps " + convertIntegerToString(payloadSize));
 
    if (!isConnected())
@@ -918,15 +940,12 @@ CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 
 
    MsgHeader header;
 
-   //assert(payloadSize < std::numeric_limits<UInt32>::max() - sizeof(header));
    if (!(payloadSize < std::numeric_limits<UInt32>::max() - sizeof(header)))
       return CIpcError(CIpcError::ERROR_INVALID_PARAMS, "Buffer is too big");
 
    header.msg_id = id;
    header.size = payloadSize;
-   header.flags = 0;
-   if (isRequest)
-      header.setRequest();
+   header.setType(msgType);
 
    CError err = CIpcError::NoIpcError();
    mSocketMutex.lockRead();
@@ -948,7 +967,7 @@ CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 
          else
          {
             do {
-               LOG4CPLUS_DEBUG(logger, "send sock " + convertIntegerToString(sock)
+               LOG4CPLUS_INFO(logger, "send sock " + convertIntegerToString(sock)
                                          + " dir " + convertIntegerToString(pDirId ? *pDirId : -1));
                res = ::send(sock, &header, sizeof(header), MSG_NOSIGNAL);
             } while (res == -1 && errno == EINTR);
@@ -957,7 +976,7 @@ CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 
          if (-1 != res && err.isNoError() && payloadSize > 0)
          {
             do {
-               LOG4CPLUS_DEBUG(logger, "send sock " + convertIntegerToString(sock)
+               LOG4CPLUS_INFO(logger, "send sock " + convertIntegerToString(sock)
                                          + " dir " + convertIntegerToString(pDirId ? *pDirId : -1));
                res = ::send(sock, pPayload, payloadSize, MSG_NOSIGNAL);
             } while (res == -1 && errno == EINTR);
@@ -988,6 +1007,7 @@ CError CIpcSocket::send(MsgID id, bool isRequest, UInt8 const* pPayload, UInt32 
 
 int CIpcSocket::findClientSocket(DirectionID const * const pDirId) const
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (pDirId)
    {
       for (tSockets::const_iterator it = mSockets.begin(); it != mSockets.end(); ++it)

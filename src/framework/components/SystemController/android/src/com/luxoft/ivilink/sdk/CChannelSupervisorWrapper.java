@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
+
 import android.util.Log;
 import com.luxoft.ivilink.sdk.helpers.Common;
-/*
+
+/**
  * Encapsulates Negotiator
  */
 public class CChannelSupervisorWrapper {
+	static {
+		System.loadLibrary("ChannelSupervisor");
+	}
 	Thread mThread;
-	
-	public void start(){
-		(mThread = new Thread(new Runnable(){
-			public void run(){
+
+	/**
+	 * Start Negotiator
+	 */
+	public void start() {
+		(mThread = new Thread(new Runnable() {
+			public void run() {
 				startCS();
-				Log.e(Common.TAG+".Negotiator", "has died!");
+				Log.e(Common.TAG + ".Negotiator", "has died!");
 			}
 		})).start();
 	}
 
-	//code taken from ChannelSupervisor/NegotiatorProcess/NegotiatorProcess.cpp 
-	private native void startCS(); // is a blocking call
+	// code taken from ChannelSupervisor/NegotiatorProcess/NegotiatorProcess.cpp
+	private native void startCS();
 }

@@ -1,9 +1,0 @@
-// We will use lite protobuf version
-option optimize_for = LITE_RUNTIME;
-
-
-package iviLink;
-
-message Timestamp {
-        required int64 utime = 1 [default = 0];
-}

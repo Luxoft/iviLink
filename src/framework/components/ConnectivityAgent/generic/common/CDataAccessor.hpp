@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CDATA_ACCESSOR_HPP
 #define CDATA_ACCESSOR_HPP
@@ -44,8 +34,8 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Types.hpp"
+#include "Logger.hpp"
 namespace iviLink
 {
    namespace ConnectivityAgent

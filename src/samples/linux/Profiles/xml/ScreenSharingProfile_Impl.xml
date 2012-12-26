@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>ScreenSharingProfileImpl_UID</uid>
+   <name>ScreenSharingProfileImpl</name>
+   <version>1</version>
+   <api uid ="ScreenSharingProfile_PAPI_UID" />
+   <complement>ScreenSharingProfileImpl_UID</complement>
+</profile>

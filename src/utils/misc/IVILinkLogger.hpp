@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IVI_LINK_LOGGER_HPP_
 #define IVI_LINK_LOGGER_HPP_
@@ -61,6 +54,11 @@
 #define LOG4CPLUS_ERROR(logger, logEvent) Logger::error(logger, logEvent)
 #define LOG4CPLUS_FATAL(logger, logEvent) Logger::fatal(logger, logEvent)
 
+#undef assert
+// actual assert that will print error and crash process - standard assert just causes crash and no print whatsoever
+// #define assert(e) ((e) ? (void)0 : __android_log_assert(0,"iviLink.assert","%s(%s:%d) >> %s ",__func__ ,__FILE__, __LINE__, #e))
+// just print of error
+#define assert(e) ((e) ? (void)0 : (void)__android_log_print(ANDROID_LOG_ERROR,"iviLink ASSERT","Assertion failed: %s(%s:%d) >> %s ",__func__ ,__FILE__, __LINE__, #e))
 
 namespace IVILinkLog
 {
@@ -69,7 +67,6 @@ namespace IVILinkLog
    class Logger
    {
    public:
-   
    
    
       std::string tag;
@@ -160,9 +157,6 @@ namespace IVILinkLog
          tag=tagStr;
       }
    };
-   
-   
-   
    
    
    class Tracer

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,28 +18,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #ifndef ANDROID // because we wildcard this folder in Android.mk
 
 #include <QtGui/QApplication>
 #include <QDeclarativeContext>
+
 #include "qmlapplicationviewer.h"
 
-#include "utils/misc/Logger.hpp"
-#include "crequestprocessor.h"
-#include "cstateupdater.h"
-#include "state-app.h"
+#include "Logger.hpp"
+#include "ClimateRequestProcessor.hpp"
+#include "ClimateStateUpdater.hpp"
+#include "climate-app.hpp"
 
+#include "ClimateState.hpp"
 
 namespace {
-    const iviLink::Service::Uid service_uid= iviLink::Service::Uid("ClimateService");
+    const iviLink::Service::Uid serviceUid= iviLink::Service::Uid("ClimateService");
     const iviLink::Profile::ApiUid
-    sender_uid    = iviLink::Profile::ApiUid("ClimateSenderProfile_PAPI_UID"),
-        receiver_uid  = iviLink::Profile::ApiUid("ClimateReceiverProfile_PAPI_UID");
+    senderUid    = iviLink::Profile::ApiUid("ClimateSenderProfile_PAPI_UID"),
+    receiverUid  = iviLink::Profile::ApiUid("ClimateReceiverProfile_PAPI_UID");
+}
+
+// Special for state-app log declaration
+
+Logger& log4StateApp()
+{
+    static Logger l = Logger::getInstance("stateapp.climate");
+    return l;
 }
 
 int main_impl(int argc, char *argv[])
@@ -48,17 +55,17 @@ int main_impl(int argc, char *argv[])
     using namespace std;
     using namespace std::tr1;
 
-
     PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
-    shared_ptr<state_app> iapp= shared_ptr<state_app>( new state_app( service_uid,
-                                                                      sender_uid,
-                                                                      receiver_uid,
-                                                                      "climate-state.bp" ) );
+    climateAppPtr iapp= climateAppPtr(new climateApp( serviceUid,
+                                                            senderUid,
+                                                            receiverUid,
+                                                            "climate-state.pb"));
+    iapp.get()->initStateApp();
     // create the processor of pressing buttons
-    shared_ptr<CRequestProcessor> rp( new CRequestProcessor( iapp ) );
+    shared_ptr<ClimateRequestProcessor> requestProcessor(new ClimateRequestProcessor(iapp));
 
     // create the UI state updater
-    shared_ptr<CStateUpdater> su( new CStateUpdater( rp, iapp ) );
+    shared_ptr<ClimateStateUpdater> stateUpdater(new ClimateStateUpdater(requestProcessor, iapp));
 
     QScopedPointer<QApplication> app(createApplication(argc, argv));
 
@@ -66,13 +73,19 @@ int main_impl(int argc, char *argv[])
     app->setQuitOnLastWindowClosed(true);
 
     QDeclarativeView viewer;
-    viewer.rootContext()->setContextProperty("CRequestProcessor", rp.get());
-    viewer.rootContext()->setContextProperty("CStateUpdater", su.get());
+    viewer.rootContext()->setContextProperty("ClimateRequestProcessor", requestProcessor.get());
+    viewer.rootContext()->setContextProperty("ClimateStateUpdater", stateUpdater.get());
     viewer.setSource(QUrl::fromLocalFile("qml/Climate_App/main.qml"));
 
     viewer.setGeometry(0, 0, 800, 600);
     viewer.setCursor(Qt::PointingHandCursor);
 
+    if (!QCoreApplication::arguments().contains("-caption") ) 
+    {
+        viewer.setCursor(QCursor(Qt::BlankCursor));
+        viewer.setWindowFlags(Qt::FramelessWindowHint);
+    }
+    
     viewer.show();
 
     return app->exec();
@@ -81,17 +94,7 @@ int main_impl(int argc, char *argv[])
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    // Verify that the version of the library that we linked against is
-    // compatible with the version of the headers we compiled against.
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-    // this little trick needed to ensure that all protobuf users destroyed before
-    // the shutdown process
     const int ret_code = main_impl(argc,argv);
-
-    // Shutdown protobuf library by hands
-    google::protobuf::ShutdownProtobufLibrary();
-
     return ret_code;
 }
 #endif //ANDROID

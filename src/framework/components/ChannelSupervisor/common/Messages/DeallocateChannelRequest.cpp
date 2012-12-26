@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,67 +18,39 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <string>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Request.hpp"
 #include "Message.hpp"
 #include "DeallocateChannelRequest.hpp"
 
 using namespace iviLink::ChannelSupervisor::Messages;
 
-DeallocateChannelRequest::DeallocateChannelRequest(   const char* tag, const unsigned int channelId  )
-   : Request(REQUESTTYPE_DEALLOCATE_CHANNEL)
+DeallocateChannelRequest::DeallocateChannelRequest(const UInt32 channelId)
+		: Request(REQUESTTYPE_DEALLOCATE_CHANNEL)
 {
-   if (channelId != 0 && strlen(tag) > 0 )
-   {
-      m_tag = tag;
-      AppendCharStringNode(m_messageDocMainNode, "tag", m_tag.c_str());
-      m_offerredChId = channelId;
-      AppendIntegerNode(m_messageDocMainNode, "channel-id", m_offerredChId);
-   }
+	m_offerredChId = channelId;
+	AppendIntegerNode(m_messageDocMainNode, "channel-id", m_offerredChId);
 }
 
-DeallocateChannelRequest::DeallocateChannelRequest(pugi::xml_document* doc) :  Request(doc)
+DeallocateChannelRequest::DeallocateChannelRequest(pugi::xml_document* doc)
+		: Request(doc)
 {
-   pugi::xml_node channelIdNode = m_messageDocMainNode.child("channel-id");
-   if (channelIdNode)
-   {
-      const char* cid = channelIdNode.first_child().value();
-      if (cid != NULL && cid[0] != '\0')
-      {
-         char *ptr;
-         m_offerredChId = strtol(cid, &ptr, 10);
-      }
-
-      pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
-
-      if (tagNode)
-      {
-         m_tag = tagNode.first_child().value();
-      }
-   }
+	pugi::xml_node channelIdNode = m_messageDocMainNode.child("channel-id");
+	if (channelIdNode)
+	{
+		const char* cid = channelIdNode.first_child().value();
+		if (cid != NULL && cid[0] != '\0')
+		{
+			char *ptr;
+			m_offerredChId = strtol(cid, &ptr, 10);
+		}
+	}
 }
-
-
-
-
-
 

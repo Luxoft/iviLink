@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CComponentMgr.hpp"
-#include "framework/components/ProfileManager/PMAL/PIM/CPIM.hpp"
-#include "framework/components/ProfileManager/PMAL/core/CPmalCore.hpp"
-#include "framework/components/ProfileManager/PMAL/ipc_protocol/CIpcProtocol.hpp"
+#include "CPIM.hpp"
+#include "CPmalCore.hpp"
+#include "CPMALIpcProtocol.hpp"
 
-#include "utils/configurator/configurator.h"
+#include "configurator.h"
 
 static const char gModuleName[] = "CComponentMgr";
 
@@ -98,7 +87,7 @@ public:
          pmpAddr = mpConfig->getParam("pmp_ipc_address");
       }
 
-      mpIpcProtocol = new Ipc::CIpcProtocol(pmpAddr.empty() ? NULL : pmpAddr.c_str());
+      mpIpcProtocol = new Ipc::CPMALIpcProtocol(pmpAddr.empty() ? NULL : pmpAddr.c_str());
 
       CError err = mpIpcProtocol->connect();
       if (!err.isNoError())
@@ -118,7 +107,6 @@ public:
 
       return CPMALError::NoPMALError(gModuleName);
    }
-
 
 
 public:
@@ -154,7 +142,7 @@ private:
    // created
    CPIM* mpPim;
    CPmalCore* mpCore;
-   Ipc::CIpcProtocol* mpIpcProtocol;
+   Ipc::CPMALIpcProtocol* mpIpcProtocol;
 };
 
 

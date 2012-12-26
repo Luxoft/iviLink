@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <unistd.h>
 
-#include "utils/misc/byteOrder.hpp"
+#include "byteOrder.hpp"
 #include "CPmpProtocol.hpp"
 #include "CPmpCoreClbCtrl.hpp"
 #include "CPmpPimClbCtrl.hpp"
@@ -64,7 +53,7 @@ namespace iviLink
          delete mpPimClbCtrl;
       }
 
-      void CPmpProtocol::channelDeletedCallback(const unsigned int channelId)
+      void CPmpProtocol::onChannelDeleted(const unsigned int channelId)
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
          LOG4CPLUS_INFO(msLogger, "channelId = " + convertIntegerToString(static_cast<int>(channelId)));
@@ -73,11 +62,10 @@ namespace iviLink
          /// we have no watchdog in channel supervisor, so it brings 
          /// the problems such as half-allocated channels.
          //disconnect(false);
-         LOG4CPLUS_WARN(msLogger, "TODO proper reconnection support");
          disconnect(true);
       }
 
-      void CPmpProtocol::connectionLostCallback()
+      void CPmpProtocol::onConnectionLost()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
          mConnectionLostSem.signal();
@@ -90,7 +78,9 @@ namespace iviLink
          {
             LOG4CPLUS_INFO(msLogger, "connect attempt");
             UInt32 chid = 0;
-            CError err = iviLink::ChannelSupervisor::allocateChannel(this,mTag.c_str(), chid);
+            CError err = iviLink::ChannelSupervisor::allocateChannel(this,mTag.c_str(),
+                                                                     chid,
+                                                                     eSafetyCritical);
             if (err.isNoError())
             {
                mChannelIdCond.lock();
@@ -104,7 +94,7 @@ namespace iviLink
             }
             else
             {
-               LOG4CPLUS_INFO(msLogger, static_cast<std::string>(err));
+               LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
                sleep(1);
             }
          }
@@ -127,7 +117,7 @@ namespace iviLink
 
          if (chid != 0)
          {
-            iviLink::ChannelSupervisor::deallocateChannel(chid, mTag.c_str());
+            iviLink::ChannelSupervisor::deallocateChannel(chid);
          }
       }
 
@@ -149,16 +139,16 @@ namespace iviLink
          return chid;
       }
 
-      void CPmpProtocol::dataReceivedCallback(const unsigned int channelId, const unsigned int readSize)
+      void CPmpProtocol::onDataReceived(const unsigned int channelId, const unsigned int readSize)
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
          unsigned char * data = new unsigned char [readSize];
          unsigned int recSize = 0;
-         CError err =  iviLink::ChannelSupervisor::receiveData(mChannelId,mTag.c_str(),data,recSize,readSize);
+         CError err = iviLink::ChannelSupervisor::receiveData(mChannelId, data, recSize, readSize);
          if(!err.isNoError())
          {
-            LOG4CPLUS_INFO(msLogger, static_cast<std::string>(err));
+            LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
             delete [] data;
             return;
          }
@@ -213,7 +203,6 @@ namespace iviLink
          {
             LOG4CPLUS_WARN(msLogger, "no callback for request");
             return;
-
          }
 
          switch (pFrame->reqType)
@@ -343,9 +332,9 @@ namespace iviLink
          mRequestMutex.unlock();
       }
 
-      void CPmpProtocol::bufferOverflowCallback(const unsigned int channelId)
+      void CPmpProtocol::onBufferOverflow(const unsigned int channelId)
       {
-
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
       }
 
       PMPFrame * CPmpProtocol::makeCoreRequest(PMPFrame & request)
@@ -390,7 +379,7 @@ namespace iviLink
          requestFrame.id = ByteOrder::hton32(requestFrame.id);
          unsigned int size = requestFrame.size;
          requestFrame.size = ByteOrder::hton32(requestFrame.size);
-         CError err = iviLink::ChannelSupervisor::sendData(getChannelId(), mTag.c_str(), reinterpret_cast<unsigned char *>(&requestFrame), size);
+         CError err = iviLink::ChannelSupervisor::sendData(getChannelId(), reinterpret_cast<unsigned char *>(&requestFrame), size);
          if (!err.isNoError())
          {
             return 0;
@@ -423,7 +412,7 @@ namespace iviLink
          response.id = ByteOrder::hton32(response.id);
          unsigned int size = response.size;
          response.size = ByteOrder::hton32(response.size);
-         iviLink::ChannelSupervisor::sendData(getChannelId(), mTag.c_str(), reinterpret_cast<unsigned char *>(&response), size);
+         iviLink::ChannelSupervisor::sendData(getChannelId(), reinterpret_cast<unsigned char *>(&response), size);
       }
 
       tMessageId CPmpProtocol::generateId ()

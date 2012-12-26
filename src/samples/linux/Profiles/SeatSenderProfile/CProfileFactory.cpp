@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include "CSeatSenderProfile.hpp"
 
-namespace {
-  Logger log = Logger::getInstance( LOG4CPLUS_TEXT("samples.Profiles.CSeatSenderProfile") );
+namespace
+{
+    Logger log = Logger::getInstance( LOG4CPLUS_TEXT("samples.Profiles.CSeatSenderProfile") );
 }
 
 
@@ -37,9 +33,6 @@ extern "C" iviLink::Profile::CProfile*
 createProfile(iviLink::Profile::IUid const& id, iviLink::Service::Uid const& sid,
               iviLink::Profile::IProfileCallbackProxy* pCbProxy)
 {
-
-  //LOG4CPLUS_TRACE_METHOD(log, __PRETTY_FUNCTION__ );
-  LOG4CPLUS_INFO(log, "SeatSender: createProfile(\"" + id.value() + "\", \"" + sid.value() + "\")");
-
-  return new iviLink::Profile::CProfile(id, sid, new CSeatSenderProfile(pCbProxy));
+    LOG4CPLUS_INFO(log, "SeatSender: createProfile(\"" + id.value() + "\", \"" + sid.value() + "\")");
+    return new iviLink::Profile::CProfile(id, sid, new CSeatSenderProfile(pCbProxy));
 }

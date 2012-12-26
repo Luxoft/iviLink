@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>Ai.png</file>
+        <file>progressBar.gif</file>
+    </qresource>
+</RCC>

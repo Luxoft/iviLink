@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
+ */ 
+ 
 
 #ifndef ANDROID
 
-
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QWidget>
+#include <QRect>
 #include "ui_auth.h"
 #include "AuthenticationDialog.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace authentication;
 
@@ -46,13 +45,18 @@ int main(int argc, char *argv[])
     QWidget *bottomWidget = new QWidget;
     bottomWidget->setAttribute(Qt::WA_TranslucentBackground);
     bottomWidget->setAttribute(Qt::WA_NoSystemBackground);
-    bottomWidget->setWindowFlags(Qt::FramelessWindowHint);
+    bottomWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
     QWidget *topWidget = new QWidget(bottomWidget);
     topWidget->setStyleSheet("image: url(:images/pin/pin-b-01.png); border-width : 0px");
     topWidget->setFixedSize(QSize(328, 354));
 
     AuthenticationDialog ui(topWidget);
+    ui.init();
+
+    // move to the screen center
+    bottomWidget->move(QApplication::desktop()->screen()->rect().center()
+                - topWidget->rect().center() );
 
     return app.exec();
 

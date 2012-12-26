@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CIPC_HPP_
 #define CIPC_HPP_
@@ -49,10 +38,10 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/CError.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CError.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Logger.hpp"
 
 #include "CIpcError.hpp"
 #include "ipc_common.hpp"
@@ -243,6 +232,15 @@ public:
       DirectionID const* const pDirId = NULL);
 
    /**
+    * Asyncronous request: will send pPayload[payloadSize] and exit
+    * - no wait for response unlike the 'request' method.
+    * On the other side OnAsyncRequest will be invoked.
+    */
+   CError asyncRequest(MsgID id, 
+      UInt8 const* pPayload, UInt32 payloadSize, 
+      DirectionID const* const pDirId = NULL);
+
+   /**
     * Getter for request timeout
     * @return current request timeout value in milliseconds
     */
@@ -394,6 +392,11 @@ private:
     * @param dirId id of client the request sender
     */
    void incomingRequest(MsgID id, 
+      UInt8 const* pPayload, UInt32 payloadSize,
+      DirectionID dirId);
+
+
+   void incomingAsyncRequest(MsgID id, 
       UInt8 const* pPayload, UInt32 payloadSize,
       DirectionID dirId);
 

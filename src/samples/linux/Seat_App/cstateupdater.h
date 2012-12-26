@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,12 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #ifndef CSTATEUPDATER_H
 #define CSTATEUPDATER_H
@@ -37,14 +32,14 @@
 #include <QDeclarativeView>
 #else // no QT there
 #include <jni.h>
-#include "utils/android/JniThreadHelper.hpp"
+#include "JniThreadHelper.hpp"
 #endif //ANDROID
 #include <cassert>
 
 #include "crequestprocessor.h"
 
-#include "state-app.h"
-#include "utils/misc/Logger.hpp"
+#include "seat-app.hpp"
+#include "Logger.hpp"
 
 #include <tr1/memory>
 
@@ -57,27 +52,30 @@ class CStateUpdater
 {
 #endif //ANDROID
 
- public:
-    #ifndef ANDROID
+public:
+#ifndef ANDROID
     explicit CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> rp,
-                           std::tr1::shared_ptr<state_app> app);
-    #else //JavaVM and object for callbacks
+                           seatAppPtr app);
+#else //JavaVM and object for callbacks
     explicit CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> rp,
-                           std::tr1::shared_ptr<state_app> app,
+                           seatAppPtr app,
                            JavaVM * pJm,
                            jobject bridge);
-    #endif //ANDROID
+#endif //ANDROID
     ~CStateUpdater();
-   
-    void initRequest() { incomingNotification(); };
+
+    void initRequest() 
+    { 
+        incomingNotification(); 
+    };
 
  private:
-    void appStateCallback( state_app::APP_STATE st );
+    void appStateCallback( seatApp::APP_STATE st );
     void incomingNotification();
 
-    std::tr1::shared_ptr<CRequestProcessor> rp;
-    std::tr1::shared_ptr<state_app> app;
-    
+    std::tr1::shared_ptr<CRequestProcessor> requestProcessor;
+    seatAppPtr app;
+
 #ifndef ANDROID
     bool qmlInitialized;
 
@@ -94,27 +92,28 @@ public slots:
     void showSeat();
     void heaterDriver(int heat);
     void heaterPass(int heat);
-    void current_seat_viewPass();
-    void current_seat_viewDriver();
-    void bottom_x(int pos);
-    void bottom_y(int pos);
-    void back_angle(int angle);
-    void back_x(int pos);
-    void back_y(int pos);
+    void currentSeatViewPass();
+    void currentSeatViewDriver();
+    void bottomX(int pos);
+    void bottomY(int pos);
+    void backAngle(int angle);
+    void backX(int pos);
+    void backY(int pos);
+    void initRequestDone();
 #else
     JavaVM * mpJM;
     jobject jCallbacks;
-    
+
     jmethodID onHeaterDriver;
     jmethodID onHeaterPassenger;
-	 jmethodID onSetDriver;
-	 jmethodID onSetPassenger;
-	 jmethodID onBottomX;
-	 jmethodID onBottomY;
-	 jmethodID onBackAngle;
-	 jmethodID onBackX;
-	 jmethodID onBackY;
-	 jmethodID onShowSeat;
+	jmethodID onSetDriver;
+	jmethodID onSetPassenger;
+	jmethodID onBottomX;
+	jmethodID onBottomY;
+	jmethodID onBackAngle;
+	jmethodID onBackX;
+	jmethodID onBackY;
+	jmethodID onShowSeat;
 #endif //ANDROID
 
 };

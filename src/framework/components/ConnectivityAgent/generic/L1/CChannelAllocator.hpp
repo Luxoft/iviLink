@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CCHANNEL_ALLOCATOR_HPP
 #define CCHANNEL_ALLOCATOR_HPP
@@ -44,10 +34,10 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
+#include "Types.hpp"
 #include "L1InterfaceStub.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/API.hpp"
+#include "CMutex.hpp"
+#include "API.hpp"
 
 namespace iviLink
 {
@@ -105,7 +95,7 @@ namespace iviLink
              * Interface for L1 to allocate outgoing channels
              * @return ERR_OK
              */
-            ERROR_CODE allocateChannel(TChannelPriority prio, UInt32 channel_id, L1InterfaceStub::tChannelInfo& channelInfo);
+            ERROR_CODE allocateChannel(TChannelPriority prio, UInt32 channel_id, L1InterfaceStub::tL1ChannelInfo& channelInfo);
 
             /**
              * Interface for L1 to deallocate outgoing channels

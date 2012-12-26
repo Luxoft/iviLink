@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPMPPIM_HPP_
 #define CPMPPIM_HPP_
@@ -40,12 +28,12 @@
 #include <set>
 #include <tr1/tuple>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/IPmpPimClb.hpp"
-#include "framework/components/ProfileManager/PMP/PIM/IPmpPimToCore.hpp"
-#include "framework/components/ProfileManager/PMP/core/IPmpCoreToPim.hpp"
-#include "framework/libraries/AppMan/Pmp/IPmpHandler.hpp"
+#include "Logger.hpp"
+#include "CMutex.hpp"
+#include "IPmpPimClb.hpp"
+#include "IPmpPimToCore.hpp"
+#include "IPmpCoreToPim.hpp"
+#include "IPmpHandler.hpp"
 #include "IPMPPIMToIpc.hpp"
 
 class CThreadPool;
@@ -164,7 +152,6 @@ private:
 
 }  // namespace ProfileManager
 }  // namespace AXIS
-
 
 
 #endif /* CPMPPIM_HPP_ */

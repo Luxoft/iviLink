@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,10 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
 
@@ -36,41 +33,36 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.ForSDK;
+import com.luxoft.ivilink.sdk.android.lib.utils.IntentActions;
+import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
 import com.luxoft.ivilink.sdk.authentication.AuthenticationActivity;
+import com.luxoft.ivilink.sdk.componentservices.ApplicationManagerService;
+import com.luxoft.ivilink.sdk.componentservices.ChannelSupervisorService;
+import com.luxoft.ivilink.sdk.componentservices.ConnectivityAgentService;
+import com.luxoft.ivilink.sdk.componentservices.ProfileLayerService;
+import com.luxoft.ivilink.sdk.config.Config;
 import com.luxoft.ivilink.sdk.helpers.AlarmHandler;
 import com.luxoft.ivilink.sdk.helpers.Common;
 import com.luxoft.ivilink.sdk.helpers.NotificationHandler;
-import com.luxoft.ivilink.sdk.helpers.SecureRandomIntentFilterGenerator;
+import com.luxoft.ivilink.sdk.helpers.BigIntegerGenerator;
+import com.luxoft.ivilink.sdk.loggingdaemon.LogsRecorder;
 
 public class SystemControllerService extends Service {
-
-	static {
-		System.loadLibrary("ivi");
-	}
-
 	Handler launcherHandler = new Handler();
 
-	static final String tag = Common.TAG+"Service";
+	private static final String tag = SystemControllerService.class.getName();
+
+	private String componentsPassword = BigIntegerGenerator.nextSessionId();
+
+	private boolean bluetoothPermitted = false;
 
 	/*
-	 * The SysCtrlServLauncherActivity may ask us
-	 * to shutdown or reset
+	 * The SysCtrlServLauncherActivity may ask us to shutdown or reset
 	 */
 	ActivityIntentReceiver air;
 
 	// contains ssm functionality
 	CWrapper wrapper = new CWrapper();
-	// contains connectivity agent functionality
-	CConnectivityAgentWrapper agent = new CConnectivityAgentWrapper();
-	// contains negotiator functionality
-	CChannelSupervisorWrapper supervisor = new CChannelSupervisorWrapper();
-	// contains application manager functionality
-	CApplicationManagerWrapper appman = new CApplicationManagerWrapper();
-	// contains profile manager functionality
-	CProfileManagerWrapper profman = new CProfileManagerWrapper();
-	// contains profile repository functionality
-	CProfileRepositoryWrapper profrepo = new CProfileRepositoryWrapper();
 
 	// empty method stub
 	@Override
@@ -81,13 +73,13 @@ public class SystemControllerService extends Service {
 	@Override
 	public void onCreate() {
 		/*
-		 * Activity may ask us to shutdown or restart, 
-		 * we don't want this to happen on accident 
-		 * (and we don't want to bind the service, that's why intents are used),
-		 * that's why we generate a random long String to use as an intent filter 
+		 * Activity may ask us to shutdown or restart, we don't want this to
+		 * happen on accident (and we don't want to bind the service, that's why
+		 * intents are used), that's why we generate a random long String to use
+		 * as an intent filter
 		 */
-		Common.serviceBR = SecureRandomIntentFilterGenerator.nextSessionId();
-		Log.v(tag, "password is: " + Common.serviceBR);
+		Common.serviceBR = BigIntegerGenerator.nextSessionId();
+		Log.i(tag, "password is: " + Common.serviceBR);
 		air = new ActivityIntentReceiver();
 		registerReceiver(air, new IntentFilter(Common.serviceBR));
 		Common.serviceClassName = this.getClass().getName();
@@ -95,9 +87,18 @@ public class SystemControllerService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.v(tag, "starting SSM  thread");
-		wrapper.start(new ComponentLauncher(this), false);
-		return START_NOT_STICKY; // is set as a foreground service later
+		if (startId != 1) {
+			Log.e(tag, "Trying to start " + this.getClass().getSimpleName() + " more than once!");
+			return START_NOT_STICKY;
+		}
+		bluetoothPermitted = intent.getBooleanExtra("bluetooth", false);
+		Log.i(tag, "starting SSM  thread");
+		if (Config.sendMails) {
+			LogsRecorder.startRecording();
+		}
+		wrapper.start(new ComponentLauncher(this), Config.useAuthentication);
+		startForeground(1, NotificationHandler.createMainNotification(this));
+		return START_NOT_STICKY; // is set as a foreground service anyway
 	}
 
 	@Override
@@ -108,74 +109,76 @@ public class SystemControllerService extends Service {
 
 	/* launcher functions */
 
+	void launchService(Class<?> serviceClass) {
+		Log.v(tag, Logging.getCurrentMethodName(serviceClass));
+		startService(new Intent(this, serviceClass).putExtra("password", componentsPassword));
+	}
+
 	void launchConnectivityAgent() {
-		Log.v(tag, "starting Connectivity Agent thread");
-		agent.start();
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.conAgntLaunch));
+		Log.v(tag, Logging.getCurrentMethodName());
+		startService(new Intent(this, ConnectivityAgentService.class).putExtra("password",
+				componentsPassword).putExtra("bluetooth", bluetoothPermitted));
 	}
 
-	public void launchChannelSupervisor() {
-		Log.v(tag, "starting Channel Supervisor thread");
-		supervisor.start();
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.negLaunch));
+	void launchChannelSupervisor() {
+		Log.v(tag, Logging.getCurrentMethodName());
+		launchService(ChannelSupervisorService.class);
 	}
 
-	public void launchProfileManager() {
-		Log.v(tag, "starting Profile Manager thread");
-		profman.start();
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.profmanLaunch));
+	void launchProfileManager() {
+		Log.v(tag, Logging.getCurrentMethodName());
+		launchService(ProfileLayerService.class);
 	}
 
-	public void launchApplicationManager() {
-		Log.v(tag, "starting Application Manager thread");
-		appman.start(ForSDK.getAppManDirectory(), AppLauncher
-				.getInstance(SystemControllerService.this, launcherHandler));
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.appmanLaunch));
-	}
-
-	public void launchProfileRepository() {
-		Log.v(tag, "starting Profile Repository thread");
-		profrepo.start(ForSDK.getProfRepoDirectory());
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.profrepoLaunch));
+	void launchApplicationManager() {
+		Log.v(tag, Logging.getCurrentMethodName());
+		launchService(ApplicationManagerService.class);
 	}
 
 	public void launchAuthentication() {
-		startActivity(new Intent(this, AuthenticationActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+		Log.v(tag, Logging.getCurrentMethodName());
+		startActivity(new Intent(this, AuthenticationActivity.class)
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
-	void doReset() {
-		Log.v(tag, "doReset()");
-		AlarmHandler.setWakeApp(SystemControllerService.this, 2000);
-		doShutdown();
-	}
-
-	void doShutdown() {
-		Log.v(tag, "doShutdown()");
-		// searching for running authentication in case the shutdown request came unexpected when it is still running
-		int pid = ForSDK.findPidOfRunningAppOneShot(this, this.getPackageName()+".authentication");
-		if(pid == -1){
-			Log.i(tag, "Authentication process is not running");
-		}else{
-			android.os.Process.killProcess(pid);
+	private void doShutdown(final boolean reset) {
+		Log.v(tag, Logging.getCurrentMethodName(reset));
+		sendBroadcast(new Intent(IntentActions.KILLER_APP));
+		sendBroadcast(new Intent(componentsPassword));
+		if (Config.sendMails) {
+			Toast.makeText(this, "Sending mail with logs now, will shutdown shortly",
+					Toast.LENGTH_LONG).show();
 		}
-		android.os.Process.killProcess(android.os.Process.myPid());
+		// to avoid network on main thread exception if mails are sent
+		new Thread(new Runnable() {
+			public void run() {
+				if (Config.sendMails) {
+					LogsRecorder.mailLog();
+					Log.i(tag, "mailing done!");
+				} else {
+					// we are giving time for anti-ivilink to kick in
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				if (reset) {
+					AlarmHandler.setWakeApp(SystemControllerService.this,
+							AlarmHandler.RESTART_TIMEOUT);
+				}
+				android.os.Process.killProcess(android.os.Process.myPid());
+			}
+		}).start();
 	}
 
-	void allOk() {
+	private void allOk() {
 		Log.v(tag, "allOk() - switching to the foreground state");
-		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message,
-				Common.doneLaunch));
+		sendBroadcast(new Intent(Common.ifProgress).putExtra(Common.message, Common.doneLaunch));
 		launcherHandler.post(new Runnable() {
 			public void run() {
-				Toast.makeText(SystemControllerService.this, Common.doneLaunch,
-						Toast.LENGTH_LONG).show();
-				startForeground(NotificationHandler.ID, NotificationHandler
-						.createNotification(SystemControllerService.this));
+				Toast.makeText(SystemControllerService.this, Common.doneLaunch, Toast.LENGTH_LONG)
+						.show();
 			}
 		});
 	}
@@ -186,9 +189,11 @@ public class SystemControllerService extends Service {
 			Log.v(tag, "intent came from the Launcher Activity");
 			String misc = intent.getStringExtra(Common.misc);
 			if (misc.equals(Common.reset)) {
-				doReset();
+				doShutdown(true);
 			} else if (misc.equals(Common.shutdown)) {
-				doShutdown();
+				doShutdown(false);
+			} else if (misc.equals(Common.doneLaunch)) {
+				allOk();
 			}
 		}
 	}

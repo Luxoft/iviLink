@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,30 +18,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef SYSTEMSTATEMACHINE_HPP
 #define SYSTEMSTATEMACHINE_HPP
 
-#include "utils/threads/CThread.hpp"
-#include "framework/messageProtocol/SystemController_ConnectivityAgent/SystemController/ConnectivityAgentMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_ChannelSupervisor/SystemController/ChannelSupervisorMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_ProfileManager/SystemController/ProfileManagerMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_AppMan/SystemController/AppManMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_Authentication/SystemController/AuthenticationAppMsgProxy.hpp"
+#include "CThread.hpp"
+#include "ConnectivityAgentMsgProxy.hpp"
+#include "ChannelSupervisorMsgProxy.hpp"
+#include "ProfileManagerMsgProxy.hpp"
+#include "AppManMsgProxy.hpp"
+#include "AuthenticationAppMsgProxy.hpp"
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 namespace SystemController
 {
@@ -148,6 +137,7 @@ private:
    virtual void onAuthenticationAppAvailable();
    virtual void onAuthenticationAppNotAvailable(){LOG4CPLUS_TRACE(sLogger, "CSystemStateMachine::onProfileManagerNotAvailable()");};
 
+   virtual bool getLinkState();
 private:
 
    friend class CSystemState;
@@ -162,6 +152,8 @@ private:
    }
 
    void startTriggerHandler();
+
+    bool linkIsUp;
 };
 
 } /* namespace SystemController */

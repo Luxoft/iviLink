@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,48 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-
-
-/********************************************************************
- *
- * System includes
- *
- ********************************************************************/
- /********************************************************************
- *
- * Forward declaration includes
- *
- ********************************************************************/
 #include "Negotiator.hpp"
-/********************************************************************
- *
- * The class includes
- *
- ********************************************************************/
+
 #include "CNegotiatorToSysCtrlProxy.hpp" 
- /********************************************************************
- *
- * Other includes
- *
- ********************************************************************/
 
 using namespace iviLink;
 using namespace ChannelSupervisor;
 
-
-CNegotiatorToSysCtrlProxy::CNegotiatorToSysCtrlProxy(const std::string connectionName, Negotiator* pOwner):
-	SystemControllerMsgProxy(connectionName),
-	mpNegotiator(pOwner)
+CNegotiatorToSysCtrlProxy::CNegotiatorToSysCtrlProxy(const std::string connectionName,
+        Negotiator* pOwner)
+        : SystemControllerMsgProxy(connectionName), mpNegotiator(pOwner)
 {
 }
 CNegotiatorToSysCtrlProxy::~CNegotiatorToSysCtrlProxy()
@@ -70,20 +40,20 @@ CNegotiatorToSysCtrlProxy::~CNegotiatorToSysCtrlProxy()
 
 CError CNegotiatorToSysCtrlProxy::sendConnectionEstablished()
 {
-	return SystemControllerMsgProxy::requestConnectionEstablished();
+    return SystemControllerMsgProxy::requestConnectionEstablished();
 }
 
 CError CNegotiatorToSysCtrlProxy::sendConnectionLost()
 {
-	return SystemControllerMsgProxy::requestConnectionLost();
+    return SystemControllerMsgProxy::requestConnectionLost();
 }
 
 CError CNegotiatorToSysCtrlProxy::onShutDown()
 {
-	mpNegotiator->onShutDown();
-	return CError::NoError("CNegotiatorToSysCtrlProxy");
+    mpNegotiator->onShutDown();
+    return CError::NoError("CNegotiatorToSysCtrlProxy");
 }
 CError CNegotiatorToSysCtrlProxy::connect()
 {
-	return SystemControllerMsgProxy::connect();
+    return SystemControllerMsgProxy::connect();
 }

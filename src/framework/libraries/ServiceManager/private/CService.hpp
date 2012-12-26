@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef C_SERVICE_HPP
 #define C_SERVICE_HPP
 
-#include "utils/misc/Logger.hpp"
-#include "framework/components/ProfileManager/PMAL/CProfile.hpp"
-#include "framework/libraries/ServiceManager/common.hpp"
+#include "Logger.hpp"
+#include "CProfile.hpp"
+#include "ServiceManagerCommon.hpp"
 
-#ifndef ANDROID
-#else
-#include "utils/android/AppInfo.hpp"
-#endif //ANDROID
+#include "AppInfo.hpp"
 
 class CMutex;
 
@@ -63,11 +50,7 @@ namespace iviLink
           * Constructor
           * @param xmlPath is location of services XMLs
           */
-         #ifndef ANDROID
-         CService(const std::string &xmlPath, const Service::Uid & service);
-         #else
-         CService(iviLink::Android::AppInfo appInfo, const Service::Uid & service);
-         #endif //ANDROID
+         CService(const std::string &xmlPath, iviLink::Android::AppInfo appInfo, const Service::Uid & service);
 
          /**
           * Destructor
@@ -79,6 +62,13 @@ namespace iviLink
           * @return  the unique class Name
           */
          const Service::Uid & getUid() const;
+
+
+         /**
+          * return the unique class name
+          * @return  the unique class Name
+          */
+         const Service::Uid & getPairUid() const;
 
          /**
           * Loads service
@@ -168,11 +158,8 @@ namespace iviLink
 
          // Members section
          std::string                                  mManifestPath;    ///< path to XML manifest of Service
-         #ifndef ANDROID
          std::string                                  mXmlPath;         ///< path of XML location
-         #else
          iviLink::Android::AppInfo                    mAppInfo;
-         #endif //ANDORID
          iviLink::Service::Uid                        mUid;             ///< Service UID
          iviLink::Service::Uid                        mPairUid;         ///< Service pair UID
          tProfilesMap                                 mProfilesMap;     ///< Map with loaded profiles

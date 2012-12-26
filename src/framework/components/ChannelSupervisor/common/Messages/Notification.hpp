@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NOTIFICATION_HPP_
 #define NOTIFICATION_HPP_
@@ -37,9 +28,12 @@
 #include "ErrorCode.hpp"
 #include <map>
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 class NotificationTypeMap;
 
@@ -69,6 +63,8 @@ public:
 	static NotificationType 	GetNotificationType(pugi::xml_document* doc);
 	static const char *			GetNotificationTag(pugi::xml_document* doc);
 
+	static std::string 			GetComplementingTag(const std::string & tag);
+
 	std::string& 				GetNotificationTag();
 
 
@@ -84,40 +80,40 @@ public:
 
 protected:
 
-	static pugi::xml_node AppendResultNode(pugi::xml_node resultsNode, const char* modelId);
-	static pugi::xml_node AppendErrorNode(pugi::xml_node node, ErrorCode errorCode, const char* errorString);
+    static pugi::xml_node AppendResultNode(pugi::xml_node resultsNode, const char* modelId);
+    static pugi::xml_node AppendErrorNode(pugi::xml_node node, ErrorCode errorCode,
+            const char* errorString);
 
-	static void SetError(pugi::xml_node errorNode, ErrorCode errorCode, const char* errorString);
-	static void GetError(pugi::xml_node errorNode, ErrorCode& errorCode, const char*& errorString);
+    static void SetError(pugi::xml_node errorNode, ErrorCode errorCode, const char* errorString);
+    static void GetError(pugi::xml_node errorNode, ErrorCode& errorCode, const char*& errorString);
 
-	static int ExtractIntegerNode(pugi::xml_node node);
-	static char* ExtractCharNode(pugi::xml_node node);
+    static int ExtractIntegerNode(pugi::xml_node node);
+    static char* ExtractCharNode(pugi::xml_node node);
 
-	pugi::xml_node 		   m_errorNode;
+    pugi::xml_node m_errorNode;
 
-	ErrorCode 					m_errorCode;
-	const char 					*m_errorStr;
+    ErrorCode m_errorCode;
+    const char *m_errorStr;
 
-
-	NotificationType 			m_notificationType;
-	static NotificationTypeMap 	m_notificationTypeMap;
-	std::string 				m_tag;
+    NotificationType m_notificationType;
+    static NotificationTypeMap m_notificationTypeMap;
+    std::string m_tag;
 };
 
-class NotificationTypeMap : public std::map<Notification::NotificationType, std::string>
+class NotificationTypeMap: public std::map<Notification::NotificationType, std::string>
 {
 public:
-	NotificationTypeMap()
-	{
-		(*this)[Notification::NOTIFICATIONTTYPE_ALLOCATE] 		= "allocate-channel";
-		(*this)[Notification::NOTIFICATIONTTYPE_CHECK_MAP] 		= "check-the-map";
-		(*this)[Notification::NOTIFICATIONTTYPE_CA_ALLOCATE] 	= "allocate-in-connectivity-agent";
-		(*this)[Notification::NOTIFICATIONTTYPE_MAP_ADD_CID] 	= "add-cid-in-map";
-		(*this)[Notification::NOTIFICATIONTTYPE_DEALLOCATE] 	= "deallocate-channel";
-	}
+    NotificationTypeMap()
+    {
+        (*this)[Notification::NOTIFICATIONTTYPE_ALLOCATE] = "allocate-channel";
+        (*this)[Notification::NOTIFICATIONTTYPE_CHECK_MAP] = "check-the-map";
+        (*this)[Notification::NOTIFICATIONTTYPE_CA_ALLOCATE] = "allocate-in-connectivity-agent";
+        (*this)[Notification::NOTIFICATIONTTYPE_MAP_ADD_CID] = "add-cid-in-map";
+        (*this)[Notification::NOTIFICATIONTTYPE_DEALLOCATE] = "deallocate-channel";
+    }
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

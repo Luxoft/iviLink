@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #ifndef IMEDIACONTROLCLIENT_PROFILE_API_HPP
 #define IMEDIACONTROLCLIENT_PROFILE_API_HPP
 
 #include <iostream>
-#include "framework/public/appLib/CProfileApiBase.hpp"
+#include <string>
+ 
+#include "CProfileApiBase.hpp"
 
-class IMediaControlClientProfile_API : public iviLink::CProfileApiBase
+class IMediaControlClientProfile_API : public   iviLink::CProfileApiBase
 {
    IVILINK_PROFILE_API_UID(MediaControlClientProfile_API_UID)
    public:
@@ -38,22 +37,25 @@ class IMediaControlClientProfile_API : public iviLink::CProfileApiBase
       class Callbacks : public iviLink::Profile::IProfileCallbackProxy
       {
       public:
-         virtual void onClientToggle() = 0; //just recieve
-         virtual void onClientSync() = 0; //just recieve
-         virtual void onClientUnsync() = 0; //just recieve
-	 virtual void onClientPlay(std::string const& track, std::string const& source, std::string const& avform) = 0; //send the msg to app
+         virtual void onClientToggle() = 0; //just receive
+         virtual void onClientSync() = 0; //just receive
+         virtual void onClientUnsync() = 0; //just receive
+	     virtual void onClientPlay(std::string const& track, std::string const&  trackUid, std::string const& source, std::string const& avform) = 0; //send the msg to app
          virtual void onClientResume() = 0;
          virtual void onClientPause() = 0; //send the msg to app
          virtual void onClientStop() = 0; //send the msg to app
+         virtual void onClientChangeHighlightedTrack(int newPosition) = 0;
       };
 
+      virtual void serverStop() = 0; //send stop to the vlc server without any callback to other side
       virtual void stop() = 0;
-      virtual void play(std::string const&  trackName, std::string const& avform) = 0; //send the msg to another side
+      virtual void play(std::string const&  trackName,std::string const&  trackUid, std::string const& avform) = 0; //send the msg to another side
       virtual void resume() = 0;
       virtual void pause() = 0; //send the msg to another side
       virtual void toggle() = 0; //just send
       virtual void sync() = 0; //just send
       virtual void unsync() = 0; //just send
+
 };
 
 

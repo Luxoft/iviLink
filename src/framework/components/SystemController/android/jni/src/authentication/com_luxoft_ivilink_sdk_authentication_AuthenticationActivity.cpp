@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,15 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
+
+#include <android/log.h>
 
 #include "com_luxoft_ivilink_sdk_authentication_AuthenticationActivity.hpp"
-#include "utils/android/AppInfo.hpp"
-#include "utils/android/StringConversion.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "samples/linux/AuthenticationApplication/AuthenticationDialog.hpp"
-#include <android/log.h>
+#include "AppInfo.hpp"
+#include "StringConversion.hpp"
+#include "AuthenticationDialog.hpp"
 
 static JavaVM * jm;
 jobject appObj;
@@ -40,20 +39,18 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
 
 
 JNIEXPORT void JNICALL Java_com_luxoft_ivilink_sdk_authentication_AuthenticationActivity_start
-  (JNIEnv * env, jobject callbacks, jstring pathToService, jstring launchInfo, jstring internalPath, jstring trlistPath)
+  (JNIEnv * env, jobject callbacks, jstring pathToService, jstring jlaunchInfo, jstring internalPath, jstring trlistPath)
 {
-   iviLink::Android::AppInfo appInfo;
-   appInfo.privateDirPath = iviLink::Android::StringConversion::jToStd(internalPath, env);
-   appInfo.serviceRepoPath = iviLink::Android::StringConversion::jToStd(pathToService, env);
-	appInfo.launchInfo = iviLink::Android::StringConversion::jToStd(launchInfo, env);
-	
+  std:: string privateDirPath = iviLink::Android::StringConversion::jToStd(internalPath, env);
+  std::string serviceRepoPath = iviLink::Android::StringConversion::jToStd(pathToService, env);
+  std::string launchInfo = iviLink::Android::StringConversion::jToStd(jlaunchInfo, env);
+  iviLink::Android::AppInfo appInfo(serviceRepoPath, privateDirPath, launchInfo, NULL, NULL);
+
 	std::string trlist = iviLink::Android::StringConversion::jToStd(trlistPath, env);
 	
 	appObj = env->NewGlobalRef(callbacks);
 	auth = new authentication::AuthenticationDialog(appInfo, jm, appObj, trlist);
-   while(true){
-      sleep(100);
-   }
+  auth->init();
 }
 
 

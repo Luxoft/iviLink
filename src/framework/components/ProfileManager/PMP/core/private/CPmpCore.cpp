@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 
-#include "utils/threads/CThreadPool.hpp"
-#include "utils/threads/CThreadPoolJob.hpp"
+#include "CThreadPool.hpp"
+#include "CThreadPoolJob.hpp"
 
-#include "framework/components/ProfileRepository/CProfileRepoClient.hpp"
+#include "CProfileRepoClient.hpp"
 #include "CPmpCore.hpp"
 
 static const iviLink::Profile::ApiUid gsAuthProfilePapiUid("AuthenticationProfile_PAPI_UID");
@@ -149,15 +138,18 @@ namespace iviLink
          profiles.clear();
          std::list<LibInfo> list;
          mpRepoClient->findProfiles(UID(id.value()), profileArguments, list, platform);
-         LOG4CPLUS_INFO(msLogger, "List size : " + convertIntegerToString(list.size()));
+         LOG4CPLUS_INFO(msLogger, "CPmpCore::findProfilesAsync : List size : " + convertIntegerToString(list.size()));
          for (std::list<LibInfo>::iterator it = list.begin(); list.end() != it; ++it)
          {
+            LOG4CPLUS_INFO(msLogger, "CPmpCore::findProfilesAsync : in cycle");
             if (mProfiles.find(Profile::Uid(it->uid.value)) == mProfiles.end())
             {
+               LOG4CPLUS_INFO(msLogger, "continue");
                continue;
             }
             if ( it->platform == platform && ( !onlyAvailable || mProfiles[Profile::Uid(it->uid.value)].available() ) )
             {
+               LOG4CPLUS_INFO(msLogger, "push_back");
                profiles.push_back((*it));
             }
          }

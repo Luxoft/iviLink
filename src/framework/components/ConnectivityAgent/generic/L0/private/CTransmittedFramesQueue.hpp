@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CTRANSMITTED_FRAMES_QUEUE_HPP
 #define CTRANSMITTED_FRAMES_QUEUE_HPP
@@ -45,10 +35,12 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/Frame.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Types.hpp"
+#include "CMutex.hpp"
+#include "Frame.hpp"
+#include "Logger.hpp"
+
+#define RETRANSMIT_TIMEOUT_SEC 20
 
 namespace iviLink
 {
@@ -84,6 +76,12 @@ namespace iviLink
              * TTransmittedFrameQueue type represents the queue of the frames with timestamp of their queuing
              */
             typedef std::list<tFrameTimeStamped> TTransmittedFrameQueue;
+
+            /**
+             * TransmitStartTimes type represents the map of channel ids with frame numbers and
+             *  its transmission start times
+             */
+            typedef std::map<UInt64, timespec> TransmitStartTimes;
 
             // Methods section
 
@@ -148,24 +146,13 @@ namespace iviLink
 
 
          private:
-            // Types section
-
             /**
-             * Used in deleteFramesForChannel() method to delete frames from queue.
+             * Concatenate channelId and frame number from the frame header to get unique frame id
+             *
+             * @param header is the frame header
              */
-            class RemoveByChannelIDPredicate
-            {
-               UInt32 chID;
-            public:
-               RemoveByChannelIDPredicate(UInt32 channel_id) :
-                  chID(channel_id)
-               {}
-
-               bool operator() (const tFrameTimeStamped& val)
-               {
-                  return val.mFrame.mFrameHeader.channel_id == chID;
-               }
-            };
+            UInt64 concatenateChannelIdFrameNum(
+                    const iviLink::ConnectivityAgent::HAL::Frame::FrameHeader& header);
 
          private:
             // Methods section
@@ -202,6 +189,7 @@ namespace iviLink
 
             CMutex mMutex;
             TTransmittedFrameQueue mQueue;
+            TransmitStartTimes mTransmitStartTimes;
             CQoS* mpQoS;
          };
       }

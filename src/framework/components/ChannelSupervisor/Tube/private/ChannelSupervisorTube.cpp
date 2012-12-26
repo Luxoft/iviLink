@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,124 +18,127 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <map>
-#include "utils/misc/Types.hpp"
-#include "utils/misc/logging.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/IChannelObserver.hpp"
+#include "Types.hpp"
+#include "IChannelObserver.hpp"
 #include "IChannelSupervisorObserver.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/API.hpp"
-#include "framework/components/ChannelSupervisor/NegotiatorClient/NegotiatorClient.hpp"
+#include "API.hpp"
+#include "NegotiatorClient.hpp"
 #include "ChannelSupervisorTube.hpp"
 #include "ChannelObserver.hpp"
-#include "framework/components/ChannelSupervisor/common/Common.hpp"
-#include "framework/components/ChannelSupervisor/common/CSError.hpp"
+#include "Common.hpp"
+#include "CSError.hpp"
 
-#include "utils/threads/CMutex.hpp"
-
+#include "CMutex.hpp"
 
 const char defErrMsg[] = "no error occurred";
-static Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("ChannelSupervisor.ChannelSupervisorTube"));
+static Logger logger = Logger::getInstance(
+		LOG4CPLUS_TEXT("ChannelSupervisor.ChannelSupervisorTube"));
 #define ALLOCATION_ATTEMPTS 100
 
-namespace iviLink {
+namespace iviLink
+{
 
-namespace ChannelSupervisor {
+namespace ChannelSupervisor
+{
 
 static std::map<int, IChannelObserver*> observerMap;
-
 static int channel = 0;
-
 static CMutex gMutex;
 
 /**
  * Negotiates channel id with other party and allocates the channel
- * @param observer   - registration of the observer for Channel supervisor events receiving
- * @param tag     - tag of the channel
- * @param channelId - channel id
+ * @param observer is registration of the observer for Channel supervisor events receiving
+ * @param tag is tag of the channel
+ * @param channelId is channel id
+ * @param priority is channel priority
  * @return CS_SUCCESS if channel successfully allocated, otherwise CS_ERR_OTHER
  */
-CError allocateChannel( IChannelSupervisorTubeObserver* observer, std::string tag, UInt32 & channelId )
+CError allocateChannel(IChannelSupervisorTubeObserver* observer,
+                       std::string const& tag,
+                       UInt32 & channelId,
+                       TChannelPriority priority)
 {
-   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
-   gMutex.lock();
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::AllocateChannel()=>tag"+ tag);
+	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+	MutexLocker globalLock(gMutex);
+	LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::AllocateChannel()=>tag" + tag);
 
-   CError err = CSError(CSError::ERROR_OTHER);
-   if (observer == NULL)
-      return err;
+	CError err = CSError(CSError::ERROR_OTHER);
+	if (observer == NULL)
+	{
+		return err;
+	}
 
-   //create negotiator client object
-   NegotiatorClient* negotiatorClient = NegotiatorClient::getInstance();
+	//create negotiator client object
+	NegotiatorClient* negotiatorClient = NegotiatorClient::getInstance();
 
-   IChannelObserver* obs = new ChannelObserver(observer);
+	IChannelObserver* obs = new ChannelObserver(observer);
+	MutexLocker lock(*(((ChannelObserver *) obs)->getMutex()));
 
-   UInt32 i = 0;
+	UInt32 i = 0;
 
-   //do negotiation until 1) timeout 2) number of negotiation exceed confuration 3) cid obtained
-   while (i < ALLOCATION_ATTEMPTS)
-   {
+	//do negotiation until 1) timeout 2) number of negotiation exceed confuration 3) cid obtained
+	while (i < ALLOCATION_ATTEMPTS)
+	{
+		//negotiate channel with other side
+		err = negotiatorClient->NegotiateChannel(tag, channelId);
+		LOG4CPLUS_INFO(logger,
+				"ChannelSupervisorTube::AllocateChannel()=>Negotiated id "
+						+ convertIntegerToString(channelId));
 
-      //negotiate channel with other side
-      err = negotiatorClient->NegotiateChannel(tag, channelId);
-      LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::AllocateChannel()=>Negotiated id "+ convertIntegerToString(channelId));
+		if (channelId != 0 && err.isNoError())
+		{
+			observerMap[channel] = obs;
 
-      if (channelId != 0 && err.isNoError())
-      {
-         observerMap[channel] = obs;
+			//allocate channel in Connectivity Agent
+			ERROR_CODE caError = ::allocateChannel(priority, channelId, obs);
 
-         //allocate channel in Connectivity Agent
-         ERROR_CODE caError = ::allocateChannel(eSafetyCritical, channelId,obs);
+			if (caError == ERR_OK)
+			{
+				LOG4CPLUS_INFO(logger,
+						"ChannelSupervisorTube::AllocateChannel()=>Allocated channelId "
+								+ convertIntegerToString(channelId));
 
-         if (caError == ERR_OK)
-         {
-            LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::AllocateChannel()=>Allocated channelId "+ convertIntegerToString(channelId));
-
-            err = negotiatorClient->UpdateMapWithCID(tag, channelId);
-            if (err.isNoError())
-            {
-               err = CSError::NoCSError(defErrMsg);
-               break;   //channel successfully allocated
-            }
-            else if (err.getCode() != CSError::UPDATE_MAP_WRONG_CID)
-            {
-               break; //error in map update
-            }
-         }
-         else
-         {
-            err = CSError(CSError::ERROR_OTHER, "allocation channel error");
-            break;   //error in CA. unable to allocate
-         }
-      }
-      else if( err.getCode() != CSError::NEGOTIATION_CHANNEL_ERROR)
-      {
-         break;   //error in negotiation
-      }
-      err = CSError(CSError::ERROR_OTHER, "unable to allocate channel. Number of attempts exceed limit");
-      ++i;
-   }
-
-   //delete negotiator
-   negotiatorClient->deleteInstance(); //should be deleted on deallocation
-   
-   gMutex.unlock();
-   return err;
- }
-
+				err = negotiatorClient->UpdateMapWithCID(tag, channelId);
+				if (err.isNoError())
+				{
+					err = CSError::NoCSError(defErrMsg);
+					break;   //channel successfully allocated
+				} else if (err.getCode() != CSError::UPDATE_MAP_WRONG_CID)
+				{
+					break; //error in map update
+				}
+			} else if (caError == ERR_NUMBER_BUSY)
+			{
+				LOG4CPLUS_ERROR(logger,
+						std::string("This channel was already allocated, ")
+								+ convertIntegerToString(channelId)
+								+ std::string(" trying a higher number"));
+				continue;
+			} else
+			{
+				err = CSError(CSError::ERROR_OTHER, "allocation channel error");
+				break;   //error in CA. unable to allocate
+			}
+		} else if (err.getCode() != CSError::NEGOTIATION_CHANNEL_ERROR)
+		{
+			LOG4CPLUS_ERROR(logger,
+					"ChannelSupervisorTube::AllocateChannel()=>err.getCode() \
+                    != CSError::NEGOTIATION_CHANNEL_ERROR, breaking...");
+			break;   //error in negotiation
+		}
+		err = CSError(CSError::ERROR_OTHER,
+				"unable to allocate channel. Number of attempts exceed limit");
+		++i;
+	}
+	return err;
+}
 
 /**
  * Deallocates the channel with the given id
@@ -144,51 +146,62 @@ CError allocateChannel( IChannelSupervisorTubeObserver* observer, std::string ta
  * @param tag     - tag of the channel
  * @return CS_SUCCESS if channel successfully deallocated, otherwise CS_ERR_OTHER
  */
-CError deallocateChannel(const UInt32 channelId, std::string tag)
+CError deallocateChannel(const UInt32 channelId)
 {
-   
-   LOG4CPLUS_TRACE_METHOD(logger, "ChannelSupervisorTube::deallocateChannel()=>tag '" + tag + "' channel "+ convertIntegerToString(channelId));
-      //create negotiator client object
-   NegotiatorClient* negotiatorClient = NegotiatorClient::getInstance();
 
-   CError err = CSError::NoCSError(defErrMsg);
+	LOG4CPLUS_TRACE_METHOD(logger,
+			"ChannelSupervisorTube::deallocateChannel()=> channel "
+					+ convertIntegerToString(channelId));
 
-    //do real channel deallocation in CA
-   ERROR_CODE caError = ::closeChannel(channelId);
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::deallocateChannel()=>CA error code" + convertIntegerToString((int)caError));
+	if (isIdRestricted(channelId))
+	{
+		LOG4CPLUS_ERROR(logger,
+				"Trying to deallocate a restricted channel: "
+						+ convertIntegerToString((int) channelId));
+		return CSError(CSError::ERROR_OTHER);
+	}
 
-   std::map<int,IChannelObserver*>::iterator it;
-   it=observerMap.find(channelId);
-   if(it != observerMap.end())
-   {
-      ChannelObserver * obs = (ChannelObserver*)(*it).second;
+	NegotiatorClient* negotiatorClient = NegotiatorClient::getInstance();
 
-      LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::deallocateChannel()=>observer found, delete");
-      if (obs) delete obs;
-      obs = 0;
-      observerMap.erase(it);
+	CError err = CSError::NoCSError(defErrMsg);
+	//do real channel deallocation in CA
+	ERROR_CODE caError = ::closeChannel(channelId);
+	LOG4CPLUS_TRACE(logger,
+			"ChannelSupervisorTube::deallocateChannel()=>CA error code"
+					+ convertIntegerToString((int) caError));
 
-   }
-   else
-   {
-      LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::deallocateChannel()=>observer not found!!!");
-   }
+	std::map<int, IChannelObserver*>::iterator it;
+	it = observerMap.find(channelId);
+	if (it != observerMap.end())
+	{
+		ChannelObserver * obs = (ChannelObserver*) (*it).second;
 
-   if (caError != ERR_OK)
-   {
-      err = CSError(CSError::ERROR_OTHER, "deallocation channel error");
-   }
-   // Even in case of error we try to free channel from negotiator
+		LOG4CPLUS_TRACE(logger,
+				"ChannelSupervisorTube::deallocateChannel()=>observer found, delete");
+		if (obs)
+			delete obs;
+		obs = 0;
+		observerMap.erase(it);
 
-   //deallocate the channel (just remove from negotiator map)
-   negotiatorClient->FreeChannel(channelId, tag);
+	} else
+	{
+		LOG4CPLUS_TRACE(logger,
+				"ChannelSupervisorTube::deallocateChannel()=>observer not found!!!");
+	}
 
-   //delete the negotiator object
-   negotiatorClient->deleteInstance();
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::deallocateChannel()=>deallocated channel " 
-                     + convertIntegerToString(channelId));
+	if (caError != ERR_OK)
+	{
+		err = CSError(CSError::ERROR_OTHER, "deallocation channel error");
+	}
+	// Even in case of error we try to free channel from negotiator
 
-   return err;
+	//deallocate the channel (just remove from negotiator map)
+	negotiatorClient->FreeChannel(channelId);
+	LOG4CPLUS_TRACE(logger,
+			"ChannelSupervisorTube::deallocateChannel()=>deallocated channel "
+					+ convertIntegerToString(channelId));
+
+	return err;
 }
 
 /**
@@ -199,14 +212,21 @@ CError deallocateChannel(const UInt32 channelId, std::string tag)
  * @param size    - data length
  * @return CS_SUCCESS if channel successfully sent, otherwise CS_ERR_OTHER
  */
-CError sendData(const UInt32 channelId, std::string tag, UInt8 const* data, UInt32 size)
+CError sendData(const UInt32 channelId, UInt8 const* data, UInt32 size)
 {
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::sendData()=>channel" 
-                   + convertIntegerToString(channelId)+ "size" + convertIntegerToString(size));
-   ::sendData(channelId, data, size);
-   return CSError::NoCSError(defErrMsg);
+	LOG4CPLUS_TRACE(logger,
+			"ChannelSupervisorTube::sendData()=>channel" + convertIntegerToString(channelId)
+					+ "size" + convertIntegerToString(size));
+	if (channelId != SERVICE_CHANNEL_NUMBER)
+	{
+		::sendData(channelId, data, size);
+		return CSError::NoCSError(defErrMsg);
+	} else
+	{
+		LOG4CPLUS_ERROR(logger, "Attempting to send data to CA service channel");
+		return CSError(CSError::ERROR_OTHER, "Attempting to send data to CA service channel");
+	}
 }
-
 
 /**
  * Receives the data from the channel
@@ -217,30 +237,37 @@ CError sendData(const UInt32 channelId, std::string tag, UInt8 const* data, UInt
  * @param maxSize    - size of the array the data will be read to
  * @return CS_SUCCESS if channel successfully read, otherwise CS_ERR_OTHER
  */
-CError receiveData(const UInt32 channelId, std::string tag, UInt8 * data, UInt32 & receivedSize, UInt32 maxSize)
+CError receiveData(const UInt32 channelId, UInt8 * data, UInt32 & receivedSize,
+		const UInt32 maxSize)
 {
-   ERROR_CODE err = ::receiveData(channelId, data, receivedSize, maxSize);
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::receiveData()=>channel " 
-                   + convertIntegerToString(channelId) + 
-                   " size " + convertIntegerToString(receivedSize) +
-                   " err " + convertIntegerToString((int)err));
-   if (err == ERR_OK)
-      return CSError::NoCSError(defErrMsg);
-   else
-      return CSError(CSError::ERROR_OTHER, "::receiveData failed");
+	ERROR_CODE err = ::receiveData(channelId, data, receivedSize, maxSize);
+	LOG4CPLUS_TRACE_METHOD(logger,
+			"ChannelSupervisorTube::receiveData()=>channel " + convertIntegerToString(channelId)
+					+ " size " + convertIntegerToString(receivedSize) + " err "
+					+ convertIntegerToString((int) err));
+	if (err == ERR_OK)
+	{
+		return CSError::NoCSError(defErrMsg);
+	} else
+	{
+		return CSError(CSError::ERROR_OTHER, "::receiveData failed");
+	}
 }
 
 CError getFreeSize(const UInt32 channelId, UInt32 & freeSize)
 {
-   ERROR_CODE err = ::getFreeSize(channelId, freeSize);
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::getFreeSize()=>channel "
-                   + convertIntegerToString(channelId) +
-                   " freeSize " + convertIntegerToString(freeSize) +
-                   " err " + convertIntegerToString((int)err));
-   if (err == ERR_OK)
-      return CSError::NoCSError(defErrMsg);
-   else
-      return CSError(CSError::ERROR_OTHER, "::getFreeSize failed");
+	ERROR_CODE err = ::getFreeSize(channelId, freeSize);
+	LOG4CPLUS_TRACE_METHOD(logger,
+			"ChannelSupervisorTube::getFreeSize()=>channel " + convertIntegerToString(channelId)
+					+ " freeSize " + convertIntegerToString(freeSize) + " err "
+					+ convertIntegerToString((int) err));
+	if (err == ERR_OK)
+	{
+		return CSError::NoCSError(defErrMsg);
+	} else
+	{
+		return CSError(CSError::ERROR_OTHER, "::getFreeSize failed");
+	}
 }
 
 /**
@@ -251,7 +278,7 @@ CError getFreeSize(const UInt32 channelId, UInt32 & freeSize)
  */
 CError kickWatchdog(const UInt32 channelId, std::string tag)
 {
-    return CSError::NoCSError(defErrMsg);
+	return CSError::NoCSError(defErrMsg);
 }
 
 /**
@@ -261,57 +288,38 @@ CError kickWatchdog(const UInt32 channelId, std::string tag)
  * @param channelId - channel id
  * @return CS_SUCCESS if channel successfully allocated, otherwise CS_ERR_OTHER
  */
-CError allocateZeroChannel( IChannelSupervisorTubeObserver* observer, std::string tag)
+CError init(IChannelSupervisorTubeObserver* observer)
 {
-   LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::allocateZeroChannel()=>channel " +
-      convertIntegerToString(CS_SERVICE_CHANNEL));
+	LOG4CPLUS_TRACE_METHOD(logger,
+			"ChannelSupervisorTube::init() => channel "
+					+ convertIntegerToString(CS_SERVICE_CHANNEL));
 
-   CError err = CSError(CSError::ERROR_OTHER);
-   if (observer == NULL)
-      return err;
+	CError err = CSError(CSError::ERROR_OTHER);
+	if (observer == NULL)
+	{
+		return err;
+	}
 
-   IChannelObserver* obs = new ChannelObserver(observer);
+	IChannelObserver* obs = new ChannelObserver(observer);
 
-   observerMap[channel] = obs;
+	observerMap[channel] = obs;
 
-   //allocate channel in Connectivity Agent
-   ERROR_CODE caError = ::allocateChannel(eSafetyCritical, CS_SERVICE_CHANNEL, obs);
+	//allocate channel in Connectivity Agent
+	ERROR_CODE caError = ::allocateChannel(eSafetyCritical, CS_SERVICE_CHANNEL, obs);
 
-   if (caError == ERR_OK)
-   {
-      LOG4CPLUS_TRACE(logger, "ChannelSupervisorTube::allocateZeroChannel()=>allocated successfully!");
-      err = CSError::NoCSError("Service allocated");
-   }
-   return err;
- }
-
-
-namespace UnstableAPI
-{
-
-CError getConnectionAddr(std::string& type, std::string& localAddr, std::string& remoteAddr)
-{
-   char *ptype, *plocal, *premote;
-   if (ERR_OK == ::getConnectionAddr(&ptype, &plocal, &premote))
-   {
-      type.assign(ptype);
-      localAddr.assign(plocal);
-      remoteAddr.assign(premote);
-
-      free(ptype);
-      free(plocal);
-      free(premote);
-
-      return CSError::NoCSError("");
-   }
-
-   return CSError(CSError::ERROR_OTHER);
+	if (caError == ERR_OK)
+	{
+		LOG4CPLUS_INFO(logger,
+				"ChannelSupervisorTube::init() => \
+            channel allocated successfully!");
+		err = CSError::NoCSError("Service allocated");
+	}
+	return err;
 }
 
-} // namespace UnstableAPI
-
+bool isIdRestricted(const UInt32 numberToCheck)
+{
+	return numberToCheck == CS_SERVICE_CHANNEL || numberToCheck == SERVICE_CHANNEL_NUMBER;
+}
 } //namespace ChannelSupervisor
 } //namespace AXIS
-
-
-

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CBasicSample.hpp"
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "Logger.hpp"
+#include "CSignalSemaphore.hpp"
 
 int main()
 {
@@ -43,6 +36,7 @@ int main()
    
    //creating of basic sample instance
    CBasicSample* basicSample = new CBasicSample(semaphore);
+   basicSample->init();
 
    LOG4CPLUS_INFO(logger, "basic sample created");
    semaphore.waitTimeout(20000);

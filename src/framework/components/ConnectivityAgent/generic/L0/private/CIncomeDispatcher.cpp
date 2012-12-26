@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -49,8 +38,8 @@
 #include "CTransmittedFramesQueue.hpp"
 #include "CSource.hpp"
 #include "CTarget.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/Frame.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/CCarrierAdapter.hpp"
+#include "Frame.hpp"
+#include "CCarrierAdapter.hpp"
 /********************************************************************
  *
  * The class includes
@@ -62,7 +51,7 @@
  * The other includes
  *
  ********************************************************************/
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace iviLink::ConnectivityAgent::L0;
 
@@ -78,74 +67,69 @@ CIncomeDispatcher::CIncomeDispatcher(iviLink::ConnectivityAgent::HAL::CCarrierAd
 
 ERROR_CODE CIncomeDispatcher::openChannel(const UInt32 channel_id, IBufferConsumer& bufferConsumer)
 {
-   mListMutex.lock();
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   MutexLocker lock(mMapMutex);
    ERROR_CODE res = ERR_FAIL;
    LOG4CPLUS_INFO(logger, "CIncomeDispatcher::openChannel(chID = "
          + convertIntegerToString(channel_id) + ", bufCons = "
          + convertIntegerToString((intptr_t)&bufferConsumer) + ")");
-   TTargetList::iterator iter = mTargetList.begin();
-   while(iter != mTargetList.end())
+   TTargetMap::iterator iter = mTargetMap.find(channel_id);
+   if (iter != mTargetMap.end())
    {
-      if (channel_id == static_cast<CTarget*>(*iter)->getChannelID())
+      if (channel_id == (static_cast<CTarget*>((*iter).second))->getChannelID())
       {
-         LOG4CPLUS_INFO(logger, "CIncomeDispatcher::openChannel: channel "
+         LOG4CPLUS_ERROR(logger, "CIncomeDispatcher::openChannel: channel "
             + convertIntegerToString(channel_id) + " already exists");
-         break;
       }
-      ++iter;
    }
-   if (iter == mTargetList.end())
+   else
    {
       CTarget* pTarget = new CTarget(channel_id);
       pTarget->registerConsumer(&bufferConsumer);
       bufferConsumer.registerProducer(pTarget);
-      mTargetList.push_back(pTarget);
+      mTargetMap[channel_id] = pTarget;
       LOG4CPLUS_INFO(logger, "CIncomeDispatcher::openChannel: opened channel "
          + convertIntegerToString(channel_id));
       res = ERR_OK;
    }
-   mListMutex.unlock();
    return res;
 }
 
 void CIncomeDispatcher::closeChannel(const UInt32 channel_id)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CIncomeDispatcher::closeChannel(chID = "
          + convertIntegerToString(channel_id));
-   mListMutex.lock();
-   for (TTargetList::iterator iter = mTargetList.begin(); iter != mTargetList.end(); ++iter)
+   MutexLocker lock(mMapMutex);
+   TTargetMap::iterator iter = mTargetMap.find(channel_id);
+   if (iter != mTargetMap.end())
    {
-      if (channel_id == static_cast<CTarget*> (*iter)->getChannelID())
+      if (channel_id == static_cast<CTarget*> ((*iter).second)->getChannelID())
       {
-         delete *iter;
-         mTargetList.erase(iter);
-         break;
+         LOG4CPLUS_INFO(logger, "CIncomeDispatcher::closeChannel(chID = "
+         + convertIntegerToString(channel_id) + ": found CTarget*)");
+         delete (*iter).second;
+         mTargetMap.erase(iter);
       }
-
    }
-   mListMutex.unlock();
 }
 
 CIncomeDispatcher::~CIncomeDispatcher()
 {  
-   mListMutex.lock();
-
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   MutexLocker lock(mMapMutex);
    mDestroyed = true;
-
-   for (TTargetList::iterator iter = mTargetList.begin(); iter != mTargetList.end(); ++iter)
+   for (TTargetMap::iterator iter = mTargetMap.begin(); iter != mTargetMap.end(); ++iter)
    {
-      delete *iter;
+      delete (*iter).second;
    }
-
-   mTargetList.clear();
-
-   mListMutex.unlock();
+   mTargetMap.clear();
 }
 
 ERROR_CODE CIncomeDispatcher::receiveFrame(const iviLink::ConnectivityAgent::HAL::Frame& frame)
 {
    ERROR_CODE ret = ERR_FAIL;
-   LOG4CPLUS_INFO(logger, "CIncomeDispatcher::receiveFrame ChID "
+   LOG4CPLUS_TRACE(logger, "CIncomeDispatcher::receiveFrame ChID "
          + convertIntegerToString(frame.mFrameHeader.channel_id) + ", number "
          + convertIntegerToString(frame.mFrameHeader.number) +   ", size "
          + convertIntegerToString(frame.getSize()));
@@ -159,27 +143,22 @@ ERROR_CODE CIncomeDispatcher::receiveFrame(const iviLink::ConnectivityAgent::HAL
    }
    else
    {
-      mListMutex.lock();
-
       if (mDestroyed)
       {
          return ERR_FAIL;
       }
 
       CTarget* pTarget = NULL;
-      LOG4CPLUS_INFO(logger, "CIncomeDispatcher::receiveFrame mTargetList.size() = "
-            + convertIntegerToString(mTargetList.size()));
-      for (TTargetList::iterator iter = mTargetList.begin(); iter != mTargetList.end(); ++iter)
       {
-         LOG4CPLUS_INFO(logger, "CIncomeDispatcher::receiveFrame check target chID = "
-               + convertIntegerToString((*iter)->getChannelID()));
-         if (frame.mFrameHeader.channel_id == (*iter)->getChannelID())
+         MutexLocker lock(mMapMutex);
+         LOG4CPLUS_INFO(logger, "CIncomeDispatcher::receiveFrame mTargetMap.size() = "
+               + convertIntegerToString(mTargetMap.size()));
+         TTargetMap::iterator iter = mTargetMap.find(frame.mFrameHeader.channel_id);
+         if (iter != mTargetMap.end())
          {
-            pTarget = *iter;
-            break;
+            pTarget = (*iter).second;
          }
       }
-      mListMutex.unlock();
 
       if (pTarget)
       {
@@ -189,7 +168,7 @@ ERROR_CODE CIncomeDispatcher::receiveFrame(const iviLink::ConnectivityAgent::HAL
       else
       {
          ret = ERR_NOTFOUND;
-         LOG4CPLUS_INFO(logger, "CIncomeDispatcher::receiveFrame error - frame.channel_id = "
+         LOG4CPLUS_ERROR(logger, "CIncomeDispatcher::receiveFrame error - frame.channel_id = "
               + convertIntegerToString(frame.mFrameHeader.channel_id) + " not found");
       }
 
@@ -198,11 +177,12 @@ ERROR_CODE CIncomeDispatcher::receiveFrame(const iviLink::ConnectivityAgent::HAL
 }
 void CIncomeDispatcher::replaceCarrier(iviLink::ConnectivityAgent::HAL::CCarrierAdapter* pCarrierAdapter)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    mpCarrier = pCarrierAdapter;
-   TTargetList::iterator iter = mTargetList.begin();
-   while(iter != mTargetList.end())
+   TTargetMap::iterator iter = mTargetMap.begin();
+   while(iter != mTargetMap.end())
    {
-      static_cast<CTarget*>(*iter)->setCarrierReplaced();
+      static_cast<CTarget*>((*iter).second)->setCarrierReplaced();
       ++iter;
    }
 }

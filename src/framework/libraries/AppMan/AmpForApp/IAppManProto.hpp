@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IAPPMANPROTO_HPP_
 #define IAPPMANPROTO_HPP_
@@ -38,11 +27,11 @@
 #include <list>
 #include <sys/types.h>
 
-#include "utils/ipc/ipc_common.hpp"
-#include "utils/misc/UID.hpp"
-#include "utils/misc/CError.hpp"
+#include "ipc_common.hpp"
+#include "UID.hpp"
+#include "CError.hpp"
 
-#include "framework/libraries/AppMan/App/IAppMan.hpp"
+#include "IAppMan.hpp"
 
 namespace iviLink
 {
@@ -56,6 +45,9 @@ namespace iviLink
          const UInt8 C_PROTO_INIT_APP = 0;
          const UInt8 C_PROTO_USE_SERV = 1;
          const UInt8 C_PROTO_REG_SERV = 2;
+
+          const UInt8 C_PROTO_IS_LINK_ALIVE = 0x1D;
+
 
          /**
           * Interface of requests from applications to AMP
@@ -83,6 +75,9 @@ namespace iviLink
              * @param service is UID of service
              */
             virtual CError registerService(pid_t pid, Service::Uid service) = 0;
+
+             // return true if connection to other side is established
+             virtual bool isLinkAlive() =0;
 
             /**
              * Is used only in CAppManProtoClient. If sesssionRequest() was made

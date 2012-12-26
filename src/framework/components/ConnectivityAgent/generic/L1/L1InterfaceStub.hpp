@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef L1INTERFACE_STUB_HPP
 #define L1INTERFACE_STUB_HPP
@@ -45,11 +35,11 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/ipc/ICallbackHandler.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/threads/ITimeoutSubscriber.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/API.hpp"
+#include "ICallbackHandler.hpp"
+#include "Types.hpp"
+#include "ITimeoutSubscriber.hpp"
+#include "CMutex.hpp"
+#include "API.hpp"
 #include "CSystemControllerProtocol.hpp"
 
 namespace iviLink
@@ -106,7 +96,7 @@ namespace iviLink
             /**
              * Type for storing allocated channel config
              */
-            struct tChannelInfo
+            struct tL1ChannelInfo
             {
                UInt64               mUpperThresholdTime;
                UInt64               mLowerThresholdTime;
@@ -128,7 +118,7 @@ namespace iviLink
             /**
              * Allocated Channels map type
              */
-            typedef std::map<UInt32,tChannelInfo> tChannelsRegistryMap;
+            typedef std::map<UInt32,tL1ChannelInfo> tChannelsRegistryMap;
 
             /**
              * Requested Channels map type
@@ -181,6 +171,9 @@ namespace iviLink
             virtual void OnRequest(iviLink::Ipc::MsgID id, 
                UInt8 const* pPayload, UInt32 payloadSize, 
                UInt8* const pResponseBuffer, UInt32& bufferSize,
+               iviLink::Ipc::DirectionID dirId);
+            virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, 
+               UInt8 const* pPayload, UInt32 payloadSize, 
                iviLink::Ipc::DirectionID dirId);
 
          public:
@@ -298,7 +291,7 @@ namespace iviLink
              * @retval ERR_DEFERRED all ok, need to wait channel allocation 
              *    request from one of clients on this side. See diagram SEQ_A
              * @retval ERR_NUMBER_BUSY there is channel with specified 
-             *    @c channel_id in the mRegistry
+             *    @c channel_id in the mL1ChannelRegistry
              * @reval ERR_IN_PROGRESS attempt to make the second request for the
              *    same channel, while the first request is not ended yet. 
              *    Please, be patient.
@@ -308,7 +301,7 @@ namespace iviLink
 
             /**
              * Performs channel allocation using CChannelAllocator.
-             * Updates mRegistry.
+             * Updates mL1ChannelRegistry.
              *
              * Method <b>MUST BE CALLED</b> inside critical section of mutexes
              * mRequestedMapMutex and mRegistryMutex (in that order). 
@@ -323,7 +316,7 @@ namespace iviLink
 
             /**
              * This method finishes channel allocation.
-             * Updates mRegistry.
+             * Updates mL1ChannelRegistry.
              *
              * @param channel_id number of requested channel
              * @param[out] dirId returns directionId of client which requested 
@@ -332,7 +325,7 @@ namespace iviLink
              * @retval ERR_OK all ok, channel successfully allocated
              * @retval ERR_DEFERRED all ok, channel allocated, but need to send
              *    message to the other side
-             * @retval ERR_NOTFOUND channel is not found in mRegistry. This is 
+             * @retval ERR_NOTFOUND channel is not found in mL1ChannelRegistry. This is 
              *    legit in case when L1interfaceStub is being destroyed. Or it 
              *    can be some bug.
              */
@@ -342,7 +335,7 @@ namespace iviLink
              * Called in case of failed channel allocation.
              * Can be called because of error received from other side or because
              * of error on our side.
-             * Erases channel data from mRequestedMap and mRegistry. Deallocates
+             * Erases channel data from mRequestedMap and mL1ChannelRegistry. Deallocates
              * the channel using CChannelAllocator.
              * 
              * @param channel_id number of requested channel
@@ -467,7 +460,7 @@ namespace iviLink
             tServiceCallbacksMap                               mServiceCallbacksMap;
 
             //> Map of allocated channels
-            tChannelsRegistryMap                               mRegistry;
+            tChannelsRegistryMap                               mL1ChannelRegistry;
 
             /**
              * Mutex for map of allocated channels.

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,47 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-
-
-
-/********************************************************************
- *
- * System includes
- *
- ********************************************************************/
 #include <cassert>
 #include <unistd.h>
 
-/********************************************************************
- *
- * Forward declaration includes
- *
- ********************************************************************/
-#include "framework/components/ConnectivityAgent/generic/common/Buffer.hpp"
-#include "framework/components/ConnectivityAgent/generic/L1/IBufferProducer.hpp"
+#include "Buffer.hpp"
+#include "IBufferProducer.hpp"
 
-/********************************************************************
- *
- * The class includes
- *
- ********************************************************************/
 #include "CSource.hpp"
-/********************************************************************
- *
- * The other includes
- *
- ********************************************************************/
-#include "utils/misc/Logger.hpp"
+
+#include "Logger.hpp"
 
 using iviLink::ConnectivityAgent::Buffer;
 using iviLink::ConnectivityAgent::L1::IBufferProducer;
@@ -73,12 +43,13 @@ CSource::CSource(const UInt32 channel_id, CSignalSemaphore& onDataSem):
    mpBufferProducer(0),
    mOnDataSem(onDataSem)
 {
-   LOG4CPLUS_INFO(logger, "CSource::CSource( chID = "
+   LOG4CPLUS_TRACE(logger, "CSource::CSource( chID = "
          + convertIntegerToString(channel_id) + " ) this = "
          + convertIntegerToString((intptr_t)this));
 }
 CSource::~CSource()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (mpBufferProducer)
    {
       mpBufferProducer->unregisterConsumer(this);
@@ -87,6 +58,7 @@ CSource::~CSource()
 
 ERROR_CODE CSource::registerProducer(IBufferProducer* pProducer)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    assert(!mpBufferProducer);
    assert(pProducer);
 
@@ -96,6 +68,7 @@ ERROR_CODE CSource::registerProducer(IBufferProducer* pProducer)
 
 ERROR_CODE CSource::unregisterProducer(IBufferProducer* pProducer)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    assert(mpBufferProducer);
    assert(pProducer);
    assert(mpBufferProducer == pProducer);
@@ -138,7 +111,7 @@ ERROR_CODE CSource::flushBuffers()
 ERROR_CODE CSource::consumeBuffer(Buffer* pBuffer)
 {
    assert(pBuffer);
-   LOG4CPLUS_INFO(logger, "CSource[chID "
+   LOG4CPLUS_TRACE(logger, "CSource[chID "
         + convertIntegerToString(mChannelID) + "]::consumeBuffer "
         + convertIntegerToString((intptr_t)pBuffer));
 
@@ -153,7 +126,7 @@ ERROR_CODE CSource::consumeBuffer(Buffer* pBuffer)
 
 ERROR_CODE CSource::OnDispatch(iviLink::ConnectivityAgent::HAL::Frame& frame_to_fill, const UInt32 quote)
 {
-   LOG4CPLUS_INFO(logger, "CSource::OnDispatch chID = "
+   LOG4CPLUS_TRACE(logger, "CSource::OnDispatch chID = "
          + convertIntegerToString(mChannelID));
 
    mBufferQueueMutex.lock();
@@ -192,45 +165,40 @@ ERROR_CODE CSource::OnDispatch(iviLink::ConnectivityAgent::HAL::Frame& frame_to_
    return ERR_OK;
 }
 
-std::list<Buffer*> CSource::CopyToFrame(iviLink::ConnectivityAgent::HAL::Frame& frame,const UInt32 quote)
+std::list<Buffer*> CSource::CopyToFrame(iviLink::ConnectivityAgent::HAL::Frame& frame, const UInt32 quote)
 {
-   /// @todo: quote ==0 means Safety Critical source->all data available should be transmitted?
+      /// @todo: quote ==0 means Safety Critical source->all data available should be transmitted?
    LOG4CPLUS_INFO(logger, "todo: quote ==0 means Safety Critical source->all data available should be transmitted?");
 
    std::list<Buffer*> released_buffers;
 
-   UInt32 size = 0;
    UInt32 copy_size = 0;
 
    bool full_copy = false;
 
    frame.mFrameHeader.channel_id = this->mChannelID;
    frame.mFrameHeader.number = this->mFrameCounter++;
-
-   for (std::list<Buffer*>::iterator it = mBuffersQueue.begin();
-         it != mBuffersQueue.end() && size < quote; ++it)
-   {
-
-      Buffer& buf = **it;
+    
+    std::list<Buffer*>::iterator it = mBuffersQueue.begin();
+    Buffer& buf = **it;
 
       LOG4CPLUS_INFO(logger, "CSource::CopyToFrame buf = "
            + convertIntegerToString((intptr_t)&buf) + ", buf.data = "
            + convertIntegerToString((intptr_t)buf.getData()) + ", buf.filled_size = "
            + convertIntegerToString(buf.getFilledSize()));
 
-      if ((buf.getFilledSize() + size <= quote))
+      if ((buf.getFilledSize() <= quote))
       {
          copy_size = buf.getFilledSize();
          full_copy = true;
       }
       else
       {
-         copy_size = quote - size;
+         copy_size = quote;
          full_copy = false;
       }
 
-      std::copy(buf.getData(), buf.getData() + copy_size, frame.data + size);
-      size += copy_size;
+      std::copy(buf.getData(), buf.getData() + copy_size, frame.data);
 
       if (full_copy)
       {
@@ -243,10 +211,8 @@ std::list<Buffer*> CSource::CopyToFrame(iviLink::ConnectivityAgent::HAL::Frame& 
          std::copy(buf.getData() + copy_size, buf.getData() + buf.getFilledSize(), buf.getData());
          buf.getFilledSize() -= copy_size;
       }
-      break;
-   }
 
-   frame.setSize(size);
+   frame.setSize(copy_size);
 
    return released_buffers;
 }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-#include "framework/components/SystemController/android/jni/src/com_luxoft_ivilink_sdk_CProfileRepositoryWrapper.hpp"
-#include "framework/components/ProfileRepository/process/CProfileRepoServerClb.hpp"
-
-#include "utils/configurator/configurator.h"
-#include "utils/misc/Logger.hpp"
+#include "com_luxoft_ivilink_sdk_CProfileRepositoryWrapper.hpp"
+#include "StringConversion.hpp"
+#include "ProfileRepositoryEntryPoint.hpp"
 
 JNIEXPORT void JNICALL Java_com_luxoft_ivilink_sdk_CProfileRepositoryWrapper_startPR
   (JNIEnv * env, jobject obj, jstring pathToDatabase)
 {
-   iviLink::conf::Configurator config("");
-   
-   const char *filename = env->GetStringUTFChars(pathToDatabase, NULL);
-   config.setParam("path_to_database", std::string(filename));
-
-   iviLink::ProfileRepository::CProfileRepoServerClb server(config);
-   server.loop();
+   std::string profileRepoPath = iviLink::Android::StringConversion::jToStd(pathToDatabase, env);
+   iviLink::ProfileRepository::profileRepositoryEntryPoint(profileRepoPath);
 }
 
 

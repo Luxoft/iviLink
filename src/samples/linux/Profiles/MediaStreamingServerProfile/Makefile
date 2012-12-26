@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 
 ###############################################################################
@@ -48,12 +46,29 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libMediaStreamingServerProfile.so
 
-INCLUDES      := -I.
+CHANNEL_SV_DIR	:= $(ROOT_DIR)framework/components/ChannelSupervisor/
+PMAL_DIR	  	:= $(ROOT_DIR)framework/components/ProfileManager/PMAL/
+FW_DIR		  	:= $(ROOT_DIR)framework/
+PROFILES_DIR  	:= $(ROOT_DIR)samples/linux/Profiles/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(CHANNEL_SV_DIR)common/
+INCLUDES      += -I$(CHANNEL_SV_DIR)Tube/
+INCLUDES      += -I$(PMAL_DIR)PIM/private/
+INCLUDES      += -I$(FW_DIR)public/appLib/
+INCLUDES      += -I$(FW_DIR)components/ProfileManager/PMAL
+INCLUDES      += -I$(FW_DIR)components/ChannelSupervisor/Tube/
+INCLUDES      += -I$(FW_DIR)public/profileLib/
+INCLUDES      += -I$(PROFILES_DIR)ProfileAPI/
+INCLUDES      += -I$(PROFILES_DIR)mediaCommon
+
 CXXFLAGS       = $(GLOBAL_CXXFLAGS) $(GLOBAL_DLL_CXXFLAGS) $(INCLUDES)
 CFLAGS         = $(GLOBAL_CFLAGS) $(GLOBAL_DLL_CFLAGS) $(INCLUDES) -std=c99
 LDFLAGS       := $(GLOBAL_LDFLAGS) $(GLOBAL_DLL_LDFALGS)
 
 LIBS :=
+LIBS += samples/linux/Profiles/mediaCommon/mediaCommon.a
+LIBS += utils/threads/libThreads.a
 
 LIBS := $(addprefix $(RESULT_DIR)/,$(LIBS))
 

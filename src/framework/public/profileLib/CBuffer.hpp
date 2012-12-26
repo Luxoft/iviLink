@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,15 +18,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
  
+
 /**
  * \file CBuffer.hpp
  * This file contains declarations of the CBuffer class (used in sending data to the other side)
@@ -37,8 +30,8 @@
 #ifndef CBUFFER_HPP__
 #define CBUFFER_HPP__
 
-#include "utils/misc/Types.hpp"
-#include "utils/misc/CError.hpp"
+#include "Types.hpp"
+#include "CError.hpp"
 
 namespace iviLink
 {
@@ -82,7 +75,6 @@ class has_mapped_type : public SFINAE
 public:
    enum { value = (sizeof(test<T>(0)) == sizeof(__one)) };
 };
-
 
 
 }

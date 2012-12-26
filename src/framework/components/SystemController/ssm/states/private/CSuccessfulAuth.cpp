@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ANDROID // not used anyway, no reason to include in build
 
 
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
+#include "CComponentLauncher.hpp"
+#include "CTriggerQueue.hpp"
+#include "CSystemStateMachine.hpp"
 #include "CSuccessfulAuth.hpp"
 #include "CIdleState.hpp"
 
@@ -61,9 +54,9 @@ CSuccessfulAuth::~CSuccessfulAuth()
 
 void CSuccessfulAuth::launchProfileManager(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "launchProfileManager()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
-   LOG4CPLUS_WARN(sLogger, "Application manager is launched here. Create specific method and probably state for this");
+   //TODO Application manager is launched here. Create specific method and probably state for this
    CComponentLauncher::getInstance()->launchApplicationManager();
 
    CComponentLauncher::getInstance()->launchProfileManager();
@@ -72,7 +65,7 @@ void CSuccessfulAuth::launchProfileManager(CSystemStateMachine* stateMachine)
 
 void CSuccessfulAuth::onProfileManagerAvailable(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onProfileManagerAvailable()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CIdleState::getInstance());
 

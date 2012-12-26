@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -42,7 +40,18 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libRequestHandler.a
 
-INCLUDES      := -I.
+LIB_APPMAN_DIR	:= $(ROOT_DIR)framework/libraries/AppMan
+COMP_APPMAN_DIR	:= $(ROOT_DIR)framework/components/AppMan
+
+INCLUDES      += -I.
+INCLUDES      += -I$(LIB_APPMAN_DIR)/AmpForApp/
+INCLUDES      += -I$(LIB_APPMAN_DIR)/AmpForPmp/
+INCLUDES      += -I$(COMP_APPMAN_DIR)/launcher/
+INCLUDES      += -I$(COMP_APPMAN_DIR)/database/
+INCLUDES      += -I$(LIB_APPMAN_DIR)/Pmp/
+INCLUDES      += -I$(UTILS_DIR)ipc/
+INCLUDES      += -I$(ROOT_DIR)framework/libraries/AppMan/App/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 
 ###############################################################################

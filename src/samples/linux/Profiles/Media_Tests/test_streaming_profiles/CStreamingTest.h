@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 /* 
  * File:   CStreamingTest.h
@@ -40,9 +39,6 @@ public:
 private:
 
 };
-
-
-
 
 
 typedef unsigned short UInt16;
@@ -133,8 +129,6 @@ class CMediaStreamingServerProfile
 public:
     
 
-
-
    // from IMediaStreamingServerProfile_API
  
    virtual void sendStreamingInfo();
@@ -152,7 +146,6 @@ public:
    std::string                                  mTag;
    info                                         mStreamingInfo;
 };
-
 
 
 #endif	/* CSTREAMINGTEST_H */

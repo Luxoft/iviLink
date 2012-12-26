@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAPPMANCONNECT_HPP_
 #define CAPPMANCONNECT_HPP_
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CThread.hpp"
+#include "Logger.hpp"
+#include "CThread.hpp"
+
+class CSignalSemaphore;
 
 namespace iviLink
 {
@@ -83,6 +74,7 @@ namespace iviLink
             virtual void threadFunc();
 
             CAppManProtoClient * mpClient;   ///< pointer to instance of IPC Protocol client
+            CSignalSemaphore * mpStartSemaphore; ///<pointer to instance of semaphore used to organize blocked init of connection thread
 
             static Logger msLogger;  ///< object of logger
          };

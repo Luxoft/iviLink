@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #ifndef IMEDIACONTROLSERVER_PROFILE_API_HPP
 #define IMEDIACONTROLSERVER_PROFILE_API_HPP
 
 #include <iostream>
-#include "framework/public/appLib/CProfileApiBase.hpp"
+#include <string>
+
+#include "CProfileApiBase.hpp"
 
 
 class IMediaControlServerProfile_API : public iviLink::CProfileApiBase
@@ -42,13 +41,16 @@ class IMediaControlServerProfile_API : public iviLink::CProfileApiBase
          virtual void onServerToggle() = 0; //just receive
          virtual void onServerSync() = 0; //just receive
          virtual void onServerUnsync() = 0; //just receive
-	 virtual void onServerPlay(std::string  const& trackName, std::string const& source, std::string const& avform) = 0; //start new broadcast and send the msg to app
+	     virtual void onServerPlay(std::string  const& trackName,std::string const&  trackUid, std::string const& source, std::string const& avform) = 0; //start new broadcast and send the msg to app
          virtual void onServerResume() = 0;
          virtual void onServerPause() = 0; //pause broadcast and send the msg to app
          virtual void onServerStop() = 0; //send the msg to app
+         virtual std::string onMediaPathRequest() = 0;
+         virtual void startVlcServer(int pipeReadDescriptor) = 0;
       };
 
-      virtual void play(std::string const trackName, std::string const avform) = 0; //start new broadcast and send the msg to another side
+      virtual void serverStop() = 0; //send stop to the vlc server without any callback to other side
+      virtual void play(std::string const& trackName,std::string const&  trackUid, std::string const& avform) = 0; //start new broadcast and send the msg to another side
       virtual void resume() = 0;
       virtual void pause() = 0; //pause broadcast and send the msg to another side
       virtual void stopStreaming() = 0; //close streaming channel and send stop to another side
@@ -56,6 +58,7 @@ class IMediaControlServerProfile_API : public iviLink::CProfileApiBase
       virtual void sync() = 0; //just send
       virtual void unsync() = 0; //just send
       virtual void setPath(std::string const& path) = 0; //set source path
+      virtual void changeHighlightedTrack(int newPosition) = 0;
 
 };
 

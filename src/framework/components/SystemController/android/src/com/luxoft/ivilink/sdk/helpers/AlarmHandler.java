@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.helpers;
 
@@ -34,13 +33,18 @@ import com.luxoft.ivilink.sdk.SysCtrlServLauncherActivity;
 import com.luxoft.ivilink.sdk.android.lib.utils.ForSDK;
 
 public class AlarmHandler {
+
+	public static final int RESTART_TIMEOUT = 1000;
+
 	public static void setWakeApp(Context asker, int timeout) {
-		String entryActivityName = asker.getPackageName() + "/" + SysCtrlServLauncherActivity.class.getName().replace(asker.getPackageName(), "");
-		Log.v("AlarmHandler", "setting clock to launch "+entryActivityName);
+		String entryActivityName = asker.getPackageName() + "/"
+				+ SysCtrlServLauncherActivity.class.getName().replace(asker.getPackageName(), "");
+		Log.i("AlarmHandler", "setting clock to launch " + entryActivityName);
 		Intent launchIntent = ForSDK.generateLaunchIntent(entryActivityName);
 		launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		AlarmManager alarmManager = (AlarmManager)asker.getSystemService(Context.ALARM_SERVICE);
+		AlarmManager alarmManager = (AlarmManager) asker.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent pendingLaunchIntent = PendingIntent.getActivity(asker, 0, launchIntent, 0);
-		alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+timeout, pendingLaunchIntent);
+		alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + timeout,
+				pendingLaunchIntent);
 	}
 }

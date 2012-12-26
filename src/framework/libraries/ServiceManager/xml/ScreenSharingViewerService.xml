@@ -1,0 +1,5 @@
+<service name= "ScreenSharingViewerService">
+    <pair name= "ScreenSharingServerService"/>
+    <profile api="ScreenSharingProfile_PAPI_UID">
+    </profile>
+</service>

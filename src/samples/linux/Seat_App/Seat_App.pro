@@ -34,8 +34,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     cstateupdater.cpp \
-    crequestprocessor.cpp \
-    state-app.cpp
+    crequestprocessor.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -44,15 +43,15 @@ qtcAddDeployment()
 HEADERS += \
     cstateupdater.h \
     crequestprocessor.h \
-    state-app.h
+    seat-app.hpp
 
 INCLUDEPATH += "../../.."
+INCLUDEPATH += "../include"
 
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkApp
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkChannel
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkUtils
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lSeatState
-unix:!macx:!symbian: LIBS += -lprotobuf-lite
 
 
 INCLUDEPATH += $$PWD/

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <stdlib.h>
 #include <cstring>
-#include "3rd_party/cryptopp/cryptopp-5.6.1/queue.h"
+//#include "queue.h"
 #include "CAuthenticationProfileImpl.hpp"
 #include "CRSAEncryptDecrypt.hpp"
 
@@ -44,7 +34,7 @@ Logger CAuthenticationProfileImpl::msLogger = Logger::getInstance(LOG4CPLUS_TEXT
 
 void CAuthenticationProfileImpl::sendPublicKey()
 {
-   RSA::PublicKey publicKey = CRSAEncryptDecrypt::getPublicKey();
+   RSA::PublicKey publicKey = CRSAEncryptDecrypt::getPublicKey(mpAppCallbacks->getInternalPath());
    sendPublicKey(publicKey);
 
    sendTrustListUID(mpTrustList->getOurUid());
@@ -155,7 +145,7 @@ void CAuthenticationProfileImpl::sendYourUIDIsKnow()
    sendProcedureId(YOUR_UID_IS_OK);
 }
 
-void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer)
+void CAuthenticationProfileImpl::onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
    LOG4CPLUS_TRACE(msLogger, "CBuffer write position = "+convertIntegerToString(buffer.getWritePosition())
@@ -175,7 +165,7 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
       string encryptedPIN((char*)(incomingData + 1), read_size - 1);
       LOG4CPLUS_INFO(msLogger, "Engrypted PIN length = " + convertIntegerToString(encryptedPIN.length()));
       LOG4CPLUS_INFO(msLogger, "Encrypted PIN  = " + encryptedPIN);
-      string decryptedRemotePIN = CRSAEncryptDecrypt::decrypt(encryptedPIN, CRSAEncryptDecrypt::getPrivateKey());
+      string decryptedRemotePIN = CRSAEncryptDecrypt::decrypt(encryptedPIN, CRSAEncryptDecrypt::getPrivateKey(mpAppCallbacks->getInternalPath()));
       LOG4CPLUS_INFO(msLogger, "Decrypted remote PIN = " + decryptedRemotePIN);
 
       mpAppCallbacks->gotPIN(decryptedRemotePIN[0] - '0',
@@ -190,7 +180,7 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
       string encryptedState((char*)(incomingData + 1), read_size - 1);
       LOG4CPLUS_INFO(msLogger, "Engrypted state length = " + convertIntegerToString(encryptedState.length()));
       LOG4CPLUS_INFO(msLogger, "Encrypted state  = " + encryptedState);
-      string decryptedRemoteState = CRSAEncryptDecrypt::decrypt(encryptedState, CRSAEncryptDecrypt::getPrivateKey());
+      string decryptedRemoteState = CRSAEncryptDecrypt::decrypt(encryptedState, CRSAEncryptDecrypt::getPrivateKey(mpAppCallbacks->getInternalPath()));
       LOG4CPLUS_INFO(msLogger, "Decrypted remote state = " + decryptedRemoteState);
       mpAppCallbacks->onExternalStateCame(decryptedRemoteState[0] - '0');
 
@@ -244,7 +234,7 @@ void CAuthenticationProfileImpl::bufferReceived(const iviLink::Channel::tChannel
    }
 }
 
-void CAuthenticationProfileImpl::channelDeletedCallback(const UInt32 channel_id)
+void CAuthenticationProfileImpl::onChannelDeleted(const UInt32 channel_id)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -257,7 +247,7 @@ void CAuthenticationProfileImpl::channelDeletedCallback(const UInt32 channel_id)
    }
 }
 
-void CAuthenticationProfileImpl::connectionLostCallback()
+void CAuthenticationProfileImpl::onConnectionLost()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 }
@@ -315,11 +305,7 @@ CAuthenticationProfileImpl::CAuthenticationProfileImpl(iviLink::Profile::IProfil
    Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("applications.Authentication"));
 
    PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
-   #ifndef ANDROID
-   mpTrustList = new CTrustList();
-   #else
-   mpTrustList = new CTrustList(mpAppCallbacks->getPathToTrlist());
-   #endif //ANDROID
+   mpTrustList = new CTrustList(mpAppCallbacks->getInternalPath());
 
    LOG4CPLUS_INFO(msLogger, "CAuthenticationProfileImpl::CAuthenticationProfileImpl");
 }
@@ -332,7 +318,7 @@ CAuthenticationProfileImpl::~CAuthenticationProfileImpl()
 void CAuthenticationProfileImpl::onEnable()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   mChannelID = iviLink::Channel::allocateChannel("CAuthenticationProfileImpl", this);
+   mChannelID = iviLink::Channel::allocateChannel("CAuthenticationProfileImpl", this, eRealTime);
    if (mChannelID)
    {
       LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");

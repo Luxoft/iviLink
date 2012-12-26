@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>NotificationsProfile_UID</uid>
+   <name>CNotificationsProfile</name>
+   <version>1</version>
+   <api uid ="NotificationsProfile_PAPI_UID" />
+   <complement>NotificationsProfile_UID</complement>
+</profile>

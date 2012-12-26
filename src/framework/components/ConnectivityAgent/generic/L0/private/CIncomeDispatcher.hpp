@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CINCOME_DISPATCHER_HPP
 #define CINCOME_DISPATCHER_HPP
@@ -49,9 +39,9 @@
  *
  ********************************************************************/ 
 #include "IFrameReceiver.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Types.hpp"
+#include "CMutex.hpp"
+#include "Logger.hpp"
 
 namespace iviLink
 {
@@ -84,7 +74,8 @@ namespace iviLink
             /**
              * TTargetList type represents list of data targets 
              */
-            typedef std::list<CTarget* > TTargetList;
+            //typedef std::list<CTarget* > TTargetList;
+            typedef std::map<UInt32, CTarget* > TTargetMap;
 
             // Methods section
 
@@ -149,10 +140,10 @@ namespace iviLink
             // Members section
 
             iviLink::ConnectivityAgent::HAL::CCarrierAdapter*           mpCarrier;            
-            TTargetList                                              mTargetList;
-            CMutex                                                   mListMutex;
-            CTransmittedFramesQueue*                                 mpTransmittedFrameQueue;
-            bool                                                     mDestroyed;
+            TTargetMap                                                  mTargetMap;
+            CMutex                                                      mMapMutex;
+            CTransmittedFramesQueue*                                    mpTransmittedFrameQueue;
+            bool                                                        mDestroyed;
          };         
       }
    }

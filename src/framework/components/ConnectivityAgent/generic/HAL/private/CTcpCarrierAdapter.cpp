@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cerrno>
@@ -43,7 +36,7 @@
 #include "CTcpCarrierAdapter.hpp"
 #include "SocketUtils.hpp"
 
-#include "utils/misc/CError.hpp"
+#include "CError.hpp"
 
 using iviLink::ConnectivityAgent::HAL::CTcpCarrierAdapter;
 
@@ -176,7 +169,7 @@ ERROR_CODE CTcpCarrierAdapter::connect()
       {
          if (ERR_OK != this->connect(sock, res))
          {
-            LOG4CPLUS_INFO(logger, "CTcpCarrierAdapter::connect() connect failed");
+            LOG4CPLUS_WARN(logger, "CTcpCarrierAdapter::connect() connect failed");
             close(sock);
             continue;
          }
@@ -281,7 +274,6 @@ ERROR_CODE CTcpCarrierAdapter::receiveRawArray(UInt8* pArray, UInt32 & size)
 }
 
 
-
 bool CTcpCarrierAdapter::isBrokenUnprotected() const
 {
    return mIsBroken;
@@ -382,7 +374,7 @@ void CTcpCarrierAdapter::acceptConnection()
       }
       else
       {
-         LOG4CPLUS_DEBUG(logger, "CIpcSocket::acceptConnection() lsn " 
+         LOG4CPLUS_INFO(logger, "CIpcSocket::acceptConnection() lsn " 
             + convertIntegerToString(mLsnSocket)
             + " new_sock " + convertIntegerToString(sock));
 
@@ -465,8 +457,6 @@ void CTcpCarrierAdapter::closeSocket(int sock)
 }
 
 
-
-
 void CTcpCarrierAdapter::threadFunc()
 {
    LOG4CPLUS_TRACE(logger, __PRETTY_FUNCTION__);
@@ -476,7 +466,7 @@ void CTcpCarrierAdapter::threadFunc()
 
    while (true)
    {
-      LOG4CPLUS_TRACE(logger, "CTcpCarrierAdapter::threadFunc() iteration");
+      LOG4CPLUS_INFO(logger, "CTcpCarrierAdapter::threadFunc() iteration");
       bool sockSet = false;
       bool lsnSet  = false;
       bool pipeSet = false;
@@ -511,10 +501,10 @@ void CTcpCarrierAdapter::threadFunc()
          int res = -1;
          do
          {
-            LOG4CPLUS_TRACE(logger, "before select maxFD = " + convertIntegerToString(maxFD));
+            LOG4CPLUS_INFO(logger, "before select maxFD = " + convertIntegerToString(maxFD));
             res = ::select(maxFD, rSet, NULL, NULL, NULL);
          } while (res == -1 && errno == EINTR);
-         LOG4CPLUS_DEBUG(logger, "select res = " + convertIntegerToString(res));
+         LOG4CPLUS_INFO(logger, "select res = " + convertIntegerToString(res));
 
          if (res == -1)
          {
@@ -702,6 +692,7 @@ ERROR_CODE CTcpCarrierAdapter::waitHandshakeState(EHandshakeState state)
 
 bool CTcpCarrierAdapter::processHandshake()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    const size_t buf_size = 50;
    UInt32 size = 0;
    UInt8 buf[buf_size];
@@ -719,7 +710,7 @@ bool CTcpCarrierAdapter::processHandshake()
                0 == memcmp(buf, gHstr2, sizeof(gHstr2)))
             {
                mHandshakeState = eHandshakeA;
-               LOG4CPLUS_TRACE(logger,"handshake set state A");
+               LOG4CPLUS_INFO(logger,"handshake set state A");
             }
             else
             {
@@ -735,7 +726,7 @@ bool CTcpCarrierAdapter::processHandshake()
                0 == memcmp(buf, gHstr1, sizeof(gHstr1)))
             {
                mHandshakeState = eHandshakeA;
-               LOG4CPLUS_TRACE(logger,"handshake set state A");
+               LOG4CPLUS_INFO(logger,"handshake set state A");
             }
             else
             {
@@ -753,7 +744,7 @@ bool CTcpCarrierAdapter::processHandshake()
          {
             setLocalAddress(reinterpret_cast<char const*>(buf));
             mHandshakeState = eHandshakeDone;
-            LOG4CPLUS_TRACE(logger,"handshake set state DONE");
+            LOG4CPLUS_INFO(logger,"handshake set state DONE");
          }
          else
          {
@@ -781,17 +772,19 @@ bool CTcpCarrierAdapter::processHandshake()
 
 const char* CTcpCarrierAdapter::getRemoteAddress() const
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return mpRemoteAddress;
 }
 
 const char* CTcpCarrierAdapter::getLocalAddress() const
 {
-   LOG4CPLUS_TRACE(logger, "CTcpCarrierAdapter::getLocalAddress");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return mpLocalAddress;
 }
 
 void CTcpCarrierAdapter::setRemoteAddress(const char* const pAddress)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CTcpCarrierAdapter::setRemoteAddress old = "
          + std::string(mpRemoteAddress ? mpRemoteAddress : "(null)")
          + ", new = " + std::string(pAddress ? pAddress : "(null)"));
@@ -807,6 +800,7 @@ void CTcpCarrierAdapter::setRemoteAddress(const char* const pAddress)
 
 void CTcpCarrierAdapter::setLocalAddress(const char* const pAddress)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CTcpCarrierAdapter::setLocalAddress old = "
         + std::string(mpRemoteAddress ? mpRemoteAddress : "(null)") 
         + ", new = " + std::string(pAddress ? pAddress : "(null)"));
@@ -828,16 +822,19 @@ const char* CTcpCarrierAdapter::getTypeName() const
 
 bool CTcpCarrierAdapter::start()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return CThread::start();
 }
 
 bool CTcpCarrierAdapter::stop()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return CThread::stop();
 }
 
 bool CTcpCarrierAdapter::stop(CSignalSemaphore *const pSem)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return CThread::stop(pSem);
 }
 

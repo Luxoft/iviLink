@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,27 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
-#ifndef ANDROID
 #include "SystemControllerMsgProxy.hpp"
-#else
-#include "framework/messageProtocol/SystemController_Authentication/Authentication/SystemControllerMsgProxy.hpp"
-#endif //ANDROID
-#include "framework/messageProtocol/SystemController_Authentication/messages.hpp"
-#include "utils/ipc/helpers/buffer_helpers.hpp"
+#include "buffer_helpers.hpp"
+#include "Exit.hpp"
 
 using namespace iviLink::Ipc;
 using iviLink::Ipc::Helpers::CBufferReader;
@@ -53,28 +38,28 @@ Logger SystemControllerMsgProxy::logger = Logger::getInstance(LOG4CPLUS_TEXT("sy
 SystemControllerMsgProxy::SystemControllerMsgProxy(const string connectionName):
    mpIpc(NULL)
 {
-   LOG4CPLUS_TRACE(logger, "SystemControllerMsgProxy(" + connectionName + ")");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    mpIpc = new CIpc(connectionName, *this);
 }
 
 SystemControllerMsgProxy::~SystemControllerMsgProxy()
 {
-   LOG4CPLUS_TRACE(logger, "~SystemControllerMsgProxy()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    delete mpIpc;
 }
 
 CError SystemControllerMsgProxy::connect()
 {
-   LOG4CPLUS_TRACE(logger, "connect()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    return mpIpc->connect();
 }
 
 bool SystemControllerMsgProxy::isConnected() const
 {
-   LOG4CPLUS_TRACE(logger, "connect()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
 
    return mpIpc->isConnected();
@@ -82,124 +67,69 @@ bool SystemControllerMsgProxy::isConnected() const
 
 CError SystemControllerMsgProxy::requestAuthenticationOK()
 {
-   LOG4CPLUS_TRACE(logger, "requestAuthenticationOK()");
-
-    if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = AA_SC_AUTHENTICATION_OK;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   return CError::NoError(getName());
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   return requestAuthenticationState(AA_SC_AUTHENTICATION_OK);
 }
 
 CError SystemControllerMsgProxy::requestAuthenticationNOK()
 {
-   LOG4CPLUS_TRACE(logger, "requestAuthenticationNOK()");
-
-    if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = AA_SC_AUTHENTICATION_NOK;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   return CError::NoError(getName());
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   return requestAuthenticationState(AA_SC_AUTHENTICATION_NOK);
 }
 
 CError SystemControllerMsgProxy::requestAuthenticationCanceled()
 {
-   LOG4CPLUS_TRACE(logger, "requestAuthenticationCanceled()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   return requestAuthenticationState(AA_SC_AUTHENTICATION_CANCELED);
+}
+
+
+CError SystemControllerMsgProxy::requestAuthenticationState(AuthenticationToSystemController authenticationState)
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
     if (!mpIpc)
       return CError(1, getName(), CError::FATAL, "no ipc");
 
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = AA_SC_AUTHENTICATION_CANCELED;
-   req->header.size = 0;
-
+   AuthenticationMessage* req = reinterpret_cast<AuthenticationMessage*>(mWriteBuffer);
+   req->requestType = authenticationState;
    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
 
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
+   UInt32 const reqSize = sizeof(Message);
    UInt32 respSize = 0;
 
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   return CError::NoError(getName());
+   return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
 }
-
 
 void SystemControllerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID)
 {
-   LOG4CPLUS_TRACE(logger, "OnRequest() in auth SystemControllerMsgProxy");
-
-   Message const* req = reinterpret_cast<Message const*>(pPayload);
-
-   assert(req->header.size + sizeof(Message) == payloadSize);
-   assert(bufferSize >= sizeof(Message));
-
-   UInt8 role = 0;
-   CBufferReader bufReader(req->data, req->header.size);
-
-   switch(req->header.type)
-   {
-   case SC_AA_SHUTDOWN:
-      onRequestShutDown();
-      break;
-   default:
-      break;
-   }
-
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   LOG4CPLUS_FATAL(logger, "Some request came from System Controller, this should not happen!");
    bufferSize = 0;
+}
+
+
+void SystemControllerMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, iviLink::Ipc::DirectionID)
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   AuthenticationMessage const* req = reinterpret_cast<AuthenticationMessage const*>(pPayload);
+   if(req->requestType == SC_AA_DIE)
+   {
+       LOG4CPLUS_INFO(logger, "Request to shutdown came");
+       killProcess();
+   }
 }
 
 void SystemControllerMsgProxy::OnConnection(iviLink::Ipc::DirectionID)
 {
-	LOG4CPLUS_TRACE(logger, "OnConnection() in auth SystemControllerMsgProxy");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 }
 
 void SystemControllerMsgProxy::OnConnectionLost(iviLink::Ipc::DirectionID)
 {
-	LOG4CPLUS_TRACE(logger, "OnConnectionLost() in auth SystemControllerMsgProxy");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+   // to prevent auth app from leaking when stack has shut down / restarted
+   killProcess();
 }
 
-SystemControllerMsgProxy::CMsgIdGen::CMsgIdGen() :
-      mId(-1)
-{}
-
-SystemControllerMsgProxy::CMsgIdGen::~CMsgIdGen()
-{}
-
-iviLink::Ipc::MsgID SystemControllerMsgProxy::CMsgIdGen::getNext()
-{
-   mId += 2;
-   return mId;
-}
 }

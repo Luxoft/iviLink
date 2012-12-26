@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,62 +18,55 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef DEALLOCATERESPONSE_HPP_
 #define DEALLOCATERESPONSE_HPP_
 
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Response.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 class DeallocateResponse: public Response
 {
 public:
 
-	DeallocateResponse(const char *tag, const unsigned int channelId );
-	DeallocateResponse(pugi::xml_document* doc);
+    DeallocateResponse(const char *tag, const unsigned int channelId);
+    DeallocateResponse(pugi::xml_document* doc);
 
-	virtual ~DeallocateResponse()
-	{
-	}
+    virtual ~DeallocateResponse()
+    {
+    }
 
-	virtual const char* GetMessageName() const
-	{
-		return m_responseTypes[RESPONSETYPE_DEALLOCATE_CHANNEL].c_str();
-	}
+    virtual const char* GetMessageName() const
+    {
+        return m_responseTypes[RESPONSETYPE_DEALLOCATE_CHANNEL].c_str();
+    }
 
-	const std::string& GetTag() const
-	{
-		return m_tag;
-	}
+    const std::string& GetTag() const
+    {
+        return m_tag;
+    }
 
-	const int GetChannelId() const
-	{
-		return m_offerredChId;
-	}
+    const int GetChannelId() const
+    {
+        return m_offerredChId;
+    }
 
 protected:
 
-	std::string 	m_tag;
-	int				m_offerredChId;
+    std::string m_tag;
+    int m_offerredChId;
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

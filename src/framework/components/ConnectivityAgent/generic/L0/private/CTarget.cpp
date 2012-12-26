@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -47,9 +36,9 @@
  *
  ********************************************************************/
 #include "IBufferConsumer.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/Frame.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/Buffer.hpp"
-#include "framework/components/ConnectivityAgent/generic/L1/IBufferProducer.hpp"
+#include "Frame.hpp"
+#include "Buffer.hpp"
+#include "IBufferProducer.hpp"
 /********************************************************************
  *
  * The class includes
@@ -61,7 +50,7 @@
  * The other includes
  *
  ********************************************************************/
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using iviLink::ConnectivityAgent::Buffer;
 using namespace iviLink::ConnectivityAgent::L0;
@@ -73,6 +62,7 @@ CTarget::CTarget(UInt32 channel_id) :
    mLastFrameNr(0),
    mCarrierReplaced(false)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CTarget::CTarget chID = " + convertIntegerToString(channel_id));
 
    mBufferQueueMutex.lock();
@@ -87,7 +77,7 @@ CTarget::CTarget(UInt32 channel_id) :
 
 CTarget::~CTarget()
 {
-   LOG4CPLUS_INFO(logger, "CTarget::~CTarget() chID = " + convertIntegerToString(mChannelID));
+   LOG4CPLUS_TRACE(logger, "CTarget::~CTarget() chID = " + convertIntegerToString(mChannelID));
    if (mpBufferConsumer)
    {
       mpBufferConsumer->flushBuffers();
@@ -127,7 +117,7 @@ ERROR_CODE CTarget::unregisterConsumer(IBufferConsumer* pConsumer)
 
 ERROR_CODE CTarget::receiveFrame(const iviLink::ConnectivityAgent::HAL::Frame& frame)
 {
-   LOG4CPLUS_INFO(logger, " CTarget::receiveFrame(): channel " + convertIntegerToString(mChannelID));
+   LOG4CPLUS_TRACE(logger, " CTarget::receiveFrame(): channel " + convertIntegerToString(mChannelID));
    static bool firstFlag = true;
    ERROR_CODE ret = ERR_FAIL;
    assert(mChannelID == frame.mFrameHeader.channel_id);
@@ -149,7 +139,6 @@ ERROR_CODE CTarget::receiveFrame(const iviLink::ConnectivityAgent::HAL::Frame& f
    else if (mBufferQueue.empty())
    {
       /// @todo: proper error
-      LOG4CPLUS_INFO(logger, "todo: proper error");
       LOG4CPLUS_ERROR(logger, "CTarget::receiveFrame error - mBufferQueue.empty()");
       ret =  ERR_FAIL;
    }
@@ -184,7 +173,7 @@ ERROR_CODE CTarget::receiveFrame(const iviLink::ConnectivityAgent::HAL::Frame& f
 
 ERROR_CODE CTarget::returnBufferBack(Buffer* pBuffer)
 {
-   LOG4CPLUS_INFO(logger, "CTarget::returnBufferBack " + convertIntegerToString((intptr_t)pBuffer));
+   LOG4CPLUS_TRACE(logger, "CTarget::returnBufferBack " + convertIntegerToString((intptr_t)pBuffer));
 
    assert(pBuffer);
 
@@ -197,7 +186,7 @@ ERROR_CODE CTarget::returnBufferBack(Buffer* pBuffer)
 
 ERROR_CODE CTarget::copyFromFrame(const iviLink::ConnectivityAgent::HAL::Frame& frame, Buffer& buffer)
 {
-   LOG4CPLUS_TRACE(logger, "CTarget::copyFromFrame");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    UInt16 frame_size = frame.getSize();
 
@@ -208,7 +197,6 @@ ERROR_CODE CTarget::copyFromFrame(const iviLink::ConnectivityAgent::HAL::Frame& 
    buffer.getFilledSize() = frame_size;
 
    /// @todo proper error messages
-   LOG4CPLUS_INFO(logger, "todo proper error messages");
    return ERR_OK;
 }
 

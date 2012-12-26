@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/port_big_back"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.3" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="2"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/driver"
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="4"
+            android:background="@drawable/port_driver_active" />
+
+        <Button
+            android:id="@+id/passenger"
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="4"
+            android:background="@drawable/port_passenget_inactive" />
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="3" >
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="13"
+        android:background="@drawable/port_ac_back"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="2.5" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="6"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.95" >
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="5" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="20" >
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="100"
+                        android:orientation="horizontal" >
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="20" >
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="100"
+                            android:orientation="vertical" >
+
+                            <RelativeLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="0px"
+                                android:layout_weight="4.5" >
+
+                                <ImageView
+                                    android:id="@+id/seatBackDef"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:background="@drawable/seat_back_def" />
+                            </RelativeLayout>
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="0px"
+                                android:layout_weight="1.2"
+                                android:orientation="horizontal" >
+
+                                <RelativeLayout
+                                    android:layout_width="0px"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2" >
+
+                                    <ImageView
+                                        android:id="@+id/seatBottomDef"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:src="@drawable/seat_bottom_def" />
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0px"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2" >
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="20" >
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="20" >
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:id="@+id/seatTopOffset"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="100" >
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="500"
+                        android:orientation="horizontal" >
+
+                        <LinearLayout
+                            android:id="@+id/seatLeftOffset"
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="100" >
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="500"
+                            android:orientation="vertical" >
+
+                            <RelativeLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="0px"
+                                android:layout_weight="4.5" >
+
+                                <ImageView
+                                    android:id="@+id/seatBackDnD"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent" />
+                            </RelativeLayout>
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="0px"
+                                android:layout_weight="1.2"
+                                android:orientation="horizontal" >
+
+                                <RelativeLayout
+                                    android:layout_width="0px"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2" >
+
+                                    <ImageView
+                                        android:id="@+id/seatBottomDnD"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:src="@drawable/seat_bottom" />
+                                </RelativeLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0px"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2" >
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/seatRightOffset"
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="100" >
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/seatBottomOffset"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="100" >
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.25" >
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="3.5"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="2.7" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="0.75" >
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/heater"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="3"
+                    android:background="@drawable/heater_selector_0" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="0.75" >
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="2.7" >
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

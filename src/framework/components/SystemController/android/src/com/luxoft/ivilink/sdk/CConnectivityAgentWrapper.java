@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,30 +18,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
+
 import android.util.Log;
+
+import com.luxoft.ivilink.sdk.bluetooth.BluetoothHelper;
 import com.luxoft.ivilink.sdk.helpers.Common;
-/*
+
+/**
  * Encapsulates Connectivity Agent
  */
 public class CConnectivityAgentWrapper {
-	
+	static {
+		System.loadLibrary("ConnectivityAgent");
+	}
+
 	Thread mThread;
-	
-	public void start(){
-		(mThread = new Thread(new Runnable(){
-			public void run(){
-				startCA();
-				Log.e(Common.TAG+".ConnectivityAgent", "has died!");
+
+	public void start(final BluetoothHelper bluetooth) {
+		(mThread = new Thread(new Runnable() {
+			public void run() {
+				startCA(bluetooth);
+				Log.e(Common.TAG + ".ConnectivityAgent", "has died!");
 			}
 		})).start();
 	}
 
-	//code is taken from ConnectivityAgent/src/linux/main.cpp
-	private native void startCA();
+	// code is taken from ConnectivityAgent/src/linux/main.cpp
+	private native void startCA(BluetoothHelper helper);
 }

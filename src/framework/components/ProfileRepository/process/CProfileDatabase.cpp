@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cstdio>
@@ -38,8 +27,8 @@
 #include <sstream>
 
 #include "CProfileDatabase.hpp"
-#include "utils/xml/pugixml.hpp"
-#include "utils/threads/CMutex.hpp"
+#include "pugixml.hpp"
+#include "CMutex.hpp"
 
 namespace iviLink
 {
@@ -54,11 +43,11 @@ namespace iviLink
          , mpDbMutex(new CMutex)
          , mpRequestMutex(new CMutex)
       {
-         #ifndef ANDROID
+#ifndef ANDROID
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
          loadDatabase();
          printDB();
-         #endif //ANDROID
+#endif //ANDROID
       }
 
       CProfileDatabase::~CProfileDatabase()
@@ -68,15 +57,15 @@ namespace iviLink
          delete mpRequestMutex;
       }
       
-      #ifndef ANDROID
-      #else
+#ifndef ANDROID
+#else
       void CProfileDatabase::setDatabasePath(std::string path)
       {
          mDirPath = path;
          loadDatabase();
          printDB();
       }
-      #endif //ANDROID
+#endif //ANDROID
 
       void CProfileDatabase::loadDatabase()
       {
@@ -84,12 +73,12 @@ namespace iviLink
          mProfiles.clear();
          pugi::xml_document doc;
          mpDbMutex->lock();
-         #ifndef ANDROID
+#ifndef ANDROID
          pugi::xml_parse_result res = doc.load_file(mDBPath.c_str());
-         #else
+#else
          std::string fullPath = mDirPath+mDBPath;
          pugi::xml_parse_result res = doc.load_file(fullPath.c_str());
-         #endif //ANDROID
+#endif //ANDROID
          switch (res.status)
          {
          case pugi::status_ok:              // No error
@@ -133,12 +122,12 @@ namespace iviLink
          pugi::xml_node profs = doc.child("profiles");
          for (pugi::xml_node_iterator it = profs.begin(); it != profs.end(); ++it)
          {
-            #ifndef ANDROID
+#ifndef ANDROID
             CProfileInfo info(std::string(it->child_value("manifest-path")));
-            #else
+#else
             std::string fullPath = mDirPath + std::string(it->child_value("manifest-path"));
             CProfileInfo info(fullPath);
-            #endif //ANDROID
+#endif //ANDROID
             if (info.failed())
             {
                LOG4CPLUS_WARN(msLogger, "Failed loading of XML Manifest");
@@ -151,12 +140,12 @@ namespace iviLink
                pugi::xml_node libs = it->child("libs");
                for (pugi::xml_node_iterator sit = libs.begin(); sit != libs.end(); ++sit)
                {
-                  #ifndef ANDROID
+#ifndef ANDROID
                   mProfiles[info.uid()].addLib(sit->attribute("platform").value(), sit->attribute("path").value());
-                  #else
+#else
                   std::string pathToLib = mDirPath + (std::string)sit->attribute("path").value();
                   mProfiles[info.uid()].addLib(sit->attribute("platform").value(), pathToLib);
-                  #endif //ANDROID
+#endif //ANDROID
                }
             }
             else if ( 0 != it->child_value("uid"))
@@ -190,12 +179,12 @@ namespace iviLink
                libNode.append_attribute("path").set_value(sit->second.c_str());
             }
          }
-         #ifndef ANDROID
+#ifndef ANDROID
          bool result = doc.save_file(mDBPath.c_str());
-         #else
+#else
          std::string fullPath = mDirPath + mDBPath;
          bool result = doc.save_file(fullPath.c_str());
-         #endif //ANDROID
+#endif //ANDROID
          mpDbMutex->unlock();
          if (result)
          {
@@ -414,11 +403,11 @@ namespace iviLink
       void CProfileDatabase::printDB()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-         #ifndef ANDROID
+#ifndef ANDROID
          LOG4CPLUS_INFO(msLogger, "Profile Database path: " + mDBPath);
-         #else
+#else
          LOG4CPLUS_INFO(msLogger, "Profile Database path: " + mDirPath + mDBPath);
-         #endif
+#endif
          LOG4CPLUS_INFO(msLogger, "State: " + convertIntegerToString(static_cast<int>(mDBState)));
          for (std::map<UID,CProfileInfo>::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
          {

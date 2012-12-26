@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include "CSeatSenderProfile.hpp"
 
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
+#include "ChannelSupervisorTube.hpp"
 #include "CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
 
 #include <cstring>
 #include <cassert>
 
 using iviLink::CBuffer;
 
-Logger CSeatSenderProfile::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Profiles.CSeatSenderProfile"));
+Logger CSeatSenderProfile::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("profiles.sender.seat"));
 
 CSeatSenderProfile::CSeatSenderProfile(iviLink::Profile::IProfileCallbackProxy* pCbProxy)
    : mChannelID(0)
@@ -46,38 +42,31 @@ CSeatSenderProfile::CSeatSenderProfile(iviLink::Profile::IProfileCallbackProxy* 
    , mSenderThread(this)
    , mBe(true)
 {
-  // Verify that the version of the library that we linked against is
-  // compatible with the version of the headers we compiled against.
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-  LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-  PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+    PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
 }
 
 CSeatSenderProfile::~CSeatSenderProfile()
 {
-   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   mSenderThread.disconnect();
-   if( mChannelID )
-     iviLink::Channel::deallocateChannel(mChannelID);
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+    mBe = false;
+    mReqSemaphore.signal();
+    mSenderThread.disconnect();
+    if (mChannelID)
+    {
+        iviLink::Channel::deallocateChannel(mChannelID);
+    }
 }
-
 
 void CSeatSenderProfile::send_state( const ISeatSenderProfile::state_t& state )
 {
-   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   std::string buf;
-   if( state.SerializeToString(&buf) )
-   {
-       //LOG4CPLUS_INFO( msLogger, "seat sender profile: send\n" + state.DebugString() );
-     {
-       const lock l( mReqMutex );
-       mReqQueue.push( buffer_t() );
-       mReqQueue.back().swap( buf ); // avoid copy
-     }
-     mReqSemaphore.signal();
-   }
-   else
-      LOG4CPLUS_ERROR(msLogger, "Unable to serialize state");
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+    std::string buf = state.serialize();
+    mReqMutex.lock();
+    mReqQueue.push(buffer_t());
+    mReqQueue.back().swap(buf); // avoid copy
+    mReqMutex.unlock();
+    mReqSemaphore.signal();
 }
 
 
@@ -85,94 +74,105 @@ void CSeatSenderProfile::onEnable()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
-   assert( mpAppCallbacks );
-   if( mpAppCallbacks )
-       mChannelID = iviLink::Channel::allocateChannel(mpAppCallbacks->get_channel_id(), this);
+   assert(mpAppCallbacks);
+   if (mpAppCallbacks)
+   {
+       const std::string ch_id = mpAppCallbacks->get_channel_id();
+       LOG4CPLUS_INFO(msLogger, "Trying allocate channel \"" + ch_id + "\"\n");
+       mChannelID = iviLink::Channel::allocateChannel(ch_id, this, eRealTime);
 
-   if (mChannelID)
-   {
-      LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");
-      mSenderThread.start();
-   }
-   else
-   {
-      LOG4CPLUS_ERROR(msLogger, "allocate Channel failed");
-   }
+       if (mChannelID)
+       {
+           LOG4CPLUS_INFO(msLogger, "Channel \""
+                           + ch_id
+                           + "\" allocated, starting the communication...");
+            mSenderThread.start();
+        }
+        else
+        {
+            LOG4CPLUS_ERROR(msLogger, "Channel \""
+                            + ch_id
+                           + "\" allocation failed");
+            killProcess(1);
+        }
+    }
+    else
+    {
+        LOG4CPLUS_ERROR(msLogger, "Can't find application callbacks, so can't get correct channel id");
+    }
 }
 
 void CSeatSenderProfile::onDisable()
 {
-   CError err = iviLink::Channel::deallocateChannel(mChannelID);
-   if (!err.isNoError())
-   {
-      LOG4CPLUS_WARN(msLogger, "Unable to deallocate channel: " + static_cast<std::string>(err));
-   }
+    CError err = iviLink::Channel::deallocateChannel(mChannelID);
+    if (!err.isNoError())
+    {
+        LOG4CPLUS_WARN(msLogger, "Unable to deallocate channel: " + static_cast<std::string>(err));
+    }
 }
 
 //from CChannelHandler
-void CSeatSenderProfile::bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
+void CSeatSenderProfile::onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
 {
-   LOG4CPLUS_ERROR(msLogger, "seat sender profile: Don't know what to do with received data: this is one-way channel");
+    LOG4CPLUS_ERROR(msLogger, "seat sender profile: Don't know what to do with received data: this is one-way channel");
 }
 
-void CSeatSenderProfile::channelDeletedCallback(const UInt32 channel_id)
+void CSeatSenderProfile::onChannelDeleted(const UInt32 channel_id)
 {
-   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
-   if (mChannelID == channel_id)
-      mChannelID = 0;
+    if (mChannelID == channel_id)
+    {
+        mChannelID = 0;
+    }
 
-   CError err = iviLink::Channel::deallocateChannel(channel_id);
-   if (!err.isNoError())
-   {
-      LOG4CPLUS_WARN(msLogger, "Unable to deallocate channel: " + static_cast<std::string>(err));
-   }
+    CError err = iviLink::Channel::deallocateChannel(channel_id);
+    if (!err.isNoError())
+    {
+        LOG4CPLUS_WARN(msLogger, "Unable to deallocate channel: " + static_cast<std::string>(err));
+    }
 }
 
-void CSeatSenderProfile::connectionLostCallback()
+void CSeatSenderProfile::onConnectionLost()
 {
-    //LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     LOG4CPLUS_ERROR(msLogger, "seat sender profile: connection lost!");
 }
 
 void CSeatSenderProfile::senderLoop()
 {
-   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   while (mBe)
-   {
-      if (hasRequests())
-      {
-         handleRequest();
-      }
-      else
-      {
-         mReqSemaphore.wait();
-      }
-   }
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+    while (mBe)
+    {
+        if (hasRequests())
+        {
+            handleRequest();
+        }
+        else
+        {
+            mReqSemaphore.wait();
+        }
+    }
 }
 
 bool CSeatSenderProfile::hasRequests()
 {
-  lock l( mReqMutex );
-  return !mReqQueue.empty();
+    MutexLocker lock(mReqMutex);
+    return !mReqQueue.empty();
 }
 
 void CSeatSenderProfile::handleRequest()
 {
-  buffer_t buf;
-  {
-    lock l( mReqMutex );
-    buf.swap( mReqQueue.front() );
+    buffer_t buf;
+    MutexLocker lock(mReqMutex);
+    buf.swap(mReqQueue.front());
     mReqQueue.pop();
-  }
 
-  CError err = iviLink::Channel::sendBuffer(mChannelID,
+    CError err = iviLink::Channel::sendBuffer(mChannelID,
                                             reinterpret_cast<const void*>(buf.c_str()),
                                             static_cast<UInt32>(buf.size()));
-  if (!err.isNoError())
-  {
-      LOG4CPLUS_INFO(msLogger, "CSeatSenderProfile::handleRequest() :: Send error"
+    if (!err.isNoError())
+    {
+        LOG4CPLUS_INFO(msLogger, "CSeatSenderProfile::handleRequest() :: Send error"
                      + static_cast<std::string>(err));
-  }
-
+    }
 }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,31 +18,43 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk;
+
 import android.util.Log;
+
+import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
 import com.luxoft.ivilink.sdk.helpers.Common;
-/*
- * Encapsulates Profile Repository
+
+/**
+ * Encapsulates Profile Repository process.
  */
 public class CProfileRepositoryWrapper {
+	static {
+		System.loadLibrary("ProfileLayer");
+	}
 	Thread mThread;
 	String mPathToRepo;
-	
-	public void start(String pathToRepo){
+
+	/**
+	 * Launch Profile Repository.
+	 * 
+	 * @param pathToRepo
+	 *            path to the profile repository files on device.
+	 */
+	public void start(String pathToRepo) {
+		Log.v(this.toString(), Logging.getCurrentMethodName(pathToRepo));
 		mPathToRepo = pathToRepo;
-		(mThread = new Thread(new Runnable(){
-			public void run(){
+		(mThread = new Thread(new Runnable() {
+			public void run() {
 				startPR(mPathToRepo);
-				Log.e(Common.TAG+".ProfileRepository", "has died!");
+				Log.e(Common.TAG + ".ProfileRepository", "has died!");
 			}
 		})).start();
 	}
-	
-	//code is taken from ProfileRepository/process/main.cpp
+
+	// code is taken from ProfileRepository/process/main.cpp
 	private native void startPR(String pathToRepo);
 }

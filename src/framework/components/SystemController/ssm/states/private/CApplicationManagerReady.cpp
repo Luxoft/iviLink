@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-#include "framework/components/SystemController/ssm/states/CApplicationManagerReady.hpp"
-#include "framework/components/SystemController/ssm/states/CAuthenticateState.hpp"
-#include "framework/components/SystemController/ssm/states/CProfileManagerHandshakeDone.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
+#include "CApplicationManagerReady.hpp"
+#include "CAuthenticateState.hpp"
+#include "CProfileManagerHandshakeDone.hpp"
+#include "CSystemStateMachine.hpp"
+#include "CTriggerQueue.hpp"
 
 namespace SystemController
 {
@@ -63,7 +55,7 @@ CApplicationManagerReady::~CApplicationManagerReady()
 
 void CApplicationManagerReady::onApplicationManagerHandshakeDone(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onApplicationManagerHandshakeDone()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CAuthenticateState::getInstance());
 

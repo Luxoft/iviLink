@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstring>
 #include <cerrno>
@@ -66,7 +57,7 @@ CTriggerQueue::~CTriggerQueue()
 #ifndef ANDROID
 mqd_t CTriggerQueue::getQueueDescriptor()
 {
-   LOG4CPLUS_TRACE(sLogger, "getQueueDescriptor()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(-1 == Q_DESCRIPTOR)
    {
@@ -92,12 +83,12 @@ mqd_t CTriggerQueue::getQueueDescriptor()
 void CTriggerQueue::sendTrigger(eSSMTriggers trigger)
 {
    LOG4CPLUS_TRACE(sLogger, "sendTrigger(" +  convertIntegerToString(static_cast<int>(trigger)) + ")");
-   #ifndef ANDROID
+#ifndef ANDROID
    if(-1 == mq_send(getQueueDescriptor(), (const char*)&trigger, sizeof(trigger), 0))
    {
 	   LOG4CPLUS_ERROR(sLogger, "Error writing to queue: " + string(strerror(errno)));
    }
-   #else
+#else
    mQueueMutex.lock();
    mQueue.push_back(trigger);
    mQueueMutex.unlock();
@@ -106,15 +97,15 @@ void CTriggerQueue::sendTrigger(eSSMTriggers trigger)
    isQueueEmpty = false;
    mCondVar.signal();
    mCondVar.unlock();
-   #endif
+#endif
 }
 
 eSSMTriggers CTriggerQueue::receiveTrigger()
 {
-   LOG4CPLUS_TRACE(sLogger, "receiveTrigger()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    eSSMTriggers trigger;
-   #ifndef ANDROID
+#ifndef ANDROID
    uint priority;
    struct mq_attr attr;
 
@@ -125,7 +116,7 @@ eSSMTriggers CTriggerQueue::receiveTrigger()
       LOG4CPLUS_ERROR(sLogger,"Error reading from queue: " + string(strerror(errno)));
       return EMPTY_TRIGGER_QUEUE;
    }
-   #else
+#else
    bool tempQState;
    mCondVar.lock();
    while(isQueueEmpty)
@@ -154,25 +145,25 @@ eSSMTriggers CTriggerQueue::receiveTrigger()
       isQueueEmpty=tempQState;
    }
    mCondVar.unlock();
-   #endif //ANDROID
+#endif //ANDROID
 
    return trigger;
 }
 
 void CTriggerQueue::resetTriggerQueue()
 {
-   #ifndef ANDROID
+#ifndef ANDROID
    mq_close(Q_DESCRIPTOR);
    Q_DESCRIPTOR = -1;
    mq_unlink(QUEUE_NAME.c_str());
-   #else
+#else
    mCondVar.lock();
    isQueueEmpty = true;
    mCondVar.unlock();
    mQueueMutex.lock();
    mQueue.clear();
    mQueueMutex.unlock();
-   #endif //ANDROID
+#endif //ANDROID
 }
 
 } /* namespace SystemController */

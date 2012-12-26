@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPROFILEREPOCONNECTION_HPP_
 #define CPROFILEREPOCONNECTION_HPP_
 
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CThread.hpp"
-#include "framework/components/ProfileRepository/CProfileRepoClient.hpp"
+#include "Logger.hpp"
+#include "CThread.hpp"
+#include "CProfileRepoClient.hpp"
 
 namespace iviLink
 {

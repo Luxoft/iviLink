@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,20 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include <algorithm>
 #include <vector>
 #include <unistd.h>
 
-#include "utils/misc/CUid.hpp"
+#include "CUid.hpp"
 
 #include "CTrustListError.hpp"
 
@@ -41,10 +34,6 @@
 #include "get_mac.hpp"
 
 using namespace iviLink;
-
-#ifndef ANDROID
-const char gsStorageFileName[] = "trust.db";
-#endif //ANDROID - is passed explicitly
 
 Logger CTrustList::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("profiles.CAuthenticationProfileImpl.trust.CTrustList"));
 
@@ -97,13 +86,8 @@ CTrustListError CTrustList::getKnownUids(tUidVector& result) const
 	return mpStorage->readAll(result);
 }
 
-#ifndef ANDROID
-CTrustList::CTrustList() :
-	mpStorage(new CFileStorage(gsStorageFileName))
-#else
 CTrustList::CTrustList(std::string pathToStorage) :
 	mpStorage(new CFileStorage(pathToStorage.c_str()))
-#endif //ANDROID
 {
 	CError err = mpStorage->connect();
 	if (!err.isNoError())

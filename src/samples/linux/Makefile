@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 
 # Autodetection of config.mk and includes
@@ -39,8 +37,13 @@ define SUBFOLDERS
 $(MAKE) -C Profiles $@
 $(MAKE) -C BasicSample $@
 $(MAKE) -C AuthenticationApplication $@
+$(MAKE) -C NaviClient $@
 $(MAKE) -C Climate_App $@
 $(MAKE) -C Seat_App $@
+$(MAKE) -C MediaApp $@
+$(MAKE) -C ScreenSharingViewer
+$(MAKE) -C launcher $@
+$(MAKE) -C IVILinkProgressBar 
 endef
 ###############################################################################
 # This target
@@ -70,7 +73,12 @@ APPMAN_DB_XML := $(APPMAN_DB_DIR)/AppManDatabase.xml
 OUT_PATH := $(call OUT_PATH_FUNC)
 $(info OUT_PATH $(OUT_PATH))
 
-QINCLUDES := $(ROOT_DIR) $(RESULT_DIR)
+FW_DIR	  := $(ROOT_DIR)framework/
+
+QINCLUDES += $(ROOT_DIR) 
+QINCLUDES += $(RESULT_DIR)
+QINCLUDES += $(FW_DIR)libraries/ServiceManager/
+QINCLUDES += $(FW_DIR)public/appLib/
 
 LIBS += -Wl,--start-group
 LIBS += -L$(3RD_PARTY_DIR)/lib -llog4cplus

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CADAPTERFACTORY_HPP_
 #define CADAPTERFACTORY_HPP_
@@ -40,9 +29,13 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
+#include "Types.hpp"
 #include "CCarrierAdapter.hpp"
 #include "ConnectionInfo.hpp"
+ #ifndef ANDROID
+ #else
+ #include "CAndroidBluetoothAdapter.hpp"
+ #endif //ANDROID
 /********************************************************************
  *
  * Forward declarations
@@ -73,6 +66,10 @@ namespace iviLink
              * @return instance of CTcpCarrierAdapter
              */
             static CTcpCarrierAdapter* CreateTcpAdapter(const CTcpConnectionInfo & connectionInfo);
+            #ifndef ANDROID
+            #else
+            static CAndroidBluetoothAdapter * CreateAndroidBluetoothAdapter(const CAndroidBluetoothInfo & connectionInfo);
+            #endif //ANDROID
 
          private:
             // Methods section

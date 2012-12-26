@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #ifndef CMEDIACONTROLCLIENTPROFILE_HPP_
 #define CMEDIACONTROLCLIENTPROFILE_HPP_
 
-
-#include "utils/misc/Logger.hpp"
-#include "framework/public/profileLib/profileLib.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IMediaControlClientProfileAPI.hpp"
-#include "samples/linux/Profiles/mediaCommon/ISender.hpp"
-#include "samples/linux/Profiles/mediaCommon/common.h"
-
 #include <iostream>
 #include <queue>
+#include <vector>
+#include <sstream>
+
+#include "Logger.hpp"
+#include "profileLib.hpp"
+#include "IMediaControlClientProfileAPI.hpp"
+#include "ISender.hpp"
+#include "common.h"
 
 using iviLink::CBuffer;
 using iviLink::Channel::tChannelId;
@@ -59,10 +55,11 @@ class CMediaControlClientProfile   : public iviLink::Channel::CChannelHandler
    IVILINK_PROFILE_API_UID(MediaControlClientProfile_API_UID)
   
    // from IMediaControlClientProfile_API
-   virtual void prepareRequest(PROCEDURES_CONTROL_IDS proc, bool has_events, std::string const& event_f, std::string const& event_s);
+   virtual void prepareRequest(PROCEDURES_CONTROL_IDS proc, bool has_events, std::string const& event_f = "", std::string const& event_s = "",std::string const& event_t = "");
 
    virtual void stop();
-   virtual void play(std::string const&  trackName, std::string const& avform); //send the msg to another side
+   virtual void serverStop();
+   virtual void play(std::string const&  trackName, std::string const&  trackUid, std::string const& avform); //send the msg to another side
    virtual void resume();
    virtual void pause(); 
    virtual void toggle(); 
@@ -73,12 +70,14 @@ class CMediaControlClientProfile   : public iviLink::Channel::CChannelHandler
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
    //from ISender
    virtual void senderLoop();
+
+   void split(const std::string& str, const std::string& delimiters , std::vector<std::string>& tokens);
 
    bool hasRequests();
    void handleRequest();
@@ -86,7 +85,7 @@ class CMediaControlClientProfile   : public iviLink::Channel::CChannelHandler
    CMediaControlClientProfile(iviLink::Profile::IProfileCallbackProxy* pCbProxy);
    virtual ~CMediaControlClientProfile();
 
-   typedef std::queue<CBuffer>                  tReqQueue;
+   typedef std::queue<std::string>                  tReqQueue;
 
    iviLink::Channel::tChannelId                 mChannelID;
 
@@ -96,7 +95,6 @@ class CMediaControlClientProfile   : public iviLink::Channel::CChannelHandler
    CSignalSemaphore *                           mpReqSemaphore;
    bool                                         mBe;
    tReqQueue                                    mReqQueue;
-   std::string                                  mTag;
    static Logger                                msLogger;
 };
 

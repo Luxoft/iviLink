@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CCONNECTIONFINDER_HPP_
 #define CCONNECTIONFINDER_HPP_
@@ -40,9 +29,9 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/threads/CCondVar.hpp"
+#include "CThread.hpp"
+#include "CSignalSemaphore.hpp"
+#include "CCondVar.hpp"
 #include "EGenderType.hpp"
 /********************************************************************
  *

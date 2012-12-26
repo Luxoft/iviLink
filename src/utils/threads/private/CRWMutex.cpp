@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -57,7 +47,8 @@
 #include "CRWMutex.hpp"
 
 
-#ifdef ANDROID
+#ifndef ANDROID
+#else
 
 void reader_lock(struct rwlock *self) 
 {
@@ -131,59 +122,58 @@ void rwlock_deinit(struct rwlock *self)
 #endif //ANDROID
 
 
-
 CRWMutex::CRWMutex()
 {
-#ifdef ANDROID
-   rwlock_init(&mMutex);
-#else
+#ifndef ANDROID
    pthread_rwlockattr_init(&mAttr);
    pthread_rwlock_init(&mMutex, &mAttr);
+#else
+   rwlock_init(&mMutex);
 #endif //ANDROID
 }
 
 CRWMutex::~CRWMutex()
 {
-#ifdef ANDROID
-   rwlock_deinit(&mMutex);
-#else
+#ifndef ANDROID
    pthread_rwlock_destroy(&mMutex);
    pthread_rwlockattr_destroy(&mAttr);
+#else
+   rwlock_deinit(&mMutex);
 #endif //ANDROID
 }
 
 void CRWMutex::lockWrite()
 {
-#ifdef ANDROID
-   writer_lock(&mMutex);
-#else
+#ifndef ANDROID
    pthread_rwlock_wrlock(&mMutex);
+#else
+   writer_lock(&mMutex);
 #endif //ANDROID
 }
 
 void CRWMutex::lockRead()
 {
-#ifdef ANDROID
-   reader_lock(&mMutex);
-#else
+#ifndef ANDROID
    pthread_rwlock_rdlock(&mMutex);
+#else
+   reader_lock(&mMutex);
 #endif //ANDROID
 }
 
 void CRWMutex::unlockWrite()
 {
-#ifdef ANDROID
-   writer_unlock(&mMutex);
-#else
+#ifndef ANDROID
    pthread_rwlock_unlock(&mMutex);
+#else
+   writer_unlock(&mMutex);
 #endif //ANDROID
 }
 
 void CRWMutex::unlockRead()
 {
-#ifdef ANDROID
-   reader_unlock(&mMutex);
+#ifndef ANDROID
+   pthread_rwlock_unlock(&mMutex);   
 #else
-   pthread_rwlock_unlock(&mMutex);
+   reader_unlock(&mMutex);
 #endif //ANDROID
 }

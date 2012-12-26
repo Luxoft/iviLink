@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IAUTHENTICATION_PROFILE_API_HPP
 #define IAUTHENTICATION_PROFILE_API_HPP
 
-#include "framework/public/appLib/CProfileApiBase.hpp"
+#include "CProfileApiBase.hpp"
 
 class IAuthenticationProfile_API : public iviLink::CProfileApiBase
 {
@@ -48,10 +38,7 @@ class IAuthenticationProfile_API : public iviLink::CProfileApiBase
          virtual void onAuthenticationIsNotRequired() = 0;
          virtual void onAuthenticationIsRequired() = 0;
          virtual void onExternalStateCame(int state) = 0;
-         #ifndef ANDROID
-         #else
-         virtual std::string getPathToTrlist() = 0;
-         #endif //ANDROID
+         virtual std::string getInternalPath() = 0;
       };
 
       virtual void sendPIN(int first_digit, int second_digit, int third_digit, int fourth_digit) = 0;

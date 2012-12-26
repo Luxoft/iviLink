@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPMPCORE_HPP_
 #define CPMPCORE_HPP_
@@ -38,16 +27,16 @@
 #include <map>
 #include <list>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/misc/CError.hpp"
-#include "utils/threads/CMutex.hpp"
+#include "Logger.hpp"
+#include "CError.hpp"
+#include "CMutex.hpp"
 
-#include "framework/components/ProfileRepository/IProfileRepoClient.hpp"
-#include "framework/components/ProfileManager/PMP/PIM/IPmpPimToCore.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/IPmpCoreClb.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/IPmpCoreProtocol.hpp"
+#include "IProfileRepoClient.hpp"
+#include "IPmpPimToCore.hpp"
+#include "IPmpCoreClb.hpp"
+#include "IPmpCoreProtocol.hpp"
 
-#include "private/CPmpCoreProfileInfo.hpp"
+#include "CPmpCoreProfileInfo.hpp"
 #include "IPmpCoreToIpc.hpp"
 #include "IPmpCoreToPim.hpp"
 #include "IPmpCoreToSysCtrl.hpp"

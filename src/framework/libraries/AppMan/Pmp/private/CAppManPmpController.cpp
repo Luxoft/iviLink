@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CAppManPmpController.hpp"
 #include "CAppManPmpIpcClient.hpp"
@@ -53,7 +42,7 @@ namespace iviLink
             : mpClient(new CAppManPmpIpcClient())
             , mpConnection(new CAmpPmpConnection(mpClient))
          {
-            LOG4CPLUS_TRACE(msLogger, "CAppManPmpController()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             assert(mpClient);
             assert(mpConnection);
 
@@ -63,7 +52,7 @@ namespace iviLink
 
          CAppManPmpController::~CAppManPmpController()
          {
-            LOG4CPLUS_TRACE(msLogger, "~CAppManPmpController()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClient->init(0);
             mpConnection->disconnect();
 
@@ -73,7 +62,7 @@ namespace iviLink
 
          CAppManPmpController * CAppManPmpController::instance()
          {
-            LOG4CPLUS_TRACE(msLogger, "instance()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             static CMutex mutex;
             if (!mspInstance)
             {
@@ -89,25 +78,25 @@ namespace iviLink
 
          IPmpRequest * CAppManPmpController::pmpRequest()
          {
-            LOG4CPLUS_TRACE(msLogger, "pmpRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return mpClient;
          }
 
          void CAppManPmpController::init(IPmpHandler * pHandler)
          {
-            LOG4CPLUS_TRACE(msLogger, "init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClient->init(pHandler);
          }
 
          void CAppManPmpController::uninit()
          {
-            LOG4CPLUS_TRACE(msLogger, "uninit()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             init(0);
          }
 
          bool CAppManPmpController::checkConnection () const
          {
-            LOG4CPLUS_TRACE(msLogger, "checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return mpClient->checkConnection();
          }
 

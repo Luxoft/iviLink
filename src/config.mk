@@ -20,6 +20,9 @@ export OBJ_DIR := obj
 export RESULT_DIR := $(abspath $(ROOT_DIR)../src_products)
 export 3RD_PARTY_DIR := $(RESULT_DIR)/3rd_party
 export PREFIX := $(abspath $(ROOT_DIR)../src_install)
+export UTILS_DIR := $(ROOT_DIR)utils/
+export MISC_DIR := $(ROOT_DIR)utils/misc/
+export THREADS_DIR := $(ROOT_DIR)utils/threads/
 
 export SYSTEM_CONTROLLER_PROCESS_NAME := IVILinkSystemController
 export CONNECTIVITY_AGENT_PROCESS_NAME := IVILinkConnectivityAgent
@@ -33,7 +36,10 @@ export PROFILE_REPOSITORY := $(PREFIX)/profile_repository
 export SERVICE_REPOSITORY := $(PREFIX)/service_repository
 export APPLICATION_MANAGER_REPOSITORY := $(PREFIX)/application_manager_repository
 
-GLOBAL_CFLAGS   := -I$(ROOT_DIR) -Wall -pthread -ggdb -fPIC -I$(3RD_PARTY_DIR)/include #-Werror
+export DEBUG_FLAGS := -O0 -ggdb
+export RELEASE_FLAGS := -O2 -D NDEBUG
+
+GLOBAL_CFLAGS   := -I$(ROOT_DIR) -Wall -pthread -fPIC -I$(3RD_PARTY_DIR)/include -I$(MISC_DIR) -I$(THREADS_DIR) #-Werror
 
 #NONUNIQUE_AXIS_QUEUE:=true
 ifeq ($(NONUNIQUE_AXIS_QUEUE),true) 

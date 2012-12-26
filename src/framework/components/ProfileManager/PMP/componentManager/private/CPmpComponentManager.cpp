@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cerrno>
@@ -43,22 +32,17 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "utils/configurator/configurator.h"
+#include "configurator.h"
 
 #include "CPmpComponentManager.hpp"
-#include "framework/components/ProfileManager/PMP/core/CPmpCore.hpp"
-#include "framework/components/ProfileManager/PMP/PIM/CPmpPim.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/CPmpProtoController.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/CPmpCoreProtocol.hpp"
-#include "framework/components/ProfileManager/PMP/interaction/CPmpPimProtocol.hpp"
-#include "framework/components/ProfileManager/PMP/repository/CRepoController.hpp"
-#include "framework/components/ProfileManager/PMP/ipc_protocol/CIpcProtocol.hpp"
-#include "framework/libraries/AppMan/Pmp/CAppManPmpController.hpp"
-
-#ifndef ANDROID
-#else
-#include "utils/android/MakeRequest.hpp"
-#endif //ANDROID
+#include "CPmpCore.hpp"
+#include "CPmpPim.hpp"
+#include "CPmpProtoController.hpp"
+#include "CPmpCoreProtocol.hpp"
+#include "CPmpPimProtocol.hpp"
+#include "CRepoController.hpp"
+#include "CPMPIpcProtocol.hpp"
+#include "CAppManPmpController.hpp"
 
 namespace iviLink
 {
@@ -102,7 +86,7 @@ namespace iviLink
       bool CPmpComponentManager::initProfileRepository()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-         #ifndef ANDROID
+#ifndef ANDROID
          char rpath[PATH_MAX] = "";
          char ipc_addr[PATH_MAX] = "";
          char * params[] = { rpath, 0, 0, 0 };
@@ -123,12 +107,11 @@ namespace iviLink
          }
             
 
-
          mRepoPid = fork();
          switch (mRepoPid)
          {
          case -1:
-            LOG4CPLUS_WARN(msLogger, "fork returned -1");
+            LOG4CPLUS_ERROR(msLogger, "fork returned -1");
             return false;
             break;
          case 0:
@@ -155,10 +138,9 @@ namespace iviLink
             LOG4CPLUS_INFO(msLogger, "mRepoPid = " + convertIntegerToString(static_cast<int>(mRepoPid)));
             break;
          }
-         #else
-         iviLink::Android::makeRequest(iviLink::Android::eLaunchProfileRepository);
-         LOG4CPLUS_FATAL(msLogger, "Started profile repository");
-         #endif //ANDROID
+#else
+         LOG4CPLUS_INFO(msLogger, "Profile Repository should be started already");
+#endif //ANDROID
          return true;
       }
 
@@ -203,11 +185,11 @@ namespace iviLink
             char * str = strerror(errno);
             if (str)
             {
-               LOG4CPLUS_WARN(msLogger, "kill error " + convertIntegerToString(errno) + std::string(str));
+               LOG4CPLUS_ERROR(msLogger, "kill error " + convertIntegerToString(errno) + std::string(str));
             }
             else
             {
-               LOG4CPLUS_WARN(msLogger, "kill error");
+               LOG4CPLUS_ERROR(msLogger, "kill error");
             }
          }
 
@@ -239,12 +221,12 @@ namespace iviLink
             LOG4CPLUS_FATAL(msLogger, "Error while initializing Profile Repository Client");
             exit(1);
          }
-         #ifndef ANDROID
+#ifndef ANDROID
          std::string platform = "Ubuntu"; ///todo: change way of setting name of current platform
-         #else
+#else
          std::string platform = "Android";
-         #endif //ANDROID
-         LOG4CPLUS_INFO(msLogger, "todo: change way of setting name of current platform");
+#endif //ANDROID
+
          mpCore = new CPmpCore(CRepoController::instance()->repository(), platform);
          mpPim = new CPmpPim(mpPimProtocol);
 
@@ -252,7 +234,7 @@ namespace iviLink
          if (mpConfig)
             ipcAddr = mpConfig->getParam("pmp_ipc_address");
 
-         mpIpcProtocol = new PMP::Ipc::CIpcProtocol(mpPim, mpCore, ipcAddr.empty() ? NULL : ipcAddr.c_str() );
+         mpIpcProtocol = new PMP::Ipc::CPMPIpcProtocol(mpPim, mpCore, ipcAddr.empty() ? NULL : ipcAddr.c_str() );
 
          mpPim->setIpc(mpIpcProtocol);
 

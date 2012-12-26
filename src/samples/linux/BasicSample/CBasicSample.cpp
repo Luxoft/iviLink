@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,41 +18,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CBasicSample.hpp"
 //profile proxy header provides the access to profile API, must be included
-#include "samples/linux/Profiles/ProfileProxy/CBasicSampleProfileProxy.hpp"
+#include "CBasicSampleProfileProxy.hpp"
 
 Logger CBasicSample::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Applications.BasicSample"));
 
-#ifndef ANDROID
 CBasicSample::CBasicSample(CSignalSemaphore & semaphore)
-#else
-CBasicSample::CBasicSample(CSignalSemaphore & semaphore, iviLink::Android::AppInfo appInfo, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result)
-#endif //ANDROID
-
    //informing iviLink that this app supports service with this UID
-   #ifndef ANDROID
    : CApp(iviLink::Service::Uid("BasicSampleServiceHUI"))
    , mBasicSampleCallbacks(semaphore)
-   #else
-   : CApp(iviLink::Service::Uid("BasicSampleServiceHUI"), appInfo)
-   , mBasicSampleCallbacks(semaphore,pJm,callbacks,operands,result)
-   , mAppInfo(appInfo)
-   #endif //ANDROID
    , mpSemaphore(&semaphore)
 {
-   //registration profile callbacks for given profile API
-   registerProfileCallbacks(iviLink::Profile::ApiUid("BasicSampleProfile_PAPI_UID"), &mBasicSampleCallbacks);
 }
 
 CBasicSample::~CBasicSample()
@@ -61,11 +40,20 @@ CBasicSample::~CBasicSample()
 
 }
 
+void CBasicSample::init()
+{
+   // initialize application in iviLink core
+   initInIVILink();
+
+   //registration profile callbacks for given profile API
+   registerProfileCallbacks(iviLink::Profile::ApiUid("BasicSampleProfile_PAPI_UID"), &mBasicSampleCallbacks);
+}
+
 /**
  * Callback that should be invoked by application library thread 
  * after initialization application in application manager 
  */
-void CBasicSample::initDone(iviLink::ELaunchInfo launcher)
+void CBasicSample::onInitDone(iviLink::ELaunchInfo launcher)
 {
 
    //if application was launched by user
@@ -79,11 +67,7 @@ void CBasicSample::initDone(iviLink::ELaunchInfo launcher)
          LOG4CPLUS_INFO(msLogger, "service started");
 
          //loading profile proxy which corresponds to given service UID
-         #ifndef ANDROID
          CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleServiceHUI"));
-         #else
-         CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleServiceHUI"), mAppInfo);
-         #endif //ANDROID
 
          //using method from profile API
          sampleProxy.sendOperands(8,21);

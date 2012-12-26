@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef PROFILEFACTORY_HPP_
 #define PROFILEFACTORY_HPP_
 
-#include "utils/misc/CError.hpp"
+#include "CError.hpp"
 
 #include "CProfileInternal.hpp"
-#include "framework/components/ProfileManager/PMAL/CProfile.hpp"
+#include "CProfile.hpp"
+
+#include "AppInfo.hpp"
 
 namespace iviLink
 {
@@ -60,7 +53,9 @@ struct ProfileInitData
    iviLink::Service::Uid const& sid;
    Profile::IProfileCallbackProxy* proxy;
 
-   ProfileInitData(Profile::IUid const& uid, Service::Uid const& sid, Profile::IProfileCallbackProxy* proxy) :
+   ProfileInitData(Profile::IUid const& uid, 
+                   Service::Uid const& sid, 
+                   Profile::IProfileCallbackProxy* proxy) :
       uid(uid),
       sid(sid),
       proxy(proxy)
@@ -68,13 +63,21 @@ struct ProfileInitData
 };
 
 
+CError createProfileImpl(char const* pProfileLibPath, 
+                         ProfileInitData const& initData, 
+                         Profile::CProfileInternal*& pProfile, 
+                         Android::AppInfo appInfo);
 #ifndef ANDROID
-CError createProfileImpl(char const* pProfileLibPath, ProfileInitData const& initData, Profile::CProfileInternal*& pProfile);
 #else
-CError createProfileImpl(char const* pProfileLibPath, ProfileInitData const& initData, Profile::CProfileInternal*& pProfile, std::string backupPath);
+CError createJavaProfileImpl(char const* pProfileLibPath, 
+                             ProfileInitData const& initData, 
+                             Profile::CProfileInternal*& pProfile, 
+                             Android::AppInfo appInfo);
 #endif //ANDROID
 
 void unloadProfileLib(iviLink::Profile::IUid const& piuid);
+
+bool stringEndsWith(std::string toCheck, std::string potentialEnding);
 
 }  // PIM
 }  // ProfileManager

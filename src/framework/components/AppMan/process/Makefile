@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -43,7 +41,17 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := $(APPLICATION_MANAGER_PROCESS_NAME)
 
-INCLUDES      := 
+FW_DIR		  := $(ROOT_DIR)framework
+
+INCLUDES      += -I.
+INCLUDES      += -I$(FW_DIR)/messageProtocol/SystemController_AppMan/AppMan/
+INCLUDES      += -I$(FW_DIR)/messageProtocol/SystemController_AppMan/
+INCLUDES      += -I$(FW_DIR)/messageProtocol/
+INCLUDES      += -I$(FW_DIR)/components/AppMan/controller/
+INCLUDES      += -I$(FW_DIR)/libraries/AppMan/AmpForPmp/
+INCLUDES      += -I$(ROOT_DIR)framework/libraries/AppMan/Pmp/
+INCLUDES      += -I$(UTILS_DIR)ipc/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 LDFLAGS       := $(GLOBAL_LDFLAGS)
 
@@ -75,7 +83,6 @@ OBJS        := $(SRC:.cpp=.o)
 OBJS        := $(OBJS:.c=.o)
 OBJS        := $(addprefix $(OBJ_FULLDIR)/,$(notdir $(OBJS)))
 DEPS        := $(OBJS:.o=.d)
-
 
 
 ###############################################################################

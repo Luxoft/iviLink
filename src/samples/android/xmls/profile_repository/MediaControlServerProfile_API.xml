@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profileApi>
+	<version>1</version>
+	<role>MediaControlServerProfile_API_Role</role>
+	<uid>MediaControlServerProfile_API_UID</uid>
+</profileApi>

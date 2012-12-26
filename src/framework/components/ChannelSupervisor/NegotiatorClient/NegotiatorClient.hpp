@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,52 +18,52 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NEGOTIATORCLIENT_HPP
 #define  NEGOTIATORCLIENT_HPP
 
 #include <string>
+#include <tr1/memory>
 
-#include "utils/threads/CMutex.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/misc/CError.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CMutex.hpp"
+#include "Types.hpp"
+#include "CError.hpp"
+#include "Logger.hpp"
+#include "CMutex.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 struct NegotiatorIPCClient;
 
+class NegotiatorClientDeleter;
+
 class NegotiatorClient
 {
+    friend class NegotiatorClientDeleter;
+
 public:
-   static NegotiatorClient* getInstance();
-   void deleteInstance();
+    static NegotiatorClient* getInstance();
 
-   CError NegotiateChannel(std::string tag, UInt32 & channelId);
-   CError UpdateMapWithCID(std::string tag, UInt32 & channelId);
-   CError FreeChannel(const UInt32 channelId, std::string tag = "");
-
+    CError NegotiateChannel(std::string const& tag, UInt32 & channelId);
+    CError UpdateMapWithCID(std::string const& tag, UInt32 & channelId);
+    CError FreeChannel(const UInt32 channelId);
 
 private:
-   NegotiatorClient();
-   ~NegotiatorClient();
+    NegotiatorClient();
+    NegotiatorClient(NegotiatorClient const&);
+    void operator =(NegotiatorClient const&);
+    ~NegotiatorClient();
 
-   static NegotiatorClient*      m_NegotiatorInstance;
-   static CMutex                 m_SingletonMutex;
+    static std::tr1::shared_ptr<NegotiatorClient> m_Instance;
+    static CMutex m_SingletonMutex;
 
-   NegotiatorIPCClient *         m_ipcClient;
-   static Logger                 msLogger;
+    NegotiatorIPCClient * m_ipcClient;
+    static Logger msLogger;
 
 };
 

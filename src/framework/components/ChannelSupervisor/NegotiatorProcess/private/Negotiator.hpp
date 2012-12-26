@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,56 +18,48 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NEGOTIATOR_HPP_
 #define NEGOTIATOR_HPP_
 
 
-#include "utils/xml/pugixml.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "pugixml.hpp"
+#include "CMutex.hpp"
+#include "Types.hpp"
+#include "CSignalSemaphore.hpp"
 
 #include "NegotiatorIPCHandler.hpp"
 #include "NegotiatorStates.hpp"
 #include "CNegotiatorToSysCtrlProxy.hpp"
 #include "Queue.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 class Negotiator
 {
 public:
-   NegotiatorIPCHandler* getHandler();
+    NegotiatorIPCHandler* getHandler();
 
-   void onShutDown()
-   {
-      m_ipcHandler->dismissSema();
-   }
+    void onShutDown()
+    {
+        m_ipcHandler->dismissSema();
+    }
 
-   Negotiator(std::string const& sock_addr);
-   ~Negotiator();
+    Negotiator(std::string const& sock_addr);
+    ~Negotiator();
 
 private:
 
-   NegotiatorIPCHandler * m_ipcHandler;
+    NegotiatorIPCHandler * m_ipcHandler;
 
-   CNegotiatorToSysCtrlProxy mSysCtrlProxy;
-   static Logger msLogger;
+    CNegotiatorToSysCtrlProxy mSysCtrlProxy;
+    static Logger msLogger;
 };
 
 }  // namespace ChannelSupervisor

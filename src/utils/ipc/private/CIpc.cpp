@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cerrno>
 #include <limits>
 
-#include "utils/threads/CThread.hpp"
+#include "CThread.hpp"
 
 #include "CIpc.hpp"
 #include "CIpcSocket.hpp"
@@ -53,16 +44,19 @@ CIpc::CIpc(Address const& address, ICallbackHandler& callbackHandler) :
    mResponseTimeout(10000),
    mListenTimeout(10000)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    LOG4CPLUS_INFO(logger, "CIpc::CIpc() address = '" + address + "'");
 }
 
 CIpc::~CIpc()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    disconnect();
 }
 
 CError CIpc::connect()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (isConnected())
       return CIpcError::NoIpcError("Already connected");
 
@@ -76,6 +70,7 @@ CError CIpc::connect()
 
 CError CIpc::waitForConnection()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (isConnected())
       return CIpcError::NoIpcError("Already connected");
 
@@ -107,6 +102,7 @@ CError CIpc::waitForConnection()
 
 CError CIpc::beginWaitForConnection()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (isConnected())
       return CIpcError::NoIpcError("Already connected");
 
@@ -133,6 +129,7 @@ CError CIpc::beginWaitForConnection()
 
 CError CIpc::endWaitForConnection()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    assert(mSocket);
 
    CError err = mSocket->stopContinuousListen();
@@ -142,6 +139,7 @@ CError CIpc::endWaitForConnection()
 
 void CIpc::disconnect()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    destroySocket();
 }
 
@@ -165,7 +163,7 @@ CError CIpc::request(MsgID id,
    UInt8* const pResponseBuffer, UInt32& bufferSize,
    DirectionID const* const pDirId/* = NULL*/)
 {
-   LOG4CPLUS_TRACE(logger, "request()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    if (!isConnected())
       return CIpcError(CIpcError::ERROR_COMMUNICATION, "request() error - not connected");
@@ -195,7 +193,7 @@ CError CIpc::request(MsgID id,
    }
 
    {
-      CError err = mSocket->send(id, true, pPayload, payloadSize, pDirId);
+      CError err = mSocket->send(id, REQUEST, pPayload, payloadSize, pDirId);
       if (!err.isNoError())
       {
          mRequestDataContainer.erase(id);
@@ -246,6 +244,37 @@ CError CIpc::request(MsgID id,
    return CIpcError::NoIpcError();
 }
 
+CError CIpc::asyncRequest(MsgID id, 
+   UInt8 const* pPayload, UInt32 payloadSize, 
+   DirectionID const* const pDirId/* = NULL*/)
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+
+   if (!isConnected())
+      return CIpcError(CIpcError::ERROR_COMMUNICATION, "request() error - not connected");
+
+   if (!checkThread())
+   {
+      LOG4CPLUS_ERROR(logger, "request() from wrong thread");
+      return CIpcError(CIpcError::ERROR_WRONG_THREAD, "This is the thread performing onRequest()");
+   }
+
+   int mutexErr = mRequestMutex.timedLock(mRequestTimeout);
+   switch (mutexErr)
+   {
+   case 0:
+      break;
+   case ETIMEDOUT:
+      return CIpcError(CIpcError::ERROR_REQUEST_TIMEOUT, "Cannot begin request before timeout");
+   default:
+      return CIpcError(CIpcError::ERROR_OTHER, strerror(errno));
+   }
+
+   CError err = mSocket->send(id, TRIGGER, pPayload, payloadSize, pDirId);
+   mRequestMutex.unlock();
+   return err;
+}
+
 time_t CIpc::getRequestTimeout() const
 {
    return mRequestTimeout;
@@ -278,7 +307,7 @@ void CIpc::setListenTimeout(time_t timeout)
 
 void CIpc::destroySocket()
 {
-   LOG4CPLUS_TRACE(logger, "destroySocket");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (mSocket)
    {
       mSocket->stopOperations();
@@ -318,10 +347,13 @@ void CIpc::onConnectionLost(DirectionID dirId)
 
 void CIpc::incomingRequest(MsgID id, UInt8 const* pPayload, UInt32 payloadSize, DirectionID dirId)
 {
-   LOG4CPLUS_TRACE(logger, "incomingRequest()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   if (!mpClientHandler)
+   if (!mpClientHandler) 
+   {
+      LOG4CPLUS_FATAL(logger, "No mpClientHandler!");
       return;
+   }
 
    mRespBufferMutex.lock();
    {
@@ -333,7 +365,7 @@ void CIpc::incomingRequest(MsgID id, UInt8 const* pPayload, UInt32 payloadSize, 
       
       mpClientHandler->OnRequest(id, pPayload, payloadSize, mRespBuffer, responseSize, dirId);
 
-      CError err = mSocket->send(id, false, mRespBuffer, responseSize, &dirId);
+      CError err = mSocket->send(id, RESPONSE, mRespBuffer, responseSize, &dirId);
       if (err.isNoError())
       {
          LOG4CPLUS_INFO(logger, "Ipc response sent addr='" + mAddress + "' MsgId=" + convertIntegerToString(id) + " size=" + convertIntegerToString(responseSize));   
@@ -348,12 +380,33 @@ void CIpc::incomingRequest(MsgID id, UInt8 const* pPayload, UInt32 payloadSize, 
    mRespBufferMutex.unlock();
 }
 
+void CIpc::incomingAsyncRequest(MsgID id, UInt8 const* pPayload, UInt32 payloadSize, DirectionID dirId)
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+
+   if (!mpClientHandler) 
+   {
+      LOG4CPLUS_FATAL(logger, "No mpClientHandler!");
+      return;
+   }
+
+   mRespBufferMutex.lock();
+   {
+      UInt32 responseSize = RESP_BUFFER_SIZE;
+      LOG4CPLUS_INFO(logger, "Ipc got async request addr='" + mAddress + 
+         "' MsgId=" + convertIntegerToString(id) + 
+         " size=" + convertIntegerToString(payloadSize) + 
+         " dirId = " + convertIntegerToString(dirId));
+      
+      mpClientHandler->OnAsyncRequest(id, pPayload, payloadSize, dirId);
+   }
+   mRespBufferMutex.unlock();
+}
+
 //
 
 bool CIpc::CRequestDataContainer::insert(MsgID id, UInt8* const pResponseBuffer, UInt32 bufferSize, tSharedSem recvSem)
 {
-   LOG4CPLUS_TRACE(logger, "insert()");
-
    mRequestDataMapMutex.lock();
    {
       if (mRequestDataMap.find(id) != mRequestDataMap.end())
@@ -379,7 +432,7 @@ bool CIpc::CRequestDataContainer::getData(MsgID id, RequestData & data) const
    tRequestDataMap::const_iterator it = mRequestDataMap.find(id);
    if (it == mRequestDataMap.end())
    {
-      LOG4CPLUS_TRACE(logger, "id " + convertIntegerToString(id) + "not found");
+      LOG4CPLUS_WARN(logger, "id " + convertIntegerToString(id) + "not found");
       mRequestDataMapMutex.unlock();
       return false;
    }
@@ -417,8 +470,7 @@ void CIpc::CRequestDataContainer::erase(MsgID id)
 
 bool CIpc::CRequestDataContainer::lockData(MsgID id, RequestData*& data)
 {
-   LOG4CPLUS_TRACE(logger, "lockData()");
-
+   LOG4CPLUS_TRACE_METHOD(logger, "lockData(" + convertIntegerToString(id) + ")");
    mRequestDataMapMutex.lock();
 
    tRequestDataMap::iterator it = mRequestDataMap.find(id);
@@ -434,7 +486,7 @@ bool CIpc::CRequestDataContainer::lockData(MsgID id, RequestData*& data)
 
 void CIpc::CRequestDataContainer::unlockData(MsgID id)
 {
-   LOG4CPLUS_TRACE(logger, "nlockData(" + convertIntegerToString(id) + ")");
+   LOG4CPLUS_TRACE_METHOD(logger, "unlockData(" + convertIntegerToString(id) + ")");
    // Currently unused
    (void)id;
    mRequestDataMapMutex.unlock();

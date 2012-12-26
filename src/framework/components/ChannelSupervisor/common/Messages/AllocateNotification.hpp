@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,55 +18,51 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ALLOCATE_NOTIFICATION_HPP_
 #define ALLOCATE_NOTIFICATION_HPP_
 
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Notification.hpp"
 #include "Message.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
-class AllocateNotification : public Notification
+class AllocateNotification: public Notification
 {
 public:
 
-	AllocateNotification( const char* tag, const unsigned int channelId = 0 );
+    AllocateNotification(const char* tag, const unsigned int channelId = 0);
 
-	AllocateNotification(pugi::xml_document* doc);
+    AllocateNotification(pugi::xml_document* doc);
 
-	virtual ~AllocateNotification()
-	{
-	}
+    virtual ~AllocateNotification()
+    {
+    }
 
-	const int GetChannelId() const
-	{
-		return m_offerredChId;
-	}
+    const int GetChannelId() const
+    {
+        return m_offerredChId;
+    }
 
-
-	virtual const char* GetMessageName() const { return m_notificationTypeMap[NOTIFICATIONTTYPE_ALLOCATE].c_str(); }
-
+    virtual const char* GetMessageName() const
+    {
+        return m_notificationTypeMap[NOTIFICATIONTTYPE_ALLOCATE].c_str();
+    }
 
 protected:
 
-	int			m_offerredChId;
+    int m_offerredChId;
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

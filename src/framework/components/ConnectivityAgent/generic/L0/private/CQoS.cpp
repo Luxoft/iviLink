@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -49,7 +39,7 @@
  *
  ********************************************************************/
 #include "CQoS.hpp"
-#include "framework/components/ConnectivityAgent/generic/L1/CChannelAllocator.hpp"
+#include "CChannelAllocator.hpp"
 
 //using AXIS::ConnectivityAgent::L1::CChannelAllocator;
 //using namespace  AXIS::ConnectivityAgent::L0;

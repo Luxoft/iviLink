@@ -9,3 +9,8 @@ copyrightcons -c license.txt -log logfile [-t] [-i] [-a] -mask mask.txt {dirs/fi
 -a: only report unapproved licenses
 
 
+---------------------------------------------------
+Example of the default case:
+
+copyrightcons -c license.txt -log log.txt -mask mask.txt /path/to/AXIS
+---------------------------------------------------

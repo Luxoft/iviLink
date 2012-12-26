@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -46,7 +44,11 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := ca_threading_test_server
 
-INCLUDES      := -Iinclude
+CON_AGENT_DIR := $(ROOT_DIR)framework/components/ConnectivityAgent/generic/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(CON_AGENT_DIR)common/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 LDFLAGS       := $(GLOBAL_LDFLAGS)
 
@@ -74,7 +76,6 @@ OBJS        := $(SRC:.cpp=.o)
 OBJS        := $(OBJS:.c=.o)
 OBJS        := $(addprefix $(OBJ_FULLDIR)/,$(notdir $(OBJS)))
 DEPS        := $(OBJS:.o=.d)
-
 
 
 ###############################################################################

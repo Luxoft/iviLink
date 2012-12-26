@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,90 +18,56 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CTIMEOUTMANAGER_HPP_
 #define CTIMEOUTMANAGER_HPP_
 
 #include <map>
-#include <list>
 
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/ITimeoutSubscriber.hpp"
+#include "CMutex.hpp"
+#include "CThread.hpp"
+#include "ITimeoutSubscriber.hpp"
+#include "Logger.hpp"
 
-/// CCallbackThread
-/**
- * CCallbackThread is helper class for CTimeoutManager. It's used for making callbacks in new threads
- */
 
-class CCallbackThread : public CThread
-{
-public:
-   CCallbackThread(ITimeoutSubscriber * subscriber, UInt32 timeout);
-   bool isEnded () const;
+class CSignalSemaphore;
+class CThreadPool;
 
-private:
-   virtual void threadFunc();
-
-   ITimeoutSubscriber * mSubscriber;
-   UInt32 mTimeout;
-   bool mThreadEnded;
-   /**
-    * static members
-    */
-   static UInt32 sCounter;
-   static char sCounterString[24];
-};
-
-/// CTimeoutManager class
-/**
- * CTimeoutManager is used for calling onTimeout() function in subscribers when time is passed
- *
- * @todo Reimplement timeout manager. PIlin, 31.08.12
- * 1) Timeout manager can quickly create a lot of threads and creation of new threads
- *    will be blocked by the system. It is dangerous for applicaton execution. There 
- *    must be fixed number of threads dedicated to timeout execution.
- *    ConnectivityAgent 
- *
- *    I propose next arcithecture: one thread with sorted queue of timeout subscribers.
- *    They can be called from this thread or from the threads of thread pool.
- *
- * 2) It will be good, if it will be possible to remove timeouts before time.
- *    It will decrease load.
- *
- * 3) Current implementation uses sleep(). sleep() can exit before actual sleeping
- *    time alarmed by some signal. It must be fixed.
- */
 
 class CTimeoutManager : public CThread
 {
 public:
+   typedef std::multimap<Int64,ITimeoutSubscriber*> tSubscribersMap ;
+
+   /**
+    * Returns and creates instance of CTimeoutManager
+    */
    static CTimeoutManager * getInstance();
 
    /**
-    * Destructor
+    * Deletes instance of singleton
     */
-   ~CTimeoutManager();
+   static void deleteInstance();
 
    /**
     * Adds subscriber to mSubscribers. It calls start() if mSubscribers was empty before adding
-    * @param subscriber - interface for callback
+    * @param subscriber - interface for callback. After performing timout object will be deleted
     * @param timeout - time in miliseconds 
     */
-   void addSubscriber(ITimeoutSubscriber * subscriber, UInt32 timeout);
+   void addSubscriber(ITimeoutSubscriber * subscriber, UInt32 ms);
+
+   /**
+    * Revomes subscriber from timeout manager
+    * @param subscriber pointer to object with ITimeoutSubscriber interface
+    */
+   void removeSubscriber(ITimeoutSubscriber * subscriber);
+
+   /**
+    * Returns time value as int64 value in ms
+    */
+   static Int64 getCurMs();
 
 private:
    // Methods section
@@ -112,18 +77,49 @@ private:
    CTimeoutManager();
 
    /**
-    * It calls callback-functions if needed
+    * Destructor
     */
+   virtual ~CTimeoutManager();
 
-   virtual void threadFunc();
    /**
-    * Destructs CCallbackThread objects from mCallbackThreads if is was ended
+    * Is called by SIGALRM handler to handle onTimout of subscribers
     */
-   void cleanEndedThreads();
+   void onTimer();
 
-   CMutex mMutex;
-   std::list<CCallbackThread*> mCallbackThreads;
-   static CTimeoutManager * msInstance;
+   /**
+    * Main function of Timaout Manager thread. Is called after start
+    */
+   virtual void threadFunc();
+
+   /**
+    * Calls processTopTimeout while it returns true
+    */
+   void processTimeout();
+
+   /**
+    * Processed top elements, if timeout passed
+    */
+   bool processTopTimeout(Int64 nowMs);
+
+   /**
+    * stops its thread
+    */
+   void finish();
+
+   /**
+    * Uses signal semaphore to wait for the next timeout and timeout adding
+    */
+   void smartWait();
+
+   Logger mLogger;                        ///< Is used for logging
+   CMutex * mpSubscriberMapMutex;         ///< Mutes for subscribers map
+   tSubscribersMap mSubscriberMap;        ///< Map with subsrcibers, time is a key
+   CSignalSemaphore * mpThreadSemaphore;  ///< Semaphore for signal handling
+   volatile bool mBe;                              ///< if false - thread exit
+   CThreadPool * mpThreadPool;            ///< thead pool is used to perform callbacks of subscribers
+   CSignalSemaphore * mpStartSemaphore;   ///< is used to block thread that calls constructor for signal from threadFunc
+
+   static CTimeoutManager * msInstance;   ///< instance of CTimeoutManager
 };
 
 #endif /* CTIMEOUTMANAGER_HPP_ */

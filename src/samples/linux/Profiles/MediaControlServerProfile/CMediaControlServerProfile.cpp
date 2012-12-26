@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #include "CMediaControlServerProfile.hpp"
 
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
-#include "samples/linux/Profiles/mediaCommon/CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "ChannelSupervisorTube.hpp"
+#include "UnstableAPI.hpp"
+#include "CSenderThread.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
 
 #include <cstring>
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 Logger CMediaControlServerProfile::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Profiles.CMediaControlServerProfile"));
 
@@ -44,25 +44,34 @@ CMediaControlServerProfile::CMediaControlServerProfile(iviLink::Profile::IProfil
 , mpReqMutex(new CMutex())
 , mpReqSemaphore(new CSignalSemaphore())
 , mBe(true)
-, mTag("CMediaControlServerProfile")
 , mPath("/home/")
 , mIp("127.0.0.1")
 , mPort("5544")
 , mRtsp("rtsp://")
 , mStreamName("stream_")
-, mpServControl(new CServerControl())
+, mpServControl(new CServerControl(static_cast<IMediaControlServerProfile_API::Callbacks*> (pCbProxy)))
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
     PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
-    // get IP from ChannelSupervisorTube.hpp"
-    std::string type;
-    std::string remAdd;
-    //the following function should be uncommented
-    //if (iviLink::ChannelSupervisor::UnstableAPI::getConnectionAddr(type, mIp, remAdd) == ERR_OK && type == "TCP/IP")
-    //{
-      ;// we've obtained our IP address
-    //}
     
+    // get IP from ChannelSupervisorTube.hpp"
+    ConnectionInformation conInfo;
+    if(ERR_OK != ::getConnectionInformation(&conInfo))
+    {
+        LOG4CPLUS_INFO(msLogger, "Unable to obtain IP address");
+        return;
+    }
+
+    mIp = conInfo.getLocalAddress();
+    LOG4CPLUS_INFO(msLogger, "After get IP address");
+    LOG4CPLUS_INFO(msLogger, "local ip: " + conInfo.getLocalAddress());
+    LOG4CPLUS_INFO(msLogger, "remote ip: " + conInfo.getRemoteAddress());
+    LOG4CPLUS_INFO(msLogger, "connection type: " + conInfo.getConnectionType());
+    if  (strcmp(conInfo.getConnectionType().c_str(), "TCP/IP") != 0)
+    {
+       LOG4CPLUS_WARN(msLogger, "May not work without TCP connection");
+    }
+
 }
 
 CMediaControlServerProfile::~CMediaControlServerProfile() {
@@ -75,56 +84,104 @@ CMediaControlServerProfile::~CMediaControlServerProfile() {
     delete mpServControl;
 
     while (!mReqQueue.empty()) {
-        CBuffer buf = mReqQueue.front();
         mReqQueue.pop();
-        delete [] buf.getBuffer();
     }
 }
 
-void CMediaControlServerProfile::play(std::string const trackName, std::string const avform)
+void CMediaControlServerProfile::split(const std::string& str, const std::string& delimiters , std::vector<std::string>& tokens)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    std::string streamName = mStreamName + trackName;
+    // Skip delimiters at beginning.
+    std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+    // Find first "non-delimiter".
+    std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+    while (std::string::npos != pos || std::string::npos != lastPos)
+    {
+        // Found a token, add it to the vector.
+        tokens.push_back(str.substr(lastPos, pos - lastPos));
+        // Skip delimiters.  Note the "not_of"
+        lastPos = str.find_first_not_of(delimiters, pos);
+        // Find next "non-delimiter"
+        pos = str.find_first_of(delimiters, lastPos);
+    }
+}
+
+void CMediaControlServerProfile::play(std::string const& trackName, std::string const& trackUid, std::string const& avform)
+{
+
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    LOG4CPLUS_INFO(msLogger,  "trackName: " + trackName + "avform: "  + avform + "trackUid: " + trackUid);
+    std::string mTrackName = trackName;
+    int position = mTrackName.find(" "); 
+    while ( position != std::string::npos ) 
+    {
+      mTrackName.replace(position, 1, "+" );
+      position = mTrackName.find( " ", position + 1 );
+    }
+    int randomNum = rand() % 1000 + 1;
+    std::stringstream out;
+    out << randomNum;
+    std::string streamName = mStreamName + mTrackName.substr(0, mTrackName.find(".")-1) + out.str();
+    LOG4CPLUS_TRACE(msLogger, "stream name: "+streamName);
+    mPath = mpAppCallbacks->onMediaPathRequest();
     std::string path = mPath + trackName;
     std::string source = mRtsp + mIp + ":" + mPort + "/" + streamName;
     if (mpServControl->sendPlay(mPort, path, streamName, avform))
     {
-        prepareRequest(PLAY, true, trackName, source, avform);
-        mpAppCallbacks->onServerPlay(trackName, source, avform);
+        prepareRequest(PLAY, true, trackName, trackUid, source, avform);
+        mpAppCallbacks->onServerPlay(trackName, trackUid, source, avform);
     }
+}
+
+void CMediaControlServerProfile::changeHighlightedTrack(int newPosition) 
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    std::stringstream out;
+    out << newPosition;
+    std::string newPos = out.str();
+    prepareRequest(CHANGETRACK, true, newPos);
 }
 
 void CMediaControlServerProfile::pause() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    prepareRequest(PAUSE, false, mTag, mTag, mTag);
+    prepareRequest(PAUSE, false);
     mpServControl->sendCommand(mpServControl->mPause);
 }
 
 void CMediaControlServerProfile::stopStreaming() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    prepareRequest(STOP, false, mTag, mTag, mTag);
+    prepareRequest(STOP, false);
+    mpServControl->sendCommand(mpServControl->mStop);
+}
+
+void CMediaControlServerProfile::serverStop() {
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
     mpServControl->sendCommand(mpServControl->mStop);
 }
 
 void CMediaControlServerProfile::resume() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__); 
     if (mpServControl->sendCommand(mpServControl->mResume))
-        prepareRequest(RESUME, false, mTag, mTag, mTag);
+    {
+        prepareRequest(RESUME, false);
+        mpAppCallbacks->onServerResume();
+    }
 }
 
 void CMediaControlServerProfile::sync() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    prepareRequest(SYNC, false,  mTag, mTag, mTag);
+    prepareRequest(SYNC, false);
 }
 
 void CMediaControlServerProfile::unsync() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    prepareRequest(UNSYNC, false,  mTag, mTag, mTag);
+    prepareRequest(UNSYNC, false);
 }
 
 void CMediaControlServerProfile::toggle() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    prepareRequest(TOGGLE, false,  mTag, mTag, mTag);
+    prepareRequest(TOGGLE, false);
 }
 
 void CMediaControlServerProfile::setPath(std::string const& path) {
@@ -132,40 +189,38 @@ void CMediaControlServerProfile::setPath(std::string const& path) {
     mPath = path;
 }
 
-void CMediaControlServerProfile::prepareRequest(PROCEDURES_CONTROL_IDS proc, bool has_events, std::string const& event_f, std::string const& event_s, std::string const& event_t) {
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    const UInt32 size = 4;
-    CBuffer buf(new UInt8[size], size);
-    bool res = true;
-    res = res && buf.write((UInt16) proc);
-    if (has_events) {
-        res = res && buf.write(event_f);
-        res = res && buf.write(event_s);
-        res = res && buf.write(event_t);
-    }
-    if (res) {
-        mpReqMutex->lock();
-        mReqQueue.push(buf);
-        mpReqMutex->unlock();
-        mpReqSemaphore->signal();
-    } else {
-        LOG4CPLUS_ERROR(msLogger, "Unable to prepare buffer - buffer size is not enough");
-        delete [] buf.getBuffer();
-    }
+
+void CMediaControlServerProfile::prepareRequest(PROCEDURES_CONTROL_IDS proc, bool has_events, std::string const& event_f, std::string const& event_s, std::string const& event_t, std::string const& event_fr)
+{
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+   std::string msg;
+   msg = static_cast<UInt8>(proc);
+   if (has_events)
+   { 
+	msg += event_f + ";" + event_s + ";" + event_t + ";" + event_fr;
+   }
+   mpReqMutex->lock();
+   mReqQueue.push(msg);
+   mpReqMutex->unlock();
+   mpReqSemaphore->signal();     
+
+
 }
 
 void CMediaControlServerProfile::onEnable() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    mChannelID = iviLink::Channel::allocateChannel(mTag, this);
+    mChannelID = iviLink::Channel::allocateChannelAsServer(MEDIA_CONTROL_TAG, this, eRealTime);
     if (mChannelID) {
         LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");
         mpSenderThread->start();
     } else {
         LOG4CPLUS_WARN(msLogger, "allocate Channel failed");
+        killProcess(1);
     }
 }
 
 void CMediaControlServerProfile::onDisable() {
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
     CError err = iviLink::Channel::deallocateChannel(mChannelID);
     if (!err.isNoError()) {
         LOG4CPLUS_WARN(msLogger, "Unable to deallocate channel: " + static_cast<std::string> (err));
@@ -174,90 +229,90 @@ void CMediaControlServerProfile::onDisable() {
 
 //from CChannelHandler
 
-void CMediaControlServerProfile::bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer) {
+void CMediaControlServerProfile::onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer) {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    if (mChannelID != channel) {
+    if (mChannelID != channel) 
+    {
         LOG4CPLUS_INFO(msLogger, "mChannelID != channel_id");
         return;
-    } else {
+    } 
+    else 
+    {
         LOG4CPLUS_INFO(msLogger, "mChannelID == channel_id");
     }
 
-    bool res = true;
-    UInt16 tmp;
-    if (!buffer.read(tmp)) {
-        LOG4CPLUS_WARN(msLogger, "Unable to read request type from buffer");
-        return;
-    }
+   UInt8 *incomingData = buffer.getBuffer();
+   int read_size = buffer.getSize();
 
-    PROCEDURES_CONTROL_IDS proc = static_cast<PROCEDURES_CONTROL_IDS> (tmp);
-    switch (proc) {
-        case STOP:
-        {
+   LOG4CPLUS_INFO(msLogger, "Procedure ID = " + convertIntegerToString(incomingData[0]));
+
+   if(incomingData[0] == STOP)
+   {
             LOG4CPLUS_INFO(msLogger, "case STOP");
             mpAppCallbacks->onServerStop();
-            mpServControl->sendCommand(mpServControl->mStop);            
-        }
-            break;
-        case PAUSE:
-        {
+            mpServControl->sendCommand(mpServControl->mStop);  
+
+   }
+   else if(incomingData[0] == SERVERSTOP)
+   {
+            LOG4CPLUS_INFO(msLogger, "case SERVERSTOP");
+            serverStop();  
+   }
+   else if(incomingData[0] == PAUSE)
+   {
             LOG4CPLUS_INFO(msLogger, "case PAUSE");
             mpAppCallbacks->onServerPause();
             mpServControl->sendCommand(mpServControl->mPause);
-            break;
-        }
-        case RESUME:
-        {
+   }
+   else if(incomingData[0] == RESUME)
+   {
             LOG4CPLUS_INFO(msLogger, "case RESUME");
-            mpAppCallbacks->onServerResume();
-            resume();
-        }
-            break;
-        case SYNC:
-        {
+            resume();  
+   }
+   else if(incomingData[0] == SYNC)
+   {
             LOG4CPLUS_INFO(msLogger, "case SYNC");
             mpAppCallbacks->onServerSync();
-            break;
-        }
-        case UNSYNC:
-        {
+   }
+   else if(incomingData[0] == UNSYNC)
+   {
             LOG4CPLUS_INFO(msLogger, "case UNSYNC");
             mpAppCallbacks->onServerUnsync();
-        }
-            break;
-        case TOGGLE:
-        {
+   }
+   else if(incomingData[0] == TOGGLE)
+   {
             LOG4CPLUS_INFO(msLogger, "case TOGGLE");
             mpAppCallbacks->onServerToggle();
-        }
-            break;
-        case PLAY:
-        {
+   }
+   else if(incomingData[0] == PLAY)
+   {
             LOG4CPLUS_INFO(msLogger, "case PLAY");
-            std::string trackName;
-            std::string avform;
-            res = res && buffer.read(trackName);
-            res = res && buffer.read(avform);
-            if (res)
-               play(trackName, avform);
-        }
-            break;
-        default:
-        {
-            LOG4CPLUS_WARN(msLogger, "Unknown request type");
-            return;
-        }
-            break;
-    }
+            std::string message((char*)(incomingData + 1), read_size - 1);
+            LOG4CPLUS_INFO(msLogger, "message  = " + message);
+            vector<string> parse_result;
+            split(message, ";", parse_result);
+            if (parse_result.size() == 3)
+            {
+                LOG4CPLUS_INFO(msLogger, parse_result[0]);
+                LOG4CPLUS_INFO(msLogger, parse_result[1]);
+                LOG4CPLUS_INFO(msLogger, parse_result[2]);
+                LOG4CPLUS_INFO(msLogger, "get message:" + parse_result[0] + " ; " + parse_result[1] + " ; " + parse_result[2]);
+            	play(parse_result[0], parse_result[1], parse_result[2]);
+            }
+            else 
+	        {
+		        LOG4CPLUS_INFO(msLogger, "cannot parse message");
+            }
 
-    if (!res) {
-        LOG4CPLUS_WARN(msLogger, "Unable to read event from buffer");
-        return;
-    }
+   }
+   else
+   {
+        LOG4CPLUS_INFO(msLogger, "unknown procedure ID");
+   }
 
 }
 
-void CMediaControlServerProfile::channelDeletedCallback(const UInt32 channel_id) {
+void CMediaControlServerProfile::onChannelDeleted(const UInt32 channel_id) {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
     if (mChannelID == channel_id)
@@ -269,7 +324,7 @@ void CMediaControlServerProfile::channelDeletedCallback(const UInt32 channel_id)
     }
 }
 
-void CMediaControlServerProfile::connectionLostCallback() {
+void CMediaControlServerProfile::onConnectionLost() {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 }
 
@@ -284,25 +339,29 @@ void CMediaControlServerProfile::senderLoop() {
     }
 }
 
-bool CMediaControlServerProfile::hasRequests() {
+bool CMediaControlServerProfile::hasRequests() 
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
     mpReqMutex->lock();
     bool res = !mReqQueue.empty();
     mpReqMutex->unlock();
     return res;
 }
 
-void CMediaControlServerProfile::handleRequest() {
-    mpReqMutex->lock();
-    CBuffer buf = mReqQueue.front();
-    mReqQueue.pop();
-    mpReqMutex->unlock();
+void CMediaControlServerProfile::handleRequest()
+{
+   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+   mpReqMutex->lock();
+   std::string msg;
+   msg = mReqQueue.front();
+   mReqQueue.pop();
+   mpReqMutex->unlock();
 
-    CError err = iviLink::Channel::sendBuffer(mChannelID, buf);
-    if (!err.isNoError()) {
-        LOG4CPLUS_INFO(msLogger, "CMediaControlServerProfile::handleRequest() :: Send error"
-                + static_cast<std::string> (err));
-    }
-
-    delete [] buf.getBuffer();
+   CError err = iviLink::Channel::sendBuffer(mChannelID, msg.c_str(), msg.length());
+   if (!err.isNoError())
+   {
+      LOG4CPLUS_INFO(msLogger, "CMediaSourceServerProfile::handleRequest() :: Send error"
+         + static_cast<std::string>(err));
+   }
 }
 

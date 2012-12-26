@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,20 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAUTHENTICATIONPROXY_HPP_
 #define CAUTHENTICATIONPROXY_HPP_
 
-#include "samples/linux/Profiles/ProfileAPI/IAuthenticationProfileAPI.hpp"
-#include "framework/public/appLib/CProfileProxy.hpp"
+#include "IAuthenticationProfileAPI.hpp"
+#include "CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IAuthenticationProfile_API
 #define CURRENT_PROFILE_PROXY CAuthenticationProxy

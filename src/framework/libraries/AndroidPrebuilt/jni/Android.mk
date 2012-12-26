@@ -23,59 +23,15 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(SETUPIVI), true)
-include $(CLEAR_VARS)
-LOCAL_MODULE := iviLinkCommon
-#ssm
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/SystemController/ssm/*/private/*.cpp)
-#utils (json excluded)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/utils/*/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/utils/ipc/helpers/private/*.cpp)
-#components message protocol
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/messageProtocol/*/*/private/*.cpp)
-#appman
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/AppMan/*/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/AppMan/*/private/*.cpp) 
-LOCAL_SRC_FILES += ../../../../../src/framework/libraries/AppMan/AmpForApp/private/CAppManProtoServer.cpp
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/libraries/AppMan/AmpForPmp/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/libraries/AppMan/Pmp/private/*.cpp)
-#negotiator
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ChannelSupervisor/*/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ChannelSupervisor/common/Messages/*.cpp)
-#agent
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ConnectivityAgent/generic/*/private/*.cpp)
-#profman
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ProfileManager/*/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ProfileManager/PMP/process/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ProfileManager/*/*/private/*.cpp)
-#profrepo
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ProfileRepository/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/components/ProfileRepository/process/*.cpp)
-LOCAL_SRC_FILES := $(LOCAL_SRC_FILES:$(LOCAL_PATH)/%=%)
-#include paths
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src #path to repositoryroot/src
-LOCAL_C_INCLUDES += $(shell find $(LOCAL_PATH)/../../../../framework -path $(LOCAL_PATH)/../../../../framework/*obj* -prune  -o -path $(LOCAL_PATH)/../../../../framework/*res* -prune -o -path $(LOCAL_PATH)/../../../../framework/*bin* -prune  -o -path $(LOCAL_PATH)/../../../../framework/*processEntryPoint* -prune  -o -type d) #excluding android build products paths
-LOCAL_C_INCLUDES += $(shell find $(LOCAL_PATH)/../../../../utils -path $(LOCAL_PATH)/../../../../utils/*json* -prune  -o  -type d)
+SRCPREFIX	:= $(LOCAL_PATH)/../../../../../src
 
-LOCAL_CFLAGS := -DANDROID -DLATRACE -DLADEBUG -DPUGIXML_NO_EXCEPTIONS -Wno-psabi
-LOCAL_LDLIBS := -llog
-include $(BUILD_STATIC_LIBRARY)
-
-#trick to force ndk-build actually do smth
-include $(CLEAR_VARS)
-LOCAL_MODULE := iviLinkCommonShared
-LOCAL_STATIC_LIBRARIES := iviLinkCommon
-include $(BUILD_SHARED_LIBRARY)
-endif
-
-ifeq ($(SETUPIVI), true)
 #jsoncpp prebuilt
 include $(CLEAR_VARS)
 LOCAL_MODULE := JsonCpp
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/utils/json/src/lib_json/*.cpp)
+LOCAL_SRC_FILES += $(wildcard $(SRCPREFIX)/utils/json/src/lib_json/*.cpp)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES:$(LOCAL_PATH)/%=%)
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src/utils/json/src/lib_json
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src/utils/json/include
+LOCAL_C_INCLUDES += $(SRCPREFIX)/utils/json/src/lib_json
+LOCAL_C_INCLUDES += $(SRCPREFIX)/utils/json/include
 include $(BUILD_STATIC_LIBRARY)
 
 #trick to force ndk-build actually do smth
@@ -83,47 +39,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := JsonCppShared
 LOCAL_STATIC_LIBRARIES := JsonCpp
 include $(BUILD_SHARED_LIBRARY)
-endif
 
-ifneq ($(SETUPIVI), true)
-#profile library - to be linked to every android profile implementation
-include $(CLEAR_VARS)
-LOCAL_MODULE := profileLib
-LOCAL_STATIC_LIBRARIES := iviLinkCommon
-LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/../../../../../src/framework/public/profileLib/private/*.cpp)
-LOCAL_SRC_FILES := $(LOCAL_SRC_FILES:$(LOCAL_PATH)/%=%)
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src/framework/public/profileLib
-LOCAL_CFLAGS := -DANDROID -DLATRACE -DLADEBUG -DPUGIXML_NO_EXCEPTIONS -Wno-psabi
-include $(BUILD_STATIC_LIBRARY)
 
-#trick to force ndk-build actually do smth
-include $(CLEAR_VARS)
-LOCAL_MODULE := profileLibShared
-LOCAL_STATIC_LIBRARIES := profileLib
-include $(BUILD_SHARED_LIBRARY)
-
-#application library - to be linked to every android application
-include $(CLEAR_VARS)
-LOCAL_MODULE := appLib
-LOCAL_STATIC_LIBRARIES := iviLinkCommon
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/public/appLib/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/libraries/ServiceManager/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(LOCAL_PATH)/../../../../../src/framework/libraries/AppMan/App/private/*.cpp)
-LOCAL_SRC_FILES := $(LOCAL_SRC_FILES:$(LOCAL_PATH)/%=%)
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../src/framework/libraries/AppMan/App
-LOCAL_CFLAGS := -DANDROID -DLATRACE -DLADEBUG -DPUGIXML_NO_EXCEPTIONS -Wno-psabi
-include $(BUILD_STATIC_LIBRARY)
-
-#trick to force ndk-build actually do smth
-include $(CLEAR_VARS)
-LOCAL_MODULE := appLibShared
-LOCAL_STATIC_LIBRARIES := appLib
-include $(BUILD_SHARED_LIBRARY)
-endif 
-
-ifeq ($(SETUPIVI), true)
 #lib for authentication
 include $(CLEAR_VARS)
 LOCAL_MODULE := cryptoppRsa
@@ -170,7 +87,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := cryptoppRsaShared
 LOCAL_STATIC_LIBRARIES := cryptoppRsa
 include $(BUILD_SHARED_LIBRARY)
-endif
 
 
 

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,32 +18,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CSENDERTHREAD_HPP_
 #define CSENDERTHREAD_HPP_
 
-#include "utils/threads/CThread.hpp"
+#include "CThread.hpp"
 #include "ISender.hpp"
 
 class CSenderThread  : public CThread
 {
 public:
-   CSenderThread(ISender * pSender);
-   virtual ~CSenderThread();
-   void disconnect();
+
+    CSenderThread(ISender * pSender);
+    virtual ~CSenderThread();
+    void disconnect();
 
 private:
-   virtual void threadFunc();
 
-   ISender * mpSender;
+    virtual void threadFunc();
+
+    ISender     *mpSender;
 };
 
 #endif /* CSENDERTHREAD_HPP_ */

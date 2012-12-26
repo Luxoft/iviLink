@@ -8,7 +8,19 @@
             <service uid="BasicSampleServiceHUI" />
             <service uid="BasicSampleServiceClient" />
          </services>
-      </app>      
+      </app>     
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.navi/.Navi</launch-info>
+         <services>
+            <service uid="NavigationMapService" />
+         </services>
+      </app>    
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.navi.voice/.EntryActivity</launch-info>
+         <services>
+            <service uid="NavigationVoiceService" />
+         </services>
+      </app>          
       <app>
          <launch-info>com.luxoft.ivilink.samples.seat/.SeatActivity</launch-info>
          <services>
@@ -27,5 +39,35 @@
             <service uid="AuthenticationService" />
          </services>
       </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.media/.VideoActivity</launch-info>
+         <services>
+            <service uid="MediaService" />
+         </services>
+      </app>
+	  <app>
+         <launch-info>com.luxoft.ivilink.samples.screensharingviewer/.ScreenSharingViewer</launch-info>
+         <services>
+            <service uid="ScreenSharingViewerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.screensharingserver/.ScreenSharingServer</launch-info>
+         <services>
+            <service uid="ScreenSharingServerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.notifications.server/.AuthActivity</launch-info>
+         <services>
+            <service uid="NotificationsServerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.notifications.client/.EntryActivity</launch-info>
+         <services>
+            <service uid="NotificationsClientService" />
+         </services>
+      </app>      
    </applications>
 </app-man>

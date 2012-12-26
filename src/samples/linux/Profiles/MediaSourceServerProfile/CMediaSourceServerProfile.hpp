@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #ifndef CMEDIASOURCESERVERPROFILE_HPP_
 #define CMEDIASOURCESERVERPROFILE_HPP_
 
 
-#include "utils/misc/Logger.hpp"
-#include "framework/public/profileLib/profileLib.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IMediaSourceServerProfileAPI.hpp"
-#include "samples/linux/Profiles/mediaCommon/ISender.hpp"
-#include "samples/linux/Profiles/mediaCommon/common.h"
+#include "Logger.hpp"
+#include "profileLib.hpp"
+#include "IMediaSourceServerProfileAPI.hpp"
+#include "ISender.hpp"
+#include "common.h"
 
 
 #include <iostream>
@@ -60,9 +55,8 @@ class CMediaSourceServerProfile   : public iviLink::Channel::CChannelHandler
    IVILINK_PROFILE_API_UID(MediaSourceServerProfile_API_UID)
   
 
-
    // from IMediaSourceServerProfile_API
-   virtual void prepareRequest(PROCEDURES_SOURCE_IDS proc, bool has_event, std::string const& event);
+   virtual void prepareRequest(PROCEDURES_SOURCE_IDS proc, bool has_event, std::string const& event = "");
 
    virtual void recallTrackList();
    virtual void sendTrackList(std::string const& trackList);
@@ -73,9 +67,9 @@ class CMediaSourceServerProfile   : public iviLink::Channel::CChannelHandler
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
    //from ISender
    virtual void senderLoop();
@@ -86,7 +80,7 @@ class CMediaSourceServerProfile   : public iviLink::Channel::CChannelHandler
    CMediaSourceServerProfile(iviLink::Profile::IProfileCallbackProxy* pCbProxy);
    virtual ~CMediaSourceServerProfile();
 
-   typedef std::queue<CBuffer>                  tReqQueue;
+   typedef std::queue<std::string>                  tReqQueue;
 
    iviLink::Channel::tChannelId                 mChannelID;
 
@@ -96,7 +90,6 @@ class CMediaSourceServerProfile   : public iviLink::Channel::CChannelHandler
    CSignalSemaphore *                           mpReqSemaphore;
    bool                                         mBe;
    tReqQueue                                    mReqQueue;
-   std::string                                  mTag;
    static Logger                                msLogger;
 };
 

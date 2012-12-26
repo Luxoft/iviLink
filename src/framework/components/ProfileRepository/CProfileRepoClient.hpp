@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,28 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPROFILEREPOCLIENT_HPP_
 #define CPROFILEREPOCLIENT_HPP_
 
 #include <list>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/ipc/CIpc.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
+#include "Logger.hpp"
+#include "CMutex.hpp"
+#include "CIpc.hpp"
+#include "ICallbackHandler.hpp"
 
 #include "RepoTypes.hpp"
 #include "ProfileRepoInternalTypes.hpp"
@@ -178,6 +167,7 @@ namespace iviLink
           */
          virtual void OnRequest(Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
                UInt8* pResponseBuffer, UInt32& bufferSize, Ipc::DirectionID);
+         virtual void OnAsyncRequest(Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, Ipc::DirectionID) {}
 
          /**
           * Returns instance of CError class by error code

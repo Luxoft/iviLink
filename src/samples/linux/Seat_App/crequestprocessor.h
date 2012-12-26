@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CREQUESTPROCESSOR_H
 #define CREQUESTPROCESSOR_H
@@ -35,9 +28,7 @@
 #include <QObject>
 #endif //ANDROID
 
-#include <tr1/memory>
-
-#include "state-app.h"
+#include "seat-app.hpp"
 
 
 class CStateUpdater;
@@ -54,10 +45,10 @@ class CRequestProcessor
 
 public:
 
-    explicit CRequestProcessor( std::tr1::shared_ptr<state_app> app  );
+    explicit CRequestProcessor(seatAppPtr app);
 
 private:
-    std::tr1::shared_ptr<state_app> app;
+    seatAppPtr app;
 
 #ifndef ANDROID
 public slots:
@@ -82,6 +73,7 @@ public:
     void bottomLeftRequest();
     void bottomRightRequest();
     void initRequest();
+    void exitRequest();
 
 };
 

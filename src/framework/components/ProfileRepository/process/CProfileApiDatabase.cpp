@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <cstdio>
@@ -38,8 +27,8 @@
 #include <sstream>
 
 #include "CProfileApiDatabase.hpp"
-#include "utils/xml/pugixml.hpp"
-#include "utils/threads/CMutex.hpp"
+#include "pugixml.hpp"
+#include "CMutex.hpp"
 
 
 namespace iviLink
@@ -55,11 +44,11 @@ namespace iviLink
       , mpDbMutex(new CMutex)
       , mpRequestMutex(new CMutex)
       {
-         #ifndef ANDROID
+#ifndef ANDROID
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
          loadDatabase();
          printDB();
-         #endif //ANDROID
+#endif //ANDROID
       }
 
       CProfileApiDatabase::~CProfileApiDatabase()
@@ -69,8 +58,8 @@ namespace iviLink
          delete mpRequestMutex;
       }
       
-      #ifndef ANDROID
-      #else
+#ifndef ANDROID
+#else
       void CProfileApiDatabase::setDatabasePath(std::string path)
       {
          LOG4CPLUS_TRACE(msLogger, "setDatabasePath to "+path);
@@ -78,7 +67,7 @@ namespace iviLink
          loadDatabase();
          printDB();
       }
-      #endif //ANDROID
+#endif //ANDROID
 
       void CProfileApiDatabase::loadDatabase()
       {
@@ -87,13 +76,13 @@ namespace iviLink
          mApis.clear();
          pugi::xml_document doc;
          // Get DOM structure from XML file
-         #ifndef ANDROID
+#ifndef ANDROID
          pugi::xml_parse_result res = doc.load_file(mDBPath.c_str());
-         #else
+#else
          std::string fullPath = mDirPath + mDBPath;
          LOG4CPLUS_TRACE(msLogger, "load Database from " +fullPath);
          pugi::xml_parse_result res = doc.load_file(fullPath.c_str());
-         #endif  //ANDROID
+#endif  //ANDROID
          switch (res.status)
          {
          case pugi::status_ok:              // No error
@@ -140,13 +129,13 @@ namespace iviLink
             std::map<UID,CProfileApiInfo>::iterator mit = mApis.find(UID(it->child_value("uid")));
             if (mApis.end() == mit)
             {
-               #ifndef ANDROID
+#ifndef ANDROID
                CProfileApiInfo inf = CProfileApiInfo(std::string(it->child_value("src")));
-               #else
+#else
                std::string fullPath = mDirPath+std::string(it->child_value("src"));
                LOG4CPLUS_INFO(msLogger, "src child path is: "+fullPath);
                CProfileApiInfo inf = CProfileApiInfo(fullPath);
-               #endif // ANDROID
+#endif // ANDROID
                if (!inf.failed())
                {
                   mApis[UID(it->child_value("uid"))] = inf;
@@ -179,12 +168,12 @@ namespace iviLink
             pugi::xml_node srcNode = apiNode.append_child("src");
             srcNode.append_child(pugi::node_pcdata).set_value(it->second.xmlPath().c_str());
          }
-         #ifndef ANDROID
+#ifndef ANDROID
          bool result =doc.save_file(mDBPath.c_str());
-         #else
+#else
          std::string fullPath = mDirPath + mDBPath;
          bool result =doc.save_file(fullPath.c_str());
-         #endif //ANDROID
+#endif //ANDROID
          mpDbMutex->unlock();
          if (!result)
          {
@@ -211,10 +200,9 @@ namespace iviLink
          }
          else
          {
-            LOG4CPLUS_TRACE(msLogger, "##else");
             mApis[info.uid()] = info;
          }
-         LOG4CPLUS_TRACE(msLogger, "toSave()");
+         LOG4CPLUS_INFO(msLogger, "toSave()");
          if (saveChanges())
          {
             mpRequestMutex->unlock();
@@ -224,7 +212,7 @@ namespace iviLink
          else
          {
             mpRequestMutex->unlock();
-            LOG4CPLUS_INFO(msLogger, "saveChanges() : false");
+            LOG4CPLUS_WARN(msLogger, "saveChanges() : false");
             return CProfileRepoError(CProfileRepoError::ERROR_DATABASE_WRITE);
          }
       }
@@ -274,11 +262,11 @@ namespace iviLink
       void CProfileApiDatabase::printDB()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-         #ifndef ANDROID
+#ifndef ANDROID
          LOG4CPLUS_INFO(msLogger, "Profile API Database path: " + mDBPath);
-         #else
+#else
          LOG4CPLUS_INFO(msLogger, "Profile API Database path: " + mDirPath + mDBPath);
-         #endif //ANDROID
+#endif //ANDROID
          LOG4CPLUS_INFO(msLogger, "State: " + convertIntegerToString(static_cast<int>(mDBState)));
          for (std::map<UID,CProfileApiInfo>::const_iterator it = mApis.begin(); mApis.end() != it; ++it)
          {

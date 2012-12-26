@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
-
 
 
 Rectangle {
@@ -39,9 +33,10 @@ Rectangle {
 
     //buttons property
     property string src: ""
+    property string empty_btn: "empty_btn.png"
 
     Connections {
-        target: CStateUpdater
+        target: ClimateStateUpdater
 
         onShowClimate:{
             console.log("onShowClimate");
@@ -95,7 +90,7 @@ Rectangle {
         }
         onSyncState:{
             console.log("onSyncState");
-            sync_btn.visible = !status;
+            sync_btn.visible = status;
         }
         onFanOffState:{
             console.log("onFanOffState");
@@ -103,92 +98,98 @@ Rectangle {
         }
 
 
-
     }
 
     Connections {
-        target: CRequestProcessor
+        target: ClimateRequestProcessor
     }
 
     function tempDecDrTog()
     {
-        CRequestProcessor.tempDecDrRequest();
+        ClimateRequestProcessor.tempDecDrRequest();
     }
 
     function tempIncDrTog()
     {
-        CRequestProcessor.tempIncDrRequest();
+        ClimateRequestProcessor.tempIncDrRequest();
     }
 
     function tempDecPassTog()
     {
-        CRequestProcessor.tempDecPassRequest();
+        ClimateRequestProcessor.tempDecPassRequest();
     }
 
     function tempIncPassTog()
     {
-        CRequestProcessor.tempIncPassRequest();
+        ClimateRequestProcessor.tempIncPassRequest();
     }
 
     function syncTog()
     {
-        CRequestProcessor.syncRequest();
+        ClimateRequestProcessor.syncRequest();
     }
 
     function fanLowTog()
     {
-        CRequestProcessor.fanLowRequest();
+        ClimateRequestProcessor.fanLowRequest();
     }
 
     function fanMidTog()
     {
-        CRequestProcessor.fanMidRequest();
+        ClimateRequestProcessor.fanMidRequest();
     }
 
     function fanHighTog()
     {
-        CRequestProcessor.fanHighRequest();
+        ClimateRequestProcessor.fanHighRequest();
     }
 
     function fanIncTog()
     {
-        CRequestProcessor.fanIncRequest();
+        ClimateRequestProcessor.fanIncRequest();
     }
 
     function fanDecTog()
     {
-        CRequestProcessor.fanDecRequest();
+        ClimateRequestProcessor.fanDecRequest();
     }
 
     function rearTog()
     {
-        CRequestProcessor.rearRequest();
+        ClimateRequestProcessor.rearRequest();
     }
 
     function frontTog()
     {
-        CRequestProcessor.frontRequest();
+        ClimateRequestProcessor.frontRequest();
     }
 
     function acTog()
     {
-        CRequestProcessor.acRequest();
+        ClimateRequestProcessor.acRequest();
     }
 
     function recircTog()
     {
-        CRequestProcessor.recircRequest();
+        ClimateRequestProcessor.recircRequest();
     }
 
     function autoTog()
     {
-        CRequestProcessor.autoRequest();
+        ClimateRequestProcessor.autoRequest();
     }
 
     function offTog()
     {
-        CRequestProcessor.offRequest();
+        ClimateRequestProcessor.offRequest();
     }
+
+    function exitBtnPressed()
+    {
+        console.log("exitBtnPressed()");
+        ClimateRequestProcessor.exitRequest();
+    }
+
 
     Rectangle {
         id: waiting_rectangle
@@ -259,6 +260,28 @@ Rectangle {
             }*/
 
         }
+
+	Image {
+                    id: exitButton
+                    x: 710
+                    y: 541
+                    source: "back.png"
+
+                    MouseArea {
+                        id: exit_mouse
+                        x: 0
+                        y: 0
+                        anchors.rightMargin: 0
+                        anchors.bottomMargin: 0
+                        anchors.leftMargin: 0
+                        anchors.topMargin: 0
+                        anchors.fill: parent
+                        onClicked:{
+							 exitBtnPressed();
+                        }                     
+                    }
+                }
+
 
         Image {
             id: drive_temp_down
@@ -606,8 +629,6 @@ Rectangle {
 
 
         }
-
-
 
 
         Image {

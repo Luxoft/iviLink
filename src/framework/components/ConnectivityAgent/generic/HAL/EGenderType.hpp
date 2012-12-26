@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef EGENDERTYPE_HPP_
 #define EGENDERTYPE_HPP_
@@ -48,7 +41,6 @@ enum EGenderType
 }  // namespace HAL
 }  // namespace ConnectivityAgent
 }  // namespace AXIS
-
 
 
 #endif /* EGENDERTYPE_HPP_ */

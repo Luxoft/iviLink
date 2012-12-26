@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CRunApp.hpp"
 
@@ -84,7 +73,7 @@ namespace iviLink
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
          std::string strUse =use ? std::string("true") : std::string("false");
-         LOG4CPLUS_FATAL(msLogger, "service: " + service.value() + "use : " + strUse);
+         LOG4CPLUS_INFO(msLogger, "service: " + service.value() + "use : " + strUse);
          if (use)
          {
             mServices.insert(service);

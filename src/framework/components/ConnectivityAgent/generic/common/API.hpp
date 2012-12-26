@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CONNECTIVITY_AGENT_API_HPP
 #define CONNECTIVITY_AGENT_API_HPP
 
-#include "utils/misc/Types.hpp"
+#include "Types.hpp"
 
 class IChannelObserver;
 
@@ -120,27 +111,7 @@ const UInt32 getMaxBufSize();
 ERROR_CODE getFreeSize(UInt32 channel_id, UInt32& free_size);
 
 
-void destroyConnectivityAgent();
-
-// Unstable API
-
-
-/**
- * Retrieves adresses of local and remote sides of connection.
- * <b>THIS IS UNSTABLE API</b>
- *
- * Memory for all results of this function will be allocated dynamically using
- * malloc() call and need to be freed using free() call.
- * All results guaranteed to be zero-terminated C-style strings or NULL.
- *
- * @param[out] pType connection type identifier
- * @param[out] pLocalAddr local address
- * @param[out] pRemoteAddr remote address
- *
- * @retval ERR_OK all ok, data obtained
- * @eetval ERR_FAIL some error, arguments were not changed
- */
-ERROR_CODE getConnectionAddr(char** pType, char** pLocalAddr, char** pRemoteAddr);
+void deinitConnectivityAgentProxy();
 
 
 #ifdef __cplusplus

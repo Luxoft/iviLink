@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
-
 
 
 Rectangle {
@@ -42,11 +36,17 @@ Rectangle {
     property int passen_back_angle:    0   //-60 - +80 grad
     property int initial_driver_back_angle:  0  //drive_back.rotation    //-60 - +80 grad
     property int angle_const:  20               //drive_back.rotation    //-60 - +80 grad
+    property string empty_btn: "empty_btn.png"
 
 
     Connections {
         target: CStateUpdater
+    
+        onInitRequestDone:{
 
+            timer_start.running = false;
+        }        
+    
         onShowSeat:{
             chair_mode.visible = true
         }
@@ -67,43 +67,44 @@ Rectangle {
                 pass_heater_img_storage.images[i].visible=(i<heat);
             }
         }
-        onCurrent_seat_viewPass: {
+        onCurrentSeatViewPass: {
             pass_seat_btn_pressed.visible = true;
             pass_seat_btn.visible = false;
             drive_seat_btn_pressed.visible = false;
             drive_seat_btn.visible = true;
         }
-        onCurrent_seat_viewDriver:{
+        onCurrentSeatViewDriver:{
             pass_seat_btn_pressed.visible = false;
             pass_seat_btn.visible = true;
             drive_seat_btn_pressed.visible = true;
             drive_seat_btn.visible = false;
         }
-        onBottom_x: {
+        onBottomX: {
             console.log("onDriver_bottom_xChanged");
             console.log(pos.toString());
             drive_bottom.x = pos;
         }
-        onBottom_y: {
+        onBottomY: {
             console.log("onDriver_bottom_yChanged");
             console.log(pos.toString());
             drive_bottom.y = pos;
         }
-        onBack_x: {
+        onBackX: {
             console.log("onDriver_bottom_xChanged");
             console.log(pos.toString());
             drive_back.x = pos;
         }
-        onBack_y: {
+        onBackY: {
             console.log("onDriver_bottom_yChanged");
             console.log(pos.toString());
             drive_back.y = pos;
         }
-        onBack_angle: {
+        onBackAngle: {
             console.log("onDriver_back_angleChanged");
             console.log(driver_back_angle.toString());
             drive_back.rotation = angle - angle_const;
         }
+        
     }
 
     Connections {
@@ -165,6 +166,13 @@ Rectangle {
         CRequestProcessor.bottomRightRequest();
     }
 
+    function exitBtnPressed()
+    {
+         console.log("exitBtnPressed()");
+         CRequestProcessor.exitRequest();
+    }
+    
+ 
     Rectangle {
         id: waiting_rectangle
         x: 0
@@ -211,7 +219,7 @@ Rectangle {
 
        Timer{
               id: timer_start
-              interval: 1000; running: true; repeat: false
+              interval: 10; running: true; repeat: false
               onTriggered: CStateUpdater.onQmlVisible();
        }
 
@@ -396,6 +404,26 @@ Rectangle {
                  drive_seat_btn_pressed.source = "driversseat_active.png";
             }*/
         }
+        Image {
+                        id: exitButton
+                        x: 710
+                        y: 541
+                        source: "back.png"
+
+                        MouseArea {
+                            id: exit_mouse
+                            x: 0
+                            y: 0
+                            anchors.rightMargin: 0
+                            anchors.bottomMargin: 0
+                            anchors.leftMargin: 0
+                            anchors.topMargin: 0
+                            anchors.fill: parent
+                            onClicked:{
+                                 exitBtnPressed();
+                            }
+                        }
+                    }
 
         Image { //chair driver back
             id: drive_back
@@ -483,7 +511,6 @@ Rectangle {
 
             onRepeatedClick: seatBackLeft();
         }
-
 
 
         Image { //chair move up

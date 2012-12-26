@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CLAUNCHTHREAD_HPP_
 #define CLAUNCHTHREAD_HPP_
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/misc/UID.hpp"
-#include "utils/misc/CError.hpp"
-#include "framework/components/AppMan/launcher/ILauncher.hpp"
-#include "framework/components/AppMan/launcher/ILauncherHandler.hpp"
-#include "framework/components/AppMan/database/IDatabase.hpp"
+#include "Logger.hpp"
+#include "CThread.hpp"
+#include "UID.hpp"
+#include "CError.hpp"
+#include "ILauncher.hpp"
+#include "ILauncherHandler.hpp"
+#include "IDatabase.hpp"
 #include "IReqHandlerForLaunch.hpp"
 #include "ILaunchThread.hpp"
 

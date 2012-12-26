@@ -33,29 +33,28 @@ DEFINES += USELOG4CPLUS
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    cstateupdater.cpp \
-    crequestprocessor.cpp \
-    state-app.cpp
+    ClimateStateUpdater.cpp \
+    ClimateRequestProcessor.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS += \
-    cstateupdater.h \
-    crequestprocessor.h \
-    state-app.h \
+    ClimateStateUpdater.hpp \
+    ClimateRequestProcessor.hpp \
+    climate-app.hpp \
     condcommon.h
 
 INCLUDEPATH += "../../../../src_products/3rd_party/include"
 INCLUDEPATH += "../../.."
+INCLUDEPATH += "../include"
 
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkApp
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkChannel
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lIviLinkUtils
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -lClimateState
 unix:!macx:!symbian: LIBS += -L$$PWD/../../../../src_install/ -llog4cplus
-unix:!macx:!symbian: LIBS += -lprotobuf-lite
 
 INCLUDEPATH += $$PWD/
 DEPENDPATH += $$PWD/

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,32 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPMPPROTOCOL_HPP_
 #define CPMPPROTOCOL_HPP_
 
 #include <map>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/threads/CCondVar.hpp"
-#include "framework/components/ChannelSupervisor/Tube/IChannelSupervisorObserver.hpp"
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
+#include "Logger.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "CCondVar.hpp"
+#include "IChannelSupervisorObserver.hpp"
+#include "ChannelSupervisorTube.hpp"
 
-#include "framework/components/ProfileManager/PMP/interaction/IPmpProtocol.hpp"
+#include "IPmpProtocol.hpp"
 
 #include "PmpRequestFrame.hpp"
 
@@ -116,13 +105,13 @@ namespace iviLink
       private:
          // from ChannelSupervisor::IChannelSupervisorTubeObserver
 
-         virtual void dataReceivedCallback(const unsigned int channelId, const unsigned int readSize);
+         virtual void onDataReceived(const unsigned int channelId, const unsigned int readSize);
 
-         virtual void bufferOverflowCallback(const unsigned int channelId);
+         virtual void onBufferOverflow(const unsigned int channelId);
 
-         virtual void channelDeletedCallback(const unsigned int channelId);
+         virtual void onChannelDeleted(const unsigned int channelId);
 
-         virtual void connectionLostCallback();
+         virtual void onConnectionLost();
 
       private:
 

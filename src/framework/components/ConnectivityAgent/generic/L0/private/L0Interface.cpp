@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -78,7 +68,7 @@ L0Interface::~L0Interface()
 ERROR_CODE L0Interface::openTransmissionChannel(const UInt32 channel_id, const UInt8 priority,
       IBufferProducer& bufferProducer, UInt64 upper_threshold, UInt64 lower_threshold)
 {
-   LOG4CPLUS_INFO(logger, "L0Interface::openTransmissionChannel(chID = "
+   LOG4CPLUS_TRACE(logger, "L0Interface::openTransmissionChannel(chID = "
          + convertIntegerToString(channel_id) + ", prio = "
          + convertIntegerToString(priority) + ", bufProd = "
          + convertIntegerToString((intptr_t)&bufferProducer) + ", up_tres = "
@@ -86,8 +76,6 @@ ERROR_CODE L0Interface::openTransmissionChannel(const UInt32 channel_id, const U
          + convertIntegerToString(lower_threshold));
 
    /// @todo correct processing of error code and return values. PIlin, 31.08.12
-   LOG4CPLUS_WARN(logger, "@todo correct processing of error code and return values. PIlin, 31.08.12");
-
    if (mpTransmitDispatcher)
    {
       mpTransmitDispatcher->openChannel(channel_id, static_cast<TChannelPriority> (priority), bufferProducer);
@@ -102,7 +90,7 @@ ERROR_CODE L0Interface::openTransmissionChannel(const UInt32 channel_id, const U
 ERROR_CODE L0Interface::openIncomingChannel(const UInt32 channel_id,
       IBufferConsumer& bufferConsumer)
 {
-   LOG4CPLUS_INFO(logger, "L0Interface::openIncomingChannel(chID = "
+   LOG4CPLUS_TRACE(logger, "L0Interface::openIncomingChannel(chID = "
          + convertIntegerToString(channel_id) + ", bufCons = "
          + convertIntegerToString((intptr_t)&bufferConsumer));
 
@@ -115,7 +103,7 @@ ERROR_CODE L0Interface::openIncomingChannel(const UInt32 channel_id,
 
 void L0Interface::closeTransmissionChannel(const UInt32 channel_id)
 {
-   LOG4CPLUS_INFO(logger, "L0Interface::closeTransmissionChannel(chID = " + convertIntegerToString(channel_id) + ")");
+   LOG4CPLUS_TRACE(logger, "L0Interface::closeTransmissionChannel(chID = " + convertIntegerToString(channel_id) + ")");
 
    if (mpTransmitDispatcher)
    {
@@ -129,7 +117,7 @@ void L0Interface::closeTransmissionChannel(const UInt32 channel_id)
 
 void L0Interface::closeIncomingChannel(const UInt32 channel_id)
 {
-   LOG4CPLUS_INFO(logger, "L0Interface::closeIncomingChannel(chID = %u" + convertIntegerToString(channel_id) + ")");
+   LOG4CPLUS_TRACE(logger, "L0Interface::closeIncomingChannel(chID = %u" + convertIntegerToString(channel_id) + ")");
    if (mpIncomeDispatcher)
    {
       mpIncomeDispatcher->closeChannel(channel_id);
@@ -138,5 +126,6 @@ void L0Interface::closeIncomingChannel(const UInt32 channel_id)
 
 UInt64 L0Interface::getQoSReport(const UInt32 channel_id)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return mpQoS->getAverageForChannel(channel_id);
 }

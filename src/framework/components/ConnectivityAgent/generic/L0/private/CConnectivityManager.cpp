@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,15 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -39,7 +31,7 @@
  * Forward declaration includes
  *
  ********************************************************************/
-#include "framework/components/ConnectivityAgent/generic/HAL/CCarrierAdapter.hpp"
+#include "CCarrierAdapter.hpp"
 #include "CIncomeDispatcher.hpp"
 #include "CTransmitDispatcher.hpp"
 #include "CQoS.hpp"
@@ -55,7 +47,7 @@
  * Other includes
  *
  ********************************************************************/
- #include "framework/components/ConnectivityAgent/generic/L1/CChannelAllocator.hpp"
+ #include "CChannelAllocator.hpp"
  
 //using AXIS::ConnectivityAgent::HAL::CCarrierAdapter;
 using namespace iviLink::ConnectivityAgent::L0;

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef TYPES_HPP
 #define TYPES_HPP
@@ -123,46 +112,53 @@ const UInt64 RETRANSMIT_TIME_NSEC = 5LLU * 1000 * 1000 * 1000;
  */
 enum TChannelPriority
 {
-   eSafetyCritical = 0,
-   eRealTime = 1,
-   ePlainData = 2
+    /**
+     * Only for system channels
+     */
+    eSafetyCritical = 0,
+
+    /**
+     * Priorities for applications
+     */
+    eRealTime = 1,
+    ePlainData = 2
 };
 
 enum ERROR_CODE
 {
-   ERR_OK                     = 1,
-   ERR_FAIL                   = 2,
-   ERR_NUMBER_BUSY            = 3,
-   ERR_CONNECTION_LOST        = 4,
-   ERR_DISCONNECTED           = 5,
-   ERR_NOTFOUND               = 6,
-   ERR_TIMEOUT                = 7,
-   ERR_WRONG_SEQUENCE         = 8,
-   ERR_AGAIN                  = 9,
-   ERR_WRONG_FRAME_SEQUENCE   = 10,
-   ERR_IN_PROGRESS            = 11,
-   ERR_REASSIGN               = 12,
-   ERR_XML_PARSING            = 13,
-   ERR_RESEND_ACK             = 14,
-   ERR_DEFERRED               = 15,
-   ERR_UNKNOWN                = 255
+    ERR_OK                     = 1,
+    ERR_FAIL                   = 2,
+    ERR_NUMBER_BUSY            = 3,
+    ERR_CONNECTION_LOST        = 4,
+    ERR_DISCONNECTED           = 5,
+    ERR_NOTFOUND               = 6,
+    ERR_TIMEOUT                = 7,
+    ERR_WRONG_SEQUENCE         = 8,
+    ERR_AGAIN                  = 9,
+    ERR_WRONG_FRAME_SEQUENCE   = 10,
+    ERR_IN_PROGRESS            = 11,
+    ERR_REASSIGN               = 12,
+    ERR_XML_PARSING            = 13,
+    ERR_RESEND_ACK             = 14,
+    ERR_DEFERRED               = 15,
+    ERR_UNKNOWN                = 255
 };
 /**
  * List of available types of carriers
  */
 enum ECarrierType
 {
-   eDummyTcpCarrier,    //!< eDummyTcpCarrier - TCP carrier for testing purposes
-   eTcpAutoCarrier,     //!< eTcpAutoCarrier - TCP carrier, detected by CTcpAutoConnectionFinder
-   eLastCarrier         //!< eLastCarrier - special value used for compile time counting of carrier types. Must be last in enum.
+    eDummyTcpCarrier,    //!< eDummyTcpCarrier - TCP carrier for testing purposes
+    eTcpAutoCarrier,     //!< eTcpAutoCarrier - TCP carrier, detected by CTcpAutoConnectionFinder
+    eLastCarrier         //!< eLastCarrier - special value used for compile time counting of carrier types. Must be last in enum.
 };
 
 enum CALLBACKTYPE
 {
-   DATA_RECEIVED,
-   BUFF_OVERFLOW,
-   CHANN_DELETED,
-   CONNECTI_LOST
+    DATA_RECEIVED,
+    BUFF_OVERFLOW,
+    CHANN_DELETED,
+    CONNECTI_LOST
 };
 
 #endif // TYPES_HPP

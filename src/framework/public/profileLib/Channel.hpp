@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,15 +18,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
  
+
 /**
  * \file Channel.hpp
  * This file contains declarations of convenience methods for communication with other side
@@ -35,17 +28,18 @@
  * and a declaration of a base class for channel callbacks (such as receiving data).
  */
 
-
 #ifndef CHANNEL_HPP_
 #define CHANNEL_HPP_
 
-#include "utils/misc/CError.hpp"
-#include "framework/components/ChannelSupervisor/Tube/IChannelSupervisorObserver.hpp"
+#include "CError.hpp"
+#include "IChannelSupervisorObserver.hpp"
 
 #include "CBuffer.hpp"
 
-namespace iviLink {
-namespace Channel {
+namespace iviLink
+{
+namespace Channel
+{
 /**
  * \namespace iviLink::Channel
  * This namespace contains convenience methods for communication with other side
@@ -61,74 +55,104 @@ typedef UInt32 tChannelId;
  * receive data from the other side.
  */
 
-class CChannelHandler : public iviLink::ChannelSupervisor::IChannelSupervisorTubeObserver
+class CChannelHandler: public iviLink::ChannelSupervisor::IChannelSupervisorTubeObserver
 {
 public:
-   /**
-    * Called from dataReceivedCallback.
-    * @param channel ID of a channel that has received data
-    * @param buffer  CBuffer object with received data
-    */
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer) = 0;
+    /**
+     * Called from dataReceivedCallback.
+     * @param channel ID of a channel that has received data
+     * @param buffer  CBuffer object with received data
+     */
+    virtual void onBufferReceived(const iviLink::Channel::tChannelId channel,
+            iviLink::CBuffer const& buffer) = 0;
 
 public:
-   // The following methods are inherited from iviLink::ChannelSupervisor::IChannelSupervisorTubeObserver
+    // The following methods are inherited from iviLink::ChannelSupervisor::IChannelSupervisorTubeObserver
 
-   /**
-    * Called when data is avaliable in channel
-    *
-    * This implementation will receive data and pack it into a dynamically allocated CBuffer
-    * and then call bufferReceived()
-    * @param channelId ID of the channel that has received data
-    * @param readSize total size of data avaliable in the channel
-    */
-   virtual void dataReceivedCallback(const unsigned int channelId, const unsigned int readSize);
+    /**
+     * Called when data is avaliable in channel
+     *
+     * This implementation will receive data and pack it into a dynamically allocated CBuffer
+     * and then call bufferReceived()
+     * @param channelId ID of the channel that has received data
+     * @param readSize total size of data avaliable in the channel
+     */
+    virtual void onDataReceived(const iviLink::Channel::tChannelId channelId,
+            const UInt32 readSize);
 
-   /**
-    * Called on channel buffer overflow.
-    *
-    * This implementation will do nothing
-    * @param channelId ID of a channel where buffer overflow has happenned
-    */
-   virtual void bufferOverflowCallback(const iviLink::Channel::tChannelId channelId);
+    /**
+     * Called on channel buffer overflow.
+     *
+     * This implementation will do nothing
+     * @param channelId ID of a channel where buffer overflow has happenned
+     */
+    virtual void onBufferOverflow(const iviLink::Channel::tChannelId channelId);
 
-   /**
-    * Called when a previously allocated channel is deallocated on the other side
-    * (this method will be called from the object registered as a channel handler in allocateChannel()).
-    * At present, classes derived from CChannelHandler 
-    * should call deallocateChannel(channelId) in their implementation of this method.
-    * @param channelID ID of the deleted channel
-    */
-   virtual void channelDeletedCallback(const iviLink::Channel::tChannelId channelId) = 0;
+    /**
+     * Called when a previously allocated channel is deallocated on the other side
+     * (this method will be called from the object registered as a channel handler in allocateChannel()).
+     * At present, classes derived from CChannelHandler
+     * should call deallocateChannel(channelId) in their implementation of this method.
+     * @param channelID ID of the deleted channel
+     */
+    virtual void onChannelDeleted(const iviLink::Channel::tChannelId channelId) = 0;
 
-   /**
-    * Called when connection with the other side is lost.
-    */
-   virtual void connectionLostCallback() = 0;
+    /**
+     * Called when connection with the other side is lost.
+     */
+    virtual void onConnectionLost() = 0;
 
 protected:
 
-   virtual ~CChannelHandler() {}
+    virtual ~CChannelHandler()
+    {
+    }
 
 protected:
 
 };
 
-
 /**
  * Allocate a channel identified with given tag.
  * @param tag  is used to find channel with identical tag on the other side to connect with
  * @param pHandler  pointer to a callbacks handler
+ * @param priority is channel priority
  * @return channel  ID of a newly allocated channel in case of success, otherwise 0
  */
-tChannelId allocateChannel(std::string const& tag, iviLink::Channel::CChannelHandler * pHandler);
+tChannelId allocateChannel(std::string const& tag,
+                           iviLink::Channel::CChannelHandler * pHandler,
+                           TChannelPriority priority = ePlainData);
+
+/**
+ * Allocate a channel identified with given tag. For asymmetrical profiles. It is expected
+ * that the paired profile will call allocateChannelAsClient with the same tag.
+ * @param tag  is used to find channel with identical tag on the other side to connect with
+ * @param pHandler  pointer to a callbacks handler
+ * @param priority is channel priority
+ * @return channel  ID of a newly allocated channel in case of success, otherwise 0
+ */
+tChannelId allocateChannelAsServer(std::string const& tag,
+                                   iviLink::Channel::CChannelHandler * pHandler,
+                                   TChannelPriority priority = ePlainData);
+
+/**
+ * Allocate a channel identified with given tag. For asymmetrical profiles. It is expected
+ * that the paired profile will call allocateChannelAsServer with the same tag.
+ * @param tag  is used to find channel with identical tag on the other side to connect with
+ * @param pHandler  pointer to a callbacks handler
+ * @param priority is channel priority
+ * @return channel  ID of a newly allocated channel in case of success, otherwise 0
+ */
+tChannelId allocateChannelAsClient(std::string const& tag,
+                                   iviLink::Channel::CChannelHandler * pHandler,
+                                   TChannelPriority priority = ePlainData);
 
 /**
  * Deallocate previously allocated channel.
  * @param channel  ID of a channel to be deallocated
  * @return error code
  */
-CError deallocateChannel (iviLink::Channel::tChannelId channel);
+CError deallocateChannel(const iviLink::Channel::tChannelId channel);
 
 /**
  * Send a buffer to the other side.
@@ -137,7 +161,7 @@ CError deallocateChannel (iviLink::Channel::tChannelId channel);
  * @param buffer CBuffer with data to send
  * @return error code
  */
-CError sendBuffer(iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer);
+CError sendBuffer(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer);
 
 /**
  * Send a buffer to the other side
@@ -150,6 +174,5 @@ CError sendBuffer(iviLink::Channel::tChannelId channel, void const* pBuffer, UIn
 
 }  // namespace Channel
 }  // namespace iviLink
-
 
 #endif /* CHANNEL_HPP_ */

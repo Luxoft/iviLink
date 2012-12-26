@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,145 +18,99 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
-#ifndef ANDROID
+
 #include "SystemControllerMsgProxy.hpp"
-#else
-#include "framework/messageProtocol/SystemController_ChannelSupervisor/ChannelSupervisor/SystemControllerMsgProxy.hpp"
-#endif //ANDROID
-#include "framework/messageProtocol/SystemController_ChannelSupervisor/messages.hpp"
 
 using namespace iviLink::Ipc;
 
 namespace ChannelSupervisorMsgProtocol
 {
 
-SystemControllerMsgProxy::SystemControllerMsgProxy(const string connectionName):
-   mpIpc(NULL)
+SystemControllerMsgProxy::SystemControllerMsgProxy(const string connectionName)
+        : mpIpc(NULL)
 {
-   mpIpc = new CIpc(connectionName, *this);
+    mpIpc = new CIpc(connectionName, *this);
 }
 
 SystemControllerMsgProxy::~SystemControllerMsgProxy()
 {
-   delete mpIpc;
+    delete mpIpc;
 }
 
 CError SystemControllerMsgProxy::connect()
 {
-   return mpIpc->connect();
+    return mpIpc->connect();
 }
 
 bool SystemControllerMsgProxy::isConnected() const
 {
-   return mpIpc->isConnected();
+    return mpIpc->isConnected();
 }
 
 CError SystemControllerMsgProxy::requestConnectionEstablished()
 {
-    if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = CS_SC_CONNECTION_ESTABLISHED;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-   {
-      return err;
-   }
-
-   return CError::NoError(getName());
+    return sendRequest(CS_SC_CONNECTION_ESTABLISHED);
 }
 
 CError SystemControllerMsgProxy::requestConnectionLost()
 {
-    if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = CS_SC_CONNECTION_LOST;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   return CError::NoError(getName());
+    return sendRequest(CS_SC_CONNECTION_LOST);
 }
 
-
-void SystemControllerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID)
+CError SystemControllerMsgProxy::sendRequest(NegotiatorToSystemController requestType)
 {
-   Message const* req = reinterpret_cast<Message const*>(pPayload);
+    if (!mpIpc)
+        return CError(1, getName(), CError::FATAL, "no ipc");
 
-   assert(req->header.size + sizeof(Message) == payloadSize);
-   assert(bufferSize >= sizeof(Message));
+    Message* req = reinterpret_cast<Message*>(mWriteBuffer);
+    req->header.type = requestType;
+    req->header.size = 0;
 
-   //Message* resp = reinterpret_cast<Message*>(pResponseBuffer);
+    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
 
-   switch(req->header.type)
-   {
-   case SC_CA_SHUTDOWN:
-      onShutDown();
-      break;
-   default:
-      break;
-   }
+    UInt32 const reqSize = sizeof(Message) + req->header.size;
+    UInt32 respSize = 0;
+
+    return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
+}
+
+void SystemControllerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+        UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize,
+        iviLink::Ipc::DirectionID)
+{
+    Message const* req = reinterpret_cast<Message const*>(pPayload);
+
+    assert(req->header.size + sizeof(Message) == payloadSize);
+    assert(bufferSize >= sizeof(Message));
+
+    switch (req->header.type)
+    {
+    case SC_CS_SHUTDOWN:
+        onShutDown();
+        break;
+    default:
+        break;
+    }
+}
+
+void SystemControllerMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+        UInt32 payloadSize, iviLink::Ipc::DirectionID)
+{
+
 }
 
 void SystemControllerMsgProxy::OnConnection(iviLink::Ipc::DirectionID)
 {
-   
+
 }
 
 void SystemControllerMsgProxy::OnConnectionLost(iviLink::Ipc::DirectionID)
 {
 
-}
-
-SystemControllerMsgProxy::CMsgIdGen::CMsgIdGen() :
-      mId(-1)
-{
-}
-
-SystemControllerMsgProxy::CMsgIdGen::~CMsgIdGen()
-{
-
-}
-
-iviLink::Ipc::MsgID SystemControllerMsgProxy::CMsgIdGen::getNext()
-{
-   mId += 2;
-   return mId;
 }
 
 }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 /* 
  * File:   CControlTest.cpp
@@ -30,9 +29,7 @@
  */
 
 
-
-
-
+static const char MediaServerName[]="MediaServer";
 
 
 #include "CControlTest.h"
@@ -157,9 +154,6 @@ void CMediaControlClientProfile::bufferReceived(UInt16 tmp, std::string const& b
 }
 
 
-
-
-
 #include <cstring>
 #include <cassert>
 #include <iostream>
@@ -251,8 +245,6 @@ void CMediaControlServerProfile::prepareRequest(PROCEDURES_IDS proc, bool has_ev
 }
 
 
-
-
 //from CChannelHandler
 
 void CMediaControlServerProfile::bufferReceived(UInt16 tmp, std::string const& buffer) {
@@ -317,18 +309,14 @@ void CMediaControlServerProfile::bufferReceived(UInt16 tmp, std::string const& b
     }
 
 
-
 }
-
-
-
 
 
 CServerControl::CServerControl()
 
 : mVTranscode("#rtp{sdp=rtsp://:")
 , mATranscode("#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:rtp{sdp=rtsp://:")
-, mServerPath(".../.../...")
+, mServerPath(MediaServerName)
 , mFd(0)
 , mStop("stop;")
 , mKeepPlay("keepplay;")
@@ -367,7 +355,6 @@ CServerControl::CServerControl()
             ; // ok
             break;
         }
-
 
 
             //file = fdopen(fds[1], "w");

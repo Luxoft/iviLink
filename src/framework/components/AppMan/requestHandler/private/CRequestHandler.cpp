@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 
-#include "utils/threads/CMutex.hpp"
+#include "CMutex.hpp"
 #include "CRequestHandler.hpp"
 
 namespace iviLink
@@ -209,6 +198,13 @@ namespace iviLink
          return launchedByAppMan ? AppMan::STARTED_BY_APPMAN :  AppMan::STARTED_BY_USER;
       }
 
+       bool CRequestHandler::isLinkAlive()
+       {
+           LOG4CPLUS_ERROR(msLogger, "CRequestHandler::is_link_alive(): this is dummy function, should not be called in normal situation");
+           return false;
+       }
+
+
       CError CRequestHandler::useService(pid_t pid, Service::Uid service, bool use)
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
@@ -272,7 +268,7 @@ namespace iviLink
 
          if (!mpDatabase || !mpPmp || !mpLaunchThread)
          {
-            LOG4CPLUS_INFO(msLogger, "AMP hasn't been inited!!!");
+            LOG4CPLUS_WARN(msLogger, "AMP hasn't been inited!!!");
             return CError::NoError("","");
          }
 
@@ -302,7 +298,7 @@ namespace iviLink
          std::map<Service::SessionUid, CRunApp>::iterator it = mSessions.find(session);
          if (mSessions.end() == it)
          {
-            LOG4CPLUS_INFO(msLogger, "Session wasn't found");
+            LOG4CPLUS_WARN(msLogger, "Session wasn't found");
             mpSessionMutex->unlock();
             printState();
             return CError::NoError("","");
@@ -313,7 +309,7 @@ namespace iviLink
          mpDatabase->getApps(service,list);
          if (list.empty())
          {
-            LOG4CPLUS_INFO(msLogger, "list is empty");
+            LOG4CPLUS_WARN(msLogger, "list is empty");
             mpAppComThread->addRequest(session); // error, no app support this service
          }
          it->second.setId(list.front());
@@ -352,7 +348,7 @@ namespace iviLink
             LOG4CPLUS_INFO(msLogger, "normal pid");
         	 if (!mpAppComThread)
         	 {
-        	    LOG4CPLUS_INFO(msLogger, "!mpAppComThread");
+        	    LOG4CPLUS_WARN(msLogger, "!mpAppComThread");
              printState();
         		 return;
         	 }

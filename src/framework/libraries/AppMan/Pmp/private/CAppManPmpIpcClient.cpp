@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <unistd.h>
 
 #include "CAppManPmpIpcClient.hpp"
-#include "utils/serialize/Serialize.hpp"
+#include "Serialize.hpp"
 #include "IPmpHandler.hpp"
 
 namespace iviLink
@@ -52,29 +41,29 @@ namespace iviLink
             , mpIpc(new iviLink::Ipc::CIpc(iviLink::Ipc::Address("AppManPmp"), *this))
             , mId(0)
          {
-            LOG4CPLUS_TRACE(msLogger, "CAppManPmpIpcClient()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          CAppManPmpIpcClient::~CAppManPmpIpcClient()
          {
-            LOG4CPLUS_TRACE(msLogger, "~CAppManPmpIpcClient()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             delete mpIpc;
          }
 
          void CAppManPmpIpcClient::init(IPmpHandler * pHandler)
          {
-            LOG4CPLUS_TRACE(msLogger, "init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpHandler = pHandler;
          }
 
          void CAppManPmpIpcClient::OnConnection(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger, "OnConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CAppManPmpIpcClient::OnConnectionLost(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger, "OnConnectionLost()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mConLostSem.signal();
             if (mpHandler)
             {
@@ -86,7 +75,7 @@ namespace iviLink
                UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize,
                iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger, "OnRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (mpHandler)
             {
                UInt32 size = 0;
@@ -103,7 +92,7 @@ namespace iviLink
 
          CError CAppManPmpIpcClient::applicationRequest(iviLink::Service::SessionUid session, iviLink::Service::Uid service)
          {
-            LOG4CPLUS_TRACE(msLogger, "applicationRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             UInt32 type = 0;
             UInt32 size = sizeof(type) + sizeof(size);
             size += stringInBufSize(session.value());
@@ -126,13 +115,13 @@ namespace iviLink
 
          iviLink::Ipc::MsgID CAppManPmpIpcClient::genId()
          {
-            LOG4CPLUS_TRACE(msLogger, "genId()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return ++mId;
          }
 
          void CAppManPmpIpcClient::loop()
          {
-            LOG4CPLUS_TRACE(msLogger, "loop()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mBe = true;
             CError err = CError::NoError("","");
             for (int i = 1;mBe ; ++i)
@@ -151,21 +140,21 @@ namespace iviLink
                   LOG4CPLUS_INFO(msLogger, "loop() :: mBe == false");
                   break;
                }
-               LOG4CPLUS_INFO(msLogger, "loop() :: connection failed");
+               LOG4CPLUS_WARN(msLogger, "loop() :: connection failed");
                usleep(250000);
             }
          }
 
          void CAppManPmpIpcClient::disconnect()
          {
-            LOG4CPLUS_TRACE(msLogger, "disconnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mBe = false;
             mpIpc->disconnect();
          }
 
          bool CAppManPmpIpcClient::checkConnection() const
          {
-            LOG4CPLUS_TRACE(msLogger, "checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return !mNoConnection;
          }
 

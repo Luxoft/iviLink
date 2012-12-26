@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -48,7 +37,7 @@
  * Other includes
  *
  ********************************************************************/
-#include"utils/misc/Logger.hpp"
+#include"Logger.hpp"
 
 /********************************************************************
  *
@@ -141,7 +130,7 @@ bool CNetlinkSocket::createSocket(__u32 messageGroups)
 
 bool CNetlinkSocket::recvRequest(INlmsgParser& parser)
 {
-   LOG4CPLUS_TRACE(logger, "CNetlinkSocket::recvRequest");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    ssize_t len;
 
    while (true)
@@ -194,7 +183,7 @@ bool CNetlinkSocket::recvRequest(INlmsgParser& parser)
 
 ssize_t CNetlinkSocket::sendRequest(Request& req)
 {
-   LOG4CPLUS_TRACE(logger, "CNetlinkSocket::send");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    if (-1 == fd)
    {
@@ -227,7 +216,7 @@ ssize_t CNetlinkSocket::sendRequest(Request& req)
 
 ssize_t CNetlinkSocket::recv()
 {
-   LOG4CPLUS_TRACE(logger, "CNetlinkSocket::recv");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    msghdr msg;
    sockaddr_nl addr;
 
@@ -284,7 +273,7 @@ ssize_t CNetlinkSocket::recv()
    if (msg.msg_flags & MSG_TRUNC)
    {
       rc = -1;
-      LOG4CPLUS_INFO(logger, "CNetlinkSocket::recv error TRUNCATED");
+      LOG4CPLUS_ERROR(logger, "CNetlinkSocket::recv error TRUNCATED");
    }
 
    return rc;
@@ -292,6 +281,7 @@ ssize_t CNetlinkSocket::recv()
 
 void CNetlinkSocket::setReceiveTimeout(__time_t sec, __suseconds_t usec)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    timeval tv;
    tv.tv_sec = sec;
    tv.tv_usec = usec;

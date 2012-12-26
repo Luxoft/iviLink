@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
+ */ 
+ 
 
 #ifndef CMEDIACONTROLCLIENTPROFILEPROXY_HPP
 #define CMEDIACONTROLCLIENTPROFILEPROXY_HPP
 
 #include <iostream>
-#include "samples/linux/Profiles/ProfileAPI/IMediaControlClientProfileAPI.hpp"
-#include "framework/appLib/appLib/CProfileProxy.hpp"
+
+#include "IMediaControlClientProfileAPI.hpp"
+#include "CProfileProxy.hpp"
 
 #define CURRENT_PROFILE_API IMediaControlClientProfile_API
 #define CURRENT_PROFILE_PROXY CMediaControlClientProfileProxy
@@ -37,20 +35,24 @@
 
 IVILINK_PROFILE_PROXY_BEGIN(CURRENT_PROFILE_PROXY, CURRENT_PROFILE_API, CURRENT_PROFILE_PROXY_API_UID)
 
+virtual void serverStop()
+{
+   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,serverStop);
+}
 
 virtual void stop()
 {
    IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,stop);
 }
 
-virtual void play(std::string const&  trackName, std::string const& avform)
+virtual void play(std::string const&  trackName, std::string const&  trackUid, std::string const& avform)
 {
-   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,play, trackName, avform)
+   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,play, trackName, trackUid, avform)
 }
 
-virtual void keepPlay()
+virtual void resume()
 {
-   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,keepPlay)
+   IVILINK_PROXY_VOID_FUNCTION(CURRENT_PROFILE_API,resume)
 }
 
 virtual void pause()

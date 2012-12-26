@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -51,7 +41,7 @@
  *
  ********************************************************************/
 #include "CTransmittedFramesQueue.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace iviLink::ConnectivityAgent::L0;
 
@@ -69,6 +59,8 @@ void CTransmittedFramesQueue::enqueue(iviLink::ConnectivityAgent::HAL::Frame& fr
 
    clock_gettime(CLOCK_MONOTONIC, &frameTS.mStartTime);
    mQueue.push_back(frameTS);
+   mTransmitStartTimes.insert(std::pair<UInt64, timespec>(
+           concatenateChannelIdFrameNum(frameTS.mFrame.mFrameHeader), frameTS.mStartTime));
 
    LOG4CPLUS_INFO(logger, "CTransmittedFramesQueue::enqueue() qsize = " + convertIntegerToString((int)mQueue.size()));
 }
@@ -90,6 +82,7 @@ void CTransmittedFramesQueue::dequeue(UInt32 channel_id, UInt32 number)
       if (((*iter).mFrame.mFrameHeader.channel_id == channel_id) && ((*iter).mFrame.mFrameHeader.number == number))
       {
          UInt64 time = getTimePeriodInNanoSec((*iter).mStartTime, end_time);
+         mTransmitStartTimes.erase(concatenateChannelIdFrameNum((*iter).mFrame.mFrameHeader));
          mQueue.erase(iter);
          LOG4CPLUS_INFO(logger, "CTransmittedFramesQueue::dequeue() qsize = "
                + convertIntegerToString((int)mQueue.size()));
@@ -114,7 +107,14 @@ void CTransmittedFramesQueue::deleteFramesForChannel(UInt32 channel_id)
    mMutex.lock();
    LOG4CPLUS_INFO(logger, "CTransmittedFramesQueue::deleteFramesForChannel(chID = " + convertIntegerToString(channel_id));
 
-   mQueue.remove_if(RemoveByChannelIDPredicate(channel_id));
+   for (TTransmittedFrameQueue::iterator iter = mQueue.begin(); iter != mQueue.end(); ++iter)
+   {
+      if ((*iter).mFrame.mFrameHeader.channel_id == channel_id)
+      {
+          mTransmitStartTimes.erase(concatenateChannelIdFrameNum((*iter).mFrame.mFrameHeader));
+          mQueue.erase(iter);
+      }
+   }
 
    mMutex.unlock();
 }
@@ -154,9 +154,33 @@ void CTransmittedFramesQueue::reenqueueRetransmittedFrame(iviLink::ConnectivityA
    LOG4CPLUS_INFO(logger, "CTransmittedFramesQueue::reenqueueRetransmittedFrame frame "
          + convertIntegerToString((intptr_t)pFrame) + " (chID = "
          + convertIntegerToString(pFrame->mFrameHeader.channel_id) + ", num = "
-         + convertIntegerToString(pFrame->mFrameHeader.number) + ") retransmitted");
+         + convertIntegerToString(pFrame->mFrameHeader.number) + ")");
 
-   mQueue.push_back(tFrameTimeStamped(fts));
+   /**
+    * We are trying to retransmit the frame while the RETRANSMIT_TIMEOUT_SEC is not passed
+    */
+   UInt64 currentChannelIdFrameNum = concatenateChannelIdFrameNum(pFrame->mFrameHeader);
+   std::map<UInt64, timespec>::iterator iter = mTransmitStartTimes.find(currentChannelIdFrameNum);
+   if (iter != mTransmitStartTimes.end())
+   {
+       if ((fts.mStartTime.tv_sec - (*iter).second.tv_sec) < RETRANSMIT_TIMEOUT_SEC)
+       {
+           mQueue.push_back(tFrameTimeStamped(fts));
+       }
+       else
+       {
+           LOG4CPLUS_INFO(logger, "Retransmit timeout => dequeue frame from channel "
+                   + convertIntegerToString(pFrame->mFrameHeader.channel_id) + ", number "
+                   + convertIntegerToString(pFrame->mFrameHeader.number));
+           mTransmitStartTimes.erase(currentChannelIdFrameNum);
+       }
+   }
+   else
+   {
+       LOG4CPLUS_WARN(logger, "Can't find current frame in mTransmitStartTimes");
+       mQueue.push_back(tFrameTimeStamped(fts));
+   }
+
    mQueue.pop_front();
 
    mMutex.unlock();
@@ -164,12 +188,14 @@ void CTransmittedFramesQueue::reenqueueRetransmittedFrame(iviLink::ConnectivityA
 
 CTransmittedFramesQueue::~CTransmittedFramesQueue()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    mMutex.lock();
    while (!mQueue.empty())
    {
       TTransmittedFrameQueue::iterator iter = mQueue.begin();
       mQueue.erase(iter);
    }
+   mTransmitStartTimes.clear();
    mMutex.unlock();
 }
 
@@ -195,4 +221,11 @@ void CTransmittedFramesQueue::lockQueue()
 void CTransmittedFramesQueue::unlockQueue()
 {
    return mMutex.unlock();
+}
+
+UInt64 CTransmittedFramesQueue::concatenateChannelIdFrameNum(
+        const iviLink::ConnectivityAgent::HAL::Frame::FrameHeader& header)
+{
+    return ((static_cast<UInt64>(header.channel_id) << (sizeof(header.channel_id) * 8))
+            | static_cast<UInt64>(header.number));
 }

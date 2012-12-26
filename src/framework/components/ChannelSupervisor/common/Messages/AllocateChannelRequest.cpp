@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,48 +18,62 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <string>
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <string.h>
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Request.hpp"
 #include "Message.hpp"
 #include "AllocateChannelRequest.hpp"
 
 using namespace iviLink::ChannelSupervisor::Messages;
 
-AllocateChannelRequest::AllocateChannelRequest(	const char* tag)
-	: Request(REQUESTTYPE_ALLOCATE_CHANNEL)
+AllocateChannelRequest::AllocateChannelRequest(const char* tag, const UInt32 channelID)
+        : Request(REQUESTTYPE_ALLOCATE_CHANNEL)
 {
-	if ( strlen(tag) > 0 )
-	{
-		m_tag = tag;
-		AppendCharStringNode(m_messageDocMainNode, "tag", m_tag.c_str());
-	}
+    if (strlen(tag) > 0)
+    {
+        m_tag = tag;
+        m_channelId = channelID;
+        AppendCharStringNode(m_messageDocMainNode, "tag", m_tag.c_str());
+        AppendIntegerNode(m_messageDocMainNode, "channel-id", m_channelId);
+    }
 }
 
-AllocateChannelRequest::AllocateChannelRequest(pugi::xml_document* doc) :  Request(doc)
+AllocateChannelRequest::AllocateChannelRequest(pugi::xml_document* doc)
+        : Request(doc)
 {
-   pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
-
-   if (tagNode)
-   {
-      m_tag = tagNode.first_child().value();
-   }
+    pugi::xml_attribute nameAttr = m_messageDocMainNode.attribute("name");
+    if (nameAttr)
+    {
+        if (strcmp(nameAttr.value(), GetMessageName()) == 0)
+        {
+            pugi::xml_node tagNode = m_messageDocMainNode.child("tag");
+            if (tagNode)
+            {
+                const char* tag = tagNode.first_child().value();
+                if (tag != NULL && tag[0] != '\0')
+                {
+                    m_tag = tag;
+                }
+            }
+            pugi::xml_node cidNode = m_messageDocMainNode.child("channel-id");
+            if (cidNode)
+            {
+                const char* cid = cidNode.first_child().value();
+                if (cid != NULL && cid[0] != '\0')
+                {
+                    char *ptr;
+                    m_channelId = strtol(cid, &ptr, 10);
+                }
+            }
+        }
+    }
 }
-
-
-
 

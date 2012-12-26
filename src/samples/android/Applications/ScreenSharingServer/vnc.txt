@@ -1,0 +1,1 @@
+{"min x":0, "max x":799, "min y":0, "max y":479, "res x":800, "res y":480, "device":"/dev/input/event8"}

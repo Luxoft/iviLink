@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.helpers;
 
@@ -34,8 +33,7 @@ import android.util.Log;
 
 public class DirectoryHelper {
 
-	static String extStorage = Environment.getExternalStorageDirectory()
-			.getAbsolutePath();
+	static String extStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
 
 	/*
 	 * returns true if path is a non-empty directory
@@ -72,20 +70,21 @@ public class DirectoryHelper {
 	 * directories
 	 */
 	private static void fixDirs(String path, StringBuilder sb) {
+
 		if (!checkDirExists(path)) {
 			if (createDir(path)) {
-				sb.append("The following directory was created for you: "
-						+ path + ", please put files there\n");
+				sb.append("The following directory was created for you: " + path
+						+ ", please put files there\n");
 			} else {
 				sb.append("Creation of the following directory " + path
 						+ " failed for some reason!\n");
 			}
 		} else {
 			if (!checkDirEmpty(path)) {
-				sb.append("Please put necessary files into folder " + path
-						+ "\n");
+				sb.append("Please put necessary files into folder " + path + "\n");
 			}
 		}
+
 	}
 
 	// public methods
@@ -94,8 +93,7 @@ public class DirectoryHelper {
 	 * returns true if all needed folders pass check
 	 */
 	public static boolean checkProjectDirs() {
-		return checkDir(ForSDK.getAppManDirectory())
-				&& checkDir(ForSDK.getProfRepoDirectory())
+		return checkDir(ForSDK.getAppManDirectory()) && checkDir(ForSDK.getProfRepoDirectory())
 				&& checkDir(ForApp.getServicePath());
 	}
 
@@ -104,13 +102,14 @@ public class DirectoryHelper {
 	 * folders are empty
 	 */
 	public static String createMissingDirs() {
-		StringBuilder tResult = new StringBuilder(
+		/*StringBuilder tResult = new StringBuilder(
 				"For normal use of this product these steps must be done:\n");
 		fixDirs(ForSDK.getAppManDirectory(), tResult);
 		fixDirs(ForSDK.getProfRepoDirectory(), tResult);
 		fixDirs(ForApp.getServicePath(), tResult);
-		Log.v("DirectoryHelper", "result is: "+tResult.toString());
-		return tResult.toString();
+		Log.v("DirectoryHelper", "result is: " + tResult.toString());
+		return tResult.toString(); */
+		return "No data found! Please run the Installer first!";
 	}
 
 	/*

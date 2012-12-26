@@ -5,19 +5,23 @@
       <src>BasicSampleProfile_API.xml</src>
    </profile-api>
    <profile-api>
+      <uid>NaviReceiverProfile_PAPI_UID</uid>
+      <src>NaviReceiverProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
       <uid>AuthenticationProfile_PAPI_UID</uid>
       <src>AuthenticationProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>ClimateSenderProfile_API_UID</uid>
+      <uid>ClimateSenderProfile_PAPI_UID</uid>
       <src>ClimateSenderProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>ClimateReceiverProfile_API_UID</uid>
+      <uid>ClimateReceiverProfile_PAPI_UID</uid>
       <src>ClimateReceiverProfile_API.xml</src>
    </profile-api>
    <profile-api>
-      <uid>SeatSenderProfile_API_UID</uid>
+      <uid>SeatSenderProfile_PAPI_UID</uid>
       <src>SeatSenderProfile_API.xml</src>
    </profile-api>
    <profile-api>
@@ -47,5 +51,9 @@
    <profile-api>
       <uid>MediaSourceServerProfile_API_UID</uid>
       <src>MediaSourceServerProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>ScreenSharingProfile_API_UID</uid>
+      <src>ScreenSharingProfile_API.xml</src>
    </profile-api>
 </profile-apis>

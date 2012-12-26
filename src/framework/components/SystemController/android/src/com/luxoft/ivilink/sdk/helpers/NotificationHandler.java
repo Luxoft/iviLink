@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,50 +18,58 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 package com.luxoft.ivilink.sdk.helpers;
 
-import com.luxoft.ivilink.sdk.R;
-import com.luxoft.ivilink.sdk.SysCtrlServLauncherActivity;
-
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.luxoft.ivilink.sdk.R;
+import com.luxoft.ivilink.sdk.SysCtrlServLauncherActivity;
+
 public class NotificationHandler {
 
-	public static final int ID = 1;
-
-	public static void setNotification(Context creator) {
-		NotificationManager mNotificationManager = (NotificationManager) creator
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = createNotification(creator);
-		mNotificationManager.notify(ID, notification); // id is needed for cancel
-	}
-	
-
-	public static Notification createNotification(Context creator){
+	/**
+	 * Creates a Notification for the SystemControllerService with a
+	 * PendingIntent that will launch SysCtrlServLaunchActivity when activated
+	 * 
+	 * @param creator
+	 *            Used in PendingIntent creation
+	 * @return created Notification
+	 */
+	@SuppressWarnings("deprecation")
+	public static Notification createMainNotification(Context creator) {
 		int icon = R.drawable.ic_launcher;
 		CharSequence tickerText = "IVILinkSDK started";
 		long when = System.currentTimeMillis();
 		Notification notification = new Notification(icon, tickerText, when);
-
 		Context context = creator.getApplicationContext();
 		CharSequence contentTitle = "IVILink SDK is running!";
 		CharSequence contentText = "Click for options";
-		Intent notificationIntent = new Intent(creator,
-				SysCtrlServLauncherActivity.class);
+		Intent notificationIntent = new Intent(creator, SysCtrlServLauncherActivity.class);
 		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		notificationIntent.putExtra(Common.shutdown, true);
-		PendingIntent contentIntent = PendingIntent.getActivity(creator, 0,
-				notificationIntent, 0);
-
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
+		PendingIntent contentIntent = PendingIntent.getActivity(creator, 0, notificationIntent, 0);
+		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 		return notification;
+	}
+
+	/**
+	 * Creates a Notification with empty icon and null message. Since all of
+	 * iviLink's components are run as foreground services, but it would be too
+	 * much to show 6 status bar notification (only SystemControllerService
+	 * shows one), fake ones are generated.
+	 * 
+	 * @return created Notification
+	 */
+	@SuppressWarnings("deprecation")
+	public static Notification createFakeNotification() {
+		Notification note = new Notification(0, null, System.currentTimeMillis());
+		note.flags |= Notification.FLAG_NO_CLEAR;
+		return note;
 	}
 }

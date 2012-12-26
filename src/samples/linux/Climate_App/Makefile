@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 
 # Autodetection of config.mk and includes
@@ -52,14 +50,27 @@ CXXFLAGS := $(GLOBAL_CXXFLAGS)
 OUT_PATH := $(call OUT_PATH_FUNC)
 $(info OUT_PATH $(OUT_PATH))
 
-QINCLUDES := $(ROOT_DIR) $(RESULT_DIR)
+FW_DIR		  := $(ROOT_DIR)framework/
+PROFILES_DIR  := $(ROOT_DIR)samples/linux/Profiles/
+
+QINCLUDES += $(ROOT_DIR) 
+QINCLUDES += $(ROOT_DIR)utils/json/include/
+QINCLUDES += $(RESULT_DIR)
+QINCLUDES += $(FW_DIR)components/ProfileManager/PMAL/PIM/private/
+QINCLUDES += $(FW_DIR)public/appLib/
+QINCLUDES += $(FW_DIR)components/ProfileManager/PMAL/
+QINCLUDES += $(PROFILES_DIR)ProfileAPI/
+QINCLUDES += $(PROFILES_DIR)ProfileAPI/States/
+QINCLUDES += $(PROFILES_DIR)ProfileAPI/States/Climate
+QINCLUDES += $(FW_DIR)public/appLib/
+QINCLUDES += $(UTILS_DIR)android/
+QINCLUDES += $(FW_DIR)libraries/ServiceManager/
 
 LIBS += -Wl,--start-group
 LIBS += -L$(3RD_PARTY_DIR)/lib -llog4cplus
 LIBS += -L$(RESULT_DIR)/utils/shared_lib -lIviLinkUtils
 LIBS += -L$(RESULT_DIR)/framework/components/ChannelSupervisor/ChannelLib -lIviLinkChannel
-LIBS += -L$(RESULT_DIR)/samples/linux/Profiles/ProfileAPI/ClimateState -lClimateState
-LIBS += -lprotobuf-lite
+LIBS += -L$(RESULT_DIR)/samples/linux/Profiles/ProfileAPI/States/Climate -lClimateState
 LIBS += -L$(RESULT_DIR)/framework/public/appLib/sharedLib -lIviLinkApp
 LIBS += -lrt
 LIBS += -Wl,--end-group 

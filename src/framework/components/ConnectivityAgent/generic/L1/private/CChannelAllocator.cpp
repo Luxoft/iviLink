@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -55,8 +45,8 @@
 #include "CSourceAgent.hpp"
 #include "CTargetAgent.hpp"
 #include "L1InterfaceStub.hpp"
-#include "utils/misc/Logger.hpp"
-#include "framework/components/ConnectivityAgent/generic/L0/L0Interface.hpp"
+#include "Logger.hpp"
+#include "L0Interface.hpp"
 
 using namespace iviLink::ConnectivityAgent::L1;
 
@@ -74,6 +64,7 @@ mpL0Interface(0)
 
 CChannelAllocator* CChannelAllocator::getInstance()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    mSingletonMutex.lock();
    if (mSelf == NULL)
    {
@@ -85,34 +76,36 @@ CChannelAllocator* CChannelAllocator::getInstance()
 
 void CChannelAllocator::deleteInstance()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    delete this;
    mSelf = NULL;
 }
 
 void CChannelAllocator::setL0Interface(L0Interface *pL0Interface)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    mpL0Interface = pL0Interface;
 }
 
 void CChannelAllocator::OnConnected()
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    L1InterfaceStub::getInstance()->OnConnected();
 }
 
 void CChannelAllocator::OnDisconnected()
 {
-   LOG4CPLUS_TRACE(logger, "CChannelAllocator::OnDisconnected()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    L1InterfaceStub::getInstance()->OnDisconnected();
 }
 
-ERROR_CODE CChannelAllocator::allocateChannel(TChannelPriority prio, UInt32 channel_id, L1InterfaceStub::tChannelInfo& channelInfo)
+ERROR_CODE CChannelAllocator::allocateChannel(TChannelPriority prio, UInt32 channel_id, L1InterfaceStub::tL1ChannelInfo& channelInfo)
 {
-   LOG4CPLUS_TRACE(logger, "CChannelAllocator::allocateOutgoingChannel()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    ERROR_CODE ret = ERR_FAIL;
 
    /// @todo correct processing of error code and return values. PIlin, 31.08.12
-   LOG4CPLUS_WARN(logger, "@todo correct processing of error code and return values. PIlin, 31.08.12");
 
    if (mpL0Interface)
    {
@@ -135,6 +128,7 @@ ERROR_CODE CChannelAllocator::allocateChannel(TChannelPriority prio, UInt32 chan
 
 ERROR_CODE CChannelAllocator::deallocateChannel(UInt32 channel_id)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    ERROR_CODE ret = ERR_FAIL;
 
    if(mpL0Interface)
@@ -149,6 +143,7 @@ ERROR_CODE CChannelAllocator::deallocateChannel(UInt32 channel_id)
 
 UInt64 CChannelAllocator::getQoSReportForChannel(const UInt32 channel_id)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    return mpL0Interface->getQoSReport(channel_id);
 }
 

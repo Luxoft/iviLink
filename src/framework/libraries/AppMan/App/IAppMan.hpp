@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IAPPMAN_HPP_
 #define IAPPMAN_HPP_
 
 #include <list>
 
-#include "utils/misc/UID.hpp"
-#include "utils/misc/CError.hpp"
+#include "UID.hpp"
+#include "CError.hpp"
+#include <tr1/functional>
 
 namespace iviLink
 {
@@ -56,6 +46,8 @@ namespace iviLink
          ERROR_NOT_INITED,    ///< IPC is not inited
          ERROR_AMP            ///< Error in AMP
       };
+
+       typedef std::tr1::function<void ()> notify_t;
 
       /**
        * AppMan Interface for Applications
@@ -83,6 +75,9 @@ namespace iviLink
           * Registers service for application in ApplicationManager
           */
          virtual CError registerService(Service::Uid service) = 0;
+
+          virtual bool isLinkAlive() = 0;
+          virtual void setLinkCallbacks( notify_t link_up_, notify_t link_down_ ) =0;
 
          /**
           * Virtual destructor

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CTCPCARRIERADAPTER_HPP_
 #define CTCPCARRIERADAPTER_HPP_
 
 #include <ctime>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CRWMutex.hpp"
-#include "utils/threads/CCondVar.hpp"
+#include "Logger.hpp"
+#include "Types.hpp"
+#include "CThread.hpp"
+#include "CRWMutex.hpp"
+#include "CCondVar.hpp"
 
 #include "../CCarrierAdapter.hpp"
 #include "../Frame.hpp"

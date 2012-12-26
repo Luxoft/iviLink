@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-#include "framework/components/SystemController/ssm/states/CAuthenticateState.hpp"
-#include "framework/components/SystemController/ssm/states/CIdleState.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
+#include "CAuthenticateState.hpp"
+#include "CIdleState.hpp"
+#include "CSystemStateMachine.hpp"
+#include "CComponentLauncher.hpp"
+#include "CTriggerQueue.hpp"
 
 namespace SystemController
 {
@@ -63,7 +55,7 @@ CAuthenticateState::~CAuthenticateState()
 
 void CAuthenticateState::startAuthentication(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "startAuthentication()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(stateMachine->authOn)
    {
@@ -71,23 +63,23 @@ void CAuthenticateState::startAuthentication(CSystemStateMachine* stateMachine)
 
       if (stateMachine->mSystemGender == 1)
       {
-         #ifndef ANDROID
+#ifndef ANDROID
          CComponentLauncher::getInstance()->launchAuthenticationApp();
-         #else
+#else
          iviLink::Android::makeRequest(iviLink::Android::eStartAuth);
-         #endif //ANDROID
+#endif //ANDROID
       }
    }
    else
    {
-      LOG4CPLUS_TRACE(sLogger, "noauth option requested --> Skip authentication");
+      LOG4CPLUS_INFO(sLogger, "noauth option requested --> Skip authentication");
       changeState(stateMachine, CIdleState::getInstance());
    }
 }
 
 void CAuthenticateState::finishAuthentication(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "finishAuthentication()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CIdleState::getInstance());
 
@@ -96,7 +88,7 @@ void CAuthenticateState::finishAuthentication(CSystemStateMachine* stateMachine)
 
 void CAuthenticateState::cancelAuthentication(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "cancelAuthentication()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CIdleState::getInstance());
 

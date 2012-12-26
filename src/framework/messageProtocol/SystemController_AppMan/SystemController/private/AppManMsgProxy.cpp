@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,135 +18,139 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 
 #include "AppManMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_AppMan/messages.hpp"
+
+#include "CommonMessage.hpp"
 
 using namespace iviLink::Ipc;
 
 namespace SystemControllerMsgProtocol
 {
 
-Logger AppManMsgProxy::logger = Logger::getInstance(LOG4CPLUS_TEXT("systemController.msgProtocol.AppManMsgProxy"));
+Logger AppManMsgProxy::logger = Logger::getInstance(
+        LOG4CPLUS_TEXT("systemController.msgProtocol.AppManMsgProxy"));
 
-AppManMsgProxy::AppManMsgProxy(const string connectionName):
-   mpIpc(NULL)
+AppManMsgProxy::AppManMsgProxy(const string connectionName)
+        : mpIpc(NULL)
 {
-   LOG4CPLUS_TRACE(logger, "AppManMsgProxy(" + connectionName + ")");
+    LOG4CPLUS_TRACE(logger, "AppManMsgProxy(" + connectionName + ")");
 
-   mpIpc = new CIpc(connectionName, *this);
+    mpIpc = new CIpc(connectionName, *this);
 }
 
 AppManMsgProxy::~AppManMsgProxy()
 {
-   LOG4CPLUS_TRACE(logger, "~AppManMsgProxy()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   delete mpIpc;
+    delete mpIpc;
 }
 
 CError AppManMsgProxy::connectAppMan()
 {
-   LOG4CPLUS_TRACE(logger, "beginWaitForConnection()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   return mpIpc->beginWaitForConnection();
+    return mpIpc->beginWaitForConnection();
 }
 
 bool AppManMsgProxy::isConnected() const
 {
-   return mpIpc->isConnected();
+    return mpIpc->isConnected();
 }
 
 CError AppManMsgProxy::requestShutDown()
 {
-   LOG4CPLUS_TRACE(logger, "requestShutDown()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
+    if (!mpIpc)
+        return CError(1, getName(), CError::FATAL, "no ipc");
 
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = SC_AM_SHUTDOWN;
-   req->header.size = 0;
+    Message* req = reinterpret_cast<Message*>(mWriteBuffer);
+    req->header.type = SC_AM_SHUTDOWN;
+    req->header.size = 0;
 
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
+    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
 
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
+    UInt32 const reqSize = sizeof(Message) + req->header.size;
 
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
+    CError err = mpIpc->asyncRequest(id, mWriteBuffer, reqSize);
 
-   if (!err.isNoError())
-      return err;
+    if (!err.isNoError())
+        return err;
 
-   return CError::NoError(getName());
+    return CError::NoError(getName());
 }
 
-void AppManMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID)
+CError AppManMsgProxy::linkUpNotification()
 {
-   LOG4CPLUS_TRACE(logger, "OnRequest()");
+    return send_notify(SC_AM_LINK_UP_NOTIFY);
+}
 
-   Message const* req = reinterpret_cast<Message const*>(pPayload);
+CError AppManMsgProxy::linkDownNotification()
+{
+    return send_notify(SC_AM_LINK_DOWN_NOTIFY);
+}
 
-   assert(req->header.size + sizeof(Message) == payloadSize);
-   assert(bufferSize >= sizeof(Message));
+CError AppManMsgProxy::send_notify(eSCtoAMMessages notify_code)
+{
+    if (!mpIpc)
+        return CError(1, getName(), CError::FATAL, "no ipc");
+    const Message msg =
+    {
+    { notify_code, 0 } };
+    return mpIpc->asyncRequest(mMsgIdGen.getNext(), reinterpret_cast<const UInt8*>(&msg),
+            sizeof(msg));
+}
 
-   switch(req->header.type)
-   {
-   case AM_SC_CONNECTION_ESTABLISHED:
-      onCounterAMConnected();
-      break;
-   case AM_SC_CONNECTION_LOST:
-      onCounterAMDisconnected();
-      break;
-   default:
-      break;
-   }
+void AppManMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+        UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   bufferSize = 0;
+    Message const* req = reinterpret_cast<Message const*>(pPayload);
+
+    assert(req->header.size + sizeof(Message) == payloadSize);
+    assert(bufferSize >= sizeof(Message));
+
+    bufferSize = 0;
+    switch (req->header.type)
+    {
+    case AM_SC_CONNECTION_ESTABLISHED:
+        onCounterAMConnected();
+        break;
+    case AM_SC_CONNECTION_LOST:
+        onCounterAMDisconnected();
+    case AM_SC_GET_LINK_STATE:
+        *pResponseBuffer = getLinkState();
+        bufferSize = sizeof(bool);
+        break;
+    default:
+        break;
+    }
+}
+
+void AppManMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+        UInt32 payloadSize, iviLink::Ipc::DirectionID)
+{
+
 }
 
 void AppManMsgProxy::OnConnection(iviLink::Ipc::DirectionID)
 {
-   LOG4CPLUS_TRACE(logger, "OnConnection()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   onAppManAvailable();
+    onAppManAvailable();
 }
 
 void AppManMsgProxy::OnConnectionLost(iviLink::Ipc::DirectionID)
 {
-   LOG4CPLUS_TRACE(logger, "OnConnectionLost()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   onAppManNotAvailable();
-}
-
-AppManMsgProxy::CMsgIdGen::CMsgIdGen() :
-      mId(-1)
-{
-}
-
-AppManMsgProxy::CMsgIdGen::~CMsgIdGen()
-{
-
-}
-
-iviLink::Ipc::MsgID AppManMsgProxy::CMsgIdGen::getNext()
-{
-   mId += 2;
-   return mId;
+    onAppManNotAvailable();
 }
 
 }

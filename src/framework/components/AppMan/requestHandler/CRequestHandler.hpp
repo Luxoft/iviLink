@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,40 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CREQUESTHANDLER_HPP_
 #define CREQUESTHANDLER_HPP_
 
 #include <map>
 
-#include "framework/libraries/AppMan/AmpForApp/IConnection.hpp"
-#include "framework/libraries/AppMan/AmpForApp/IConnectionHandler.hpp"
-#include "framework/libraries/AppMan/AmpForApp/IAppManProto.hpp"
-#include "framework/libraries/AppMan/AmpForApp/IAppManProtoAmpToApp.hpp"
+#include "IConnection.hpp"
+#include "IConnectionHandler.hpp"
+#include "IAppManProto.hpp"
+#include "IAppManProtoAmpToApp.hpp"
 
-#include "framework/libraries/AppMan/AmpForPmp/IPmpConnectionStatus.hpp"
-#include "framework/libraries/AppMan/Pmp/IPmpHandler.hpp"
-#include "framework/libraries/AppMan/Pmp/IPmpRequest.hpp"
+#include "IPmpConnectionStatus.hpp"
+#include "IPmpHandler.hpp"
+#include "IPmpRequest.hpp"
 
 #include "CRunApp.hpp"
-#include "framework/components/AppMan/database/IDatabase.hpp"
+#include "IDatabase.hpp"
 #include "IReqHandlerForLaunch.hpp"
 #include "IReqHandlerForAppCom.hpp"
 #include "ILaunchThread.hpp"
 #include "IAppComThread.hpp"
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 class CMutex;
 
@@ -143,7 +132,11 @@ namespace iviLink
          virtual AppMan::EInitResult initApplication(pid_t pid,
                std::list<Service::Uid> listOfSupportedServices);
 
-         /**
+//       IAppManProto
+          // connectivity
+          bool isLinkAlive();
+
+          /**
           * Application says if it can support given service
           * @param pid of process
           * @param service is UID of service

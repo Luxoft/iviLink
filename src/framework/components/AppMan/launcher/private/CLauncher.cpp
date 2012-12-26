@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cerrno>
 #include <cstdio>
@@ -57,35 +46,37 @@ namespace iviLink
       CLauncher::CLauncher()
          : mpHandler(0)
       {
-         LOG4CPLUS_TRACE(sLogger, "CLauncher()");
+         LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
+
+         CLauncher::setSIGCHLDHandler();
       }
 
       CLauncher::~CLauncher()
       {
-         LOG4CPLUS_TRACE(sLogger, "~CLauncher()");
+         LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
       }
 
-      #ifndef ANDROID
+#ifndef ANDROID
       void CLauncher::init(ILauncherHandler * pHandler)
-      #else
+#else
       void CLauncher::init(ILauncherHandler * pHandler, JavaVM * jm, jclass launchClass, jmethodID launchMethod)
-      #endif
+#endif
       {
-         LOG4CPLUS_TRACE(sLogger, "init()");
+         LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
          mpHandler = pHandler;
-         #ifndef ANDROID
-         #else
+#ifndef ANDROID
+#else
          pJm = jm;
          jLauncher = launchClass;
          jLaunchMethod = launchMethod;
-         #endif //ANDROID
+#endif //ANDROID
       }
 
       void CLauncher::launche(const std::string & launchInfo)
       {
          LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__ );
          LOG4CPLUS_INFO(sLogger, "launch info: " + launchInfo);
-         #ifndef ANDROID
+#ifndef ANDROID
          char rpath[PATH_MAX] = "";
          char * params[] = { rpath, 0, 0, 0 };
 
@@ -147,7 +138,9 @@ namespace iviLink
             }
             break;
          }
-         #else 
+
+#else 
+         
          JNIEnv *env;
          iviLink::Android::JniThreadHelper jth(pJm);
          env = jth.getEnv();
@@ -166,11 +159,11 @@ namespace iviLink
 	         LOG4CPLUS_INFO(sLogger, "make callback: mpHandler->launchedApp(launchinfo, pid)");
             mpHandler->launchedApp(launchInfo,pid);
          }
-         #endif // ANDROID
+#endif // ANDROID
       }
       
-      #ifndef ANDROID
-      #else
+#ifndef ANDROID
+#else
       void CLauncher::uninit()
       {
          mpHandler = 0;
@@ -178,7 +171,39 @@ namespace iviLink
          jLauncher = 0;
          jLaunchMethod = 0;
       }
-      #endif //ANDROID
+#endif //ANDROID
+
+      void CLauncher::onSIGCHLD(int signal_number)
+      {
+         LOG4CPLUS_TRACE(sLogger, "onSIGCHLD(" + convertIntegerToString(signal_number) + ")");
+
+         pid_t pid = -1;
+         int status;
+
+         while((pid = waitpid(-1, &status, WNOHANG)) > 0)
+         {
+            LOG4CPLUS_INFO(sLogger, "Child with PID " + convertIntegerToString(pid) + "exited with status "
+          		                                   + convertIntegerToString((int)WEXITSTATUS(status)));
+         }
+      }
+
+      void CLauncher::setSIGCHLDHandler()
+      {
+         LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
+
+         struct sigaction sigchld_action;
+
+         memset(&sigchld_action, 0, sizeof(sigchld_action));
+         sigchld_action.sa_handler = CLauncher::onSIGCHLD;
+
+         if(sigaction(SIGCHLD, &sigchld_action, NULL) < 0)
+         {
+            LOG4CPLUS_INFO(sLogger, "CLauncher::setSIGCHLDHandler() errno = " + convertIntegerToString(errno)
+          		               + " " + std::string(strerror(errno)));
+
+            return;
+         }
+      }
 
    } // AMP
 

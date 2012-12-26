@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cerrno>
 #include <cstdio>
@@ -35,12 +28,13 @@
 #include <signal.h>
 #include <string>
 #include <unistd.h>
+#include <vector>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/misc/CError.hpp"
+#include "Logger.hpp"
+#include "CError.hpp"
 #include "reset.hpp"
 
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
+#include "CComponentLauncher.hpp"
 
 using SystemController::CComponentLauncher;
 
@@ -57,7 +51,7 @@ void onSIGTERM(int sig)
 
 void setSIGTERMHandler()
 {
-   LOG4CPLUS_TRACE(gsLogger, "setSIGCHLDHandler()");
+   LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
 
    struct sigaction action;
 
@@ -78,8 +72,9 @@ void setupReset(char const* argv0)
    setSIGTERMHandler();
 }
 
-void stopComponentns()
+void stopComponents()
 {
+   LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
    CComponentLauncher* pcl = CComponentLauncher::getInstance();
    pcl->shutdownAllComponents();
 }
@@ -92,11 +87,6 @@ void hardReset(bool internal_reset)
    {
       LOG4CPLUS_FATAL(gsLogger, "Stop failed, exiting.");
       exit(1); 
-   }
-
-   if (internal_reset)
-   {
-      stopComponentns();
    }
 
    pid_t pid;
@@ -119,8 +109,8 @@ void hardReset(bool internal_reset)
    }
 
    // child
-
-   sid = setsid();
+   // function shall create a new session, if the calling process is not a process group leader
+   sid = setsid();   
    if (sid < 0)
    {
       fputs(("setsid error: " + CError::FormErrnoDescr(errno)).c_str(),
@@ -132,12 +122,13 @@ void hardReset(bool internal_reset)
    
    fputs(("execl error: " + CError::FormErrnoDescr(errno)).c_str(),
       stderr);
+
    exit(1);
 }
 
 int destroy(pid_t pid)
 {
-   usleep(500000);
+   //usleep(500000);
    
    // -pid for killing all children with process
    if (-1 == kill(-pid, SIGTERM))
@@ -232,11 +223,102 @@ int hardStop(bool internal_stop)
    LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
    if (internal_stop)
    {
-      stopComponentns();
+      stopComponents();
 
-      destroy(getpid());
+      destroy(getpid());      
       exit(0);
+   }
+   else
+   {
+      shutdownIviProcesses();
    }
 
    return search_and_destroy(name_from_path(gsArgv0));
+}
+
+int getQuantityOfRunningIVILink()
+{
+   LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
+   int count = 0;
+   char line[SIZE_OF_PIDOF_RET];
+   char *subStr = 0;
+
+   FILE *command = popen("pidof IVILinkSystemController", "r");
+
+   fgets(line, SIZE_OF_PIDOF_RET, command); 
+   subStr = strtok(line, " ");   
+   while (subStr != NULL) 
+   {
+      count++; 
+      subStr = strtok(NULL, " ");   
+   } 
+   pclose(command);
+   LOG4CPLUS_INFO(gsLogger, "number of running iviLink = " +
+         convertIntegerToString(count));
+   return count;
+}
+
+bool shutdownIviProcess(char *proc_name)
+{   
+   LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
+   bool killed = true;
+   char *subStr = 0;
+   char *line = new char[SIZE_OF_PIDOF_RET];   
+   char *sCom = new char[SIZE_OF_COMMAND_STR];
+   pid_t pid = 0;
+
+   strcpy(sCom, "pidof ");
+   strcat(sCom, proc_name);
+
+   FILE *command = popen(sCom, "r");
+
+   fgets(line, SIZE_OF_PIDOF_RET, command); 
+   subStr = strtok(line, " ");   
+   while (subStr != NULL) 
+   {               
+      if ((pid = atoi(subStr)) > 0)
+      {        
+         if (-1 == kill(-pid, SIGTERM))
+         {
+            LOG4CPLUS_WARN(gsLogger, "Failed to kill " + std::string(proc_name) + CError::FormErrnoDescr(errno));
+            killed = false;
+         }
+         else
+         {
+            LOG4CPLUS_INFO(gsLogger, "Killed process " + std::string(proc_name) + " with pid = " + convertIntegerToString(pid));
+            killed = true;
+         }
+      }
+      subStr = strtok(NULL, " ");
+   } 
+   pclose(command);
+
+   delete []sCom;
+   delete []line;
+   return killed;
+}
+
+void shutdownIviProcesses()
+{
+   LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
+   std::vector<char*> viviProc;
+   viviProc.push_back("IVILinkProgressBar");
+   viviProc.push_back("IVILinkConnectivityAgent");
+   viviProc.push_back("IVILinkNegotiator");
+   viviProc.push_back("IVILinkProfileManager");
+   viviProc.push_back("IVILinkProfileRepository");
+   viviProc.push_back("IVILinkApplicationManager");
+   viviProc.push_back("AuthenticationApplication");
+   viviProc.push_back("launcher");
+   viviProc.push_back("ScreenSharing");
+   viviProc.push_back("Climate_App");
+   viviProc.push_back("Seat_App");
+   viviProc.push_back("MediaApp");
+   viviProc.push_back("Navi");
+
+   for (int i = 0; i != viviProc.size(); i++)
+   {
+      shutdownIviProcess(viviProc[i]);
+   }
+
 }

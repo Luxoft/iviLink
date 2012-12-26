@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,8 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
 /* 
  * File:   CServer.cpp
@@ -39,7 +38,6 @@ CServer::CServer() {
 void CServer::onPlay(std::string const& sout, std::string const& url) {
     const char * mSout = sout.c_str();
     const char * mUrl = url.c_str();
-     std::cout << "onPlay" << std::endl;
     //libvlc_vlm_add_broadcast(vlc, media_name, mUrl, mSout, 0, NULL, true, false);
     //libvlc_vlm_play_media(vlc, media_name);
 }

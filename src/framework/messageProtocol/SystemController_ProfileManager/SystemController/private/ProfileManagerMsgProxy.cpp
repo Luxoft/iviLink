@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 
 #include "ProfileManagerMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_ProfileManager/messages.hpp"
-#include "utils/ipc/helpers/buffer_helpers.hpp"
+#include "helpers/buffer_helpers.hpp"
 
 using namespace iviLink::Ipc;
 using iviLink::Ipc::Helpers::CBufferReader;
@@ -45,189 +33,142 @@ using iviLink::Ipc::Helpers::CBufferWriter;
 namespace SystemControllerMsgProtocol
 {
 
-Logger ProfileManagerMsgProxy::logger = Logger::getInstance(LOG4CPLUS_TEXT("systemController.msgProtocol.ProfileManagerMsgProxy"));
+Logger ProfileManagerMsgProxy::logger = Logger::getInstance(
+        LOG4CPLUS_TEXT("systemController.msgProtocol.ProfileManagerMsgProxy"));
 
-ProfileManagerMsgProxy::ProfileManagerMsgProxy(const string connectionName):
-   mpIpc(NULL)
+ProfileManagerMsgProxy::ProfileManagerMsgProxy(const string connectionName)
+        : mpIpc(NULL)
 {
-   LOG4CPLUS_TRACE(logger, "ProfileManagerMsgProxy(" + connectionName + ")");
+    LOG4CPLUS_TRACE(logger, "ProfileManagerMsgProxy(" + connectionName + ")");
 
-   mpIpc = new CIpc(connectionName, *this);
+    mpIpc = new CIpc(connectionName, *this);
 }
 
 ProfileManagerMsgProxy::~ProfileManagerMsgProxy()
 {
-   LOG4CPLUS_TRACE(logger, "~ProfileManagerMsgProxy()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   delete mpIpc;
+    delete mpIpc;
 }
 
 CError ProfileManagerMsgProxy::connectProfileManager()
 {
-   LOG4CPLUS_TRACE(logger, "beginWaitForConnection()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   return mpIpc->beginWaitForConnection();
+    return mpIpc->beginWaitForConnection();
 }
 
 bool ProfileManagerMsgProxy::isConnected() const
 {
-   return mpIpc->isConnected();
+    return mpIpc->isConnected();
 }
 
 CError ProfileManagerMsgProxy::requestShutDown()
 {
-   LOG4CPLUS_TRACE(logger, "requestShutDown()");
-
-   if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = SC_PM_SHUTDOWN;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   //UInt32 respSize = BUFFER_SIZE;
-   UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   return CError::NoError(getName());
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    UInt32 respSize = 0;
+    return sendRequest(SC_PM_SHUTDOWN, respSize);
 }
 
 CError ProfileManagerMsgProxy::requestUnlockAuthenticationProfile()
 {
-   LOG4CPLUS_TRACE(logger, "requestUnlockAuthenticationProfile()");
-
-   if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = SC_PM_UNLOCK_AUTHENTICATION_PROFILE;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   UInt32 respSize = BUFFER_SIZE;
-   //UInt32 respSize = 0;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   Message* resp = reinterpret_cast<Message*>(mReadBuffer);
-   assert(respSize >= sizeof(Message));
-   assert(resp->header.size + sizeof(Message) == respSize);
-   
-   bool wasPMError = false;
-   CBufferReader reader(resp->data, resp->header.size);
-   
-   err = reader.read(wasPMError);
-   if (!err.isNoError()) 
-      return err;
-
-   if (wasPMError) 
-      return CError(1, getName(), CError::ERROR, "Error unlocking auth profile");
-
-   return CError::NoError(getName());
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    return requestUnlock(SC_PM_UNLOCK_AUTHENTICATION_PROFILE);
 }
 
 CError ProfileManagerMsgProxy::requestUnlockProfiles()
 {
-   LOG4CPLUS_TRACE(logger, "requestUnlockProfiles()");
-
-   if (!mpIpc)
-      return CError(1, getName(), CError::FATAL, "no ipc");
-
-   Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-   req->header.type = SC_PM_UNLOCK_PROFILES;
-   req->header.size = 0;
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(Message) + req->header.size;
-   UInt32 respSize = BUFFER_SIZE;
-
-   CError err = mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
-
-   if (!err.isNoError())
-      return err;
-
-   Message* resp = reinterpret_cast<Message*>(mReadBuffer);
-   assert(respSize >= sizeof(Message));
-   assert(resp->header.size + sizeof(Message) == respSize);
-   
-   bool wasPMError = false;
-   CBufferReader reader(resp->data, resp->header.size);
-   
-   err = reader.read(wasPMError);
-   if (!err.isNoError()) 
-      return err;
-
-   if (wasPMError) 
-      return CError(1, getName(), CError::ERROR, "Error unlocking profiles");
-
-   return CError::NoError(getName());
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    return requestUnlock(SC_PM_UNLOCK_PROFILES);
 }
 
-void ProfileManagerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID)
+CError ProfileManagerMsgProxy::sendRequest(SystemControllerToProfileManager requestType,
+        UInt32& responseSize)
 {
-   LOG4CPLUS_TRACE(logger, "OnRequest()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   Message const* req = reinterpret_cast<Message const*>(pPayload);
+    if (!mpIpc)
+        return CError(1, getName(), CError::FATAL, "no ipc");
 
-   assert(req->header.size + sizeof(Message) == payloadSize);
-   assert(bufferSize >= sizeof(Message));
+    Message* req = reinterpret_cast<Message*>(mWriteBuffer);
+    req->header.type = requestType;
+    req->header.size = 0;
 
-   switch(req->header.type)
-   {
-   case PM_SC_CONNECTION_ESTABLISHED:
-      onCounterPMConnected();
-      break;
-   case PM_SC_CONNECTION_LOST:
-      onCounterPMDisconnected();
-      break;
-   default:
-      break;
-   }
+    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
 
-   bufferSize = 0;
+    UInt32 const reqSize = sizeof(Message) + req->header.size;
+    return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, responseSize);
+}
+
+CError ProfileManagerMsgProxy::requestUnlock(SystemControllerToProfileManager requestType)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    UInt32 respSize = BUFFER_SIZE;
+    CError err = sendRequest(requestType, respSize);
+    if (!err.isNoError())
+        return err;
+
+    Message* resp = reinterpret_cast<Message*>(mReadBuffer);
+    assert(respSize >= sizeof(Message));
+    assert(resp->header.size + sizeof(Message) == respSize);
+
+    bool wasPMError = false;
+    CBufferReader reader(resp->data, resp->header.size);
+
+    err = reader.read(wasPMError);
+    if (!err.isNoError())
+        return err;
+
+    if (wasPMError)
+        return CError(1, getName(), CError::ERROR, "Error unlocking profile");
+
+    return CError::NoError(getName());
+}
+
+void ProfileManagerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+        UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize,
+        iviLink::Ipc::DirectionID)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+
+    Message const* req = reinterpret_cast<Message const*>(pPayload);
+
+    assert(req->header.size + sizeof(Message) == payloadSize);
+    assert(bufferSize >= sizeof(Message));
+
+    switch (req->header.type)
+    {
+    case PM_SC_CONNECTION_ESTABLISHED:
+        onCounterPMConnected();
+        break;
+    case PM_SC_CONNECTION_LOST:
+        onCounterPMDisconnected();
+        break;
+    default:
+        break;
+    }
+
+    bufferSize = 0;
+}
+
+void ProfileManagerMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+        UInt32 payloadSize, iviLink::Ipc::DirectionID)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 }
 
 void ProfileManagerMsgProxy::OnConnection(iviLink::Ipc::DirectionID)
 {
-   LOG4CPLUS_TRACE(logger, "OnConnection()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   onProfileManagerAvailable();
+    onProfileManagerAvailable();
 }
 
 void ProfileManagerMsgProxy::OnConnectionLost(iviLink::Ipc::DirectionID)
 {
-   LOG4CPLUS_TRACE(logger, "OnConnectionLost()");
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
-   onProfileManagerNotAvailable();
-}
-
-ProfileManagerMsgProxy::CMsgIdGen::CMsgIdGen() :
-      mId(-1)
-{
-}
-
-ProfileManagerMsgProxy::CMsgIdGen::~CMsgIdGen()
-{
-
-}
-
-iviLink::Ipc::MsgID ProfileManagerMsgProxy::CMsgIdGen::getNext()
-{
-   mId += 2;
-   return mId;
+    onProfileManagerNotAvailable();
 }
 
 }

@@ -1,7 +1,14 @@
-<device name="HeadUnit">
+<device name="Phone">
     <service name="SeatService" />
     <service name="ClimateService" />
-	 <service name="BasicSampleServiceHUI" />
+	<service name="BasicSampleServiceHUI" />
     <service name="BasicSampleServiceClient" />
-	 <service name="AuthenticationService" />
+	<service name="AuthenticationService" />
+	<service name="NavigationMapService" />
+	<service name="NavigationVoiceService" />
+    <service name="MediaService" />
+	<service name="NotificationsServerService" />
+	<service name="NotificationsClientService" />
+	<service name="ScreenSharingServerService" />
+	<service name="ScreenSharingViewerService" />
 </device>

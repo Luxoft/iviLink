@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,28 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPROFILEREPOSERVERCLB_HPP_
 #define CPROFILEREPOSERVERCLB_HPP_
 
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/ipc/CIpc.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
-#include "framework/components/ProfileRepository/ProfileRepoInternalTypes.hpp"
+#include "CSignalSemaphore.hpp"
+#include "CIpc.hpp"
+#include "ICallbackHandler.hpp"
+#include "ProfileRepoInternalTypes.hpp"
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 #include "CProfileApiDatabase.hpp"
 #include "CProfileDatabase.hpp"
 
@@ -83,6 +72,7 @@ namespace iviLink
           * Callback is called on incoming requests
           */
          virtual void OnRequest(Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, Ipc::DirectionID);
+        virtual void OnAsyncRequest(Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, Ipc::DirectionID) {}
 
          /**
           * Function contains loop used to keep connection with Profile Repository Process

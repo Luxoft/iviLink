@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 /**
  * \file CApp.hpp
@@ -34,16 +27,12 @@
  */
  
 
-
 #ifndef CAPP_HPP_
 #define CAPP_HPP_
 
-#include "common.hpp"
+#include "AppLibCommon.hpp"
 
-#ifndef ANDROID
-#else
-#include "utils/android/AppInfo.hpp"
-#endif //ANDROID
+#include "AppInfo.hpp"
 
 namespace iviLink
 {
@@ -62,13 +51,19 @@ namespace iviLink
    class CApp
    {
    public:
-      #ifndef ANDROID
+      /**
+       * In case of Android, we additionally have to pass path to service
+       * repository and application's launch string:
+       * otherwise AppMan isn't able to correctly identify how this app was launched and 
+       * ServiceManager can't find service repository in some cases
+       */
+
       /**
        * Constructor. No information on supported services is passed to iviLink.
        * In order to enable services or disable any of them in run-time
        * setEnabled() method should be used
        */
-      CApp();
+      CApp(iviLink::Android::AppInfo appInfo = iviLink::Android::AppInfo());
       
       
       /**
@@ -77,7 +72,8 @@ namespace iviLink
        * run-time setEnabled() method should be used
        * @param service UID of the service to be supported by the Application
        */
-      CApp(const Service::Uid &service);
+      CApp(const Service::Uid &service, iviLink::Android::AppInfo appInfo 
+                                      = iviLink::Android::AppInfo());
       
       
       /**
@@ -86,21 +82,16 @@ namespace iviLink
        * them in run-time setEnabled() method should be used
        * @param services list of the services UIDs to be supported by the Application
        */
-      CApp(const Service::ListOfUids &services);
-      #else
-      /**
-       * In case of Android, we additionally have to pass path to service
-       * repository and application's launch string:
-       * otherwise AppMan isn't able to correctly identify how this app was launched and 
-       * ServiceManager can't find service repository in some cases
-       */
-      CApp(iviLink::Android::AppInfo appInfo);
-      CApp(const Service::Uid &service, iviLink::Android::AppInfo appInfo);
-      CApp(const Service::ListOfUids &services, iviLink::Android::AppInfo appInfo);
-      #endif //ANDROID
+      CApp(const Service::ListOfUids &services, iviLink::Android::AppInfo appInfo 
+                                              = iviLink::Android::AppInfo());
 
       virtual ~CApp();
 
+      /**
+       * Starts interactions with iviLink core, registers application and starts waiting for incoming requests
+       * Must be called after constructor of CApp inheritor.
+       */
+      void initInIVILink();
 
       /**
        * Changes enabled status of service. If service is enabled it means
@@ -182,41 +173,51 @@ namespace iviLink
        *    or by Application Manager (after request from the other side -
        *    then proxies may be used).
        */
-      virtual void initDone(ELaunchInfo launcher);
+      virtual void onInitDone(ELaunchInfo launcher);
 
       /**
        * Called before loading an incoming service.
        * @param service UID of an incoming service
        */
-      virtual void incomingServiceBeforeLoading(const Service::Uid &service);
+      virtual void onIncomingServiceBeforeLoading(const Service::Uid &service);
 
       /**
        * Called after loading an incoming service.
        * @param service UID of a loaded incoming service
        */
-      virtual void incomingServiceAfterLoading(const Service::Uid &service);
+      virtual void onIncomingServiceAfterLoading(const Service::Uid &service);
 
       /**
        * Called if an error has occurred during service loading.
        * @param service UID of an incoming service that caused the error
        */
-       virtual void serviceLoadError(const Service::Uid &service);
+       virtual void onServiceLoadError(const Service::Uid &service);
 
       /**
        * Called when a service session ends.
        * @param service UID of a service whose session has ended
        */
-      virtual void serviceDropped(const Service::Uid &service);
+      virtual void onServiceDropped(const Service::Uid &service);
+
+       // Connectivity callbacks
+       /**
+        * Called when two iviLinks connected ans authentificated with each other
+        */
+       virtual void onLinkUp();
+       /**
+        * Called when Connectivity Agent's link has been broken
+        */
+       virtual void onPhysicalLinkDown();
+       // Connectivity state
+       virtual bool isLinkAlive();
 
    private:
 
       App::CAppManProxy * mpAppManProxy;
       App::CServManProxy * mpServManProxy;
+      Service::ListOfUids mSupportedServices;
       
-      #ifndef ANDROID
-      #else
       iviLink::Android::AppInfo mAppInfo;
-      #endif //ANDROID
    };
 
 }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -59,12 +49,12 @@
  *
  ********************************************************************/
 
-#include "utils/xml/pugixml.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/libraries/ServiceManager/CServiceManager.hpp"
-#include "framework/components/ProfileManager/PMAL/CComponentMgr.hpp"
-#include "framework/components/ProfileManager/PMAL/IPMALCore.hpp"
-#include "framework/components/ProfileManager/PMAL/IPMALPIM.hpp"
+#include "pugixml.hpp"
+#include "CMutex.hpp"
+#include "CServiceManager.hpp"
+#include "CComponentMgr.hpp"
+#include "IPMALCore.hpp"
+#include "IPMALPIM.hpp"
 
 namespace iviLink
 {
@@ -72,22 +62,14 @@ namespace iviLink
    {
 
       Logger CService::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("ServicesLib.GenericService"));
-      
-      #ifndef ANDROID
-      CService::CService(const std::string &xmlPath, const Service::Uid & service)
+
+      CService::CService(const std::string &xmlPath, iviLink::Android::AppInfo appInfo, const Service::Uid & service)
          : mXmlPath(xmlPath)
          , mUid(service)
          , mpProfilesMapMutex(new CMutex())
          , mpCbMapMutex(new CMutex())
          , mCorrect(true)
-      #else
-      CService::CService(iviLink::Android::AppInfo appInfo, const Service::Uid & service)
-         : mAppInfo(appInfo)
-         , mUid(service)
-         , mpProfilesMapMutex(new CMutex())
-         , mpCbMapMutex(new CMutex())
-         , mCorrect(true)
-      #endif //ANDROID
+         , mAppInfo(appInfo)
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
       }
@@ -104,14 +86,15 @@ namespace iviLink
          return mUid;
       }
 
+      const Service::Uid & CService::getPairUid() const
+      {
+         return mPairUid;
+      }
       bool CService::load(tCallbacksMap & cbMap)
       {
-         #ifndef ANDROID
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mManifestPath = mXmlPath + mUid.value() + ".xml";
-         #else
-         mManifestPath = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
-         #endif //ANDROID
-         LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML filename = '" +
+         LOG4CPLUS_INFO(msLogger, "CService::parseServiceXML filename = '" +
             mManifestPath + "'");
 
          pugi::xml_document doc;
@@ -119,7 +102,7 @@ namespace iviLink
          if (result)
          {
             std::string service_name(doc.child("service").attribute("name").value());
-            LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML()" + service_name);
+            LOG4CPLUS_INFO(msLogger, "CService::parseServiceXML()" + service_name);
             mPairUid = doc.child("service").child("pair").attribute("name").value();
 
             for (pugi::xml_node profile_node = doc.child("service").child("profile"); profile_node;
@@ -168,13 +151,9 @@ namespace iviLink
                tCallbacksMap::iterator iter = cbMap.find(profile_api_UID);
                if(iter != cbMap.end())
                {
-                  LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML() callbacks found, loding profile....");
+                  LOG4CPLUS_INFO(msLogger, "CService::parseServiceXML() callbacks found, loding profile....");
                   Profile::IProfileCallbackProxy* pCallback = iter->second;
-                  #ifndef ANDROID
-                  err = pPim->loadProfile(prfUid, mPairUid, pCallback, pProfile);
-                  #else
-                  err = pPim->loadProfile(prfUid, mPairUid, pCallback, pProfile, mAppInfo.privateDirPath);
-                  #endif //ANDROID
+                  err = pPim->loadProfile(prfUid, mPairUid, pCallback, pProfile, mAppInfo);
                   if (err.isNoError())
                   {
                      mpProfilesMapMutex->lock();
@@ -207,6 +186,7 @@ namespace iviLink
 
       void CService::unload()
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          std::list<Service::Uid> eraseList;
          for(tProfilesMap::iterator it =mProfilesMap.begin();
@@ -233,12 +213,9 @@ namespace iviLink
 
       bool CService::incomingLoad(tCallbacksMap & cbMap)
       {
-         #ifndef ANDROID
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mManifestPath = mXmlPath + mUid.value() + ".xml";
-         #else
-         mManifestPath = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
-         #endif //ANDROID
-         LOG4CPLUS_TRACE(msLogger, "CService::parseServiceXML filename = '" +
+         LOG4CPLUS_INFO(msLogger, "CService::parseServiceXML filename = '" +
             mManifestPath + "'");
 
          pugi::xml_document doc;
@@ -246,7 +223,7 @@ namespace iviLink
          if (result)
          {
             std::string service_name(doc.child("service").attribute("name").value());
-            LOG4CPLUS_TRACE(msLogger, "CService::incomingLoad()" + service_name);
+            LOG4CPLUS_INFO(msLogger, "CService::incomingLoad()" + service_name);
             mPairUid = doc.child("service").child("pair").attribute("name").value();
 
             for (pugi::xml_node profile_node = doc.child("service").child("profile"); profile_node;
@@ -294,14 +271,12 @@ namespace iviLink
       ERROR_CODE CService::incomingProfileRequest( iviLink::Profile::Uid const& uid,
             iviLink::Profile::ApiUid const& papiUid)
       {
-         LOG4CPLUS_TRACE(msLogger, "CService::incomingProfileRequest() " + uid.value()
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+         LOG4CPLUS_INFO(msLogger, "CService::incomingProfileRequest() " + uid.value()
             + " api = " + papiUid.value());
          ERROR_CODE ret = ERR_FAIL;
-         #ifndef ANDROID
          std::string path = mXmlPath + mUid.value() + ".xml";
-         #else
-         std::string path = mAppInfo.serviceRepoPath + mUid.value() + ".xml";
-         #endif //ANDROID
+         LOG4CPLUS_INFO(msLogger, "XML path: " + path);
          pugi::xml_document doc;
          pugi::xml_parse_result result = doc.load_file(path.c_str());
          if (result)
@@ -326,14 +301,10 @@ namespace iviLink
             if(iter !=mCbMap.end())
             {
                mpCbMapMutex->unlock();
-               LOG4CPLUS_TRACE(msLogger,
+               LOG4CPLUS_INFO(msLogger,
                      "CService::incomingProfileRequest() callbacks found, loding profile....");
                iviLink::Profile::IProfileCallbackProxy* pCallback = iter->second;
-               #ifndef ANDROID
-               err = pPim->loadProfile(prfUid, mUid, pCallback, pProfile);
-               #else
-               err = pPim->loadProfile(prfUid, mUid, pCallback, pProfile, mAppInfo.privateDirPath);
-               #endif //ANDROID
+               err = pPim->loadProfile(prfUid, mUid, pCallback, pProfile, mAppInfo);
                mpProfilesMapMutex->lock();
                mProfilesMap[profile_api] = pProfile;
                mpProfilesMapMutex->unlock();
@@ -356,6 +327,7 @@ namespace iviLink
 
       void CService::profileDied(const Profile::IUid &instance)
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          for (tProfilesMap::iterator it = mProfilesMap.begin();
                mProfilesMap.end() != it; ++it)
@@ -382,6 +354,7 @@ namespace iviLink
 
       bool CService::allLoaded() const
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          for (tProfilesMap::const_iterator it = mProfilesMap.begin();
                mProfilesMap.end() != it; ++it)
@@ -398,6 +371,7 @@ namespace iviLink
 
       bool CService::allDied() const
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          bool res = mProfilesMap.empty();
          mpProfilesMapMutex->unlock();
@@ -406,6 +380,7 @@ namespace iviLink
 
       CProfileApiBase * CService::getProfile(const Profile::ApiUid &profileApi)
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          tProfilesMap::iterator it = mProfilesMap.find(profileApi);
          if(it != mProfilesMap.end())
@@ -414,23 +389,27 @@ namespace iviLink
             {
                CProfileApiBase * api = it->second->profileInstance();
                mpProfilesMapMutex->unlock();
+               LOG4CPLUS_TRACE(msLogger, "Found profile instance for API: " + profileApi.value());
                return api;
             }
             else
             {
                mpProfilesMapMutex->unlock();
+               LOG4CPLUS_WARN(msLogger, "No profile instance for API: " + profileApi.value());
                return NULL;
             }
          }
          else
          {
             mpProfilesMapMutex->unlock();
+            LOG4CPLUS_WARN(msLogger, "No profile API in map: " + profileApi.value());
             return NULL;
          }
       }
 
       void CService::releaseProfile(const Profile::ApiUid &profileApi)
       {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          mpProfilesMapMutex->lock();
          tProfilesMap::iterator it = mProfilesMap.find(profileApi);
          if(it != mProfilesMap.end() && it->second)

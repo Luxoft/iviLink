@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPMPCOMPONENTMANAGER_HPP_
 #define CPMPCOMPONENTMANAGER_HPP_
 
 #include <sys/types.h>
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 namespace iviLink
 {
@@ -57,7 +46,7 @@ namespace iviLink
    {
       namespace Ipc
       {
-         class CIpcProtocol;
+         class CPMPIpcProtocol;
       }  // namespace Ipc
 
       class CPmpCore;
@@ -125,7 +114,7 @@ namespace iviLink
          CPmpCore * mpCore;                  ///< Pointer to Core instance
          CPmpPimProtocol * mpPimProtocol;    ///< Pointer to PMP PIM Protocol instance
          CPmpPim * mpPim;                    ///< Pointer to PIM instance
-         iviLink::PMP::Ipc::CIpcProtocol * mpIpcProtocol; ///< Pointer to IPC Protocol instance
+         iviLink::PMP::Ipc::CPMPIpcProtocol * mpIpcProtocol; ///< Pointer to IPC Protocol instance
          iviLink::conf::Configurator * mpConfig;
 
          static Logger msLogger; ///< object of logger

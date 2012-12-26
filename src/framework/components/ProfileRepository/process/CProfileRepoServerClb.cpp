@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <unistd.h>
 
-#include "utils/configurator/configurator.h"
-#include "utils/misc/logging.hpp"
-#include "utils/serialize/Serialize.hpp"
+#include "configurator.h"
+#include "Serialize.hpp"
  
 #include "CProfileRepoServerClb.hpp"
 
@@ -60,12 +48,12 @@ namespace iviLink
 
          mpIpc = new Ipc::CIpc(addr, *this);
          
-         #ifndef ANDROID
-         #else
+#ifndef ANDROID
+#else
          std::string dirPath = mConfig.getParam("path_to_database");
          mProfileDB.setDatabasePath(dirPath);
          mApiDB.setDatabasePath(dirPath);
-         #endif //ANDROID
+#endif //ANDROID
       }
 
       CProfileRepoServerClb::~CProfileRepoServerClb()

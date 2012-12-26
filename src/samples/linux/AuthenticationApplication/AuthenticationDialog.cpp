@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
+#include <unistd.h>
+#include <sys/param.h>
 
-
-
-
-
-
-#include "samples/linux/AuthenticationApplication/AuthenticationDialog.hpp"
+#include "AuthenticationDialog.hpp"
 namespace authentication
 {
 
@@ -45,7 +41,7 @@ AuthenticationDialog::AuthenticationDialog(iviLink::Android::AppInfo appInfo, Ja
    : iviLink::CApp(iviLink::Service::Uid("AuthenticationService"), appInfo)
    , SystemControllerMsgProxy("SysCtrl_AuthApp")
    , mAppInfo(appInfo)
-   , mPathToTrlist(pathToTrlist)
+   , mInternalPath(pathToTrlist)
    , mpJm(pJm)
    , jAppCallbacks(callbacksObj)
    , mPin("")
@@ -53,24 +49,34 @@ AuthenticationDialog::AuthenticationDialog(iviLink::Android::AppInfo appInfo, Ja
 #endif //ANDROID
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
+}
+
+void AuthenticationDialog::init()
+{
+   initInIVILink();
+
    MutexLocker lock(mMutex);
    switch2INITIAL();
 
-   #ifndef ANDROID
+#ifndef ANDROID
+   char path[MAXPATHLEN];
+   getcwd(path, MAXPATHLEN);
+   mInternalPath = std::string(path);
+   LOG4CPLUS_INFO(sLogger, "internal path is: "+mInternalPath);
    mpAuthenticationProxy = new CAuthenticationProxy(iviLink::Service::Uid("AuthenticationService"));
-   #else
-   mpAuthenticationProxy = new CAuthenticationProxy(iviLink::Service::Uid("AuthenticationService"), mAppInfo);
-   #endif //ANDROID
-   
-   registerProfileCallbacks(iviLink::Profile::ApiUid("AuthenticationProfile_PAPI_UID"),this);
+#else
+   mpAuthenticationProxy = new CAuthenticationProxy(iviLink::Service::Uid("AuthenticationService"), 
+                                                    mAppInfo);
+#endif //ANDROID
 
-   #ifndef ANDROID
+   
+#ifndef ANDROID
    setupUi(this); // QT stuff
    msgBox = new QDialog(this);
    msgBoxWidget = new QWidget(msgBox);
    QObject::connect( this, SIGNAL(showPopup(int, QString)), this, SLOT(on_showPopup(int, QString)));
    QObject::connect( this, SIGNAL(showPINCodeWindow()), this, SLOT(on_showPINCodeWindow()));
-   #endif //ANDROID
+#endif //ANDROID
 
    CError err = SystemControllerMsgProxy::connect();
    if (!err.isNoError())
@@ -79,13 +85,14 @@ AuthenticationDialog::AuthenticationDialog(iviLink::Android::AppInfo appInfo, Ja
    }
 }
 
-void AuthenticationDialog::initDone(iviLink::ELaunchInfo launcher)
+void AuthenticationDialog::onInitDone(iviLink::ELaunchInfo launcher)
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    MutexLocker lock(mMutex);
    if (iviLink::LAUNCHED_BY_USER == launcher)
    {
       LOG4CPLUS_INFO(sLogger, "started by user");
+      registerProfileCallbacks(iviLink::Profile::ApiUid("AuthenticationProfile_PAPI_UID"),this);
       if(loadService(iviLink::Service::Uid("AuthenticationService")))
       {
          LOG4CPLUS_INFO(sLogger, "started by user - service loaded!");
@@ -103,13 +110,14 @@ void AuthenticationDialog::initDone(iviLink::ELaunchInfo launcher)
    }
 }
 
-void AuthenticationDialog::incomingServiceBeforeLoading(const iviLink::Service::Uid &service)
+void AuthenticationDialog::onIncomingServiceBeforeLoading(const iviLink::Service::Uid &service)
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    MutexLocker lock(mMutex);
+   registerProfileCallbacks(iviLink::Profile::ApiUid("AuthenticationProfile_PAPI_UID"),this);
 }
 
-void AuthenticationDialog::incomingServiceAfterLoading(const iviLink::Service::Uid &service)
+void AuthenticationDialog::onIncomingServiceAfterLoading(const iviLink::Service::Uid &service)
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    MutexLocker lock(mMutex);
@@ -124,13 +132,13 @@ void AuthenticationDialog::incomingServiceAfterLoading(const iviLink::Service::U
 bool AuthenticationDialog::checkPINs()
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
-   #ifndef ANDROID
+#ifndef ANDROID
    if(sRemotePIN == sLocalPIN)
-   #else
+#else
    LOG4CPLUS_INFO(sLogger, "checkPINs(): mPin="+mPin);
    LOG4CPLUS_INFO(sLogger, "checkPINs(): theirPin="+theirPin);
    if(mPin.compare(theirPin) == 0)
-   #endif //ANDROID
+#endif //ANDROID
    {
       LOG4CPLUS_WARN(sLogger, "Authentication is successful!!!");
       if(mState == WAITING_REMOTE_PIN)
@@ -146,16 +154,21 @@ bool AuthenticationDialog::checkPINs()
    else
    {
       LOG4CPLUS_WARN(sLogger, "Authentication failed!!! PINs aren't equal");
-      if(mState == WAITING_LOCAL_PIN)
+      if(mState == WAITING_LOCAL_PIN || mState == WAITING_REMOTE_PIN)
       {
-         #ifndef ANDROID
+#ifndef ANDROID
          sLocalPIN.clear();
          pinEditLine->clear();
          emit showPopup(authentication::incorrectPin, QString("Authentication failed!!! PINs aren't equal. Try again."));
-         #else
+
+         backspaceButton->setEnabled(true);
+         backspaceButton->setVisible(true);
+         OKButton->setEnabled(true);
+         OKButton->setVisible(true);
+#else
          mPin = std::string("");
          callJavaMethod("resetPinDialog");
-         #endif //ANDROID
+#endif //ANDROID
       }
       return false;
    }
@@ -171,14 +184,14 @@ void AuthenticationDialog::gotPIN(int first_digit, int second_digit, int third_d
                                       + convertIntegerToString(third_digit)
                                       + convertIntegerToString(fourth_digit) + ")");
 
-   #ifndef ANDROID
+#ifndef ANDROID
    sRemotePIN.setPIN(first_digit, second_digit, third_digit, fourth_digit);
-   #else
+#else
    theirPin = convertIntegerToString(first_digit)
             + convertIntegerToString(second_digit)
             + convertIntegerToString(third_digit)
             + convertIntegerToString(fourth_digit);
-   #endif //ANDROID
+#endif //ANDROID
 
    if (mState != WAITING_REMOTE_PIN && mState != WAITING_ANY_PIN)
    {
@@ -197,9 +210,16 @@ void AuthenticationDialog::gotPIN(int first_digit, int second_digit, int third_d
 
 void AuthenticationDialog::onAuthenticationIsNotRequired()
 {
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    MutexLocker lock(mMutex);
-   LOG4CPLUS_INFO(sLogger, "onAuthenticationIsNotRequired(");
-   switch2SUCCESS();
+   if(getLaunchInfo() == iviLink::LAUNCHED_BY_USER) 
+   {
+      switch2WAITING_REMOTE_DEATH();
+   } 
+   else 
+   {
+      switch2SUCCESS();
+   }
 }
 
 void AuthenticationDialog::onAuthenticationIsRequired()
@@ -208,19 +228,6 @@ void AuthenticationDialog::onAuthenticationIsRequired()
    LOG4CPLUS_INFO(sLogger, "onAuthenticationIsRequired()");
    switch2WAITING_ANY_PIN();
 }
-
-void AuthenticationDialog::onRequestShutDown()
-{
-   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
-   MutexLocker lock(mMutex);
-   LOG4CPLUS_INFO(sLogger, "Shutdown request from system controller - close Application");
-   #ifndef ANDROID
-   qApp->exit(0);
-   #else
-   callJavaMethod("shutDown");
-   #endif //ANDROID
-}
-
 
 #ifndef ANDROID
 void AuthenticationDialog::on_showPINCodeWindow()
@@ -278,15 +285,15 @@ void AuthenticationDialog::okButtonClicked()
 #endif //ANDROID
 {
    LOG4CPLUS_INFO(sLogger, "on_OKButton_clicked()");
-   #ifndef ANDROID
+#ifndef ANDROID
    if(!sLocalPIN.isPINSet()) {
       emit showPopup(authentication::tooShortPin, QString("Wrong PIN input. Please try again."));
       return;
    }
-   #else
+#else
    // this will never happen because of a check in the java code
    if(mPin.size() != 4)  return; 
-   #endif // ANDROID
+#endif // ANDROID
    if (mState == WAITING_ANY_PIN)
    {
       switch2WAITING_REMOTE_PIN(); //become master  
@@ -422,7 +429,7 @@ int AuthenticationDialog::getIntFromStr(std::string str, int pos)
 }
 
 
-void AuthenticationDialog::serviceDropped(iviLink::Service::Uid const&/* serviceUID*/)
+void AuthenticationDialog::onServiceDropped(iviLink::Service::Uid const&/* serviceUID*/)
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__ );
    LOG4CPLUS_INFO(sLogger, "Counter-service was dropped by counter-side");
@@ -440,15 +447,16 @@ void AuthenticationDialog::switch2INITIAL()
 
 void AuthenticationDialog::switch2WAITING_ANY_PIN()
 {
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    if(mState == INITIAL)
    {
       LOG4CPLUS_INFO(sLogger, "STATE:: WAITING_ANY_PIN");
       mState = WAITING_ANY_PIN;
-      #ifndef ANDROID
+#ifndef ANDROID
       emit showPINCodeWindow();
-      #else
+#else
       callJavaMethod("showPinDialog");
-      #endif //ANDROID
+#endif //ANDROID
    }
    else
    {
@@ -459,11 +467,12 @@ void AuthenticationDialog::switch2WAITING_ANY_PIN()
 
 void AuthenticationDialog::switch2WAITING_REMOTE_PIN() // is master
 {
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    if(mState == WAITING_ANY_PIN)
    {
       LOG4CPLUS_INFO(sLogger, "STATE:: WAITING_REMOTE_PIN (our side generated pin first and we are master now)");
       mState = WAITING_REMOTE_PIN;
-      #ifndef ANDROID
+#ifndef ANDROID
       // TODO grey buttons
       backspaceButton->setEnabled(false);
 		backspaceButton->setVisible(false);
@@ -473,13 +482,13 @@ void AuthenticationDialog::switch2WAITING_REMOTE_PIN() // is master
                                    sLocalPIN.getSecondDigit(),
                                    sLocalPIN.getThirdDigit(),
                                    sLocalPIN.getFourthDigit());
-      #else
+#else
       mpAuthenticationProxy->sendPIN(getIntFromStr(mPin, 0),
                                     getIntFromStr(mPin, 1),
                                     getIntFromStr(mPin, 2),
                                     getIntFromStr(mPin, 3));
       callJavaMethod("lockText");
-      #endif //ANDROID
+#endif //ANDROID
    }
    else
    {
@@ -489,6 +498,7 @@ void AuthenticationDialog::switch2WAITING_REMOTE_PIN() // is master
 
 void AuthenticationDialog::switch2WAITING_LOCAL_PIN() // is slave
 {
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
    if(mState == WAITING_ANY_PIN)
    {
       LOG4CPLUS_INFO(sLogger, "STATE:: WAITING_LOCAL_PIN (other side generated pin first and we are slave now)");
@@ -512,7 +522,7 @@ void AuthenticationDialog::switch2WAITING_PIN_CONFIRMATION()
       mpAuthenticationProxy->writeRemoteUIDToTrustList();
       LOG4CPLUS_INFO(sLogger, "switch2WAITING_PIN_CONFIRMATION: sending pin");
       // wait for confirmation
-      #ifndef ANDROID
+#ifndef ANDROID
       // TODO grey buttons
       OKButton->setEnabled(false);
       OKButton->setVisible(false);
@@ -520,13 +530,13 @@ void AuthenticationDialog::switch2WAITING_PIN_CONFIRMATION()
                                    sLocalPIN.getSecondDigit(),
                                    sLocalPIN.getThirdDigit(),
                                    sLocalPIN.getFourthDigit());
-      #else
+#else
       mpAuthenticationProxy->sendPIN(getIntFromStr(mPin, 0),
                                     getIntFromStr(mPin, 1),
                                     getIntFromStr(mPin, 2),
                                     getIntFromStr(mPin, 3));
       callJavaMethod("hideDialog");
-      #endif //ANDROID
+#endif //ANDROID
    } 
    else
    {
@@ -564,17 +574,20 @@ void AuthenticationDialog::switch2SUCCESS()
 void AuthenticationDialog::switch2WAITING_REMOTE_DEATH()
 {
    LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
-   if(mState == WAITING_REMOTE_PIN)
+   if(mState == WAITING_REMOTE_PIN || mState == INITIAL)
    {
-      mState = WAITING_REMOTE_DEATH;
       // pins match, is trusted
-      mpAuthenticationProxy->writeRemoteUIDToTrustList();
-      // notify slave
-      sendExternalState(ext_AUTH_OK);
-      #ifndef ANDROID
-      #else
-      callJavaMethod("hideDialog");
-      #endif //ANDROID
+      if (mState == WAITING_REMOTE_PIN)
+      {
+         mpAuthenticationProxy->writeRemoteUIDToTrustList();
+         // notify slave
+         sendExternalState(ext_AUTH_OK);
+#ifndef ANDROID
+#else
+         callJavaMethod("hideDialog");
+#endif //ANDROID
+      }
+      mState = WAITING_REMOTE_DEATH;
    }
    else
    {

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CPhysicalLayerHandshakeDone.hpp"
 #include "CChannelLayerReady.hpp"
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
+#include "CComponentLauncher.hpp"
+#include "CSystemStateMachine.hpp"
+#include "CTriggerQueue.hpp"
 
 namespace SystemController
 {
@@ -62,20 +51,20 @@ CPhysicalLayerHandshakeDone::~CPhysicalLayerHandshakeDone()
 
 void CPhysicalLayerHandshakeDone::launchChannelLayer(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "launchChannelLayer()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
-   #ifndef ANDROID
+#ifndef ANDROID
    CComponentLauncher::getInstance()->launchChannelSupervisor();
    stateMachine->connectChannelSupervisor();
-   #else 
+#else 
    stateMachine->connectChannelSupervisor();
    iviLink::Android::makeRequest(iviLink::Android::eLaunchNegotiator);
-   #endif //ANDROID
+#endif //ANDROID
 }
 
 void CPhysicalLayerHandshakeDone::onChannelSupervisorAvailable(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onChannelSupervisorAvailable()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CChannelLayerReady::getInstance());
 

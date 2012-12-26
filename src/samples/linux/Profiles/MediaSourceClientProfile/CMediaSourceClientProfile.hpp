@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #ifndef CMEDIASOURCECLIENTPROFILE_HPP_
 #define CMEDIASOURCECLIENTPROFILE_HPP_
 
 
-#include "utils/misc/Logger.hpp"
-#include "framework/public/profileLib/profileLib.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IMediaSourceClientProfileAPI.hpp"
-#include "samples/linux/Profiles/mediaCommon/ISender.hpp"
-#include "samples/linux/Profiles/mediaCommon/common.h"
+#include "Logger.hpp"
+#include "profileLib.hpp"
+#include "IMediaSourceClientProfileAPI.hpp"
+#include "ISender.hpp"
+#include "common.h"
 
 using iviLink::CBuffer;
 using iviLink::Channel::tChannelId;
@@ -62,9 +57,9 @@ class CMediaSourceClientProfile   : public iviLink::Channel::CChannelHandler
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
    //from ISender
    virtual void senderLoop();
@@ -83,7 +78,6 @@ class CMediaSourceClientProfile   : public iviLink::Channel::CChannelHandler
    CSignalSemaphore *                           mpReqSemaphore;
    bool                                         mBe;
    bool                                         mHasRequest;
-   std::string                                  mTag;
    static Logger                                msLogger;
 };
 

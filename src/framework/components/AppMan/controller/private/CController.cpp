@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,27 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CController.hpp"
-#include "framework/components/AppMan/requestHandler/CAppComThread.hpp"
-#include "framework/components/AppMan/requestHandler/CLaunchThread.hpp"
-#include "framework/components/AppMan/requestHandler/CRequestHandler.hpp"
-#include "framework/libraries/AppMan/AmpForApp/CAppManProtoServer.hpp"
-#include "framework/libraries/AppMan/AmpForPmp/CPmpController.hpp"
-#include "framework/components/AppMan/database/CDatabase.hpp"
-#include "framework/components/AppMan/launcher/CLauncher.hpp"
+#include "CAppComThread.hpp"
+#include "CLaunchThread.hpp"
+#include "CRequestHandler.hpp"
+#include "CAppManProtoServer.hpp"
+#include "CPmpController.hpp"
+#include "CDatabase.hpp"
+#include "CLauncher.hpp"
 
 
 namespace iviLink
@@ -69,21 +58,21 @@ namespace iviLink
          delete mpRequestHandler;
       }
 
-      #ifndef ANDROID
+#ifndef ANDROID
       void CController::init()
-      #else
+#else
       void CController::init(std::string pathToDatabase, JavaVM * jm, jclass launchClass, jmethodID launchMethod)
-      #endif //ANDROID
+#endif //ANDROID
       {
          AppMan::Ipc::CPmpController::instance();
          mpAppComThread->start();
          mpLaunchThread->start();
 
-         #ifndef ANDROID
+#ifndef ANDROID
          mpDatabase->load();
-         #else
+#else
          mpDatabase->load(pathToDatabase);
-         #endif //ANDROID
+#endif //ANDROID
          mpDatabase->print();
 
          mpRequestHandler->initDatabase(mpDatabase);
@@ -105,11 +94,11 @@ namespace iviLink
          mpLaunchThread->initLauncher(mpLauncher);
          mpLaunchThread->initRequestHandler(mpRequestHandler);
 
-         #ifndef ANDROID
+#ifndef ANDROID
          mpLauncher->init(mpLaunchThread);
-         #else
+#else
          mpLauncher->init(mpLaunchThread, jm, launchClass, launchMethod);
-         #endif
+#endif //ANDROID
 
          mpAppManProtoServer->startWaitingForClients();
 
@@ -127,13 +116,35 @@ namespace iviLink
          mpAppManProtoServer->initConnectionHandler(0);
          mpAppComThread->uninit();
          mpLaunchThread->uninit();
-         #ifndef ANDROID
+#ifndef ANDROID
          mpLauncher->init(0);
-         #else
+#else
          mpLauncher->uninit(); // for convenience
-         #endif //ANDROID
+#endif //ANDROID
          mpRequestHandler->uninit();
       }
+
+       void CController::setLinkStateGetter( std::tr1::function<bool ()> getter )
+       {
+           mpAppManProtoServer->set_link_state_getter( getter );
+       }
+
+       void CController::onLinkUpNotify()
+       {
+           LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+
+           if( mpAppManProtoServer )
+               mpAppManProtoServer->onLinkUpNotify();
+       }
+
+       void CController::onLinkDownNotify()
+       {
+           LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+
+           if( mpAppManProtoServer )
+               mpAppManProtoServer->onLinkDownNotify();
+       }
+
 
    } /* namespace AMP */
 } /* namespace AXIS */

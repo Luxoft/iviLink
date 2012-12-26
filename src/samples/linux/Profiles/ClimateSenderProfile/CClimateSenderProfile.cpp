@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-#include "CClimateSenderProfile.hpp"
-
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
-#include "CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+ */ 
+ 
 
 #include <cstring>
 #include <cassert>
 
+
+#include "CClimateSenderProfile.hpp"
+
+#include "ChannelSupervisorTube.hpp"
+#include "CSenderThread.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
+
+
 using iviLink::CBuffer;
 
-Logger CClimateSenderProfile::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Profiles.CClimateSenderProfile"));
+Logger CClimateSenderProfile::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("profiles.sender.climate"));
 
 CClimateSenderProfile::CClimateSenderProfile(iviLink::Profile::IProfileCallbackProxy* pCbProxy)
    : mChannelID(0)
@@ -46,16 +44,14 @@ CClimateSenderProfile::CClimateSenderProfile(iviLink::Profile::IProfileCallbackP
    , mSenderThread(this)
    , mBe(true)
 {
-  // Verify that the version of the library that we linked against is
-  // compatible with the version of the headers we compiled against.
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-  PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
 }
 
 CClimateSenderProfile::~CClimateSenderProfile()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
+   mBe = false;
+   mReqSemaphore.signal();
    mSenderThread.disconnect();
    if( mChannelID )
      iviLink::Channel::deallocateChannel(mChannelID);
@@ -66,18 +62,12 @@ void CClimateSenderProfile::send_state( const IClimateSenderProfile::state_t& st
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    std::string buf;
-   if( state.SerializeToString(&buf) )
-   {
-       //LOG4CPLUS_INFO( msLogger, "seat sender profile: send\n" + state.DebugString() );
-     {
-       const lock l( mReqMutex );
-       mReqQueue.push( buffer_t() );
-       mReqQueue.back().swap( buf ); // avoid copy
-     }
-     mReqSemaphore.signal();
-   }
-   else
-      LOG4CPLUS_ERROR(msLogger, "Unable to serialize state");
+   buf = state.serialize();
+   mReqMutex.lock();
+   mReqQueue.push( buffer_t() );
+   mReqQueue.back().swap( buf ); // avoid copy
+   mReqMutex.unlock();
+   mReqSemaphore.signal();
 }
 
 
@@ -87,17 +77,28 @@ void CClimateSenderProfile::onEnable()
 
    assert( mpAppCallbacks );
    if( mpAppCallbacks )
-       mChannelID = iviLink::Channel::allocateChannel(mpAppCallbacks->get_channel_id(), this);
-
-   if (mChannelID)
    {
-      LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");
-      mSenderThread.start();
+       const std::string ch_id = mpAppCallbacks->get_channel_id();
+       LOG4CPLUS_INFO(msLogger, "Trying allocate channel \"" + ch_id + "\"\n");
+       mChannelID = iviLink::Channel::allocateChannel(ch_id, this, eRealTime);
+
+       if (mChannelID)
+       {
+           LOG4CPLUS_INFO(msLogger, "Channel \""
+                           + ch_id
+                           + "\" allocated, starting the communication...");
+           mSenderThread.start();
+       }
+       else
+       {
+           LOG4CPLUS_ERROR(msLogger, "Channel \""
+                            + ch_id
+                           + "\" allocation failed");
+           killProcess(1);
+       }
    }
    else
-   {
-      LOG4CPLUS_ERROR(msLogger, "allocate Channel failed");
-   }
+     LOG4CPLUS_ERROR(msLogger, "Can't find application callbacks, so can't get correct channel id");
 }
 
 void CClimateSenderProfile::onDisable()
@@ -110,12 +111,12 @@ void CClimateSenderProfile::onDisable()
 }
 
 //from CChannelHandler
-void CClimateSenderProfile::bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
+void CClimateSenderProfile::onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
 {
    LOG4CPLUS_ERROR(msLogger, "seat sender profile: Don't know what to do with received data: this is one-way channel");
 }
 
-void CClimateSenderProfile::channelDeletedCallback(const UInt32 channel_id)
+void CClimateSenderProfile::onChannelDeleted(const UInt32 channel_id)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -129,7 +130,7 @@ void CClimateSenderProfile::channelDeletedCallback(const UInt32 channel_id)
    }
 }
 
-void CClimateSenderProfile::connectionLostCallback()
+void CClimateSenderProfile::onConnectionLost()
 {
     //LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     LOG4CPLUS_ERROR(msLogger, "seat sender profile: connection lost!");
@@ -153,7 +154,7 @@ void CClimateSenderProfile::senderLoop()
 
 bool CClimateSenderProfile::hasRequests()
 {
-  lock l( mReqMutex );
+  MutexLocker lock( mReqMutex );
   return !mReqQueue.empty();
 }
 
@@ -161,7 +162,7 @@ void CClimateSenderProfile::handleRequest()
 {
   buffer_t buf;
   {
-    lock l( mReqMutex );
+    MutexLocker lock( mReqMutex );
     buf.swap( mReqQueue.front() );
     mReqQueue.pop();
   }

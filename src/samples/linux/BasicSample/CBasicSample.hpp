@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,31 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CBASICSAMPLE_HPP_
 #define CBASICSAMPLE_HPP_
 
 //CApp header, must be included for interaction with apllication manager
-#include "framework/public/appLib/CApp.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CApp.hpp"
+#include "Logger.hpp"
 //basic sample api profile header, must be included for implementing callbacks
-#include "samples/linux/Profiles/ProfileAPI/IBasicSampleProfileAPI.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "IBasicSampleProfileAPI.hpp"
+#include "CSignalSemaphore.hpp"
 
-#ifndef ANDROID
-#else
-#include <jni.h>
-#include "utils/android/AppInfo.hpp"
-#include "utils/android/JniThreadHelper.hpp"
-#endif //ANDROID
 
 // CBasicSample class inherits CApp class
 class CBasicSample : public iviLink::CApp
@@ -53,19 +40,9 @@ class CBasicSample : public iviLink::CApp
    {
       CSignalSemaphore * mpSemaphore;
       public:
-         #ifndef ANDROID
          explicit BasicSampleProfileCallbacks(CSignalSemaphore & semaphore)
             : mpSemaphore(&semaphore)
          {}
-         #else
-         explicit BasicSampleProfileCallbacks(CSignalSemaphore & semaphore, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result)
-            : mpSemaphore(&semaphore),
-              mpJM(pJm),
-              jCallbacks(callbacks),
-              jOnOperands(operands),
-              jOnResult(result)
-         {}
-         #endif //ANDROID
 
 
          virtual void handleError(CError const & error)
@@ -79,13 +56,6 @@ class CBasicSample : public iviLink::CApp
           */
          virtual void operandsReceived(int a, int b)
          {
-            #ifndef ANDROID
-            #else
-            JNIEnv *env;
-            iviLink::Android::JniThreadHelper jth(mpJM);
-            env = jth.getEnv();
-            env->CallVoidMethod(jCallbacks, jOnOperands, a,b);
-            #endif //ANDROID
             mpSemaphore->signal();
          }
 
@@ -96,33 +66,18 @@ class CBasicSample : public iviLink::CApp
           */
          virtual void resultReceived(int a)
          {
-            #ifndef ANDROID
-            #else
-            JNIEnv *env;
-            iviLink::Android::JniThreadHelper jth(mpJM);
-            env = jth.getEnv();
-            env->CallVoidMethod(jCallbacks, jOnResult, a);
-            #endif //ANDROID
             mpSemaphore->signal();
          }
-        
-         private:
-            #ifndef ANDROID
-            #else
-            JavaVM* mpJM;
-            jmethodID jOnOperands;
-            jmethodID jOnResult;
-            jobject jCallbacks;
-            #endif //ANDROID
    };
 
 public:
-   #ifndef ANDROID
    CBasicSample(CSignalSemaphore & semaphore);
-   #else
-   CBasicSample(CSignalSemaphore & semaphore, iviLink::Android::AppInfo appInfo, JavaVM* pJm, jobject callbacks, jmethodID operands, jmethodID result);
-   #endif //ANDROID
    virtual ~CBasicSample();
+
+   /**
+    * Initializes application in iviLink core
+    */
+   void init();
 
    /**
     * Callback that should be invoked by application library thread 
@@ -130,7 +85,7 @@ public:
     * @param launcher shows the initiator of application start
     * @return none
     */
-   virtual void initDone(iviLink::ELaunchInfo launcher);
+   virtual void onInitDone(iviLink::ELaunchInfo launcher);
 
 private:
 
@@ -140,13 +95,6 @@ private:
 
    static Logger msLogger;
    CSignalSemaphore * mpSemaphore;  
-    
-   #ifndef ANDROID
-   #else
-   // this is a structure with additional info needed for android version
-   // see utils/android/AppInfo.hpp and documentation
-   iviLink::Android::AppInfo mAppInfo;
-   #endif //ANDROID
 };
 
 #endif /* CBASICSAMPLE_HPP_ */

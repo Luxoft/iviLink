@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include "CMediaSourceServerProfile.hpp"
 
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
-#include "samples/linux/Profiles/mediaCommon/CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "ChannelSupervisorTube.hpp"
+#include "CSenderThread.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
 
 #include <cstring>
 #include <cassert>
@@ -46,7 +42,6 @@ CMediaSourceServerProfile::CMediaSourceServerProfile(iviLink::Profile::IProfileC
    , mpReqMutex(new CMutex())
    , mpReqSemaphore(new CSignalSemaphore())
    , mBe(true)
-   , mTag("CMediaSourceServerProfile")
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
@@ -63,9 +58,7 @@ CMediaSourceServerProfile::~CMediaSourceServerProfile()
 
    while (!mReqQueue.empty())
    {
-      CBuffer buf = mReqQueue.front();
       mReqQueue.pop();
-      delete [] buf.getBuffer();
    }
 }
 
@@ -78,42 +71,34 @@ void CMediaSourceServerProfile::sendTrackList(std::string const& trackList)
 void CMediaSourceServerProfile::trackListChanged()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   prepareRequest(TRACKLISTCHANGED, false, mTag);
+   prepareRequest(TRACKLISTCHANGED, false);
 }
 void CMediaSourceServerProfile::recallTrackList()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   prepareRequest(RECALLTRACKLIST, false, mTag);
+   prepareRequest(RECALLTRACKLIST, false);
 }
 
 void CMediaSourceServerProfile::prepareRequest(PROCEDURES_SOURCE_IDS proc, bool has_event, std::string const& trackList)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   const UInt32 size = 4;
-   CBuffer buf(new UInt8[size], size);
-   bool res = true;
-   res = res && buf.write((UInt16)proc);
+   std::string msg;
+   msg = static_cast<UInt8>(proc);
    if (has_event)
-      res = res && buf.write(trackList);
-   if (res)
-   {
-      mpReqMutex->lock();
-      mReqQueue.push(buf);
-      mpReqMutex->unlock();
-      mpReqSemaphore->signal();     
+   { 
+	msg += trackList;
    }
-   else
-   {
-      LOG4CPLUS_ERROR(msLogger, "Unable to prepare buffer - buffer size is not enough");
-      delete [] buf.getBuffer();
-   }
+   mpReqMutex->lock();
+   mReqQueue.push(msg);
+   mpReqMutex->unlock();
+   mpReqSemaphore->signal();     
 }
 
 
 void CMediaSourceServerProfile::onEnable()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   mChannelID = iviLink::Channel::allocateChannel(mTag, this);
+   mChannelID = iviLink::Channel::allocateChannelAsServer(MEDIA_SOURCE_TAG, this, eRealTime);
    if (mChannelID)
    {
       LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");
@@ -122,6 +107,7 @@ void CMediaSourceServerProfile::onEnable()
    else
    {
       LOG4CPLUS_WARN(msLogger, "allocate Channel failed");
+      killProcess(1);
    }
 }
 
@@ -135,7 +121,7 @@ void CMediaSourceServerProfile::onDisable()
 }
 
 //from CChannelHandler
-void CMediaSourceServerProfile::bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
+void CMediaSourceServerProfile::onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
 {
   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    if (mChannelID != channel)
@@ -148,29 +134,24 @@ void CMediaSourceServerProfile::bufferReceived(const iviLink::Channel::tChannelI
       LOG4CPLUS_INFO(msLogger, "mChannelID == channel_id");
    }
    
-   bool res = true;
-   UInt16 tmp;
-   res = res && buffer.read(tmp);
-   if (!res)
-   {
-      LOG4CPLUS_WARN(msLogger, "Unable to read request type from buffer");
-      return;
-   }
+   UInt8 *incomingData = buffer.getBuffer();
+   int read_size = buffer.getSize();
 
-   PROCEDURES_SOURCE_IDS proc = static_cast<PROCEDURES_SOURCE_IDS>(tmp);
-   
-   if (proc == REQUESTTRACKLIST)
+   LOG4CPLUS_INFO(msLogger, "Procedure ID = " + convertIntegerToString(incomingData[0]));
+
+   if(incomingData[0] == REQUESTTRACKLIST)
    {
          LOG4CPLUS_INFO(msLogger, "case REQUESTTRACKLIST");
          mpAppCallbacks->onRequestTrackList();
    }
    else
    {
-         LOG4CPLUS_WARN(msLogger, "Unknown request type");
+        LOG4CPLUS_INFO(msLogger, "unknown procedure ID");
    }
+
 }
 
-void CMediaSourceServerProfile::channelDeletedCallback(const UInt32 channel_id)
+void CMediaSourceServerProfile::onChannelDeleted(const UInt32 channel_id)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -184,7 +165,7 @@ void CMediaSourceServerProfile::channelDeletedCallback(const UInt32 channel_id)
    }
 }
 
-void CMediaSourceServerProfile::connectionLostCallback()
+void CMediaSourceServerProfile::onConnectionLost()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 }
@@ -216,17 +197,16 @@ bool CMediaSourceServerProfile::hasRequests()
 void CMediaSourceServerProfile::handleRequest()
 {
    mpReqMutex->lock();
-   CBuffer buf = mReqQueue.front();
+   std::string msg;
+   msg = mReqQueue.front();
    mReqQueue.pop();
    mpReqMutex->unlock();
 
-   CError err = iviLink::Channel::sendBuffer(mChannelID, buf);
+   CError err = iviLink::Channel::sendBuffer(mChannelID, msg.c_str(), msg.length());
    if (!err.isNoError())
    {
       LOG4CPLUS_INFO(msLogger, "CMediaSourceServerProfile::handleRequest() :: Send error"
          + static_cast<std::string>(err));
    }
-
-   delete [] buf.getBuffer();
 }
 

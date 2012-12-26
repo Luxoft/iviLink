@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -45,12 +35,12 @@
  * Forward declaration includes
  *
  ********************************************************************/
-#include "utils/ipc/CIpc.hpp"
+#include "CIpc.hpp"
 #include "CSourceAgent.hpp"
 #include "CTargetAgent.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/Buffer.hpp"
-#include "framework/components/ConnectivityAgent/generic/common/CDataAccessor.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/CConnectivityAgent.hpp"
+#include "Buffer.hpp"
+#include "CDataAccessor.hpp"
+#include "CConnectivityAgent.hpp"
  /********************************************************************
  *
  * The class includes
@@ -63,10 +53,11 @@
  *
  ********************************************************************/
 #include "CChannelAllocator.hpp"
-#include "utils/misc/Logger.hpp"
-#include "utils/misc/byteOrder.hpp"
-#include "utils/threads/CTimeoutManager.hpp"
-#include "framework/components/ConnectivityAgent/generic/HAL/CCarrierAdapter.hpp"
+#include "Logger.hpp"
+#include "byteOrder.hpp"
+#include "CTimeoutManager.hpp"
+#include "CCarrierAdapter.hpp"
+#include "UnstableAPI.hpp"
 
 
 using namespace iviLink::ConnectivityAgent::L1;
@@ -88,7 +79,7 @@ L1InterfaceStub::L1InterfaceStub():
 {
    fillCallbacks();
    CError err = mSCProtocol.connect();
-   LOG4CPLUS_INFO(logger, static_cast<std::string>(err));
+   LOG4CPLUS_INFO(logger, "mSCProtocol.connect() returned: " + static_cast<std::string>(err));
 }
 
 L1InterfaceStub::~L1InterfaceStub()
@@ -128,14 +119,14 @@ void L1InterfaceStub::deleteInstance()
 
 void L1InterfaceStub::OnConnection(DirectionID dirId)
 {
-   LOG4CPLUS_INFO(logger, "L1InterfaceStub::OnConnection dirId = "
+   LOG4CPLUS_TRACE(logger, "L1InterfaceStub::OnConnection dirId = "
       + convertIntegerToString(dirId));
    mClientDirections.push_back(dirId);
 }
 
 void L1InterfaceStub::OnConnectionLost(DirectionID dirId)
 {
-   LOG4CPLUS_INFO(logger, "L1InterfaceStub::onConnectionLost dirId = " 
+   LOG4CPLUS_TRACE(logger, "L1InterfaceStub::onConnectionLost dirId = " 
       + convertIntegerToString(dirId));
    std::remove(mClientDirections.begin(), mClientDirections.end(), dirId);
 }
@@ -146,7 +137,7 @@ ERROR_CODE L1InterfaceStub::beginAllocateChannel(const TChannelPriority prio, co
       "client_side" + std::string(client_side ? "true" : "false") +")");
    ERROR_CODE ret = ERR_UNKNOWN;
 
-   if (mRegistry.find(channel_id) == mRegistry.end()) //if channel wasn't opened yet
+   if (mL1ChannelRegistry.find(channel_id) == mL1ChannelRegistry.end()) //if channel wasn't opened yet
    {
       tRequestedChannelsMap::iterator iter = mRequestedMap.find(channel_id);
       if (iter == mRequestedMap.end()) // if channel wasn't requested yet ->request channel
@@ -192,7 +183,7 @@ ERROR_CODE L1InterfaceStub::beginAllocateChannel(const TChannelPriority prio, co
          {
             // SEQ_E_1
 
-            LOG4CPLUS_INFO(logger, "L1InterfaceStub::beginAllocateChannel() => ERROR: allocation is in progress! ");
+            LOG4CPLUS_ERROR(logger, "L1InterfaceStub::beginAllocateChannel() => ERROR: allocation is in progress! ");
             ret = ERR_IN_PROGRESS;
          }
       }
@@ -201,7 +192,7 @@ ERROR_CODE L1InterfaceStub::beginAllocateChannel(const TChannelPriority prio, co
    {
       // SEQ_E_2
 
-      LOG4CPLUS_INFO(logger, "L1InterfaceStub::beginAllocateChannel() => ERROR: channel already exists! ");
+      LOG4CPLUS_ERROR(logger, "L1InterfaceStub::beginAllocateChannel() => ERROR: channel already exists! ");
       ret = ERR_NUMBER_BUSY;
    }
    
@@ -215,12 +206,12 @@ ERROR_CODE L1InterfaceStub::allocateChannelLocally(const UInt32 channel_id, tReq
 
    ERROR_CODE ret = ERR_FAIL;
 
-   assert(mRegistry.find(channel_id) == mRegistry.end());
+   assert(mL1ChannelRegistry.find(channel_id) == mL1ChannelRegistry.end());
 
    assert(req_info.mState == E_TRANSITION_AGENT || req_info.mState == E_TRANSITION_CLIENT);
 
    ///>FIXME Set up correct thresholds
-   tChannelInfo info;
+   tL1ChannelInfo info;
    info.mType                 = req_info.mType;
    info.mClientDir            = req_info.mClientDir;
    info.mState                = req_info.mState;
@@ -233,12 +224,11 @@ ERROR_CODE L1InterfaceStub::allocateChannelLocally(const UInt32 channel_id, tReq
          + convertIntegerToString((int)ret));
 
    /// @todo correct processing of error code and return values. PIlin, 31.08.12
-   LOG4CPLUS_WARN(logger, "@todo correct processing of error code and return values. PIlin, 31.08.12");
    ret = ERR_OK;
 
    if (ERR_OK == ret)
    {
-      mRegistry.insert(std::pair<UInt32,tChannelInfo >(channel_id, info));
+      mL1ChannelRegistry.insert(std::pair<UInt32,tL1ChannelInfo >(channel_id, info));
    }
 
    return ret;
@@ -249,10 +239,10 @@ ERROR_CODE L1InterfaceStub::endAllocateChannel(const UInt32 channel_id, Directio
    ERROR_CODE err = ERR_OK;
    mRegistryMutex.lock();
    {
-      tChannelsRegistryMap::iterator iter = mRegistry.find(channel_id);
-      if (iter != mRegistry.end())
+      tChannelsRegistryMap::iterator iter = mL1ChannelRegistry.find(channel_id);
+      if (iter != mL1ChannelRegistry.end())
       {
-         tChannelInfo & info = iter->second;
+         tL1ChannelInfo & info = iter->second;
 
          if (E_TRANSITION_AGENT == info.mState)
             err = ERR_DEFERRED;
@@ -266,7 +256,7 @@ ERROR_CODE L1InterfaceStub::endAllocateChannel(const UInt32 channel_id, Directio
       {
          // SEQ_E_4
          err = ERR_NOTFOUND;
-         LOG4CPLUS_INFO(logger, "L1InterfaceStub::endAllocateChannel(): ERR_NOTFOUND");
+         LOG4CPLUS_ERROR(logger, "L1InterfaceStub::endAllocateChannel(): ERR_NOTFOUND");
       }
    }
    mRegistryMutex.unlock();
@@ -293,17 +283,17 @@ ERROR_CODE L1InterfaceStub::failAllocateChannel(const UInt32 channel_id, Directi
       }
 
       {
-         tChannelsRegistryMap::iterator iter = mRegistry.find(channel_id);
+         tChannelsRegistryMap::iterator iter = mL1ChannelRegistry.find(channel_id);
 
-         if (iter != mRegistry.end())
+         if (iter != mL1ChannelRegistry.end())
          {
             LOG4CPLUS_INFO(logger, "L1InterfaceStub::failAllocateChannel(): remove registry entry and deallocate channel");
 
             /*ret = */CChannelAllocator::getInstance()->deallocateChannel(channel_id);
-            tChannelInfo & info = iter->second;
+            tL1ChannelInfo & info = iter->second;
             dirId = info.mClientDir;
 
-            mRegistry.erase(iter);
+            mL1ChannelRegistry.erase(iter);
          }
       }
    }
@@ -315,11 +305,11 @@ ERROR_CODE L1InterfaceStub::failAllocateChannel(const UInt32 channel_id, Directi
 
 ERROR_CODE L1InterfaceStub::deallocateChannel(UInt32 channel_id)
 {
-   LOG4CPLUS_INFO(logger, "L1InterfaceStub::deallocateChannel(chID = " + convertIntegerToString(channel_id) + ")");
+   LOG4CPLUS_TRACE(logger, "L1InterfaceStub::deallocateChannel(chID = " + convertIntegerToString(channel_id) + ")");
    ERROR_CODE ret = ERR_NOTFOUND;
    mRegistryMutex.lock();
 
-   if (mRegistry.find(channel_id) != mRegistry.end())
+   if (mL1ChannelRegistry.find(channel_id) != mL1ChannelRegistry.end())
    {
       ret = CChannelAllocator::getInstance()->deallocateChannel(channel_id);
    }
@@ -339,9 +329,9 @@ ERROR_CODE L1InterfaceStub::sendData(CDataAccessor & accessor)
    LOG4CPLUS_TRACE(logger, "L1InterfaceStub::sendData()");
    ERROR_CODE ret = ERR_NOTFOUND;
    mRegistryMutex.lock();
-   tChannelsRegistryMap::iterator iter = mRegistry.find(accessor.getChannelID());
+   tChannelsRegistryMap::iterator iter = mL1ChannelRegistry.find(accessor.getChannelID());
 
-   if (iter!=mRegistry.end())
+   if (iter != mL1ChannelRegistry.end())
    {
       bool exit = false;
       Buffer buf;
@@ -386,7 +376,7 @@ ERROR_CODE L1InterfaceStub::sendData(CDataAccessor & accessor)
 
 ERROR_CODE L1InterfaceStub::receiveData(Buffer & buffer, UInt32 channel_id)
 {
-   LOG4CPLUS_INFO(logger, "L1InterfaceStub::receiveData() => channel " + convertIntegerToString(channel_id));
+   LOG4CPLUS_TRACE(logger, "L1InterfaceStub::receiveData() => channel " + convertIntegerToString(channel_id));
 
    UInt32 offset = 0;
    CDataAccessor accessor;
@@ -463,7 +453,7 @@ ERROR_CODE L1InterfaceStub::receiveData(Buffer & buffer, UInt32 channel_id)
          mpIpc->request(mMsgIdGen.next(), 
             buf, accessor.getObjectSize(), 
             NULL, responseSize,
-            &mRegistry[channel_id].mClientDir);
+            &mL1ChannelRegistry[channel_id].mClientDir);
 
          delete [] buf;
       }
@@ -502,7 +492,7 @@ ERROR_CODE L1InterfaceStub::sendRequest( CDataAccessor & accessor)
       memcpy(buf.getData() + offset,accessor.getData(), accessor.getDataSize() );
    }
 
-   ERROR_CODE ret = mRegistry[SERVICE_CHANNEL_NUMBER].mpSourceAgent->fillBuffer(buf);
+   ERROR_CODE ret = mL1ChannelRegistry[SERVICE_CHANNEL_NUMBER].mpSourceAgent->fillBuffer(buf);
 
    buf.forgetData();
 
@@ -594,14 +584,19 @@ void L1InterfaceStub::OnRequest(iviLink::Ipc::MsgID id,
       send_result = true;
    }
 
-   if (send_result)
+   /*Here was a "<" condition, getConnectionAddr did not work */
+   if (send_result && (savedBufferSize >= pReq.getObjectSize() ) )
    {
-      if (savedBufferSize < pReq.getObjectSize())
-      {
-         bufferSize = pReq.getObjectSize();
-         pReq.copyToRawArray(pResponseBuffer);
-      }
+      bufferSize = pReq.getObjectSize();
+      pReq.copyToRawArray(pResponseBuffer);
    }
+}
+
+void L1InterfaceStub::OnAsyncRequest(iviLink::Ipc::MsgID id, 
+      UInt8 const* pPayload, UInt32 payloadSize, 
+      DirectionID dirId)
+{
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 }
 
 bool L1InterfaceStub::processClientAllocateRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId)
@@ -671,12 +666,12 @@ bool L1InterfaceStub::processClientDeallocateRequest(CDataAccessor & accessor, c
    {
       LOG4CPLUS_INFO(logger, "L1InterfaceStub::processClientDeallocateRequest() => Deallocate Channel Request: ChID = " + convertIntegerToString(channel_id));
       mRegistryMutex.lock();
-      tChannelsRegistryMap::iterator iter =  mRegistry.find(channel_id);
-      if (iter!=mRegistry.end())
+      tChannelsRegistryMap::iterator iter =  mL1ChannelRegistry.find(channel_id);
+      if (iter != mL1ChannelRegistry.end())
       {
          iter->second.mState = E_TRANSITION_CLIENT;
          sendRequest(accessor);
-         new CRequestTimeout(100000,static_cast<tOpCode>(accessor.getOpCode()),channel_id,this );
+         new CRequestTimeout(250000,static_cast<tOpCode>(accessor.getOpCode()),channel_id,this );
          // ret = ERR_OK;
       }
       else
@@ -703,55 +698,28 @@ bool L1InterfaceStub::processClientSendRequest(CDataAccessor & accessor, const i
 
 bool L1InterfaceStub::processClientGetConnectionAddrRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId)
 {
-   bool ok = false;
+   bool result = false;
    if (this->mpAgent)
    {
       iviLink::ConnectivityAgent::HAL::CCarrierAdapter* pca = mpAgent->getCurrentCarrierAdapter();
       if (pca)
       {
-         char const* typ = pca->getTypeName();
-         char const* loc = pca->getLocalAddress();
-         char const* rem = pca->getRemoteAddress();
-
-         const UInt32 typ_len = (typ ? strlen(typ) : 0) + 1;
-         const UInt32 loc_len = (loc ? strlen(loc) : 0) + 1;
-         const UInt32 rem_len = (rem ? strlen(rem) : 0) + 1;
-
-         UInt32 buf_size = sizeof(typ_len) + typ_len +
-            sizeof(loc_len) + loc_len +
-            sizeof(rem_len) + rem_len;
-         UInt8* buf = new UInt8[buf_size];
-
-#define cpy(dst, src, n) ( memcpy((dst), (src), (n)), (dst) + (n) )
-
-         UInt8* p = buf;
-         p = cpy(p, &typ_len, sizeof(typ_len));
-         p = cpy(p, (typ ? typ : ""), typ_len);
-         p = cpy(p, &loc_len, sizeof(loc_len));
-         p = cpy(p, (loc ? loc : ""), loc_len);
-         p = cpy(p, &rem_len, sizeof(rem_len));
-         p = cpy(p, (rem ? rem : ""), rem_len);
-
-         assert(p == buf + buf_size);
-
-#undef cpy
-
-         accessor.setData(buf, buf_size);
-
-         ok = true;
+         ConnectionInformation address(pca->getLocalAddress(), pca->getRemoteAddress(), pca->getTypeName());
+         UInt8 * serializedData = address.serialize();
+         accessor.setData(serializedData, address.getSerializedSize());
+         delete[] serializedData;
+         result = true;
       }
    }
 
-   if (!ok)
+   if (!result)
    {
-      // todo myabe use resetData
-
       UInt32 tmp = accessor.getOpCode();
       accessor.resetAll();
       accessor.setOpCode(tmp);
    }
 
-   return true;
+   return result;
 }
 
 void L1InterfaceStub::processServiceAllocateRequest(CDataAccessor & accessor)
@@ -801,7 +769,7 @@ void L1InterfaceStub::processServiceAllocateRequest(CDataAccessor & accessor)
 
          LOG4CPLUS_INFO(logger, "L1InterfaceStub::processServiceAllocateRequest()=>channel wasn't requested yet ->set channel to wait and trigger timeout");
 
-         new CRequestTimeout(100000,E_ALLOCATE_CHANNEL,channel_id, this);
+         new CRequestTimeout(250000,E_ALLOCATE_CHANNEL,channel_id, this);
 
          return;
       }      
@@ -837,14 +805,14 @@ void L1InterfaceStub::processServiceDeallocateRequest(CDataAccessor & accessor)
       bool found = false;
 
       mRegistryMutex.lock();
-      tChannelsRegistryMap::iterator iter = mRegistry.find(accessor.getChannelID());
-      if (mRegistry.end() != iter)
+      tChannelsRegistryMap::iterator iter = mL1ChannelRegistry.find(accessor.getChannelID());
+      if (mL1ChannelRegistry.end() != iter)
       {
          dirId = iter->second.mClientDir;
          found = true;
 
-         LOG4CPLUS_TRACE(logger, "L1InterfaceStub::processServiceDeallocateRequest()=>channel found in registry - removing");
-         mRegistry.erase(accessor.getChannelID());
+         LOG4CPLUS_INFO(logger, "L1InterfaceStub::processServiceDeallocateRequest()=>channel found in registry - removing");
+         mL1ChannelRegistry.erase(accessor.getChannelID());
       }
       mRegistryMutex.unlock();
 
@@ -905,7 +873,7 @@ void L1InterfaceStub::processServiceAllocateResponse(CDataAccessor & accessor)
    {
       // SEQ_E_4
 
-      LOG4CPLUS_WARN(logger, "L1InterfaceStub::processServiceAllocateResponse()=> failed channel allocation");
+      LOG4CPLUS_ERROR(logger, "L1InterfaceStub::processServiceAllocateResponse()=> failed channel allocation");
 
       failAllocateChannel(channel_id, dirId);
       accessor.setErrorCode(err);
@@ -918,7 +886,7 @@ void L1InterfaceStub::processServiceAllocateResponse(CDataAccessor & accessor)
    }
    else
    {
-      LOG4CPLUS_WARN(logger, "L1InterfaceStub::processServiceAllocateResponse()=> unknown client, failing channel");
+      LOG4CPLUS_ERROR(logger, "L1InterfaceStub::processServiceAllocateResponse()=> unknown client, failing channel");
    }
 }
 
@@ -941,12 +909,12 @@ void L1InterfaceStub::processServiceDeallocateResponse(CDataAccessor & accessor)
 
          mRegistryMutex.lock();
          {
-            tChannelsRegistryMap::iterator iter = mRegistry.find(channel_id);
-            if (iter != mRegistry.end())
+            tChannelsRegistryMap::iterator iter = mL1ChannelRegistry.find(channel_id);
+            if (iter != mL1ChannelRegistry.end())
             {
                dirId = iter->second.mClientDir;
                found = true;
-               mRegistry.erase(iter);
+               mL1ChannelRegistry.erase(iter);
             }
          }
          mRegistryMutex.unlock();
@@ -995,7 +963,7 @@ void L1InterfaceStub::sendIpcNotification(CDataAccessor & accessor, iviLink::Ipc
 
    if (!err.isNoError())
    {
-      LOG4CPLUS_WARN(logger, static_cast<std::string>(err));
+      LOG4CPLUS_WARN(logger, "sendIpcNotification error : " + static_cast<std::string>(err));
    }
 
    delete [] buf;
@@ -1018,7 +986,7 @@ void L1InterfaceStub::CRequestTimeout::onTimeout()
          case E_ALLOCATE_CHANNEL:
          {
             mpOwner->mRegistryMutex.lock();
-            bool found = (mpOwner->mRegistry.find(mChannelID) != mpOwner->mRegistry.end());
+            bool found = (mpOwner->mL1ChannelRegistry.find(mChannelID) != mpOwner->mL1ChannelRegistry.end());
             mpOwner->mRegistryMutex.unlock();
 
             if (found)
@@ -1033,6 +1001,7 @@ void L1InterfaceStub::CRequestTimeout::onTimeout()
                resp.setChannelID(mChannelID);
                resp.setOpCode(E_ALLOCATE_CHANNEL_RESP);
                resp.setData(reinterpret_cast<UInt8 *>(&data), sizeof(UInt32));
+               resp.setErrorCode(ERR_TIMEOUT);
                mpOwner->mRequestedMapMutex.lock();
                mpOwner->mRequestedMap.erase(mChannelID);
                mpOwner->mRequestedMapMutex.unlock();
@@ -1047,8 +1016,8 @@ void L1InterfaceStub::CRequestTimeout::onTimeout()
             bool found = false;
             mpOwner->mRegistryMutex.lock();
             {
-               tChannelsRegistryMap::iterator iter = mpOwner->mRegistry.find(mChannelID);
-               found = (iter != mpOwner->mRegistry.end());
+               tChannelsRegistryMap::iterator iter = mpOwner->mL1ChannelRegistry.find(mChannelID);
+               found = (iter != mpOwner->mL1ChannelRegistry.end());
                if (found)
                {
                   client_dir = iter->second.mClientDir;
@@ -1062,6 +1031,7 @@ void L1InterfaceStub::CRequestTimeout::onTimeout()
                resp.setChannelID(mChannelID);
                resp.setOpCode(E_DEALLOCATE_CHANNEL_RESP);
                resp.setData(reinterpret_cast<UInt8 *>(&data), sizeof(UInt32));
+               resp.setErrorCode(ERR_TIMEOUT);
                UInt8* buf = new UInt8[resp.getObjectSize()];
                resp.copyToRawArray(buf);
 

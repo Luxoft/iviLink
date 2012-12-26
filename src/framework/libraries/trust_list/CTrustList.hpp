@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CTRUSTLIST_HPP__
 #define CTRUSTLIST_HPP__
 
 #include <vector>
 
-#include "utils/misc/CUid.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CUid.hpp"
+#include "Logger.hpp"
 
 #include "CTrustListError.hpp"
 
 namespace iviLink
 {
-
 
 
 class ITrustListStorage;
@@ -81,11 +72,7 @@ public:
    CTrustListError getKnownUids(tUidVector& result) const;
 
 public:
-   #ifndef ANDROID
-   CTrustList();
-   #else
    CTrustList(std::string pathToTrlist);
-   #endif //ANDROID
 
    ~CTrustList();
 

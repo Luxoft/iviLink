@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,72 +18,65 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef MESSAGE_HPP
 #define MESSAGE_HPP
 
 #include <ostream>
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
+#include "Types.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 class Message
 {
 public:
 
-	Message();
+    Message();
 
-	Message(pugi::xml_document* doc);
+    Message(pugi::xml_document* doc);
 
-	virtual ~Message()
-	{
-		if (m_messageDoc)
-		{
-			delete m_messageDoc;
-			m_messageDoc = 0;
-		}
-	}
+    virtual ~Message()
+    {
+        if (m_messageDoc)
+        {
+            delete m_messageDoc;
+            m_messageDoc = 0;
+        }
+    }
 
-	virtual const char* GetMessageName() const = 0;
+    virtual const char* GetMessageName() const = 0;
 
-	virtual void Write(std::ostream& stream);
+    virtual void Write(std::ostream& stream);
 
-	virtual void Write(pugi::xml_writer& writer);
+    virtual void Write(pugi::xml_writer& writer);
 
-	pugi::xml_document* GetMessageDoc()
+    pugi::xml_document* GetMessageDoc()
     {
         return m_messageDoc;
     }
 
-	static pugi::xml_node AppendIntegerNode(pugi::xml_node node,
-											const char* name,
-											int value,
-											const char* format = "%d");
+    static pugi::xml_node AppendIntegerNode(pugi::xml_node node, const char* name, int value,
+            const char* format = "%d");
 
-	static pugi::xml_node AppendCharStringNode(pugi::xml_node node,
-												const char* name,
-												const char* value);
+    static pugi::xml_node AppendCharStringNode(pugi::xml_node node, const char* name,
+            const char* value);
 
 protected:
 
-	pugi::xml_document*		m_messageDoc;
-	pugi::xml_node 			m_messageDocMainNode;
+    pugi::xml_document* m_messageDoc;
+    pugi::xml_node m_messageDocMainNode;
 
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

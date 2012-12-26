@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,16 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef REQUEST_HPP_
 #define REQUEST_HPP_
@@ -36,9 +27,12 @@
 #include "Message.hpp"
 #include <map>
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 class RequestTypesMap;
 
@@ -46,42 +40,42 @@ class Request: public Message
 {
 public:
 
-	enum RequestType
-	{
-		REQUESTTYPE_UNKNOWN 				= 0,
-		REQUESTTYPE_ALLOCATE_CHANNEL  = 1,
-		REQUESTTYPE_CA_ALLOCATION_DONE,
-		REQUESTTYPE_DEALLOCATE_CHANNEL
-	};
+    enum RequestType
+    {
+        REQUESTTYPE_UNKNOWN = 0,
+        REQUESTTYPE_ALLOCATE_CHANNEL = 1,
+        REQUESTTYPE_CA_ALLOCATION_DONE,
+        REQUESTTYPE_DEALLOCATE_CHANNEL
+    };
 
-	Request(RequestType requestType = REQUESTTYPE_UNKNOWN);
+    Request(RequestType requestType = REQUESTTYPE_UNKNOWN);
 
-	Request(pugi::xml_document* doc, RequestType requestType = REQUESTTYPE_UNKNOWN);
+    Request(pugi::xml_document* doc, RequestType requestType = REQUESTTYPE_UNKNOWN);
 
-	virtual ~Request()
-	{
-	}
+    virtual ~Request()
+    {
+    }
 
-	static RequestType GetRequestType(pugi::xml_document* doc);
+    static RequestType GetRequestType(pugi::xml_document* doc);
 
 protected:
 
-	RequestType m_requestType;
-	static RequestTypesMap m_requestTypes;
+    RequestType m_requestType;
+    static RequestTypesMap m_requestTypes;
 };
 
-class RequestTypesMap : public std::map<Request::RequestType, std::string>
+class RequestTypesMap: public std::map<Request::RequestType, std::string>
 {
 public:
-	RequestTypesMap()
-	{
-		(*this)[Request::REQUESTTYPE_ALLOCATE_CHANNEL] = "allocate-channel";
-		(*this)[Request::REQUESTTYPE_DEALLOCATE_CHANNEL] = "deallocate-channel";
-		(*this)[Request::REQUESTTYPE_CA_ALLOCATION_DONE] = "ca-allocation-done";
-	}
+    RequestTypesMap()
+    {
+        (*this)[Request::REQUESTTYPE_ALLOCATE_CHANNEL] = "allocate-channel";
+        (*this)[Request::REQUESTTYPE_DEALLOCATE_CHANNEL] = "deallocate-channel";
+        (*this)[Request::REQUESTTYPE_CA_ALLOCATION_DONE] = "ca-allocation-done";
+    }
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

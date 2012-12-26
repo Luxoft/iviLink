@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CMUTEX_HPP
 #define CMUTEX_HPP
@@ -80,12 +70,12 @@ private:
 };
 
 
-class lock : noncopyable {
+class MutexLocker : noncopyable {
 public:
-    explicit lock( CMutex& m ) : m(m) { m.lock(); }
-    ~lock() { m.unlock(); }
+    explicit MutexLocker( CMutex& m ) : mMutex(m) { mMutex.lock(); }
+    ~MutexLocker() { mMutex.unlock(); }
 private:
-    CMutex& m;
+    CMutex& mMutex;
 };
 
 #endif

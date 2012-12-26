@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 	###############################################################################
 # Autodetection of config.mk and includes
@@ -45,7 +43,11 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libAmpPmp.a
 
-INCLUDES      := -I.
+INCLUDES      += -I.
+INCLUDES      += -I$(UTILS_DIR)serialize/
+INCLUDES      += -I$(UTILS_DIR)ipc/
+INCLUDES      += -I$(ROOT_DIR)framework/libraries/AppMan/Pmp/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 
 ###############################################################################

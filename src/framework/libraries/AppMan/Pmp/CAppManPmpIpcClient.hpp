@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,27 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAPPMANPMPIPCCLIENT_HPP_
 #define CAPPMANPMPIPCCLIENT_HPP_
 
 #include "IPmpRequest.hpp"
-#include "utils/ipc/CIpc.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CIpc.hpp"
+#include "ICallbackHandler.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Logger.hpp"
 
 namespace iviLink
 {
@@ -105,6 +94,12 @@ namespace iviLink
             virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
                   UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize,
                   iviLink::Ipc::DirectionID dirId);
+
+
+            // stub not used
+            virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+                  UInt32 payloadSize,
+                  iviLink::Ipc::DirectionID dirId) {}
 
             /**
              * Request to AMP to start new session with founded by AppMan application

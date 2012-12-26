@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <unistd.h>
 
 #include "CAppManPmpIpcServer.hpp"
-#include "utils/serialize/Serialize.hpp"
+#include "Serialize.hpp"
  
 namespace iviLink
 {
@@ -53,38 +42,37 @@ namespace iviLink
             , mId(0)
             , mBe(true)
          {
-            LOG4CPLUS_TRACE(msLogger,"CAppManPmpIpcServer()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          CAppManPmpIpcServer::~CAppManPmpIpcServer()
          {
-            LOG4CPLUS_TRACE(msLogger,"~CAppManPmpIpcServer()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             delete mpIpc;
          }
 
          void CAppManPmpIpcServer::OnConnection(iviLink::Ipc::DirectionID dirId)
          {
-
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CAppManPmpIpcServer::OnConnectionLost(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnConnectionLost()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mConLostSem.signal();
             if (mpConnectionStatus)
             {
-               LOG4CPLUS_INFO(msLogger,"OnConnectionLost() - 1");
+               LOG4CPLUS_INFO(msLogger,"OnConnectionLost() - before mpConnectionStatus->onConnectionLost()");
                mpConnectionStatus->onConnectionLost();
-               LOG4CPLUS_INFO(msLogger,"OnConnectionLost() - 2");
+               LOG4CPLUS_INFO(msLogger,"OnConnectionLost() - after mpConnectionStatus->onConnectionLost()");
             }
-            LOG4CPLUS_TRACE(msLogger,"OnConnectionLost() - END");
          }
 
          void CAppManPmpIpcServer::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
                UInt32 payloadSize, UInt8* const pResponseBuffer,
                UInt32& bufferSize, iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (mpRequest)
             {
                UInt32 size = 0;
@@ -105,7 +93,7 @@ namespace iviLink
 
          void CAppManPmpIpcServer::appRequestError(iviLink::Service::SessionUid session)
          {
-            LOG4CPLUS_TRACE(msLogger,"appRequestError()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             UInt32 type = 0;
             UInt32 size = sizeof(type) + sizeof(size);
             size += stringInBufSize(session.value());
@@ -124,7 +112,7 @@ namespace iviLink
 
          void CAppManPmpIpcServer::appManConnectionLost()
          {
-            LOG4CPLUS_TRACE(msLogger,"appManConnectionLost()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             //nothing to do
          }
 
@@ -135,14 +123,14 @@ namespace iviLink
 
          void CAppManPmpIpcServer::init(IPmpRequest * pRequest, IPmpConnectionStatus * pConnectionStatus)
          {
-            LOG4CPLUS_TRACE(msLogger,"init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpRequest = pRequest;
             mpConnectionStatus = pConnectionStatus;
          }
 
          void CAppManPmpIpcServer::loop()
          {
-            LOG4CPLUS_TRACE(msLogger,"loop()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             CError err = CError::NoError("","");
             for (int i = 1;mBe ; ++i)
             {
@@ -161,20 +149,20 @@ namespace iviLink
                   break;
                }
 
-               LOG4CPLUS_INFO(msLogger,"loop() :: connection failed");
+               LOG4CPLUS_WARN(msLogger,"loop() :: connection failed");
                usleep (250000);
             }
          }
 
          void CAppManPmpIpcServer::disconnect()
          {
-            LOG4CPLUS_TRACE(msLogger,"disconnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpIpc->disconnect();
          }
 
          bool CAppManPmpIpcServer::checkConnection() const
          {
-            LOG4CPLUS_TRACE(msLogger, "checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return !mNoConnection;
          }
 

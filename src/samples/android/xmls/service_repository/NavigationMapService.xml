@@ -1,0 +1,5 @@
+<service name= "NavigationMapService">
+    <pair name= "NavigationVoiceService"/>
+    <profile api="NaviSenderProfile_PAPI_UID">
+    </profile>
+</service>

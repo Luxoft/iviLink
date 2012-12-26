@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CPIM_HPP_
 #define CPIM_HPP_
@@ -38,15 +27,17 @@
 #include <map>
 #include <set>
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
-#include "utils/threads/CMutex.hpp"
+#include "CMutex.hpp"
 
-#include "framework/components/ProfileManager/PMAL/IPMALPIM.hpp"
-#include "framework/libraries/AppMan/App/IAppManHandler.hpp"
+#include "IPMALPIM.hpp"
+#include "IAppManHandler.hpp"
 
 #include "IPMALPIMToIpc.hpp"
-#include "framework/components/ProfileManager/PMAL/PIM/private/CProfileInstanceMap.hpp"
+#include "CProfileInstanceMap.hpp"
+
+#include "AppInfo.hpp"
 
 class CThreadPool;
 class IThreadPoolJobData;
@@ -62,21 +53,15 @@ class CPIM : public IPMALPIM, public IPMALPIMToIpc, public AppMan::IAppManHandle
    
 public:
    // from IPMALPIM
-   #ifndef ANDROID
    virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
          iviLink::Service::Uid const& sid,
          iviLink::Profile::IProfileCallbackProxy* const pProxy,
-         Profile::CProfile*& pProfile);
-   #else
-   virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
-         iviLink::Service::Uid const& sid,
-         iviLink::Profile::IProfileCallbackProxy* const pProxy,
-         Profile::CProfile*& pProfile, std::string backupPath);  
+         Profile::CProfile*& pProfile, 
+         Android::AppInfo appInfo = Android::AppInfo());  
          /*
-          * we copy profiles' *.so to the backupPath and load them from there,
+          * we copy profiles' *.so to the AppInfo's internalPath and load them from there,
           * otherwise on Android 2.2 devices (and maybe on others) fail is imminent
           */
-   #endif //ANDROID
 
    virtual CPMALError unloadProfile(Profile::CProfile*& profile);
 
@@ -154,7 +139,6 @@ private:
 
 }  // namespace ProfileManager
 }  // namespace AXIS
-
 
 
 #endif /* CPIM_HPP_ */

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,33 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-//#include <ctime>
 #include <cassert>
 #include "crequestprocessor.h"
+#include "seat_coords.hpp"
 
 using namespace std;
 using namespace std::tr1;
 
 typedef ISeatSenderProfile::state_t state_t;
 
-namespace {
-    state_t::Seat& cur_seat( state_t& st )
-    {
-        return st.current_seat() == state_t::DRIVER ?
-            *st.mutable_driver() :
-            *st.mutable_pass();
-    }
-}
-
-
-CRequestProcessor::CRequestProcessor( shared_ptr<state_app> app  )
+CRequestProcessor::CRequestProcessor(seatAppPtr app)
     : app(app)
 {
     assert(app);
@@ -54,163 +39,162 @@ CRequestProcessor::CRequestProcessor( shared_ptr<state_app> app  )
 // change driver heater state request
 void CRequestProcessor::driverHeaterRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    int speed = st.driver().heater();
-    --speed;
-    if( speed < state_t::HEATER_MIN )
-        speed = state_t::HEATER_MAX;
-    st.mutable_driver()->set_heater(speed);
-    app->update_state( st );
+    app->retrieveState(st);
+    st.driverHeaterRequest();
+    app->updateState(st);
 }
 
 // change passenger heater state request
 void CRequestProcessor::passHeaterRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    int speed = st.pass().heater();
-    --speed;
-    if( speed < state_t::HEATER_MIN )
-        speed = state_t::HEATER_MAX;
-    st.mutable_pass()->set_heater(speed);
-    app->update_state( st );
+    app->retrieveState(st);
+    st.passengerHeaterRequest();
+    app->updateState(st);
 }
 
 // change visible seat state to driver request
 void CRequestProcessor::driverSeatRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    st.set_current_seat(state_t::DRIVER);
-    app->update_state( st );
+    app->retrieveState(st);
+    st.driverSeatRequest();
+    app->updateState(st);
 }
 
 // change visible seat state to passenger request
 void CRequestProcessor::passSeatRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    st.set_current_seat(state_t::PASS);
-    app->update_state( st );
+    app->retrieveState(st);
+    st.passengerSeatRequest();
+    app->updateState(st);
 }
 
 // move seatback request
 void CRequestProcessor::backLeftRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-    const int new_angle= seat.back_angle() - state_t::ANGLE_STEP;
-    if( new_angle > state_t::MIN_ANGLE )
+    app->retrieveState(st);
+    const int newAngle= st.getCurrentSeatBackAngle() - SEAT_BACK_ANGLE_STEP;
+    if(newAngle > SEAT_BACK_MIN_ANGLE)
     {
-        seat.set_back_angle( new_angle );
-        app->update_state( st );
+        st.setCurrentBackAngle(newAngle);
+        app->updateState(st);
     }
 }
 
 // move seatback request
 void CRequestProcessor::backRightRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-    const int new_angle= seat.back_angle() + state_t::ANGLE_STEP;
-    if( new_angle < state_t::MAX_ANGLE )
+    app->retrieveState(st);
+    const int newAngle= st.getCurrentSeatBackAngle() + SEAT_BACK_ANGLE_STEP;
+    if(newAngle < SEAT_BACK_MAX_ANGLE)
     {
-        seat.set_back_angle( new_angle );
-        app->update_state( st );
+        st.setCurrentBackAngle(newAngle);
+        app->updateState(st);
     }
 }
 
 // move seat request
 void CRequestProcessor::bottomUpRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-
-    const int new_bottom_y = seat.bottom_y() - state_t::SEAT_STEP;
-    if( new_bottom_y > state_t::LIM_BOTTOM_UP )
-    {
-        seat.set_bottom_y( new_bottom_y );
-        seat.set_back_y( seat.back_y() - state_t::SEAT_STEP );
-        app->update_state( st );
-    }
+    app->retrieveState(st);
+    st.setCurrentY(normalizeRy(st.getCurrentY() - SEAT_STEP));
+    app->updateState(st);
 }
 
 // move seat request
 void CRequestProcessor::bottomDownRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-
-    const int new_bottom_y = seat.bottom_y() + state_t::SEAT_STEP;
-    if( new_bottom_y < state_t::LIM_BOTTOM_DOWN )
-    {
-        seat.set_bottom_y( new_bottom_y );
-        seat.set_back_y( seat.back_y() + state_t::SEAT_STEP );
-        app->update_state( st );
-    }
+    app->retrieveState(st);
+    st.setCurrentY(normalizeRy(st.getCurrentY() + SEAT_STEP));
+    app->updateState(st);
 }
 
 // move seat request
 void CRequestProcessor::bottomLeftRequest()
 {
-    if( !is_active(app) ) return;
-    state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-
-    const int new_bottom_x = seat.bottom_x() - state_t::SEAT_STEP;
-    if( new_bottom_x > state_t::LIM_BOTTOM_LEFT )
+    if(!app->isActive()) 
     {
-        seat.set_bottom_x( new_bottom_x );
-        seat.set_back_x( seat.back_x() - state_t::SEAT_STEP );
-        app->update_state( st );
+        return;
     }
+    state_t st;
+    app->retrieveState(st);
+    st.setCurrentX(normalizeRx(st.getCurrentX() - SEAT_STEP));
+    app->updateState(st);
 }
 
 // move seat request
 void CRequestProcessor::bottomRightRequest()
 {
-    if( !is_active(app) ) return;
+    if(!app->isActive()) 
+    {
+        return;
+    }
 
     state_t st;
-    app->retrive_state( st );
-    state_t::Seat& seat = cur_seat( st );
-
-    const int new_bottom_x = seat.bottom_x() + state_t::SEAT_STEP;
-    if( new_bottom_x < state_t::LIM_BOTTOM_RIGHT )
-    {
-        seat.set_bottom_x( new_bottom_x );
-        seat.set_back_x( seat.back_x() + state_t::SEAT_STEP );
-        app->update_state( st );
-    }
+    app->retrieveState(st);
+    st.setCurrentX(normalizeRx(st.getCurrentX() + SEAT_STEP));
+    app->updateState(st);
 }
 
 // initializing state request
 void CRequestProcessor::initRequest()
-{
+{       
+    LOG4CPLUS_TRACE_METHOD(log4StateApp(), __PRETTY_FUNCTION__);   
+    state_t st;
+    app->retrieveState(st);
+    app->updateState(st);
     return;
-    //if( !is_active(app) ) return;
 }
 
+void CRequestProcessor::exitRequest()
+{
+    killProcess();
+}
 

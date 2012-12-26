@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,31 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAPPMANPROTOSERVER_HPP_
 #define CAPPMANPROTOSERVER_HPP_
 
 #include <map>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/ipc/CIpc.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
+#include "Logger.hpp"
+#include "CIpc.hpp"
+#include "ICallbackHandler.hpp"
 #include "IAppManProto.hpp"
 #include "IAppManProtoAmpToApp.hpp"
 #include "IConnection.hpp"
 //#include "IConnectionHandler.hpp"
+#include <tr1/functional>
 
 class CMutex;
 
@@ -94,6 +84,11 @@ namespace iviLink
              */
             bool startWaitingForClients();
 
+             // Connectivity callbacks
+             void set_link_state_getter( std::tr1::function<bool ()> getter );
+             virtual void onLinkUpNotify();
+             virtual void onLinkDownNotify();
+             bool isLinkAlive();
          private:
             /**
              * Callback is called in case of new connection
@@ -113,6 +108,8 @@ namespace iviLink
             virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
                   UInt32 payloadSize, UInt8* const pResponseBuffer,
                   UInt32& bufferSize, iviLink::Ipc::DirectionID dirId);
+            virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+                  UInt32 payloadSize, iviLink::Ipc::DirectionID dirId) {}
 
             /**
              * Makes request to application to start session
@@ -142,14 +139,20 @@ namespace iviLink
              */
             iviLink::Ipc::MsgID genId();
 
+             void notify( iviLink::Ipc::DirectionID id, UInt8 notification );
+             void notify_all( UInt8 notification );
+
             IAppManProto * mpServer; ///< Pointer to server side handler of request from applications
             IConnectionHandler * mpConnectionHandler; ///< Pointer to connection status handler
             iviLink::Ipc::CIpc * mpIpc; ///< Pointer to object of IPC connection
             iviLink::Ipc::MsgID mId; ///< ID of last IPC message
-            std::map<pid_t, iviLink::Ipc::DirectionID> mClients; ///< map of DirIDs of applications connected to AMP
+             typedef std::map<pid_t, iviLink::Ipc::DirectionID> clients_map_t;
+             clients_map_t mClients; ///< map of DirIDs of applications connected to AMP
             CMutex * mpClientsMutex; ///< Mutex for mClients
 
             static Logger msLogger; ///< Object of logger
+
+             std::tr1::function<bool ()> link_state_getter;
          };
 
       }

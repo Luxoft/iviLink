@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CProfileManagerHandshakeDone.hpp"
-#include "framework/components/SystemController/ssm/states/CApplicationManagerReady.hpp"
+#include "CApplicationManagerReady.hpp"
 #include "CChannelLayerReady.hpp"
-#include "framework/components/SystemController/componentLauncher/CComponentLauncher.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CSystemStateMachine.hpp"
-#include "framework/components/SystemController/ssm/stateMachine/CTriggerQueue.hpp"
+#include "CComponentLauncher.hpp"
+#include "CSystemStateMachine.hpp"
+#include "CTriggerQueue.hpp"
 
 namespace SystemController
 {
@@ -63,20 +52,20 @@ CProfileManagerHandshakeDone::~CProfileManagerHandshakeDone()
 
 void CProfileManagerHandshakeDone::launchApplicationManager(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "launchAplicationManager()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
-   #ifndef ANDROID
+#ifndef ANDROID
    CComponentLauncher::getInstance()->launchApplicationManager();
    stateMachine->connectApplicationManager();
-   #else
+#else
    stateMachine->connectApplicationManager();
    iviLink::Android::makeRequest(iviLink::Android::eLaunchApplicationManager);
-   #endif //ANDROID
+#endif //ANDROID
 }
 
 void CProfileManagerHandshakeDone::onApplicationManagerAvailable(CSystemStateMachine* stateMachine)
 {
-   LOG4CPLUS_TRACE(sLogger, "onApplicationManagerAvailable()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    changeState(stateMachine, CApplicationManagerReady::getInstance());
 

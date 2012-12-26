@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -52,17 +42,17 @@
  * The class includes
  *
  ********************************************************************/
-#include "framework/libraries/ServiceManager/CServiceManager.hpp"
+#include "CServiceManager.hpp"
 #include "CService.hpp"
 /********************************************************************
  *
  * The other includes
  *
  ********************************************************************/
-#include "utils/xml/pugixml.hpp"
-#include "framework/libraries/AppMan/App/CAppManConnectController.hpp"
-#include "framework/components/ProfileManager/PMAL/CComponentMgr.hpp"
-#include "framework/components/ProfileManager/PMAL/CPMALError.hpp"
+#include "pugixml.hpp"
+#include "CAppManConnectController.hpp"
+#include "CComponentMgr.hpp"
+#include "CPMALError.hpp"
 
 namespace iviLink
 {
@@ -75,21 +65,12 @@ namespace iviLink
       CServiceManager* CServiceManager::mspInstance = NULL;
       CMutex CServiceManager::msSingletonMutex;
 
-
-      #ifndef ANDROID
-      CServiceManager* CServiceManager::getInstance()
-      #else
       CServiceManager* CServiceManager::getInstance(iviLink::Android::AppInfo appInfo)
-      #endif //ANDROID
       {
          msSingletonMutex.lock();
          if (mspInstance == NULL)
          {
-            #ifndef ANDROID
-            mspInstance = new CServiceManager();
-            #else
             mspInstance = new CServiceManager(appInfo);
-            #endif //ANDROID
          }
          msSingletonMutex.unlock();
          return mspInstance;
@@ -104,30 +85,23 @@ namespace iviLink
          msSingletonMutex.unlock();
       }
 
-      #ifndef ANDROID
-      CServiceManager::CServiceManager()
-         : mpClient(0)
-         , mXmlPath(SERVICE_REPOSITORY)
-      #else
       CServiceManager::CServiceManager(iviLink::Android::AppInfo appInfo)
          : mpClient(0)
+#ifndef ANDROID
+         , mXmlPath((std::string)SERVICE_REPOSITORY + "/")
+#else 
+         , mXmlPath(appInfo.serviceRepoPath)
+#endif //ANDROID
          , mAppInfo(appInfo)
-      #endif //ANDROID
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-         #ifndef ANDROID
-         mXmlPath += "/";
-         #endif //ANDROID
          loadDb();
-         #ifndef ANDROID
+         
          CError err = initPmal();
-         #else
-         CError err = initPmal(mAppInfo.launchInfo);
-         #endif //ANDROID
          if(!err.isNoError())
          {
             LOG4CPLUS_ERROR(msLogger,
-                  "CServiceManager::CServiceManager()=> PMAL component manager creation error "
+               "CServiceManager::CServiceManager()=> PMAL component manager creation error "
                + static_cast<std::string>(err));
          }
       }
@@ -145,25 +119,22 @@ namespace iviLink
          }
          mActiveServicesMutex.unlock();
 
-         #ifndef ANDROID
-         AppMan::CAppManConnectController::instance()->init(0);
-         #else
-         AppMan::CAppManConnectController::instance(mAppInfo.launchInfo)->init(0);
-         #endif //ANDROID
+         AppMan::CAppManConnectController::instance(mAppInfo)->init(0);
          PMAL::CPMALComponentMgr::destroy();
       }
 
       void CServiceManager::loadDb()
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-         #ifndef ANDROID
-         std::string path = mXmlPath + "HeadUnitServices.xml";
-         #else
-         std::string path = mAppInfo.serviceRepoPath + "AndroidServices.xml";
-         #endif //ANDROID
+         std::string path = mXmlPath 
+#ifndef ANDROID
+                           + "HeadUnitServices.xml";
+#else
+                           + "AndroidServices.xml";
+#endif //ANDROID
          pugi::xml_document doc;
 
-         LOG4CPLUS_TRACE(msLogger, "path = " + path);
+         LOG4CPLUS_INFO(msLogger, "path = " + path);
 
          pugi::xml_parse_result result = doc.load_file(path.c_str());
          if (result)
@@ -182,15 +153,11 @@ namespace iviLink
          }
          else
          {
-            LOG4CPLUS_ERROR(msLogger, "xml error: " + std::string(result.description()));
+            LOG4CPLUS_FATAL(msLogger, "xml error: " + std::string(result.description()));
          }
       }
 
-      #ifndef ANDROID
       CError CServiceManager::initPmal()
-      #else
-      CError CServiceManager::initPmal(std::string launchInfo)
-      #endif //ANDROID
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          PMAL::CPMALError err = PMAL::CPMALComponentMgr::create(this, NULL);
@@ -200,11 +167,8 @@ namespace iviLink
          }
          PMAL::CPMALComponentMgr* pPmalMgr = PMAL::CPMALComponentMgr::getInstance();
 
-         #ifndef ANDROID
-         AppMan::CAppManConnectController * pAppmanCC = AppMan::CAppManConnectController::instance();
-         #else
-         AppMan::CAppManConnectController * pAppmanCC = AppMan::CAppManConnectController::instance(launchInfo);
-         #endif //ANDROID
+         AppMan::CAppManConnectController * pAppmanCC 
+                       = AppMan::CAppManConnectController::instance(mAppInfo);
          if (!pAppmanCC)
          {
             return CError(1, gModuleName, CError::FATAL, "unable to get app man connect controller");
@@ -280,11 +244,7 @@ namespace iviLink
             return false;
          }
          mActiveServicesMutex.unlock();
-         #ifndef ANDROID
-         CService * pService = new CService(mXmlPath, service);
-         #else
-         CService * pService = new CService(mAppInfo, service);
-         #endif //ANDROID
+         CService * pService = new CService(mXmlPath, mAppInfo, service);
          mCallbacksMutex.lock();
          if (!pService->load(mCallbacks))
          {
@@ -297,7 +257,7 @@ namespace iviLink
          mActiveServicesMutex.lock();
          mActiveServices[service] = pService;
          mActiveServicesMutex.unlock();
-         LOG4CPLUS_ERROR(msLogger, "Loaded a service just fine");
+         LOG4CPLUS_TRACE(msLogger, "Loaded a service successfully");
          return true;
       }
 
@@ -313,20 +273,11 @@ namespace iviLink
             return false;
          }
          mSystemServicesMutex.unlock();
-         mActiveServicesMutex.lock();
-         tServiceMap::const_iterator sit = mActiveServices.find(service);
-         if (mActiveServices.end() != sit)
+         if(isServiceAlreadyLoaded(service)) 
          {
-             LOG4CPLUS_WARN( msLogger, "incomingLoad(" + service.value() + "): service already loaded");
-            mActiveServicesMutex.unlock();
-            return true; //dmi3s  #1248579 was false. should be false.
+            return true;
          }
-         mActiveServicesMutex.unlock();
-         #ifndef ANDROID
-         CService * pService = new CService(mXmlPath, service);
-         #else
-         CService * pService = new CService(mAppInfo, service);
-         #endif //ANDROID
+         CService * pService = new CService(mXmlPath, mAppInfo, service);
          mCallbacksMutex.lock();
          if (!pService->incomingLoad(mCallbacks))
          {
@@ -368,7 +319,10 @@ namespace iviLink
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          if (mpClient)
          {
-            mpClient->serviceRequestCallback(service);
+            if(!isServiceAlreadyLoaded(service))
+            {
+               mpClient->serviceRequestCallback(service);
+            }
          }
          if (!incomingLoad(service))
          {
@@ -426,16 +380,41 @@ namespace iviLink
             Profile::IUid const& profileInstance )
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+         LOG4CPLUS_WARN(msLogger, "service dropped: "+service.value());
          mActiveServicesMutex.lock();
          tServiceMap::iterator it = mActiveServices.find(service);
+         Service::Uid complementedService = service;
+         bool hasFound = false;
          if(mActiveServices.end() == it)
          {
+            LOG4CPLUS_INFO(msLogger, "service was not among active, looking for its complement");
+            for(it = mActiveServices.begin(); it != mActiveServices.end(); it++)
+            {
+               LOG4CPLUS_INFO(msLogger, "service: "+it->second->getUid().value());
+               LOG4CPLUS_INFO(msLogger, "service's complement: "+it->second->getPairUid().value());
+               if(it->second->getPairUid().value().compare(service.value()) == 0)
+               {
+                  LOG4CPLUS_INFO(msLogger, "complement dropped: "+service.value());
+                  LOG4CPLUS_INFO(msLogger, "of: "+it->second->getUid().value());
+                  complementedService = it->second->getUid().value();
+                  hasFound = true;
+                  break;
+               } else {
+                  LOG4CPLUS_TRACE(msLogger, "service dropped and current service's complement are not equal");
+               }
+            }
+         } else {
+            hasFound = true;
+         }
+         if(!hasFound)
+         {  
+            LOG4CPLUS_ERROR(msLogger, "The service that was dropped was now found among mActiveServices and their complements");
             mActiveServicesMutex.unlock();
             return;
          }
          if (it->second->correctState() && mpClient)
          {
-            mpClient->serviceDropped(service);
+            mpClient->serviceDropped(complementedService);
          }
          it->second->profileDied(profileInstance);
          if (it->second->allDied())
@@ -459,6 +438,13 @@ namespace iviLink
          if (mActiveServices.end() == it)
          {
             mActiveServicesMutex.unlock();
+            LOG4CPLUS_WARN(msLogger, "the service is not among active: " + service.value());
+            LOG4CPLUS_INFO(msLogger, "List of active services");
+            for (tServiceMap::iterator it = mActiveServices.begin();
+               mActiveServices.end() != it; ++it)
+            {
+               LOG4CPLUS_INFO(msLogger, it->second->getUid().value());
+            }
             return 0;
          }
          CProfileApiBase * pProfile = it->second->getProfile(profileApi);
@@ -487,6 +473,20 @@ namespace iviLink
             }
          }
          mActiveServicesMutex.unlock();
+      }
+
+
+      bool CServiceManager::isServiceAlreadyLoaded(const Service::Uid & service)
+      {
+         LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+         MutexLocker lock(mActiveServicesMutex);
+         tServiceMap::const_iterator sit = mActiveServices.find(service);
+         if (mActiveServices.end() != sit)
+         {
+            LOG4CPLUS_WARN( msLogger, "incomingLoad(" + service.value() + "): service already loaded");
+            return true; //dmi3s  #1248579 was false. should be false.
+         }
+         return false;
       }
    }
 }

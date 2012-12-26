@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,13 +18,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
+#include <sstream>
+#include <cstdlib>
 
+#include "Types.hpp"
 
-//#ifndef COMMON_H_
-//#define COMMON_H_ 
+#ifndef MEDIAPROFILECOMMON_H_
+#define MEDIAPROFILECOMMON_H_ 
+
+#define MEDIA_CONTROL_TAG "MediaControl"
+#define MEDIA_SOURCE_TAG "MediaSource"
+#define MEDIA_STREAMING_TAG "MediaStreaming"
 
     enum PROCEDURES_STREAMING_IDS {
         SENDSTREAMINGINFO = 1,
@@ -50,8 +56,10 @@
                PAUSE,
                TOGGLE,
                SYNC,
-               UNSYNC,              
+               UNSYNC,     
+	       SERVERSTOP,  
+           CHANGETRACK,       
    };
 
 
-//#endif /* COMMON_H_ */
+#endif /* MEDIAPROFILECOMMON_H_ */

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NEGOTIATORSTATES_HPP_
 #define NEGOTIATORSTATES_HPP_
@@ -39,39 +28,40 @@
 #include <iostream>
 #include <string>
 
-#include "utils/threads/CRWMutex.hpp"
-#include "utils/threads/CCondVar.hpp"
-#include "framework/components/ChannelSupervisor/common/CSError.hpp"
-#include "framework/components/ChannelSupervisor/common/Messages/Notification.hpp"
-#include "utils/misc/Logger.hpp"
+#include "CRWMutex.hpp"
+#include "CCondVar.hpp"
+#include "CSError.hpp"
+#include "Notification.hpp"
+#include "Logger.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 class NegotiaterStates
 {
 public:
-   friend class NegotiatorIPCHandler;
-   enum STATE
-   {
-      IDLE,
-      NEGOTIATED,
-      CHECKEDINMAP,
-      CAALLOCATED,
-      ALLOCDONE
-   };
+    friend class NegotiatorIPCHandler;
+    enum STATE
+    {
+        IDLE, NEGOTIATED, CHECKEDINMAP, CAALLOCATED, ALLOCDONE
+    };
 
-   typedef std::map< std::string, std::pair < STATE, Messages::Notification* > > StateMap;
-   CError ProcessTubeNotification( UInt8* rawNotification);
-   STATE GetTagState(const char * tag);
-   Messages::Notification * GetNotification(const char * tag);
-   void ParseResponse__(pugi::xml_document* doc, char* responseStr);
+    typedef std::map<std::string, std::pair<STATE, Messages::Notification*> > StateMap;
+    CError ProcessTubeNotification(UInt8* rawNotification);
+    STATE GetTagState(const char * tag);
+    Messages::Notification * GetNotification(const char * tag);
+    void ParseResponse__(pugi::xml_document* doc, char* responseStr);
+    std::string StateToString(STATE state);
 private:
-   CCondVar       mStateCond;
-   bool           mWaitFlag;
-   CRWMutex       m_mapMutex;
-   StateMap       m_StateMap;
-   static Logger        msLogger;
+    STATE GetTagStateInternal(const char * tag);
+    Messages::Notification * GetNotificationInternal(const char * tag);
+    CCondVar mStateCond;
+    bool mWaitFlag;
+    CRWMutex m_mapMutex;
+    StateMap m_StateMap;
+    static Logger msLogger;
 };
 
 }  // namespace ChannelSupervisor

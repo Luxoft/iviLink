@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,20 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <stdlib.h>
 #include <cstring>
+#include <cassert>
 
 #include "CBasicSampleProfileImpl.hpp"
 
@@ -124,7 +115,7 @@ CBasicSampleProfileImpl::~CBasicSampleProfileImpl()
 void CBasicSampleProfileImpl::onEnable()
 {
    //Allocating channel
-   mChannelID = allocateChannel("CBasicSampleProfileImpl", this);
+   mChannelID = allocateChannel("CBasicSampleProfileImpl", this, eRealTime);
    if(mChannelID != 0)
    {
       LOG4CPLUS_INFO(msLogger, "CBasicSampleProfileImpl::CBasicSampleProfileImpl(): Channel allocated, starting the communication...");
@@ -149,8 +140,9 @@ void CBasicSampleProfileImpl::onDisable()
 /**
  * Callback that should be invoked when the data is received
  */
-void CBasicSampleProfileImpl::bufferReceived(const tChannelId channel, CBuffer const& buffer)
+void CBasicSampleProfileImpl::onBufferReceived(const tChannelId channel, CBuffer const& buffer)
 {
+   assert (channel == mChannelID);
    UInt8 procedure;
 
    bool res = buffer.read(procedure);
@@ -214,7 +206,7 @@ void CBasicSampleProfileImpl::bufferReceived(const tChannelId channel, CBuffer c
 /**
  * Callback that should be invoked when the channel is deleted
  */
-void CBasicSampleProfileImpl::channelDeletedCallback(const UInt32 channel_id)
+void CBasicSampleProfileImpl::onChannelDeleted(const UInt32 channel_id)
 {
    LOG4CPLUS_INFO(msLogger, "CBasicSampleProfileImpl::channelDeletedCallback() - " +
          convertIntegerToString(channel_id) + " channel deleted!");
@@ -226,7 +218,7 @@ void CBasicSampleProfileImpl::channelDeletedCallback(const UInt32 channel_id)
 /**
  * Callback that should be invoked when the connection is lost
  */
-void CBasicSampleProfileImpl::connectionLostCallback()
+void CBasicSampleProfileImpl::onConnectionLost()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 }

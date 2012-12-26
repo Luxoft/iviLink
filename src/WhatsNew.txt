@@ -2,6 +2,22 @@ What’s new?
 
 =====================================================
 
+1.1.19 release changes:
+
+Media app;
+
+Stability issues fixed;
+
+Twitter app;
+
+Htc connection fix;
+
+Setup script;
+
+Screen sharing app.
+
+=====================================================
+
 1.1.2 release changes:
 
 Android version of iviLink core and applications added (Android versions from 2.2 to 4.1 supported);

@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -43,7 +41,14 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libnegotiator_client.a
 
-INCLUDES      := -I.
+COMMON_DIR	  := $(ROOT_DIR)framework/components/ChannelSupervisor/common/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(UTILS_DIR)ipc/
+INCLUDES      += -I$(COMMON_DIR)Messages/
+INCLUDES      += -I$(COMMON_DIR)
+INCLUDES      += -I$(UTILS_DIR)xml/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 
 ###############################################################################

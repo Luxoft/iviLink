@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -43,7 +41,26 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libSSM.a
 
-INCLUDES      := -I.
+SYSC_DIR	  := $(ROOT_DIR)framework/components/SystemController/
+MSGPROTO_DIR  := $(ROOT_DIR)framework/messageProtocol/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(SYSC_DIR)ssm/states/
+INCLUDES      += -I$(SYSC_DIR)processEntryPoint/
+INCLUDES      += -I$(SYSC_DIR)componentLauncher/
+INCLUDES      += -I$(MSGPROTO_DIR)
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ConnectivityAgent/SystemController/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ConnectivityAgent/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ChannelSupervisor/SystemController/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ChannelSupervisor/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ProfileManager/SystemController/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_ProfileManager/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_AppMan/SystemController/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_AppMan/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_Authentication/SystemController/
+INCLUDES      += -I$(MSGPROTO_DIR)SystemController_Authentication/
+INCLUDES      += -I$(UTILS_DIR)/ipc/
+
 CXXFLAGS      := $(GLOBAL_CXXFLAGS) $(INCLUDES)
 
 ###############################################################################

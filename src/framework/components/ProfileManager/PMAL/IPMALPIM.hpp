@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,35 +18,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef PMAL_IPIM_HPP_
 #define PMAL_IPIM_HPP_
 
-/********************************************************************
- *
- * Other includes
- *
- ********************************************************************/
-#include "framework/components/ProfileManager/PMAL/CProfile.hpp"
-#include "utils/misc/UID.hpp"
+#include "CProfile.hpp"
+#include "UID.hpp"
 
 #include "CPMALError.hpp"
 
+#include "AppInfo.hpp"
+
 namespace iviLink {
 namespace PMAL {
-
 
 /**
  * Public interface for PMAL PIM - the profile implementation manager.
@@ -67,6 +52,7 @@ public:
     * @param sid is the id of service to which profile belongs
     * @param pProxy it the pointer profile callbacks handler
     * @param [out] pProfile is the resulting pointer to profile instance object.
+    * @param info application info, necessary for Android
     * In case of any error (not NO_ERROR return value), pProfile will be NULL.
     *
     * @retval NO_ERROR profile loaded successfully
@@ -78,17 +64,12 @@ public:
     *    instance creation
     * @retval ERROR_PROFILE_INIT error on profile instance init prevents it use
     */
-   #ifndef ANDROID
    virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
          iviLink::Service::Uid const& sid,
          iviLink::Profile::IProfileCallbackProxy* const pProxy,
-         Profile::CProfile*& pProfile) = 0;
-   #else
-   virtual CPMALError loadProfile(iviLink::Profile::Uid const& profileUid,
-         iviLink::Service::Uid const& sid,
-         iviLink::Profile::IProfileCallbackProxy* const pProxy,
-         Profile::CProfile*& pProfile, std::string backupPath) = 0;
-   #endif //ANDROID
+         Profile::CProfile*& pProfile, 
+         Android::AppInfo info = Android::AppInfo()) = 0;
+
 
    /**
     * Destroys loaded profile instance.
@@ -104,11 +85,7 @@ protected:
 
 };
 
-
-
 }  // namespace ProfileManager
 }  // namespace AXIS
-
-
 
 #endif /* PMAL_IPIM_HPP_ */

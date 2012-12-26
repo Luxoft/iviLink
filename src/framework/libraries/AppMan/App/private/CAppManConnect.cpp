@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CAppManConnect.hpp"
 #include "CAppManProtoClient.hpp"
+#include "CSignalSemaphore.hpp"
 
 #include <cassert>
 
@@ -50,32 +40,35 @@ namespace iviLink
          CAppManConnect::CAppManConnect(CAppManProtoClient * pClient)
          : CThread("AppManAppConnection")
          , mpClient(pClient)
+         , mpStartSemaphore(new CSignalSemaphore())
          {
-            LOG4CPLUS_TRACE(msLogger,"CAppManConnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             assert(mpClient);
          }
 
          CAppManConnect::~CAppManConnect()
          {
-            LOG4CPLUS_TRACE(msLogger,"~CAppManConnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+            delete mpStartSemaphore;
          }
 
          void CAppManConnect::connect()
          {
-            LOG4CPLUS_TRACE(msLogger,"connect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             start();
+            mpStartSemaphore->wait();
          }
 
          void CAppManConnect::disconnect()
          {
-            LOG4CPLUS_TRACE(msLogger,"disconnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClient->disconnect();
          }
 
          void CAppManConnect::threadFunc()
          {
-            LOG4CPLUS_TRACE(msLogger,"threadFunc()");
-            mpClient->loop();
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+            mpClient->loop(mpStartSemaphore);
          }
 
       }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,12 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include <QtCore/QCoreApplication>
 #include <QDebug>
@@ -48,6 +43,8 @@ QStringList our_paths;
 QFile     * log=0;
 bool        filereported(false);
 bool        onlyalerts(false);
+const int   maxEmptyLines = 2;
+
 QString fileToString(const QString& path)
 {
     QFile file(path);
@@ -61,12 +58,12 @@ QString fileToString(const QString& path)
         }
         return QString();
     }
-    QByteArray data=file.readAll();
+    QByteArray data = file.readAll();
     return QString(data);
 }
 void fileToStringList(const QString& path)
 {
-    QStringList *out=NULL;
+    QStringList *out = NULL;
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
@@ -121,20 +118,21 @@ bool inList(const QStringList& list, const QString& text)
             {
                 re.setCaseSensitivity(Qt::CaseInsensitive);
                 re.setMinimal(true);
-                if(text.contains(re))return true;
+                if(text.contains(re))
+                    return true;
             }
-        }else
-        if(str.startsWith("-re:"))
+        }else if(str.startsWith("-re:"))
         {
             QRegExp re(str.mid(4));
             if(re.isValid() && !re.isEmpty())
             {
                 re.setCaseSensitivity(Qt::CaseInsensitive);
                 re.setMinimal(true);
-                if(text.contains(re))return false;
+                if(text.contains(re))
+                    return false;
             }
-        }else
-        if(text.contains(str, Qt::CaseInsensitive)) return true;
+        }else if(text.contains(str, Qt::CaseInsensitive))
+            return true;
     }
     return false;
 }
@@ -152,12 +150,14 @@ bool RemoveComment(const QString& path, const QString& text, int from, int to, b
         commentprinted=true;
     }
     bool flag=inList(gray_copyrights, comment);
-    if(!flag)return false;
+    if(!flag)
+        return false;
     bool comment_must_be_removed(inList(reject_copyrights, comment));
     bool comment_must_be_saved(inList(skip_copyrights, comment));
     skip|=comment_must_be_saved;
     modify|=comment_must_be_removed;
-    if(infomode && log){
+    if(infomode && log)
+    {
         if(!commentprinted && !onlyalerts)
         {
             reportFile(path);
@@ -170,7 +170,9 @@ bool RemoveComment(const QString& path, const QString& text, int from, int to, b
         if(comment_must_be_saved)log->write("[KEEP] ");
         log->write("\n**********************************************\n");
     }
-    if(comment_must_be_removed && !comment_must_be_saved)return true;
+    if(comment_must_be_removed && !comment_must_be_saved)
+        return true;
+
     return false;
 }
 
@@ -180,13 +182,16 @@ void storeFile(const QString& orig, const QString& path, const QStringList& line
     if(skip && modify)
     {
         reportFile(path);
-        if(log)log->write("PROBLEM: file contains both our and third-party copyrights");
+        if(log)
+            log->write("PROBLEM: file contains both our and third-party copyrights");
     }
-    if(infomode)return;
+    if(infomode)
+        return;
 
 
     QString outpath=path;
-    if(testmode)outpath+=".test";
+    if(testmode)
+        outpath+=".test";
 
     QFile ofile(outpath);
     if(ofile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -197,15 +202,19 @@ void storeFile(const QString& orig, const QString& path, const QStringList& line
             {
                 QStringList lines=copyright_header.split('\n');
                 QStringListIterator iter(lines);
-                if(!bashcomment)ofile.write("/* \n");
+                if(!bashcomment)
+                    ofile.write("/* \n");
                 while(iter.hasNext())
                 {
-                    if(bashcomment)ofile.write("# ");
-                    else ofile.write(" * ");
+                    if(bashcomment)
+                        ofile.write("# ");
+                    else
+                        ofile.write(" * ");
                     ofile.write(iter.next().toAscii());
                     ofile.write("\n");
                 }
-                if(!bashcomment)ofile.write(" */\n\n");
+                if(!bashcomment)
+                    ofile.write(" */ \n");
             }
             QStringListIterator iter(lines);
             while(iter.hasNext())
@@ -213,9 +222,8 @@ void storeFile(const QString& orig, const QString& path, const QStringList& line
                 ofile.write(iter.next().toAscii());
             }
         }
-        else{
+        else
             ofile.write(orig.toAscii());
-        }
     }
     else if(log)
     {
@@ -245,8 +253,10 @@ void processCXXFile(const QFileInfo& file, bool assume_our)
             output<<text.mid(offset);
             break;
         }
-        if(off_sd<0)off_sd=text.length();
-        if(off_ss<0)off_ss=text.length();
+        if(off_sd<0)
+            off_sd=text.length();
+        if(off_ss<0)
+            off_ss=text.length();
 
         if(off_ss<off_sd)
         {
@@ -260,7 +270,10 @@ void processCXXFile(const QFileInfo& file, bool assume_our)
                 }
             }
             int end=text.indexOf('\n', off_ss);
-            if(end<0)end=text.length();else ++end;
+            if(end<0)
+                end=text.length();
+            else
+                ++end;
             //grab more lines
             if(comment_from_newline)
             {
@@ -269,15 +282,18 @@ void processCXXFile(const QFileInfo& file, bool assume_our)
                 while(end!=text.length())
                 {
                     int nextss=text.indexOf("//",end);
-                    if(nextss<0)break;
+                    if(nextss<0)
+                        break;
                     //check if there is \n between // and end
                     int moreN=text.indexOf('\n', end);
-                    if(moreN>=0 && moreN<nextss)break;
+                    if(moreN>=0 && moreN<nextss)
+                        break;
                     //check for [end]...spaces...//
                     bool spaces_between(true);
                     for(int i=end; i<nextss; ++i)
                     {
-                        if(!text.at(i).isSpace()){
+                        if(!text.at(i).isSpace())
+                        {
                             spaces_between=false;
                             break;
                         }
@@ -291,32 +307,28 @@ void processCXXFile(const QFileInfo& file, bool assume_our)
             if(RemoveComment(file.absoluteFilePath(), text, off_ss, end, skipfile, modify_file))
             {
                 if(offset<off_ss)
-                {
                     output<<text.mid(offset,off_ss-offset);
-                }
             }
             else
-            {
                 output<<text.mid(offset, end-offset);
-            }
+
             offset=end;
         }else{
             int nextoffset;
             int end=text.indexOf("*/", off_sd+2);
-            if(end<0){
+            if(end<0)
                 end=nextoffset=text.length();
-            }else{
+            else
                 nextoffset=end+2;
-            }
 
             if(RemoveComment(file.absoluteFilePath(), text, off_sd, end, skipfile, modify_file))
             {
-                if(offset<off_sd)output<<text.mid(offset, off_sd-offset);
+                if(offset<off_sd)
+                    output<<text.mid(offset, off_sd-offset);
             }
             else
-            {
                 output<<text.mid(offset, end+2-offset);
-            }
+
             offset=nextoffset;
         }
     }
@@ -344,13 +356,17 @@ void processMakeFile(const QFileInfo& file, bool assume_our)
         int newlinebefore=off_ss==0 ? 0 : text.lastIndexOf('\n', off_ss)+1;
         for(int i=newlinebefore+1; i<off_ss; ++i)
         {
-            if(!text.at(i).isSpace()){
+            if(!text.at(i).isSpace())
+            {
                 comment_from_newline=false;
                 break;
             }
         }
         int end=text.indexOf('\n', off_ss);
-        if(end<0)end=text.length();else ++end;//end if after \n
+        if(end<0)
+            end=text.length();
+        else
+            ++end;//end if after \n
         //grab more lines
         if(comment_from_newline)
         {
@@ -359,15 +375,18 @@ void processMakeFile(const QFileInfo& file, bool assume_our)
             while(end<text.length())
             {
                 int nextss=text.indexOf('#',end);
-                if(nextss<0)break;
+                if(nextss<0)
+                    break;
                 //check if there is \n between // and end
                 int moreN=text.indexOf('\n', end);
-                if(moreN>=0 && moreN<nextss)break;
+                if(moreN>=0 && moreN<nextss)
+                    break;
                 //check for [end]...spaces...//
                 bool spaces_between(true);
                 for(int i=end; i<nextss; ++i)
                 {
-                    if(!text.at(i).isSpace()){
+                    if(!text.at(i).isSpace())
+                    {
                         spaces_between=false;
                         break;
                     }
@@ -375,7 +394,10 @@ void processMakeFile(const QFileInfo& file, bool assume_our)
                 if(!spaces_between || nextss-end!=tabspace)
                     break;
                 end=text.indexOf('\n', nextss);
-                if(end<0)end=text.length();else ++end;
+                if(end<0)
+                    end=text.length();
+                else
+                    ++end;
             }
         }
         //qDebug()<<"... ... comment at "<<off_ss<<"--"<<end;
@@ -396,6 +418,69 @@ void processMakeFile(const QFileInfo& file, bool assume_our)
         offset=end;
     }
     storeFile(text, file.absoluteFilePath(), output, skipfile, modify_file, true);
+}
+
+// only spaces are in the string
+bool isSpaces(const QString str)
+{
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (!str[i].isSpace())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void removeExtraLines(const QFileInfo& file)
+{
+    //to string list
+    QStringList fileList;
+    int countOfEmptyLines = 0;
+    const QString& path = file.absoluteFilePath();
+    QFile readfile(path);
+    if(!readfile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QString outpath=path;
+    if(testmode)
+        outpath+=".test";
+
+    while(!readfile.atEnd())
+    {
+        QByteArray data=readfile.readLine();
+        if(data.length() && data.at(data.length()-1)=='\n')
+            data.resize(data.size()-1);
+        if(data.length() && data.at(data.length()-1)=='\r')
+            data.resize(data.size()-1);
+
+        QString str(data);
+        fileList += str;
+    }
+
+    //new file without empty lines
+    QFile outfile(outpath);
+    if(outfile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        for (int i = 0; i < fileList.size(); ++i)
+        {
+            if (fileList.at(i).isEmpty() || isSpaces(fileList.at(i)))
+            {
+                countOfEmptyLines++;
+            }
+            else
+            {
+                countOfEmptyLines = 0;
+            }
+            if (countOfEmptyLines <= maxEmptyLines)
+            {
+                outfile.write(fileList.at(i).toAscii());
+                outfile.write("\n");
+            }
+        }
+        outfile.close();
+    }
 }
 
 void parseFile(const QFileInfo& file, bool force_update=false)
@@ -436,13 +521,16 @@ void parseFile(const QFileInfo& file, bool force_update=false)
         {
             qDebug()<<"Parsing "<<file.baseName();
             processCXXFile(file.absoluteFilePath(),force_update);
+            removeExtraLines(file.absoluteFilePath());
+
         }
-        else
-        if(file.baseName().toLower()=="makefile")
+        else if(file.baseName().toLower()=="makefile")
         {
             qDebug()<<"Parsing "<<file.baseName();
             processMakeFile(file.absoluteFilePath(),force_update);
+            removeExtraLines(file.absoluteFilePath());
         }
+
     }
 
 }
@@ -456,6 +544,7 @@ int main(int argc, char *argv[])
         QString arg(argv[i]);
         if(arg=="-c")
         {
+            //lisence.txt
             if(i+1==argc)return 1;
             copyright_header=fileToString(QString(argv[i+1]));
             ++i;
@@ -463,6 +552,7 @@ int main(int argc, char *argv[])
         }
         if(arg=="-mask")
         {
+            //mask.txt
             if(i+1==argc)return 1;
             fileToStringList(QString(argv[i+1]));
             ++i;
@@ -470,6 +560,7 @@ int main(int argc, char *argv[])
         }
         if(arg=="-log")
         {
+            //log.txt
             if(i+1==argc)return 1;
             _log.setFileName(QString(argv[i+1]));
             if(!_log.open(QIODevice::WriteOnly | QIODevice::Text))return 1;

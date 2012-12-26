@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,81 +18,72 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
 #include <queue>
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
-#include "utils/misc/Types.hpp"
-#include "framework/components/ChannelSupervisor/common/Messages/NegotiatorMessage.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Types.hpp"
+#include "NegotiatorMessage.hpp"
 
 #define MAXQUEUESIZE 10
 
-namespace iviLink {
-namespace ChannelSupervisor {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
 class MessageQueue
 {
 public:
-	MessageQueue(CSignalSemaphore* sema) : 
-		m_queueSize(0),
-		m_sema(sema)
-	{
-	}
+    MessageQueue(CSignalSemaphore* sema)
+            : m_queueSize(0), m_sema(sema)
+    {
+    }
 
-	int queueSize()
-	{
-		return m_queueSize;
-	}
+    int queueSize()
+    {
+        return m_queueSize;
+    }
 
-	bool enqueue(Messages::NegotiatorMessage* msg)
-	{
-		m_queueMutex.lock();
-		if ( messageQueue.size() < MAXQUEUESIZE )
-		{
-			messageQueue.push(msg);
-			m_queueSize++;
-			m_queueMutex.unlock();
-			m_sema->signal();
-			return true;
-		}
-		m_queueMutex.unlock();
-		return false;
-	}
+    bool enqueue(Messages::NegotiatorMessage* msg)
+    {
+        m_queueMutex.lock();
+        if (messageQueue.size() < MAXQUEUESIZE)
+        {
+            messageQueue.push(msg);
+            m_queueSize++;
+            m_queueMutex.unlock();
+            m_sema->signal();
+            return true;
+        }
+        m_queueMutex.unlock();
+        return false;
+    }
 
-	Messages::NegotiatorMessage* dequeue()
-	{
-		m_queueMutex.lock();
-		Messages::NegotiatorMessage* msg = NULL;
-		if ( messageQueue.size() > 0 )
-		{
-			msg = messageQueue.front();	//take the message
-			messageQueue.pop();			//remove from the q
-			m_queueSize--;
-		}
-		m_queueMutex.unlock();
-		return msg;
-	}
+    Messages::NegotiatorMessage* dequeue()
+    {
+        m_queueMutex.lock();
+        Messages::NegotiatorMessage* msg = NULL;
+        if (messageQueue.size() > 0)
+        {
+            msg = messageQueue.front();	//take the message
+            messageQueue.pop();			//remove from the q
+            m_queueSize--;
+        }
+        m_queueMutex.unlock();
+        return msg;
+    }
 
 private:
-	std::queue<Messages::NegotiatorMessage*> messageQueue;
-	int                            m_queueSize;
-	CMutex						       m_queueMutex;
-	CSignalSemaphore*			       m_sema;
+    std::queue<Messages::NegotiatorMessage*> messageQueue;
+    int m_queueSize;
+    CMutex m_queueMutex;
+    CSignalSemaphore* m_sema;
 };
 
 }  // namespace ChannelSupervisor

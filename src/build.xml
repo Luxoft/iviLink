@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="iviLinkAndroid" basedir = "." default="help">
 
+    <condition property="device.path" else="/mnt/sdcard">
+      <isset property="device.path"/>
+    </condition>
+
    <target name="build" depends="build-ubuntu, install-ubuntu,build-android" />
    
    <target name="build-ubuntu">
@@ -9,45 +13,49 @@
 
    <target name="build-android">
       <delete dir="${basedir}/../src_install/android"/>
+      <delete dir="${basedir}/samples/android/xmls/profile_repository/profileImpls"/>
       <ant antfile="${basedir}/framework/libraries/AndroidPrebuilt/build.xml" inheritall="false"/>   
-      <ant antfile="${basedir}/framework/public/AndroidCommonLib/build.xml" inheritall="false"/>   
-      <ant antfile="${basedir}/framework/components/SystemController/android/build.xml" inheritall="false" >
+      <ant antfile="${basedir}/framework/components/SystemController/android/build.xml" inheritall="false" target="debug" >
          <property name="result.dir" value= "${basedir}/../src_install/android" /> 
-         <property name="iviLib.path" value= "${basedir}/framework/public/AndroidCommonLib/iviLib.jar" /> 
       </ant>
-      <ant antfile="${basedir}/samples/android/BasicSample/build.xml" inheritall="false" >
-         <property name="result.dir" value= "${basedir}/../src_install/android" /> 
-         <property name="iviLib.path" value= "${basedir}/framework/public/AndroidCommonLib/iviLib.jar" /> 
-      </ant>
-      <ant antfile="${basedir}/samples/android/SeatApp/build.xml" inheritall="false" >
-         <property name="result.dir" value= "${basedir}/../src_install/android" /> 
-         <property name="iviLib.path" value= "${basedir}/framework/public/AndroidCommonLib/iviLib.jar" /> 
-      </ant>
-      <ant antfile="${basedir}/samples/android/ClimateClient/build.xml" inheritall="false" >
-         <property name="result.dir" value= "${basedir}/../src_install/android" /> 
-         <property name="iviLib.path" value= "${basedir}/framework/public/AndroidCommonLib/iviLib.jar" /> 
-      </ant>
-      <!-- you can add your apps here -->
+     <apply executable="ant" failonerror="true">
+         <arg value="debug" />
+         <arg value="-Dresult.dir=${basedir}/../src_install/android" />
+         <arg value="-buildfile" />
+         <fileset dir="samples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+     <apply executable="ant" failonerror="true">
+         <arg value="jar" />
+         <arg value="-buildfile" />
+         <fileset dir="samples/android/Profiles">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
    </target>
    
-   <target name="full-clean" depends="clean-android, clean-ubuntu">
-      <ant antfile="${basedir}/framework/libraries/AndroidPrebuilt/build.xml" inheritall="false"  target="clean"/>    
-      <ant antfile="${basedir}/framework/public/AndroidCommonLib/build.xml" inheritall="false " target="clean" />   
-   </target>
+   <target name="full-clean" depends="full-clean-android, clean-ubuntu" />
    
    
-   <target name="full-clean-android" depends="clean-android">
-      <ant antfile="${basedir}/framework/libraries/AndroidPrebuilt/build.xml" inheritall="false"  target="clean"/>    
-      <ant antfile="${basedir}/framework/public/AndroidCommonLib/build.xml" inheritall="false " target="clean" />   
+   <target name="full-clean-android" depends="clean-android"> 
+      <exec executable="ndk-build" dir="framework/libraries/AndroidPrebuilt/AndroidNativeAppLib/" failonerror="true">
+         <arg value="clean" />
+      </exec>
    </target>
    
    <target name="clean-android">
       <delete dir="${basedir}/../src_install/android"/>
-      <ant antfile="${basedir}/samples/android/BasicSample/build.xml" inheritall="false"  target="clean"/>  
-      <ant antfile="${basedir}/samples/android/SeatApp/build.xml" inheritall="false"  target="clean"/>  
-      <ant antfile="${basedir}/samples/android/ClimateClient/build.xml" inheritall="false"  target="clean"/>  
+      <delete dir="${basedir}/samples/android/xmls/profile_repository/profileImpls/"/>
+      <apply executable="ant" failonerror="true">
+         <arg value="clean" />
+         <arg value="-buildfile" />
+         <fileset dir="samples/android/">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>
       <ant antfile="${basedir}/framework/components/SystemController/android/build.xml" inheritall="false"  target="clean"/>  
-      <!-- you can add your apps here -->
+      <ant antfile="${basedir}/framework/public/AndroidCommonLib/build.xml" inheritall="false"  target="clean"/>  
    </target>
    
    <target name="clean-ubuntu">
@@ -57,18 +65,37 @@
    </target>
    
    
-   <target name="setup">
-      <!-- this prepares local.properties for applications and downloads protobuf -->
-      <ant antfile="${basedir}/3rd_party/build.xml" inheritall="false"  target="setup" />   
+   <target name="setup" depends="setup-android-projects">
+      <!-- this prepares local.properties for applications -->
       <ant antfile="${basedir}/framework/libraries/AndroidPrebuilt/build.xml" inheritall="false"  target="setup"/>  
-      <ant antfile="${basedir}/framework/public/AndroidCommonLib/build.xml" inheritall="false"  target="setup"/>  
-      <ant antfile="${basedir}/framework/components/SystemController/android/build.xml" inheritall="false" target="setup"/>   
-      <ant antfile="${basedir}/samples/android/BasicSample/build.xml" inheritall="false"  target="setup"/>   
-      <ant antfile="${basedir}/samples/android/SeatApp/build.xml" inheritall="false"  target="setup"/> 
-      <ant antfile="${basedir}/samples/android/ClimateClient/build.xml" inheritall="false"  target="setup"/> 
-      <!-- you can add paths to your apps here  -->  
+      <echo message="Setup done. Please restart your terminal to run ant build" />
    </target>
-   
+
+   <target name="setup-android-projects">
+      <exec executable="android" failonerror="true">
+         <arg value="update"/>
+         <arg value="project"/>
+         <arg value="--path"/>
+         <arg value="${basedir}/framework/public/AndroidCommonLib"/>
+      </exec> 
+      <exec executable="android" failonerror="true">
+         <arg value="update"/>
+         <arg value="project"/>
+         <arg value="--path"/>
+         <arg value="${basedir}/framework/components/SystemController/android"/>
+      </exec> 
+      <apply executable="android" failonerror="false">
+         <arg value="update"/>
+         <arg value="project"/>
+         <arg value="--path"/>
+         <dirset dir="samples/android/">
+            <include name="**" />
+            <present targetdir="samples/android/" present="both">
+               <mapper type="regexp" from="(.*)" to="\1/AndroidManifest.xml" />
+            </present>
+         </dirset> 
+      </apply>
+   </target>   
    
    <target name="install" depends="install-ubuntu,install-clean-android" />
    
@@ -91,24 +118,27 @@
       <exec executable="adb">
          <arg value="push"/>
          <arg value="samples/android/xmls/"/>
-         <arg value="/mnt/sdcard/"/>
+         <arg value="${device.path}"/>
       </exec>
    </target>
    
    <target name="uninstall">
-      <ant antfile="${basedir}/samples/android/BasicSample/build.xml" inheritall="false"  target="uninstall"/>  
-      <ant antfile="${basedir}/samples/android/SeatApp/build.xml" inheritall="false"  target="uninstall"/>  
-      <ant antfile="${basedir}/samples/android/ClimateClient/build.xml" inheritall="false"  target="uninstall"/> 
+      <apply executable="ant" failonerror="false">
+         <arg value="uninstall" />
+         <arg value="-buildfile" />
+         <fileset dir="samples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>
       <ant antfile="${basedir}/framework/components/SystemController/android/build.xml" inheritall="false"  target="uninstall"/>  
-      <!-- you can add your apps here -->
       <echo message="Removing folders on device" />
       <exec executable="adb">
          <arg value="shell"/>
          <arg value="rm"/>
          <arg value="-r"/>
-         <arg value="/mnt/sdcard/profile_repository/"/>
-         <arg value="/mnt/sdcard/service_repository/"/>
-         <arg value="/mnt/sdcard/application_manager_database/"/>
+         <arg value="${device.path}/profile_repository/"/>
+         <arg value="${device.path}/service_repository/"/>
+         <arg value="${device.path}/application_manager_database/"/>
       </exec>
    </target>
    
@@ -116,16 +146,19 @@
    <target name="install-clean-android" depends="uninstall, install-android" />
    
    <target name="help">
-      <echo message="ant setup: should be run first. Will prepare protobuf and local.properties for Android projects" />
+      <echo message="use -Ddevice.path= to set device-specific external storage path (by default /mnt/sdcard is used)" />
+      <echo message="ant setup: should be run first (but after setup_ubuntu_and_android_env.sh, in a restarted terminal). Will prepare protobuf and local.properties for Android projects, and create prebuilt libraries with rsa, json and protobuf for Android. Terminal must be restarted after it in order to build samples successfully" />
+      <echo message="ant setup-android-projects: you can use this command to generate local.properties for Android projects (it is done automatically in the 'ant setup' task)" />
       <echo message="ant build: build SDK and apps for Ubuntu and Android. Results are copied into iviLink/src_install" />
       <echo message="ant build-ubuntu: build SDK and apps for Ubuntu only." />
-      <echo message="ant build-android: build SDK and apps for Android only. (will fail if Ubuntu version has not been build before)" />
+      <echo message="ant build-android: build SDK and apps for Android only. (will fail if Ubuntu version has not been built)" />
       <echo message="ant full-clean: clean all" />
-      <echo message="ant full-clean-android: clean all Android stuff" />
+      <echo message="ant full-clean-android: clean all Android stuff: apps and prebuilt libraries" />
       <echo message="ant clean-android: clean Android apps only (won't clean src/framework/libraries/AndroidPrebuilt and src/framework/public/AndroidCommonLib - use full-clean-android)" />
       <echo message="ant clean-ubuntu: clean all Ubuntu stuff" />
-      <echo message="ant install-android: installs Android apps and directories with xmls to a connected device" />
-      <echo message="ant install-clean-android: installs Android apps and directories with xmls to a connected device (clean installation)" />
+      <echo message="ant install-android: installs Android apps and directories with xmls to a connected device (will fail if there are two or more devices connected)" />
+      <echo message="ant uninstall: uninstalls Android apps and directories with xmls from a connected device (will fail if there are two or more devices connected)" />
+      <echo message="ant install-clean-android: installs Android apps and directories with xmls to a connected device (clean installation - uninstall is run first)" />
    </target>
    
 </project>

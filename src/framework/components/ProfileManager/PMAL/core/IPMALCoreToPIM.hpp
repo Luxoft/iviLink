@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ICORETOPIM_HPP_
 #define ICORETOPIM_HPP_
 
-#include "framework/components/ProfileManager/PMAL/CPMALError.hpp"
-#include "utils/misc/UID.hpp"
+#include "CPMALError.hpp"
+#include "UID.hpp"
 
 namespace iviLink {
 namespace PMAL {
@@ -67,7 +58,6 @@ protected:
 
 }  // namespace ProfileManager
 }  // namespace AXIS
-
 
 
 #endif /* ICORETOPIM_HPP_ */

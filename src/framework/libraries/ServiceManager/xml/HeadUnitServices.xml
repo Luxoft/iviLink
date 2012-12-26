@@ -5,11 +5,9 @@
     <service name="SeatService" />
     <service name="BasicSampleServiceHUI" />
     <service name="BasicSampleServiceClient" />
+    <service name="NavigationVoiceService" />
     <service name="AuthenticationService" />
-    <service name="MediaStreamingServerService" />
-    <service name="MediaControlServerService" />
-    <service name="MediaSourceServerService" />
-    <service name="MediaStreamingClientService" />
-    <service name="MediaControlClientService" />
-    <service name="MediaSourceClientService" />
+    <service name="NavigationVoiceService" />
+    <service name="MediaService" />
+    <service name="ScreenSharingViewerService" />
 </device>

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,19 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #include "CMediaSourceClientProfile.hpp"
 
-#include "framework/components/ChannelSupervisor/Tube/ChannelSupervisorTube.hpp"
-#include "samples/linux/Profiles/mediaCommon/CSenderThread.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+#include "ChannelSupervisorTube.hpp"
+#include "CSenderThread.hpp"
+#include "CMutex.hpp"
+#include "CSignalSemaphore.hpp"
+#include "Exit.hpp"
 
 
 #include <cstring>
@@ -47,7 +43,6 @@ CMediaSourceClientProfile::CMediaSourceClientProfile(iviLink::Profile::IProfileC
    , mpReqMutex(new CMutex())
    , mpReqSemaphore(new CSignalSemaphore())
    , mBe(true)
-   , mTag("CMediaSourceClientProfile")
    , mHasRequest(false)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
@@ -77,7 +72,7 @@ void CMediaSourceClientProfile::requestTrackList()
 void CMediaSourceClientProfile::onEnable()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-   mChannelID = iviLink::Channel::allocateChannel(mTag, this);
+   mChannelID = iviLink::Channel::allocateChannelAsClient(MEDIA_SOURCE_TAG, this, eRealTime);
    if (mChannelID)
    {
       LOG4CPLUS_INFO(msLogger, "Channel allocated, starting the communication...");
@@ -86,6 +81,7 @@ void CMediaSourceClientProfile::onEnable()
    else
    {
       LOG4CPLUS_WARN(msLogger, "allocate Channel failed");
+      killProcess(1);
    }
 }
 
@@ -99,7 +95,7 @@ void CMediaSourceClientProfile::onDisable()
 }
 
 //from CChannelHandler
-void CMediaSourceClientProfile::bufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
+void CMediaSourceClientProfile::onBufferReceived(const iviLink::Channel::tChannelId channel, iviLink::CBuffer const& buffer)
 {
   LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    if (mChannelID != channel)
@@ -112,55 +108,38 @@ void CMediaSourceClientProfile::bufferReceived(const iviLink::Channel::tChannelI
       LOG4CPLUS_INFO(msLogger, "mChannelID == channel_id");
    }
    
-   bool res = true;
-   UInt16 tmp;
-   if (!buffer.read(tmp))
-   {
-      LOG4CPLUS_WARN(msLogger, "Unable to read request type from buffer");
-      return;
-   }
+   UInt8 *incomingData = buffer.getBuffer();
+   int read_size = buffer.getSize();
 
-   PROCEDURES_SOURCE_IDS proc = static_cast<PROCEDURES_SOURCE_IDS>(tmp);
+   LOG4CPLUS_INFO(msLogger, "Procedure ID = " + convertIntegerToString(incomingData[0]));
 
-   switch(proc)
+
+   if(incomingData[0] == RECALLTRACKLIST)
    {
-   case RECALLTRACKLIST:
-      {
          LOG4CPLUS_INFO(msLogger, "case RECALLTRACKLIST");
          mpAppCallbacks->onRecallTrackList();
-      }
-      break;
-   case TRACKLISTCHANGED:
-      {
+
+   }
+   else if(incomingData[0] == TRACKLISTCHANGED)
+   {
          LOG4CPLUS_INFO(msLogger, "case TRACKLISTCHANGED");        
          mpAppCallbacks->onTrackListChanged();
-      }
-      break;
-   case SENDTRACKLIST:
-      {
-         LOG4CPLUS_INFO(msLogger, "case TRACKLISTRECIEVED");
-         std::string trackList;
-         res = res && buffer.read(trackList);
-         if (res)
-            mpAppCallbacks->onTrackListReceived(trackList);
-      }
-      break;
-   default:
-      {
-         LOG4CPLUS_WARN(msLogger, "Unknown request type");
-         return;
-      }
-      break;
-   }
 
-   if (!res)
+   }
+   else if(incomingData[0] == SENDTRACKLIST)
    {
-      LOG4CPLUS_WARN(msLogger, "Unable to read event from buffer");
-      return;
+        LOG4CPLUS_INFO(msLogger, "case TRACKLISTRECIEVED");
+        std::string trackList((char*)(incomingData + 1), read_size - 1);
+        LOG4CPLUS_INFO(msLogger, "TrackList  = " + trackList);
+        mpAppCallbacks->onTrackListReceived(trackList);
+   }
+   else
+   {
+        LOG4CPLUS_INFO(msLogger, "unknown procedure ID");
    }
 }
 
-void CMediaSourceClientProfile::channelDeletedCallback(const UInt32 channel_id)
+void CMediaSourceClientProfile::onChannelDeleted(const UInt32 channel_id)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -174,7 +153,7 @@ void CMediaSourceClientProfile::channelDeletedCallback(const UInt32 channel_id)
    }
 }
 
-void CMediaSourceClientProfile::connectionLostCallback()
+void CMediaSourceClientProfile::onConnectionLost()
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
    mpAppCallbacks->onRecallTrackList();
@@ -210,7 +189,7 @@ void CMediaSourceClientProfile::handleRequest()
    bool res = true;
    const UInt32 size = 4;
    CBuffer buf(new UInt8[size], size);
-   res = res && buf.write((UInt16)REQUESTTRACKLIST);
+   res = res && buf.write((UInt8)REQUESTTRACKLIST);
 
    if (res)
    {

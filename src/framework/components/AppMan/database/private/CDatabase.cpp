@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,25 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <string>
 
 #include "CDatabase.hpp"
-#include "utils/xml/pugixml.hpp"
-#include "utils/threads/CMutex.hpp"
+#include "pugixml.hpp"
+#include "CMutex.hpp"
 
 namespace iviLink
 {
@@ -82,11 +71,11 @@ namespace iviLink
          return res;
       }
 
-      #ifndef ANDROID
+#ifndef ANDROID
       bool CDatabase::load()
-      #else
+#else
       bool CDatabase::load(std::string pathToDatabase)
-      #endif //ANDROID
+#endif //ANDROID
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
@@ -94,14 +83,14 @@ namespace iviLink
          pugi::xml_document doc;
          // Get DOM structure from XML file
          LOG4CPLUS_INFO(msLogger, "DB path: " + mDBPath);
-         #ifndef ANDROID
+#ifndef ANDROID
          pugi::xml_parse_result res = doc.load_file(mDBPath.c_str());
-         #else
+#else
          mDirPath = pathToDatabase;
          LOG4CPLUS_INFO(msLogger, "DB directory path: " + mDirPath);
          std::string fullPath = mDirPath + mDBPath;
          pugi::xml_parse_result res = doc.load_file(fullPath.c_str());
-         #endif //ANDROID
+#endif //ANDROID
          switch (res.status)
          {
          case pugi::status_ok:              // No error
@@ -111,7 +100,7 @@ namespace iviLink
          case pugi::status_io_error:            // Error reading from file/stream
          case pugi::status_out_of_memory:       // Could not allocate memory
          case pugi::status_internal_error:      // Internal error occurred
-            LOG4CPLUS_INFO(msLogger, "AppMan database open error");
+            LOG4CPLUS_ERROR(msLogger, "AppMan database open error");
             mpMutex->unlock();
             return false;
             break;
@@ -125,7 +114,7 @@ namespace iviLink
          case pugi::status_bad_attribute:       // Parsing error occurred while parsing element attribute
          case pugi::status_bad_end_element:     // Parsing error occurred while parsing end element tag
          case pugi::status_end_element_mismatch: // There was a mismatch of start-end tags (closing tag had incorrect name, some tag was not closed or there was an excessive closing tag)
-            LOG4CPLUS_INFO(msLogger, "AppMan database parsing error");
+            LOG4CPLUS_ERROR(msLogger, "AppMan database parsing error");
             mpMutex->unlock();
             return false;
             break;
@@ -158,10 +147,9 @@ namespace iviLink
             LOG4CPLUS_INFO(msLogger, "launch-info : " + std::string(it->child_value("launch-info")));
             if (hasAppWithNoLocks(app.launchInfo()))
             {
-               LOG4CPLUS_INFO(msLogger, "!!! Application launch info repetition !!!");
+               LOG4CPLUS_WARN(msLogger, "!!! Application launch info repetition !!!");
                continue;
             }
-            LOG4CPLUS_INFO(msLogger, "push back");
             int id = genId();
             mApplications[id] = app;
 
@@ -170,10 +158,8 @@ namespace iviLink
             for (pugi::xml_node_iterator srv = services.begin();
                   services.end() != srv; ++srv)
             {
-               LOG4CPLUS_INFO(msLogger, "++srv");
                if (strcmp(srv->name(),"service") || !strcmp(srv->name(), ""))
                {
-                  LOG4CPLUS_INFO(msLogger, "srv continue");
                   continue;
                }
                std::string uid(srv->attribute("uid").value());
@@ -210,12 +196,12 @@ namespace iviLink
             }
          }
 
-         #ifndef ANDROID
+#ifndef ANDROID
          bool result = doc.save_file(mDBPath.c_str());
-         #else
+#else
          std::string fullPath = mDirPath + mDBPath;
          bool result = doc.save_file(fullPath.c_str());
-         #endif
+#endif //ANDROID
 
          mpMutex->unlock();
          return result;
@@ -484,12 +470,12 @@ namespace iviLink
       void CDatabase::printWithNoLocks() const
       {
          LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-         #ifndef ANDROID
+#ifndef ANDROID
          LOG4CPLUS_INFO(msLogger, "Database path: %s" + mDBPath);
-         #else
+#else
          std::string fullPath = mDirPath + mDBPath;
          LOG4CPLUS_INFO(msLogger, "Database path: " + fullPath);
-         #endif
+#endif //ANDROID
          for (std::map<int, CApplication>::const_iterator it = mApplications.begin();
                mApplications.end() != it; ++it)
          {

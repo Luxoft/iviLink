@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CServManProxy.hpp"
-#include "framework/public/appLib/CApp.hpp"
+#include "CApp.hpp"
 
 namespace iviLink
 {
@@ -51,7 +44,7 @@ namespace iviLink
       {
          if (mpApp)
          {
-            mpApp->incomingServiceBeforeLoading(serviceUID);
+            mpApp->onIncomingServiceBeforeLoading(serviceUID);
          }
       }
 
@@ -59,7 +52,7 @@ namespace iviLink
       {
          if (mpApp)
          {
-            mpApp->serviceDropped(serviceUID);
+            mpApp->onServiceDropped(serviceUID);
          }
       }
 
@@ -67,7 +60,7 @@ namespace iviLink
       {
          if (mpApp)
          {
-            mpApp->incomingServiceAfterLoading(serviceUID);
+            mpApp->onIncomingServiceAfterLoading(serviceUID);
          }
       }
 
@@ -75,7 +68,7 @@ namespace iviLink
       {
          if (mpApp)
          {
-            mpApp->serviceLoadError(service);
+            mpApp->onServiceLoadError(service);
          }
       }
    }

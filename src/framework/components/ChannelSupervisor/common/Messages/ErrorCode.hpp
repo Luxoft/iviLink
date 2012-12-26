@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,35 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ERRORCODE_HPP
 #define ERRORCODE_HPP
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 enum ErrorCode
 {
-   ERRORCODE_SUCCESS                      = 0,  //operation successful
-   ERRORCODE_CHANNELID_ALREADY_OCCUPIED,        //channel id was or is being used
-   ERRORCODE_WRONG_CHANNELID,                   //incorrect channel id
-   ERRORCODE_TIMEOUT_OCCURRED,                  //timeout occurred during operation
-   ERRORCODE_FREE_CID_NOT_FOUND_IN_MAP,         //free cid was not found in map
-   ERRORCODE_OTHER                              //other error occurred
+    ERRORCODE_SUCCESS = 0,  //operation successful
+    ERRORCODE_CHANNELID_ALREADY_OCCUPIED,        //channel id was or is being used
+    ERRORCODE_WRONG_CHANNELID,                   //incorrect channel id
+    ERRORCODE_TIMEOUT_OCCURRED,                  //timeout occurred during operation
+    ERRORCODE_FREE_CID_NOT_FOUND_IN_MAP,         //free cid was not found in map
+    ERRORCODE_OTHER                              //other error occurred
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

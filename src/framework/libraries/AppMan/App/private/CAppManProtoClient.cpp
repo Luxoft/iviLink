@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <unistd.h>
+#include <tr1/array>
 
 #include "CAppManProtoClient.hpp"
-#include "utils/serialize/Serialize.hpp"
+#include "Serialize.hpp"
 
 namespace iviLink
 {
@@ -53,24 +43,25 @@ namespace iviLink
          , mId(0)
          , mAppInited(false)
          {
-            LOG4CPLUS_TRACE(msLogger,"CAppManProtoClient()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          CAppManProtoClient::~CAppManProtoClient()
          {
-            LOG4CPLUS_TRACE(msLogger,"~CAppManProtoClient()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             delete mpIpc;
          }
 
-         void CAppManProtoClient::init(IAppManProtoAmpToApp * pHandler)
+          void CAppManProtoClient::init(IAppManProtoAmpToApp * pHandler)
          {
-            LOG4CPLUS_TRACE(msLogger,"init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpHandler = pHandler;
          }
 
-         void CAppManProtoClient::loop()
+         void CAppManProtoClient::loop(CSignalSemaphore * pStartSemaphore)
          {
-            LOG4CPLUS_TRACE(msLogger,"loop()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+            bool notSignaled = true;
             mBe = true;
             CError err = CError::NoError("","");
             for (int i = 1;mBe ; ++i)
@@ -81,8 +72,18 @@ namespace iviLink
                {
                   LOG4CPLUS_INFO(msLogger, "loop() : connect established");
                   mNoConnection = false;
+                  if (notSignaled)
+                  {
+                     notSignaled = false;
+                     pStartSemaphore->signal();
+                  }
                   mConLostSem.wait();
                   mNoConnection = true;
+               }
+               if (notSignaled && i > 5)
+               {
+                  notSignaled = false;
+                  pStartSemaphore->signal();
                }
                if (!mBe)
                {
@@ -90,39 +91,56 @@ namespace iviLink
                   break;
                }
                LOG4CPLUS_INFO(msLogger, "loop() :: connection failed");
-               usleep(250000);
+               usleep(50000);
             }
          }
 
          void CAppManProtoClient::disconnect()
          {
-            LOG4CPLUS_TRACE(msLogger,"disconnect()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mBe = false;
             mpIpc->disconnect();
          }
 
          bool CAppManProtoClient::checkConnection() const
          {
-            LOG4CPLUS_TRACE(msLogger,"checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return !mNoConnection;
          }
 
          void CAppManProtoClient::OnConnection(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CAppManProtoClient::OnConnectionLost(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnConnectionLost()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mConLostSem.signal();
          }
+
+          void CAppManProtoClient::onLinkUpNotify()
+          {
+              LOG4CPLUS_TRACE(msLogger, __PRETTY_FUNCTION__);
+              assert( mpHandler );
+              if( mpHandler )
+                  mpHandler -> onLinkUpNotify();
+          }
+
+          void CAppManProtoClient::onLinkDownNotify()
+          {
+              LOG4CPLUS_TRACE(msLogger, __PRETTY_FUNCTION__);
+              assert( mpHandler );
+              if( mpHandler )
+                  mpHandler -> onLinkDownNotify();
+          }
+
 
          void CAppManProtoClient::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
                UInt32 payloadSize, UInt8* const pResponseBuffer,
                UInt32& bufferSize, iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             if (!mpHandler)
             {
                return;
@@ -136,6 +154,7 @@ namespace iviLink
             UInt8 type = 0;
             memcpy(&type,pPayload+pos,sizeof(type));
             pos += sizeof(type);
+
             pid_t pid = 0;
             memcpy(&pid,pPayload+pos,sizeof(pid));
             pos += sizeof(pid);
@@ -171,9 +190,34 @@ namespace iviLink
             }
          }
 
+
+        void CAppManProtoClient::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
+                  UInt32 payloadSize,  iviLink::Ipc::DirectionID dirId)
+        {    
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);        
+            UInt32 size = 0;
+            memcpy(&size,pPayload,sizeof(size));
+            LOG4CPLUS_INFO(msLogger, "payloadSize: " + convertIntegerToString(payloadSize)
+                  + " size: " + convertIntegerToString(size));
+            UInt32 pos = sizeof(size);
+            UInt8 type = 0;
+            memcpy(&type,pPayload+pos,sizeof(type));
+            pos += sizeof(type);
+            if( type == C_PROTO_LINK_UP_NOTIFY )
+            {
+                onLinkUpNotify();
+                return;
+            } 
+            else if( type == C_PROTO_LINK_DOWN_NOTIFY )
+            {
+                onLinkDownNotify();
+                return;
+            }
+        }
+
          EInitResult CAppManProtoClient::initApplication(pid_t pid, std::list<Service::Uid> listOfSupportedServices)
          {
-            LOG4CPLUS_TRACE(msLogger,"initApplication()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             UInt8 type = C_PROTO_INIT_APP;
             UInt32 count = listOfSupportedServices.size();
             UInt32 size = sizeof(size) + sizeof(type) + sizeof(pid) + sizeof(count);
@@ -214,9 +258,36 @@ namespace iviLink
             }
          }
 
+          bool CAppManProtoClient::isLinkAlive()
+          {
+              assert(mpIpc);
+              if(!mpIpc)
+                  return false;
+
+              // Really sory about this piss of code, but I'm out of time and nervous
+              static const UInt8 type = C_PROTO_IS_LINK_ALIVE;
+              static const UInt32 sz = sizeof(sz) + sizeof(type);
+              std::tr1::array<UInt8,sz> raw;
+              memcpy(&raw[0],&sz,sizeof(sz));
+              memcpy(&raw[sizeof(sz)],&type,sizeof(type));
+              std::tr1::array<UInt8,sizeof(bool)> rsp;
+
+              UInt32 rsz= rsp.size();
+
+              const CError err = mpIpc->request( genId(),
+                                                 &raw[0], raw.size(),
+                                                 &rsp[0], rsz );
+              if( !err.isNoError() )
+              {
+                  LOG4CPLUS_ERROR(msLogger, "CAppManProtoClient::is_link_available(): " + err.operator std::string());
+                  return false;
+              }
+              return rsz == 1 && rsp[0] != 0;
+          }
+
          CError CAppManProtoClient::useService(pid_t pid, Service::Uid service, bool use)
          {
-            LOG4CPLUS_TRACE(msLogger,"useService()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             UInt8 type = C_PROTO_USE_SERV;
             UInt32 size = sizeof(size) + sizeof(pid) + stringInBufSize(service.value()) + sizeof(use);
 
@@ -243,7 +314,7 @@ namespace iviLink
 
          CError CAppManProtoClient::registerService(pid_t pid, Service::Uid service)
          {
-            LOG4CPLUS_TRACE(msLogger,"registerService()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             UInt8 type = C_PROTO_REG_SERV;
             UInt32 size = sizeof(size) + sizeof(pid) + stringInBufSize(service.value());
 
@@ -272,7 +343,7 @@ namespace iviLink
 
          iviLink::Ipc::MsgID CAppManProtoClient::genId()
          {
-            LOG4CPLUS_TRACE(msLogger,"genId()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             return ++mId;
          }
 

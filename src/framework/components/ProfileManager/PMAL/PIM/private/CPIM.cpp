@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,30 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cassert>
 #include <utility>
 #include <unistd.h>
 
-#include "utils/threads/CThreadPool.hpp"
+#include "CThreadPool.hpp"
 
-#include "framework/components/ProfileManager/PMAL/CProfile.hpp"
+#include "CProfile.hpp"
 
-#include "framework/components/ProfileManager/PMAL/CComponentMgr.hpp"
-#include "framework/components/ProfileManager/PMAL/IProfileManagersCallbacks.hpp"
+#include "CComponentMgr.hpp"
+#include "IProfileManagersCallbacks.hpp"
 
-#include "framework/components/ProfileManager/PMAL/ipc_protocol/IPMALIpcToPIM.hpp"
-#include "framework/components/ProfileManager/PMAL/core/IPMALCoreToPIM.hpp"
+#include "IPMALIpcToPIM.hpp"
+#include "IPMALCoreToPIM.hpp"
 
 #include "CPIM.hpp"
 #include "CProfileInternal.hpp"
@@ -159,25 +150,20 @@ public:
 };
 
 ////
-#ifndef ANDROID
 CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
             iviLink::Service::Uid const& sid,
             iviLink::Profile::IProfileCallbackProxy* const pProxy,
-            Profile::CProfile*& pProfile)
-#else
-CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
-            iviLink::Service::Uid const& sid,
-            iviLink::Profile::IProfileCallbackProxy* const pProxy,
-            Profile::CProfile*& pProfile, std::string backupPath)
-#endif //ANDROID
+            Profile::CProfile*& pProfile, 
+            Android::AppInfo appInfo)
 {
+
    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__ + (" uid" + profileUid.value()));
 
    Profile::CProfile* pProf = NULL;
 
    std::string path;
 
-   // prepearing
+   // preparing
 
    CPMALComponentMgr* pMgr = CPMALComponentMgr::getInstance();
    if (!pMgr)
@@ -223,11 +209,7 @@ CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
    LOG4CPLUS_INFO(logger, "creating profile '" + path + "'with piuid '" + piuid.value() + "'");
    Profile::CProfileInternal* pProfInt = NULL;
    PIM::ProfileInitData initData(piuid, sid, pProxy);
-   #ifndef ANDROID
-   err = PIM::createProfileImpl(path.c_str(), initData, pProfInt);
-   #else
-   err = PIM::createProfileImpl(path.c_str(), initData, pProfInt, backupPath);
-   #endif //ANDROID
+   err = PIM::createProfileImpl(path.c_str(), initData, pProfInt, appInfo);
 
    if (!err.isNoError())
    {
@@ -270,8 +252,6 @@ CPMALError CPIM::loadProfile(iviLink::Profile::Uid const& profileUid,
    if (!err.isNoError())
    {
       /// @todo what error handling can be here?
-      LOG4CPLUS_INFO(logger, "todo what error handling can be here?");
-
       LOG4CPLUS_ERROR(logger, static_cast<std::string>(err));
    }
 
@@ -293,8 +273,6 @@ CPMALError CPIM::unloadProfile(Profile::CProfile *& profile)
    if (!err.isNoError())
    {
       /// @todo what error handling can be here?
-      LOG4CPLUS_INFO(logger, "todo what error handling can be here?");
-
       LOG4CPLUS_ERROR(logger, static_cast<std::string>(err));
       return CPMALError(CPMALError::ERROR_WRONG_PARAM, gModuleName);
    }
@@ -422,7 +400,7 @@ void CPIM::unloadProfile(Profile::IUid const& piuid, Profile::CProfile *& profil
    if (!err.isNoError())
    {
       // Someone was faster and already removed this profile
-      LOG4CPLUS_DEBUG(logger, "unloadProfile: profile already unloaded, err = " + static_cast<std::string>(err));
+      LOG4CPLUS_INFO(logger, "unloadProfile: profile already unloaded, err = " + static_cast<std::string>(err));
       return;
    }
 
@@ -440,7 +418,6 @@ void CPIM::unloadProfile(Profile::IUid const& piuid, Profile::CProfile *& profil
             if (!err.isNoError())
             {
                /// @todo what error handling can be here?
-               LOG4CPLUS_INFO(logger, "todo what error handling can be here?");
                LOG4CPLUS_ERROR(logger, static_cast<std::string>(err));
             }
          }
@@ -493,6 +470,7 @@ void CPIM::incomingProfileInternal(iviLink::Profile::Uid const& profileUid,
 
 void CPIM::profileDiedInternal(iviLink::Profile::IUid const& piuid)
 {
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    Profile::CProfileInternal* pi = NULL;
 
    CError err = mInstanceMap.find(piuid, pi);
@@ -547,6 +525,7 @@ CPMALError CPIM::generatePIUID(iviLink::CUid const& profileUid,
 
    return CPMALError::NoPMALError(gModuleName);
 }
+
 
 Logger CPIM::logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.Pmal.Pim"));
 Logger PIM::CProfileEnabler::logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.Pmal.Pim.CProfileEnabler"));

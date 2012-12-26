@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,32 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CAppManProxy.hpp"
-#include "utils/threads/CMutex.hpp"
-#include "framework/libraries/AppMan/App/CAppManConnectController.hpp"
-#include "framework/libraries/AppMan/App/IAppMan.hpp"
+#include "CMutex.hpp"
+#include "CAppManConnectController.hpp"
+#include "IAppMan.hpp"
 #include "CLogger.hpp"
+
+#include <cassert>
 
 namespace iviLink
 {
    namespace App
    {
-
-      #ifndef ANDROID
-      CAppManProxy::CAppManProxy(CApp * pApp)
-      #else
-      CAppManProxy::CAppManProxy(CApp * pApp, std::string launchInfo)
-      #endif //ANDROID
+      CAppManProxy::CAppManProxy(CApp * pApp, Android::AppInfo appInfo)
          : CThread("iviLinkAppCoreThread")
          , mpApp(pApp)
          , mInitStatus(NOT_INITED)
@@ -53,13 +42,10 @@ namespace iviLink
          , mLauncher(ERROR_APP_NOT_INITED_IN_IVILINK)
          , mpRequestSemaphore(new CSignalSemaphore())
          , mpUseListMutex(new CMutex())
+         , mpStartSemaphore(new CSignalSemaphore())
       {
          LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
-         #ifndef ANDROID
-         #else
-         mLaunchInfo = launchInfo;
-         LOG4CPLUS_TRACE(*App::CLogger::logger(), "mLaunchInfo: "+mLaunchInfo);
-         #endif //ANDROID  
+         mAppInfo = appInfo;
       }
 
       CAppManProxy::~CAppManProxy()
@@ -69,10 +55,12 @@ namespace iviLink
          delete mpInitMutex;
          delete mpRequestSemaphore;
          delete mpUseListMutex;
+         delete mpStartSemaphore;
       }
 
       void CAppManProxy::threadFunc()
       {
+         mpStartSemaphore->signal();
          mpRequestSemaphore->wait();
          while (mBe)
          {
@@ -109,33 +97,31 @@ namespace iviLink
             AppMan::EInitResult initRes;
             do
             {
-               #ifndef ANDROID
-               initRes = AppMan::CAppManConnectController::instance()->applicationManager()
-                     ->initApplication(mInitedServices);
-               #else
-               initRes = AppMan::CAppManConnectController::instance(mLaunchInfo)->applicationManager()
-                     ->initApplication(mInitedServices);
-               #endif //ANDROID
+               AppMan::IAppMan* app_manager = AppMan::CAppManConnectController::instance(mAppInfo)
+                                                ->applicationManager();
+
+               assert( app_manager );
+               initRes= app_manager -> initApplication(mInitedServices);
+
+               using namespace std::tr1;
+
+               AppMan::notify_t up = bind( &CApp::onLinkUp, mpApp ),
+                   down = std::tr1::bind( &CApp::onPhysicalLinkDown, mpApp );
+               app_manager -> setLinkCallbacks( up, down );
+
+
                if (AppMan::STARTED_BY_APPMAN == initRes)
                {
                   mLauncher = LAUNCHED_BY_IVILINK;
-                  mpApp->initDone(mLauncher);
-                  #ifndef ANDROID
-                  AppMan::CAppManConnectController::instance()->checkSessionRequest();
-                  #else
-                  AppMan::CAppManConnectController::instance(mLaunchInfo)->checkSessionRequest();
-                  #endif //ANDROID
+                  mpApp->onInitDone(mLauncher);
+                  AppMan::CAppManConnectController::instance(mAppInfo)->checkSessionRequest();
                   break;
                }
                else if (AppMan::STARTED_BY_USER == initRes)
                {
                   mLauncher = LAUNCHED_BY_USER;
-                  mpApp->initDone(mLauncher);
-                  #ifndef ANDROID
-                  AppMan::CAppManConnectController::instance()->checkSessionRequest();
-                  #else
-                  AppMan::CAppManConnectController::instance(mLaunchInfo)->checkSessionRequest();
-                  #endif //ANDROID
+                  mpApp->onInitDone(mLauncher);
+                  AppMan::CAppManConnectController::instance(mAppInfo)->checkSessionRequest();
                   break;
                }
                usleep(250000);
@@ -143,7 +129,6 @@ namespace iviLink
             while(mBe);
          }
       }
-
 
       void CAppManProxy::handleUseService()
       {
@@ -158,13 +143,8 @@ namespace iviLink
          Service::Uid service = mUseList.front().first;
          mpUseListMutex->unlock();
 
-         #ifndef ANDROID
-         CError err = AppMan::CAppManConnectController::instance()->applicationManager()
+         CError err = AppMan::CAppManConnectController::instance(mAppInfo)->applicationManager()
                ->useService(service, use);
-         #else
-         CError err = AppMan::CAppManConnectController::instance(mLaunchInfo)->applicationManager()
-               ->useService(service, use);
-         #endif //ANDROID
 
          if (err.isNoError())
          {
@@ -173,6 +153,13 @@ namespace iviLink
             mpUseListMutex->unlock();
          }
       }
+
+       bool CAppManProxy::isLinkAlive()
+       {
+           LOG4CPLUS_TRACE_METHOD(*App::CLogger::logger(),__PRETTY_FUNCTION__);
+           return AppMan::CAppManConnectController::instance(mAppInfo)->applicationManager()
+               ->isLinkAlive();
+       }
 
       bool CAppManProxy::hasRequests()
       {
@@ -203,6 +190,12 @@ namespace iviLink
       ELaunchInfo CAppManProxy::launcher() const
       {
          return mLauncher;
+      }
+
+      void CAppManProxy::startProxyThread()
+      {
+         start();
+         mpStartSemaphore->wait();
       }
 
    }

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CAUTHENTICATION_PROFILE_IMPL_HPP
 #define CAUTHENTICATION_PROFILE_IMPL_HPP
 
-#include "utils/misc/Logger.hpp"
-#include "framework/public/profileLib/profileLib.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IAuthenticationProfileAPI.hpp"
-#include "framework/libraries/trust_list/CTrustList.hpp"
+#include "Logger.hpp"
+#include "profileLib.hpp"
+#include "IAuthenticationProfileAPI.hpp"
+#include "CTrustList.hpp"
 #include "CRSAEncryptDecrypt.hpp"
 
 using iviLink::CBuffer;
@@ -71,9 +64,9 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
 
    CAuthenticationProfileImpl(iviLink::Profile::IProfileCallbackProxy* pCbProxy);

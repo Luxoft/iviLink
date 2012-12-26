@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -18,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 # 
-# 
+ # 
 
 ###############################################################################
 # Autodetection of config.mk and includes
@@ -46,7 +45,24 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 
 OUT_FNAME     := libClimateReceiverProfile.so
 
-INCLUDES      := -I.
+CHANNEL_SV_DIR	:= $(ROOT_DIR)framework/components/ChannelSupervisor/
+PMAL_DIR	  := $(ROOT_DIR)framework/components/ProfileManager/PMAL/
+FW_DIR		  := $(ROOT_DIR)framework/
+
+INCLUDES      += -I.
+INCLUDES      += -I$(CHANNEL_SV_DIR)common/
+INCLUDES      += -I$(CHANNEL_SV_DIR)Tube/
+INCLUDES      += -I$(PMAL_DIR)PIM/private/
+INCLUDES      += -I$(FW_DIR)public/appLib/
+INCLUDES      += -I$(FW_DIR)public/profileLib/
+INCLUDES      += -I$(FW_DIR)components/ProfileManager/PMAL
+INCLUDES      += -I$(ROOT_DIR)samples/linux/Profiles/ProfileAPI/
+INCLUDES      += -I$(ROOT_DIR)samples/linux/Profiles/ProfileAPI/States/Climate/
+INCLUDES      += -I$(ROOT_DIR)samples/linux/Profiles/ProfileAPI/States/
+INCLUDES      += -I$(ROOT_DIR)utils/json/include/
+INCLUDES      += -I./../include/
+INCLUDES      += -I./../../include/
+
 CXXFLAGS       = $(GLOBAL_CXXFLAGS) $(GLOBAL_DLL_CXXFLAGS) $(INCLUDES)
 CFLAGS         = $(GLOBAL_CFLAGS) $(GLOBAL_DLL_CFLAGS) $(INCLUDES) -std=c99
 LDFLAGS       := $(GLOBAL_LDFLAGS) $(GLOBAL_DLL_LDFALGS)

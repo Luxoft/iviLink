@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-# 
 # 
 
 # Autodetection of config.mk and includes
@@ -52,7 +50,21 @@ CXXFLAGS := $(GLOBAL_CXXFLAGS)
 OUT_PATH := $(call OUT_PATH_FUNC)
 $(info OUT_PATH $(OUT_PATH))
 
-QINCLUDES := $(ROOT_DIR) $(RESULT_DIR)
+PMAL_DIR	  := $(ROOT_DIR)framework/components/ProfileManager/PMAL/
+FW_DIR		  := $(ROOT_DIR)framework/
+
+QINCLUDES += $(ROOT_DIR) 
+QINCLUDES += $(RESULT_DIR)
+QINCLUDES += $(PMAL_DIR)
+QINCLUDES += $(PMAL_DIR)PIM/private/
+QINCLUDES += $(ROOT_DIR)utils/ipc
+QINCLUDES += $(UTILS_DIR)android/
+QINCLUDES += $(FW_DIR)public/appLib/
+QINCLUDES += $(FW_DIR)messageProtocol/
+QINCLUDES += $(FW_DIR)messageProtocol/SystemController_Authentication/
+QINCLUDES += $(FW_DIR)messageProtocol/SystemController_Authentication/Authentication/
+QINCLUDES += $(ROOT_DIR)samples/linux/Profiles/ProfileProxy/
+QINCLUDES += $(ROOT_DIR)samples/linux/Profiles/ProfileAPI/
 
 LIBS += -Wl,--start-group
 LIBS += -L$(3RD_PARTY_DIR)/lib -llog4cplus

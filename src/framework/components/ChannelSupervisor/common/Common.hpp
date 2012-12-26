@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,51 +18,58 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef COMMON_H_
 #define COMMON_H_
 
 #include <string>
-#include <ctime>
 
-namespace iviLink {
-	namespace ChannelSupervisor {
+#include "Types.hpp"
 
-		enum CS_ERROR 
-		{
-			CS_SUCCESS = 0,
-			CS_ERR_OTHER = 1000
-		};
+#define TAG_SERVER_SUFFIX "SERVER"
+#define TAG_CLIENT_SUFFIX "CLIENT"
+#define TAG_SUFFIX_SEPARATOR "#"
 
-		struct UID 
-		{
-			int uid;
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
 
-			UID() : uid(0) { }
+// NegotiatorIPCHandler will wait no longer than this timeout for response from the other side
+const UInt32 OTHER_SIDE_RESP_TIMEOUT_MS = 3500;
 
-			UID(int a)
-			{
-				uid = a;
-			}
-		};
+enum CS_ERROR
+{
+    CS_SUCCESS = 0, CS_ERR_OTHER = 1000
+};
 
-		struct ChannelId
-		{
-			unsigned int caChannelId;
+struct UID
+{
+    int uid;
 
-			ChannelId() : caChannelId(0) { }
-		};
-	}
+    UID()
+            : uid(0)
+    {
+    }
+
+    UID(int a)
+    {
+        uid = a;
+    }
+};
+
+struct ChannelId
+{
+    unsigned int caChannelId;
+
+    ChannelId()
+            : caChannelId(0)
+    {
+    }
+};
+}
 }
 
 #endif /* COMMON_H_ */

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef IVI_LINK_APP_CCORE_HPP_
 #define IVI_LINK_APP_CCORE_HPP_
 
-#include "framework/public/appLib/CApp.hpp"
-#include "framework/libraries/AppMan/App/IAppManHandler.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CSignalSemaphore.hpp"
+
+#include "CApp.hpp"
+#include "IAppManHandler.hpp"
+#include "CThread.hpp"
+#include "CSignalSemaphore.hpp"
+
+#include "IAppMan.hpp"
 
 class CMutex;
 
@@ -56,17 +51,17 @@ namespace iviLink
       class CAppManProxy : public CThread
       {
       public:
-         #ifndef ANDROID
-         CAppManProxy(CApp * pApp);
-         #else
-         CAppManProxy(CApp * pApp, std::string launchInfo);
-         #endif //ANDROID
+         CAppManProxy(CApp * pApp, Android::AppInfo appInfo);
+
          virtual ~CAppManProxy();
 
          void finish();
          void init(const Service::ListOfUids &services);
          void useService(const Service::Uid& service, bool use);
          ELaunchInfo launcher() const;
+
+         bool isLinkAlive();
+         void startProxyThread();
 
       private:
          // from CThread
@@ -85,12 +80,10 @@ namespace iviLink
          CSignalSemaphore * mpRequestSemaphore;
          tUseServiceList mUseList;
          CMutex * mpUseListMutex;
-         #ifndef ANDROID
-         #else
-         std::string mLaunchInfo;
-         #endif //ANDROID
-      };
+         CSignalSemaphore * mpStartSemaphore;
 
+         Android::AppInfo mAppInfo;
+      };
    }
 }
 #endif

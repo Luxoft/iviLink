@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
+#include <cassert>
+#include <unistd.h>
+#include <sys/param.h>
 
 #include "CServerControl.hpp"
+#include "common.hpp"
+#include "Exit.hpp"
+
+static const char MediaServerName[]="MediaServer";
 
 Logger CServerControl::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("samples.Profiles.CServerControl"));
 
-CServerControl::CServerControl()
+CServerControl::CServerControl(IMediaControlServerProfile_API::Callbacks* callbacks)
 : //mpMutex(new CMutex()),
- mVTranscode("#rtp{sdp=rtsp://:")
-, mATranscode("#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:rtp{sdp=rtsp://:")
-, mServerPath(".../.../...")
+ mVTranscode(VCODE)
+, mATranscode(ACODE)
+, mServerPath(MediaServerName)
 , mFd(0)
 , mStop ("stop;")
 , mResume("resume;")
@@ -42,10 +46,16 @@ CServerControl::CServerControl()
 , mVideo("video")
 , mPlay ("play;")
 {
-     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-    PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
-
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    assert(callbacks);
     pipe (fds); 
+    char path[MAXPATHLEN];
+    getcwd(path, MAXPATHLEN);
+    LOG4CPLUS_INFO(msLogger, "!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    LOG4CPLUS_INFO(msLogger, "path: "+std::string(path));
+    mServerPath = std::string(path)+"/"+mServerPath;
+    LOG4CPLUS_INFO(msLogger, "full path: "+mServerPath);
+#ifndef ANDROID
     pid_t pid = fork();
 
     switch (pid) {
@@ -61,11 +71,11 @@ CServerControl::CServerControl()
             close(fds[1]);
             char fd_str[15];
             sprintf(fd_str, "%i", fds[0]);
-            if (execle(mServerPath.c_str(), mServerPath.c_str(), fd_str, NULL) == -1) {
-                 LOG4CPLUS_ERROR(msLogger, "execle(server) failed"); 
-                 exit(1);
+            if (execl(mServerPath.c_str(), mServerPath.c_str(), fd_str,  NULL)) {
+                 LOG4CPLUS_ERROR(msLogger, "execl(server) failed"); 
+                 killProcess(1);
             }
-            exit(1);
+            killProcess(1);
         }
         default:
         {
@@ -75,7 +85,10 @@ CServerControl::CServerControl()
            break;
         }        
     }
-
+#else
+    callbacks->startVlcServer(fds[0]);
+    file = fdopen(fds[1], "w");
+#endif //ANDROID
 }
 
 CServerControl::~CServerControl() {

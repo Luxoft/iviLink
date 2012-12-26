@@ -1,0 +1,5 @@
+<service name= "NotificationsClientService">
+    <pair name= "NotificationsServerService"/>
+    <profile api="NotificationsProfile_PAPI_UID">
+    </profile>
+</service>

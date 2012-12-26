@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,34 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef NEGOTIATOR_SYSTEM_CONTROLLER_PROTOCOL_HPP
 #define NEGOTIATOR_SYSTEM_CONTROLLER_PROTOCOL_HPP
-/********************************************************************
- *
- * System includes
- *
- ********************************************************************/
+
+
  #include <string>
-/********************************************************************
- *
- * Other includes
- *
- ********************************************************************/
-#include "utils/misc/Types.hpp"
-#include "framework/messageProtocol/SystemController_ChannelSupervisor/ChannelSupervisor/SystemControllerMsgProxy.hpp"
-#include "framework/messageProtocol/SystemController_ChannelSupervisor/messages.hpp"
+
+#include "Types.hpp"
+#include "SystemControllerMsgProxy.hpp"
+#include "SysCtrlNegProtocol.hpp"
 
 namespace iviLink {
 namespace ChannelSupervisor {
@@ -55,22 +38,22 @@ class Negotiator;
 
 class CNegotiatorToSysCtrlProxy: public ChannelSupervisorMsgProtocol::SystemControllerMsgProxy
 {
-   public:
+public:
 
-   CNegotiatorToSysCtrlProxy( const std::string connectionName, Negotiator* pOwner);
+    CNegotiatorToSysCtrlProxy(const std::string connectionName, Negotiator* pOwner);
 
-   ~CNegotiatorToSysCtrlProxy();
+    ~CNegotiatorToSysCtrlProxy();
 
-   CError sendConnectionEstablished();
+    CError sendConnectionEstablished();
 
-   CError sendConnectionLost();
+    CError sendConnectionLost();
 
-   virtual CError onShutDown();
+    virtual CError onShutDown();
 
-   CError connect();
+    CError connect();
 
-   private:
-   	Negotiator * mpNegotiator;
+private:
+    Negotiator * mpNegotiator;
 };
 
 }  // namespace ChannelSupervisor

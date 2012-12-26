@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,14 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #include "get_mac.hpp"
 
@@ -41,14 +34,8 @@
 #include <sys/ioctl.h>
 
 
-#include "utils/misc/CError.hpp"
-#include "utils/misc/Logger.hpp"
-
-Logger gsLogger = Logger::getInstance(LOG4CPLUS_TEXT("profiles.CAuthenticationProfileImpl.trust.get_mac"));
-
-#if !defined(linux)
-#error This code uses ioctl and seems to be linux specific.
-#endif
+#include "CError.hpp"
+#include "Logger.hpp"
 
 bool get_mac(char buff[13])
 {
@@ -56,7 +43,7 @@ bool get_mac(char buff[13])
    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
    if (sock == -1)
    {
-      LOG4CPLUS_ERROR(gsLogger, "socket error: " + CError::FormErrnoDescr(errno));
+      LOG4CPLUS_ERROR(Logger::getInstance("get_mac"), "socket error: " + CError::FormErrnoDescr(errno));
       return false;
    }
 
@@ -75,7 +62,7 @@ bool get_mac(char buff[13])
    ifc.ifc_buf = buf;
    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) 
    { 
-      LOG4CPLUS_ERROR(gsLogger, "ioctl SIOCGIFCONF error: " + CError::FormErrnoDescr(errno));
+      LOG4CPLUS_ERROR(Logger::getInstance("get_mac"), "ioctl SIOCGIFCONF error: " + CError::FormErrnoDescr(errno));
       return false;
    }
 
@@ -98,7 +85,7 @@ bool get_mac(char buff[13])
       }
       else
       {
-         LOG4CPLUS_ERROR(gsLogger, "ioctl SIOCGIFCONF error: " + CError::FormErrnoDescr(errno));
+         LOG4CPLUS_ERROR(Logger::getInstance("get_mac"), "ioctl SIOCGIFCONF error: " + CError::FormErrnoDescr(errno));
          return false;
       }
    }

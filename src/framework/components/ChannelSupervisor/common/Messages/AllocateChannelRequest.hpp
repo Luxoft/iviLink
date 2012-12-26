@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,56 +18,60 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef ALLOCATECHANNELREQUEST_HPP_
 #define ALLOCATECHANNELREQUEST_HPP_
 
 
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Request.hpp"
 #include "Message.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+#include "Types.hpp"
+
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
 class AllocateChannelRequest: public Request
 {
 public:
 
-	AllocateChannelRequest( const char* tag );
+    AllocateChannelRequest(const char* tag, const UInt32 channelID);
 
-	AllocateChannelRequest(pugi::xml_document* doc);
+    AllocateChannelRequest(pugi::xml_document* doc);
 
-	virtual ~AllocateChannelRequest()
-	{
-	}
+    virtual ~AllocateChannelRequest()
+    {
+    }
 
-	const std::string& GetTag() const
-	{
-		return m_tag;
-	}
+    const std::string& GetTag() const
+    {
+        return m_tag;
+    }
 
-	virtual const char* GetMessageName() const { return m_requestTypes[REQUESTTYPE_ALLOCATE_CHANNEL].c_str(); }
+    UInt32 GetChannelID() const
+    {
+        return m_channelId;
+    }
+
+    virtual const char* GetMessageName() const
+    {
+        return m_requestTypes[REQUESTTYPE_ALLOCATE_CHANNEL].c_str();
+    }
 
 protected:
 
-	std::string m_tag;
+    std::string m_tag;
+    UInt32 m_channelId;
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

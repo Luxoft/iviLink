@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,23 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef CRSAENCRYPTDECRYPT_HPP_
 #define CRSAENCRYPTDECRYPT_HPP_
 
 #include <string>
 #include <iostream>
-#include "utils/misc/Logger.hpp"
-#include "3rd_party/cryptopp/cryptopp-5.6.1/rsa.h"
-#include "3rd_party/cryptopp/cryptopp-5.6.1/integer.h"
+#include "Logger.hpp"
+#include "rsa.h"
+#include "integer.h"
 
 using CryptoPP::Integer;
 using CryptoPP::RSA;
@@ -51,8 +44,8 @@ public:
 
    static string encrypt(string stringToEncrypt, RSA::PublicKey publicKey);
    static string decrypt(string stringToDecrypt, RSA::PrivateKey privateKey);
-   static RSA::PublicKey getPublicKey();
-   static RSA::PrivateKey getPrivateKey();
+   static RSA::PublicKey getPublicKey(std::string pathToKeyStorage);
+   static RSA::PrivateKey getPrivateKey(std::string pathToKeyStorage);
 
    static void printPrivateKey(RSA::PrivateKey key)
    {

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,21 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
+ */ 
+ 
 
-
-
-
-
-
-
-
-
+#include <tr1/array>
+#include <cassert>
+#include <vector>
 
 #include "IConnectionHandler.hpp"
 #include "CAppManProtoServer.hpp"
-#include "utils/serialize/Serialize.hpp"
+#include "Serialize.hpp"
  
 namespace iviLink
 {
@@ -43,6 +37,8 @@ namespace iviLink
 
       namespace Ipc
       {
+          using iviLink::Ipc::DirectionID;
+
          Logger CAppManProtoServer::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("AppMan.Ipc.AmpForApp"));
 
          CAppManProtoServer::CAppManProtoServer()
@@ -52,13 +48,13 @@ namespace iviLink
             , mId(0)
             , mpClientsMutex(new CMutex())
          {
-            LOG4CPLUS_TRACE(msLogger,"CAppManProtoServer()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          CAppManProtoServer::~CAppManProtoServer()
          {
             mpServer = 0;
-            LOG4CPLUS_TRACE(msLogger,"~CAppManProtoServer()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpIpc->endWaitForConnection();
             delete mpIpc;
             delete mpClientsMutex;
@@ -66,19 +62,19 @@ namespace iviLink
 
          void CAppManProtoServer::init(IAppManProto * pServer)
          {
-            LOG4CPLUS_TRACE(msLogger,"init()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpServer = pServer;
          }
 
          void CAppManProtoServer::initConnectionHandler(IConnectionHandler * pHandler)
          {
-            LOG4CPLUS_TRACE(msLogger,"initConnectionHandler()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpConnectionHandler = pHandler;
          }
 
          bool CAppManProtoServer::startWaitingForClients()
          {
-            LOG4CPLUS_TRACE(msLogger,"startWaitingForClients()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             CError err = mpIpc->beginWaitForConnection();
             if (err.isNoError())
             {
@@ -86,19 +82,19 @@ namespace iviLink
             }
             else
             {
-               LOG4CPLUS_INFO(msLogger, static_cast<std::string>(err));
+               LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
                return false;
             }
          }
 
          void CAppManProtoServer::OnConnection(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnConnection with application");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
          }
 
          void CAppManProtoServer::OnConnectionLost(iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnConnectionLost()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
             mpClientsMutex->lock();
             for (std::map<pid_t, iviLink::Ipc::DirectionID>::iterator it = mClients.begin();
@@ -118,16 +114,12 @@ namespace iviLink
                UInt32 payloadSize, UInt8* const pResponseBuffer,
                UInt32& bufferSize, iviLink::Ipc::DirectionID dirId)
          {
-            LOG4CPLUS_TRACE(msLogger,"OnRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
             if (!mpServer)
             {
                LOG4CPLUS_ERROR(msLogger, "! No pointer on server");
                return;
-            }
-            else
-            {
-               LOG4CPLUS_INFO(msLogger, "Has pointer on server");
             }
             UInt32 size = 0;
             memcpy(&size,pPayload,sizeof(size));
@@ -135,6 +127,16 @@ namespace iviLink
             UInt8 type = 0;
             memcpy(&type,pPayload+pos,sizeof(type));
             pos += sizeof(type);
+
+            // Process link connectivity request
+            if( type == C_PROTO_IS_LINK_ALIVE )
+            {
+                const bool alive = isLinkAlive();
+                memcpy(pResponseBuffer, &alive, bufferSize = sizeof(bool));
+                LOG4CPLUS_INFO(msLogger, std::string("C_PROTO_IS_LINK_ALIVE return ") + (alive ? "true" : "false" ) );
+                return;
+            }
+
             pid_t pid = 0;
             memcpy(&pid,pPayload+pos,sizeof(pid));
             pos += sizeof(pid);
@@ -197,7 +199,7 @@ namespace iviLink
          CError CAppManProtoServer::sessionRequest(pid_t pid, iviLink::Service::SessionUid session,
                            iviLink::Service::Uid service)
          {
-            LOG4CPLUS_TRACE(msLogger,"sessionRequest()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClientsMutex->lock();
             std::map<pid_t, iviLink::Ipc::DirectionID>::iterator dit = mClients.find(pid);
             if (mClients.end() == dit)
@@ -234,7 +236,7 @@ namespace iviLink
 
          CError CAppManProtoServer::getAppLaunchInfo(pid_t pid, std::string & launchInfo)
          {
-            LOG4CPLUS_TRACE(msLogger,"getAppLaunchInfo()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClientsMutex->lock();
             std::map<pid_t, iviLink::Ipc::DirectionID>::iterator dit = mClients.find(pid);
             if (mClients.end() == dit)
@@ -274,7 +276,7 @@ namespace iviLink
 
          bool CAppManProtoServer::checkConnection(pid_t pid)
          {
-            LOG4CPLUS_TRACE(msLogger,"checkConnection()");
+            LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
             mpClientsMutex->lock();
             std::map<pid_t, iviLink::Ipc::DirectionID>::iterator it = mClients.find(pid);
             if (mClients.end() == it)
@@ -309,6 +311,87 @@ namespace iviLink
          {
             return ++mId;
          }
+
+          void CAppManProtoServer::onLinkUpNotify()
+          {
+              notify_all( C_PROTO_LINK_UP_NOTIFY );
+          }
+
+          void CAppManProtoServer::onLinkDownNotify()
+          {
+              notify_all( C_PROTO_LINK_DOWN_NOTIFY );
+          }
+
+          void CAppManProtoServer::notify( iviLink::Ipc::DirectionID id, UInt8 notification )
+          {
+              LOG4CPLUS_TRACE(msLogger, __PRETTY_FUNCTION__);
+              typedef UInt32 sz_t;
+              typedef UInt8  msg_t;
+
+              static const UInt32 sz= sizeof(sz_t)+sizeof(msg_t);
+              std::tr1::array<UInt8,sizeof(sz_t)+sizeof(msg_t)> raw;
+              memcpy(&raw[0], &sz, sizeof(sz)); // sorry
+              raw[sizeof(sz)] = notification;
+
+              assert( mpIpc );
+              if( mpIpc )
+              {
+                  UInt32 rsz= 0;
+                  const CError err = mpIpc->request(genId(),
+                                                    &raw[0], raw.size(),
+                                                    &raw[0], rsz,  // No response
+                                                    &id);
+                  if( !err.isNoError() )
+                      LOG4CPLUS_ERROR( msLogger, "CAppManProtoServer failed to send notification: " +
+                                       err.operator std::string() );
+              }
+          }
+
+          void CAppManProtoServer::notify_all( UInt8 notification )
+          {
+              typedef std::vector<DirectionID> clients_list_t;
+              clients_list_t clients;
+              {
+                  MutexLocker lock(*mpClientsMutex);
+                  clients.reserve( mClients.size() );
+                  for(clients_map_t::const_iterator e= mClients.end(), i= mClients.begin(); i!=e; ++i)
+                  {
+                      clients.push_back( i->second );
+                  }
+              }
+
+              typedef UInt32 sz_t;
+              typedef UInt8  msg_t;
+
+              static const UInt32 sz= sizeof(sz_t)+sizeof(msg_t);
+              std::tr1::array<UInt8,sizeof(sz_t)+sizeof(msg_t)> raw;
+              memcpy(&raw[0], &sz, sizeof(sz));
+              raw[sizeof(sz)] = notification;
+              for( clients_list_t::const_iterator e= clients.end(), i= clients.begin(); i!=e; ++i )
+              {
+
+                assert( mpIpc );
+                if( mpIpc )
+                {
+                    const CError err = mpIpc->asyncRequest(genId(),
+                                                      &raw[0], raw.size(),
+                                                      &(*i));
+                    if( !err.isNoError() )
+                      LOG4CPLUS_ERROR( msLogger, "CAppManProtoServer failed to send notification: " +
+                                       err.operator std::string() );
+                }
+              }
+          }
+
+          bool CAppManProtoServer::isLinkAlive()
+          {
+              return link_state_getter ? link_state_getter() : false;
+          }
+
+          void CAppManProtoServer::set_link_state_getter( std::tr1::function<bool ()> getter )
+          {
+              link_state_getter = getter;
+          }
 
       }
 

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -56,7 +46,7 @@
  * The other includes
  *
  ********************************************************************/
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace iviLink::ConnectivityAgent;
 Logger CDataAccessor::logger = Logger::getInstance(LOG4CPLUS_TEXT("ConnectivityAgent.CDataAccessor"));
@@ -191,8 +181,8 @@ void CDataAccessor::copyToRawArray(UInt8* pBuf)
 }
 void CDataAccessor::printContent()
 {
-   LOG4CPLUS_DEBUG(logger, "========CDataAccessor::printContent()==============");
-   LOG4CPLUS_DEBUG(logger, 
+   LOG4CPLUS_INFO(logger, "========CDataAccessor::printContent()==============");
+   LOG4CPLUS_INFO(logger, 
       "Operation  = " + convertIntegerToString(mOperation) + " \n "
       "Error code = " + convertIntegerToString(mErrorCode) + " \n "
       "Channel ID = " + convertIntegerToString(mChannelID) + " \n "
@@ -202,5 +192,5 @@ void CDataAccessor::printContent()
    //    LOG4CPLUS_INFO(logger, "Data:  ");
    // }
 
-   LOG4CPLUS_DEBUG(logger, "=======================END=========================");
+   LOG4CPLUS_INFO(logger, "=======================END=========================");
 }

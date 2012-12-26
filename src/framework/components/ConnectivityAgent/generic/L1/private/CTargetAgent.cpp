@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 /********************************************************************
  *
@@ -44,7 +34,7 @@
  * Forward declaration includes
  *
  ********************************************************************/
-#include "framework/components/ConnectivityAgent/generic/common/Buffer.hpp"
+#include "Buffer.hpp"
 #include "IBufferProducer.hpp"
 #include "L1InterfaceStub.hpp"
 
@@ -60,7 +50,7 @@
  * The other includes
  *
  ********************************************************************/
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 using namespace iviLink::ConnectivityAgent::L1;
 Logger CTargetAgent::logger = Logger::getInstance(LOG4CPLUS_TEXT("ConnectivityAgent.L1.CTargetAgent"));
@@ -99,7 +89,7 @@ ERROR_CODE CTargetAgent::flushBuffers()
 
 ERROR_CODE CTargetAgent::consumeBuffer(iviLink::ConnectivityAgent::Buffer* pBuffer)
 {
-   LOG4CPLUS_INFO(logger, "CTargetAgent::consumeBuffer " + convertIntegerToString((intptr_t)pBuffer));
+   LOG4CPLUS_TRACE(logger, "CTargetAgent::consumeBuffer " + convertIntegerToString((intptr_t)pBuffer));
    mBufferQueueMutex.lock();
    mBufferQueue.push_back(pBuffer);
    mBufferQueueMutex.unlock();
@@ -136,7 +126,7 @@ ERROR_CODE CTargetAgent::visitStub()
 {
    ERROR_CODE ret = ERR_FAIL;
 
-   LOG4CPLUS_TRACE(logger, "CTargetAgent::visitStub()");
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 
    iviLink::ConnectivityAgent::Buffer* buf = NULL;
    mBufferQueueMutex.lock();

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cerrno>
 #include <cstdio>
@@ -38,7 +28,7 @@
 
 #include "CComponentLauncher.hpp"
 
-#include "utils/misc/CError.hpp"
+#include "CError.hpp"
 
 using namespace std;
 
@@ -53,7 +43,7 @@ CComponentLauncher* CComponentLauncher::sInstance = 0;
 
 CComponentLauncher* CComponentLauncher::getInstance()
 {
-   LOG4CPLUS_TRACE(sLogger, "getInstance()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(0 == sInstance)
    {
@@ -66,7 +56,7 @@ CComponentLauncher* CComponentLauncher::getInstance()
 
 CComponentLauncher::CComponentLauncher()
 {
-   LOG4CPLUS_TRACE(sLogger, "CComponentLauncher()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    mComponentLocation.insert(pair<Components, string>(PROFILE_MANAGER, COMPONENT_PATH + string(PROFILE_MANAGER_PROCESS_NAME)));
    mComponentLocation.insert(pair<Components, string>(CHANNEL_SUPERVISOR, COMPONENT_PATH + string(NEGOTIATOR_PROCESS_NAME)));
@@ -75,16 +65,17 @@ CComponentLauncher::CComponentLauncher()
 
    LOG4CPLUS_WARN(sLogger, "Information about AuthApp location, name and availability should be taken from configuration");
    mComponentLocation.insert(pair<Components, string>(AUTHENTICATION_APP, COMPONENT_PATH + "AuthenticationApplication"));
+   mComponentLocation.insert(pair<Components, string>(SPLASH_SCREEN, COMPONENT_PATH + "IVILinkProgressBar"));
 }
 
 CComponentLauncher::~CComponentLauncher()
 {
-   LOG4CPLUS_TRACE(sLogger, "~CComponentLauncher()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 }
 
 void CComponentLauncher::launchConnectivityAgent()
 {
-   LOG4CPLUS_TRACE(sLogger, "launchConnectivityAgent()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(isComponentRunning(CONNECTIVITY_AGENT))
    {
@@ -96,7 +87,7 @@ void CComponentLauncher::launchConnectivityAgent()
 
 void CComponentLauncher::launchProfileManager()
 {
-   LOG4CPLUS_TRACE(sLogger, "launchProfileManager()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(isComponentRunning(PROFILE_MANAGER))
    {
@@ -108,7 +99,7 @@ void CComponentLauncher::launchProfileManager()
 
 void CComponentLauncher::launchChannelSupervisor()
 {
-   LOG4CPLUS_TRACE(sLogger, "launchChannelSupervisor()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(isComponentRunning(CHANNEL_SUPERVISOR))
    {
@@ -120,7 +111,7 @@ void CComponentLauncher::launchChannelSupervisor()
 
 void CComponentLauncher::launchApplicationManager()
 {
-   LOG4CPLUS_TRACE(sLogger, "launchApplicationManager()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(isComponentRunning(APPLICATION_MANAGER))
    {
@@ -132,7 +123,7 @@ void CComponentLauncher::launchApplicationManager()
 
 void CComponentLauncher::launchAuthenticationApp()
 {
-   LOG4CPLUS_TRACE(sLogger, "launchAuthenticationApp()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    if(isComponentRunning(AUTHENTICATION_APP))
    {
@@ -142,20 +133,34 @@ void CComponentLauncher::launchAuthenticationApp()
    launchComponent(AUTHENTICATION_APP);
 }
 
+void CComponentLauncher::launchSplashScreen()
+{
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
+
+   if(isComponentRunning(SPLASH_SCREEN))
+   {
+      shutdownComponent(SPLASH_SCREEN);
+   }
+
+   launchComponent(SPLASH_SCREEN);
+}
+
+
 void CComponentLauncher::shutdownAllComponents()
 {
-   LOG4CPLUS_TRACE_METHOD(sLogger, "shutdownAllComponents()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
+   shutdownComponent(SPLASH_SCREEN);
    shutdownComponent(AUTHENTICATION_APP);
    shutdownComponent(APPLICATION_MANAGER);
-   shutdownComponent(PROFILE_MANAGER);
-   shutdownComponent(CHANNEL_SUPERVISOR);
    shutdownComponent(CONNECTIVITY_AGENT);
+   shutdownComponent(CHANNEL_SUPERVISOR);
+   shutdownComponent(PROFILE_MANAGER);   
 }
 
 bool CComponentLauncher::isComponentRunning(Components component)
 {
-   LOG4CPLUS_TRACE(sLogger, "isComponentRunning()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    //mComponentPidCondVar.lock();
    bool found = mComponentPid.end() != mComponentPid.find(component);
@@ -183,7 +188,7 @@ void CComponentLauncher::shutdownComponent(Components component)
          // killing component and all its subprocesses
          if (-1 == kill(-pid, SIGTERM))
          {
-            LOG4CPLUS_DEBUG(sLogger, "Unable to kill component group: " + CError::FormErrnoDescr(errno));
+            LOG4CPLUS_WARN(sLogger, "Unable to kill component group: " + CError::FormErrnoDescr(errno));
             killed = false;
          }
       }
@@ -205,7 +210,7 @@ void CComponentLauncher::shutdownComponent(Components component)
 
 pid_t CComponentLauncher::launchComponent(Components component)
 {
-   LOG4CPLUS_TRACE(sLogger, "launchComponent()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    pid_t componentProcessPID;
 
@@ -278,7 +283,7 @@ void CComponentLauncher::onSIGCHLD(int signal_number)
 
 void CComponentLauncher::setSIGCHLDHandler()
 {
-   LOG4CPLUS_TRACE(sLogger, "setSIGCHLDHandler()");
+   LOG4CPLUS_TRACE_METHOD(sLogger, __PRETTY_FUNCTION__);
 
    struct sigaction sigchld_action;
 
@@ -292,8 +297,6 @@ void CComponentLauncher::setSIGCHLDHandler()
 
       return;
    }
-
-   LOG4CPLUS_INFO(sLogger, "ComponentLauncher::setSIGCHLDHandler() done");
 }
 
 }

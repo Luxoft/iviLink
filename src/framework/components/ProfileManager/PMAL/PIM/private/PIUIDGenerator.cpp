@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,43 +18,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include "CProfileInternal.hpp"
 #include "PIUIDGenerator.hpp"
 
-#include "framework/components/ProfileManager/PMAL/CComponentMgr.hpp"
-#include "framework/components/ProfileManager/PMAL/ipc_protocol/IPMALIpcToPIM.hpp"
+#include "CComponentMgr.hpp"
+#include "IPMALIpcToPIM.hpp"
 
 using namespace iviLink::PMAL;
 using iviLink::Profile::IUid;
 
 static const char gModuleName[] = "PMAL_PIUIDGenerator";
 
-
 CError iviLink::PMAL::PIM::getPIUID(IUid& uid)
 {
+   Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.PMAL.PIUIDGenerator"));
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    CPMALComponentMgr* mgr = CPMALComponentMgr::getInstance();
    if (!mgr)
       return CError(1, gModuleName, CError::ERROR);
 
    IPMALIpcToPIM* ipc = mgr->getIpcToPIM();
 
-   Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.PMAL.PIUIDGenerator"));
    CError err = ipc->generatePIUID(uid);
    if (!err.isNoError())
    {
       /// @todo error processing
-      LOG4CPLUS_INFO(logger, "todo: error processing");
+      LOG4CPLUS_ERROR(logger, "error : " + static_cast<std::string>(err));
       return err;
    }
 
@@ -64,6 +55,8 @@ CError iviLink::PMAL::PIM::getPIUID(IUid& uid)
 
 CError iviLink::PMAL::PIM::releasePIUID(IUid const& uid)
 {
+   Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.PMAL.PIUIDGenerator"));
+   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    CPMALComponentMgr* mgr = CPMALComponentMgr::getInstance();
    if (!mgr)
       return CError(1, gModuleName, CError::ERROR);
@@ -73,13 +66,11 @@ CError iviLink::PMAL::PIM::releasePIUID(IUid const& uid)
    if (!ipc)
       return CError(1, gModuleName, CError::ERROR);
 
-   Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("profileManager.PMAL.PIUIDGenerator"));
-
    CError err = ipc->releasePIUID(uid);
    if (!err.isNoError())
    {
       /// @todo error processing
-      LOG4CPLUS_INFO(logger, "todo: error processing");
+      LOG4CPLUS_ERROR(logger, "error : " + static_cast<std::string>(err));
       return err;
    }
 

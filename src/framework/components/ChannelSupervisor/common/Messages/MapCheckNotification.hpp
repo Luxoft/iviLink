@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,54 +18,51 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef MAP_CHECK_NOTIFICATION_HPP_
 #define MAP_CHECK_NOTIFICATION_HPP_
 
-#include "utils/xml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "Notification.hpp"
 #include "Message.hpp"
 
-namespace iviLink {
-namespace ChannelSupervisor {
-namespace Messages {
+namespace iviLink
+{
+namespace ChannelSupervisor
+{
+namespace Messages
+{
 
-class MapCheckNotification : public Notification
+class MapCheckNotification: public Notification
 {
 public:
 
-	MapCheckNotification( const char* tag, const unsigned int channelId = 0 );
+    MapCheckNotification(const char* tag, const unsigned int channelId = 0);
 
-	MapCheckNotification(pugi::xml_document* doc);
+    MapCheckNotification(pugi::xml_document* doc);
 
-	virtual ~MapCheckNotification()
-	{
-	}
+    virtual ~MapCheckNotification()
+    {
+    }
 
-	const int GetChannelId() const
-	{
-		return m_offerredChId;
-	}
+    const int GetChannelId() const
+    {
+        return m_offerredChId;
+    }
 
-	virtual const char* GetMessageName() const { return m_notificationTypeMap[NOTIFICATIONTTYPE_CHECK_MAP].c_str(); }
-
+    virtual const char* GetMessageName() const
+    {
+        return m_notificationTypeMap[NOTIFICATIONTTYPE_CHECK_MAP].c_str();
+    }
 
 protected:
 
-	int			m_offerredChId;
+    int m_offerredChId;
 };
 
-}  // Message
+}  // Messages
 }  // ChannelSupervisor
 }  // AXIS
 

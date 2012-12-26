@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,18 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef COMPONENTLAUNCHER_HPP
 #define COMPONENTLAUNCHER_HPP
@@ -47,8 +36,8 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-#include "utils/misc/Logger.hpp"
-#include "utils/threads/CCondVar.hpp"
+#include "Logger.hpp"
+#include "CCondVar.hpp"
 
 namespace SystemController
 {
@@ -59,8 +48,8 @@ enum Components
    CHANNEL_SUPERVISOR,
    CONNECTIVITY_AGENT,
    APPLICATION_MANAGER,
-
-   AUTHENTICATION_APP
+   AUTHENTICATION_APP,
+   SPLASH_SCREEN
 };
 
 class CComponentLauncher
@@ -86,6 +75,8 @@ public:
    void launchApplicationManager();
 
    void launchAuthenticationApp();
+
+   void launchSplashScreen();
 
    void shutdownAllComponents();
 

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,11 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
+ */ 
+ 
 
 #ifndef ANDROID
 #include <QDeclarativeEngine>
@@ -32,11 +28,11 @@
 #endif //ANDROID
 
 #include "cstateupdater.h"
+#include "seat_coords.hpp"
 
 #include <fstream>
-#include <google/protobuf/text_format.h>
-#include "framework/public/appLib/CProfileApiBase.hpp"
-#include "framework/libraries/ServiceManager/CServiceManager.hpp"
+#include "CProfileApiBase.hpp"
+#include "CServiceManager.hpp"
 
 #include <tr1/utility>
 #include <tr1/type_traits>
@@ -44,58 +40,52 @@
 using namespace std;
 using namespace std::tr1;
 
-
-namespace {
-    Logger log4 = Logger::getInstance("SeatClientSample.CStateUpdater");
-}
-
-
 #ifndef ANDROID
-CStateUpdater::CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> rp,
-                             std::tr1::shared_ptr<state_app> app)
-    : rp( rp )
-    , app( app )
+CStateUpdater::CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> requestProcessor,
+                             seatAppPtr app)
+    : requestProcessor(requestProcessor)
+    , app(app)
     , qmlInitialized(false)
 #else
-CStateUpdater::CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> rp,
-                             std::tr1::shared_ptr<state_app> app, 
+CStateUpdater::CStateUpdater(std::tr1::shared_ptr<CRequestProcessor> requestProcessor,
+                             seatAppPtr app,
                              JavaVM * pJm,
                              jobject bridge)
-    : rp( rp )
-    , app( app )
+    : requestProcessor(requestProcessor)
+    , app(app)
     , mpJM(pJm)
     , jCallbacks(bridge)
 #endif //ANDROID
 {
-   LOG4CPLUS_TRACE_METHOD(log4, __PRETTY_FUNCTION__);
-   assert(rp);
-   assert( app );
-   if( app )
-   {
-       using namespace placeholders;
-       app->set_state_callback( bind( &CStateUpdater::incomingNotification, this ) );
-       app->set_app_state_callback( bind( &CStateUpdater::appStateCallback, this, _1 ) );
-   }
-   LOG4CPLUS_INFO(log4, "CStateUpdater created");
-   #ifndef ANDROID
-   #else
-   iviLink::Android::JniThreadHelper jth(mpJM);
-   JNIEnv * env = jth.getEnv();
-    
+    LOG4CPLUS_TRACE_METHOD(log4StateApp(), __PRETTY_FUNCTION__);
+    assert(requestProcessor);
+    assert(app);
+    if (app)
+    {
+        using namespace placeholders;
+        app->setStateCallback(bind( &CStateUpdater::incomingNotification, this));
+        app->setAppStateCallback(bind(&CStateUpdater::appStateCallback, this, _1));
+    }
+    LOG4CPLUS_INFO(log4StateApp(), "CStateUpdater created");
+#ifndef ANDROID
+#else
+    iviLink::Android::JniThreadHelper jth(mpJM);
+    JNIEnv * env = jth.getEnv();
+
     jclass claz = env->GetObjectClass(jCallbacks);
-    LOG4CPLUS_INFO(log4, "CStateUpdater: constructor: got claz");
-    
+    LOG4CPLUS_INFO(log4StateApp(), "CStateUpdater: constructor: got claz");
+
     onHeaterDriver = env->GetMethodID(claz, "onHeaterDriver", "(I)V");
     onHeaterPassenger = env->GetMethodID(claz, "onHeaterPassenger", "(I)V");
     onSetDriver= env->GetMethodID(claz, "onSetDriver", "()V");
-	 onSetPassenger = env->GetMethodID(claz, "onSetPassenger", "()V");
-	 onBottomX = env->GetMethodID(claz, "onBottomX", "(I)V");
-	 onBottomY = env->GetMethodID(claz, "onBottomY", "(I)V");
-	 onBackAngle = env->GetMethodID(claz, "onBackAngle", "(I)V");
-	 onBackX = env->GetMethodID(claz, "onBackX", "(I)V");
-	 onBackY = env->GetMethodID(claz, "onBackY", "(I)V");
-	 onShowSeat = env->GetMethodID(claz, "onShowSeat", "()V");
-   #endif //ANDROID
+	onSetPassenger = env->GetMethodID(claz, "onSetPassenger", "()V");
+	onBottomX = env->GetMethodID(claz, "onBottomX", "(I)V");
+	onBottomY = env->GetMethodID(claz, "onBottomY", "(I)V");
+	onBackAngle = env->GetMethodID(claz, "onBackAngle", "(I)V");
+	onBackX = env->GetMethodID(claz, "onBackX", "(I)V");
+	onBackY = env->GetMethodID(claz, "onBackY", "(I)V");
+	onShowSeat = env->GetMethodID(claz, "onShowSeat", "()V");
+#endif //ANDROID
 }
 
 CStateUpdater::~CStateUpdater()
@@ -105,70 +95,90 @@ CStateUpdater::~CStateUpdater()
 #ifndef ANDROID
 void CStateUpdater::onQmlVisible()
 {
-   LOG4CPLUS_INFO(log4, "got signal that GUI is ready");
-   qmlInitialized= true;
-   if( is_active(app) )
-   {
-      LOG4CPLUS_INFO(log4, "got signal that GUI is ready, init is done as well, sending init request");
-      incomingNotification();
-   }
+    LOG4CPLUS_TRACE_METHOD(log4StateApp(), __PRETTY_FUNCTION__);
+    LOG4CPLUS_INFO(log4StateApp(), "got signal that GUI is ready");
+    qmlInitialized= true;
+    if(app->isActive())
+    {
+        LOG4CPLUS_INFO(log4StateApp(), "got signal that GUI is ready, init is done as well, sending init request");
+        incomingNotification();
+        emit initRequestDone();
+    }
 }
 #endif //ANDROID
 
-void CStateUpdater::appStateCallback( state_app::APP_STATE )
+void CStateUpdater::appStateCallback(seatApp::APP_STATE)
 {
-   #ifndef ANDROID
-    if( is_active(app) && qmlInitialized )
+    LOG4CPLUS_TRACE_METHOD(log4StateApp(), __PRETTY_FUNCTION__);
+#ifndef ANDROID
+    if (app->isActive() && qmlInitialized)
+    {
+        LOG4CPLUS_INFO(log4StateApp(), "app->is_active() && qmlInitialized");
         incomingNotification();
-   #else
-   if(is_active(app)) incomingNotification();
-   #endif //ANDROID
+    }
+#else
+    if (app->isActive())
+    {
+        incomingNotification();
+    }
+#endif //ANDROID
 }
 
 
 //Callback for profile created on the other side; notification about seat state
 void CStateUpdater::incomingNotification()
 {
-    if( !app ) return;
+    LOG4CPLUS_TRACE_METHOD(log4StateApp(), __PRETTY_FUNCTION__);
+    if (!app) 
+    {
+        return;
+    }
 
     ISeatReceiverProfile::state_t st;
-    app->retrive_state( st );
-    #ifndef ANDROID
-    emit heaterDriver(st.driver().heater());
-    emit heaterPass(st.pass().heater());
-    const iviLink::SeatState::Seat& seat = st.current_seat() == iviLink::SeatState::DRIVER ?
-                st.driver() : st.pass();
-    emit bottom_x(seat.bottom_x());
-    emit bottom_y(seat.bottom_y());
-    emit back_x(seat.back_x());
-    emit back_y(seat.back_y());
-    emit back_angle(seat.back_angle());
-
-    emit st.current_seat() == iviLink::SeatState::DRIVER ?
-        current_seat_viewDriver() :
-        current_seat_viewPass();
-
+    app->retrieveState(st);
+    LOG4CPLUS_INFO(log4StateApp(), "Got state: " + st.serialize());
+#ifndef ANDROID
     emit showSeat();
-    #else
+
+    emit heaterDriver(st.getDriverHeater());
+    emit heaterPass(st.getPassengerHeater());
+
+    const int sbottomX = rel2screenX(st.getCurrentX());
+    const int sbottomY = rel2screenY(st.getCurrentY());
+    emit bottomX(sbottomX);
+    emit bottomY(sbottomY);
+    emit backX(bottom2backX(sbottomX ) );
+    emit backY(bottom2backY(sbottomY ) );
+    emit backAngle(st.getCurrentSeatBackAngle());
+
+    if(st.getCurrentSelection() == iviLink::DRIVER)
+    {
+        emit currentSeatViewDriver();
+    }
+    else
+    {
+        emit currentSeatViewPass();
+    }
+#else
     iviLink::Android::JniThreadHelper jth(mpJM);
     JNIEnv * env = jth.getEnv();
-    
-    const iviLink::SeatState::Seat& seat = st.current_seat() == iviLink::SeatState::DRIVER ?
-                st.driver() : st.pass();
-    
-    env->CallVoidMethod(jCallbacks, onShowSeat);    
-    env->CallVoidMethod(jCallbacks, onBottomX, seat.bottom_x());
-    env->CallVoidMethod(jCallbacks, onBottomY, seat.bottom_y()); 
-    env->CallVoidMethod(jCallbacks, onBackX, seat.back_x());
-    env->CallVoidMethod(jCallbacks, onBackY, seat.back_y());
-    env->CallVoidMethod(jCallbacks, onBackAngle, seat.back_angle());
-    if(st.current_seat() == iviLink::SeatState::DRIVER){
-      env->CallVoidMethod(jCallbacks, onSetDriver);
-      env->CallVoidMethod(jCallbacks, onHeaterDriver, st.driver().heater());
-    } else {
-      env->CallVoidMethod(jCallbacks, onSetPassenger);
-      env->CallVoidMethod(jCallbacks, onHeaterPassenger, st.pass().heater());
-    }
-    #endif //ANDROID
-}
 
+    env->CallVoidMethod(jCallbacks, onShowSeat);
+    env->CallVoidMethod(jCallbacks, onBottomX, st.getCurrentX());
+    env->CallVoidMethod(jCallbacks, onBottomY, st.getCurrentY());
+    env->CallVoidMethod(jCallbacks, onBackX, st.getCurrentX());
+    env->CallVoidMethod(jCallbacks, onBackY, st.getCurrentY());
+    env->CallVoidMethod(jCallbacks, onBackAngle, st.getCurrentSeatBackAngle());
+
+    if (st.getCurrentSelection() == iviLink::DRIVER)
+    {
+        env->CallVoidMethod(jCallbacks, onSetDriver);
+        env->CallVoidMethod(jCallbacks, onHeaterDriver, st.getDriverHeater());
+    } 
+    else 
+    {
+        env->CallVoidMethod(jCallbacks, onSetPassenger);
+        env->CallVoidMethod(jCallbacks, onHeaterPassenger, st.getPassengerHeater());
+    }
+#endif //ANDROID
+}

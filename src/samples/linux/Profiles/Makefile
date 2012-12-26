@@ -1,5 +1,4 @@
-# 
-# iviLINK SDK, version 1.1.2
+# iviLINK SDK, version 1.1.19
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
@@ -18,7 +17,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 # 
-# 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
 include $(AXIS_CONFIG_MK)
@@ -34,23 +32,31 @@ include $(COMMON_MK)
 ###############################################################################
 # Subfolders
 define SUBFOLDERS
-# protobuf states - generate includes and shared libraries
 $(MAKE) -C BasicSampleProfileImpl $@
 $(MAKE) -C AuthenticationProfileImpl $@
-$(MAKE) -C ProfileAPI/SeatState $@
-$(MAKE) -C ProfileAPI/ClimateState $@
 # make symmetic samples
+$(MAKE) -C ProfileAPI/States/Climate $@
 $(MAKE) -C ClimateReceiverProfile $@
 $(MAKE) -C ClimateSenderProfile $@
+$(MAKE) -C ProfileAPI/States/Seat $@
 $(MAKE) -C SeatSenderProfile $@
 $(MAKE) -C SeatReceiverProfile $@
-#
+
+# navi
+$(MAKE) -C NaviReceiver $@
+
+#media common
+$(MAKE) -C mediaCommon $@
+# media
 $(MAKE) -C MediaSourceClientProfile $@
 $(MAKE) -C MediaSourceServerProfile $@
 $(MAKE) -C MediaControlClientProfile $@
 $(MAKE) -C MediaControlServerProfile $@
 $(MAKE) -C MediaStreamingClientProfile $@
 $(MAKE) -C MediaStreamingServerProfile $@
+
+$(MAKE) -C ScreenSharingProfileImpl $@
+
 endef
 ###############################################################################
 # Rules

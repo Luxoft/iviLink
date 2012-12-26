@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,26 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #include <cstring>
 #include <cassert>
 #include <unistd.h>
 
 #include "CProfileRepoClient.hpp"
-#include "utils/serialize/Serialize.hpp"
-#include "utils/configurator/configurator.h"
+#include "Serialize.hpp"
+#include "configurator.h"
 
 
 namespace iviLink

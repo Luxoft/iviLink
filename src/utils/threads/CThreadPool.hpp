@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,17 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef THREAD_POOL_HPP
 #define THREAD_POOL_HPP
@@ -44,11 +34,11 @@
  * Other includes
  *
  ********************************************************************/
-#include "utils/misc/Types.hpp"
-#include "utils/threads/CThread.hpp"
-#include "utils/threads/CThreadPoolJob.hpp"
+#include "Types.hpp"
+#include "CThread.hpp"
+#include "CThreadPoolJob.hpp"
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
 
 
 class CSignalSemaphore;
@@ -137,6 +127,7 @@ private:
 
       /// Pointer to the queue containing job structs
       std::deque<CThreadPoolJob> * mpJobQueue;
+      CSignalSemaphore mStartSemaphore;
    };
 
 private:

@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,22 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
+ */ 
+ 
 
 #ifndef CMEDIASTREAMINGCLIENTPROFILE_HPP_
 #define CMEDIASTREAMINGCLIENTPROFILE_HPP_
 
 
-#include "utils/misc/Logger.hpp"
-#include "framework/public/profileLib/profileLib.hpp"
-#include "samples/linux/Profiles/ProfileAPI/IMediaStreamingClientProfileAPI.hpp"
-#include "samples/linux/Profiles/mediaCommon/ISender.hpp"
-#include "samples/linux/Profiles/mediaCommon/common.h"
+#include "Logger.hpp"
+#include "profileLib.hpp"
+#include "IMediaStreamingClientProfileAPI.hpp"
+#include "ISender.hpp"
+#include "common.h"
 
 #include <iostream>
 #include <queue>
@@ -60,7 +55,6 @@ class CMediaStreamingClientProfile   : public iviLink::Channel::CChannelHandler
    IVILINK_PROFILE_API_UID(MediaStreamingClientProfile_API_UID)
 
 
-    
    struct info
    {
        //std::vector<std::string> audioForm;
@@ -81,9 +75,9 @@ class CMediaStreamingClientProfile   : public iviLink::Channel::CChannelHandler
    virtual void onDisable();
 
    //from CChannelHandler
-   virtual void bufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
-   virtual void channelDeletedCallback(const UInt32 channel_id);
-   virtual void connectionLostCallback();
+   virtual void onBufferReceived(const iviLink::Channel::tChannelId channel, CBuffer const& buffer);
+   virtual void onChannelDeleted(const UInt32 channel_id);
+   virtual void onConnectionLost();
 
    //from ISender
    virtual void senderLoop();
@@ -94,7 +88,7 @@ class CMediaStreamingClientProfile   : public iviLink::Channel::CChannelHandler
    CMediaStreamingClientProfile(iviLink::Profile::IProfileCallbackProxy* pCbProxy);
    virtual ~CMediaStreamingClientProfile();
 
-   typedef std::queue<CBuffer>                  tReqQueue;
+   typedef std::queue<std::string>                  tReqQueue;
 
    iviLink::Channel::tChannelId                 mChannelID;
 
@@ -104,7 +98,6 @@ class CMediaStreamingClientProfile   : public iviLink::Channel::CChannelHandler
    CSignalSemaphore *                           mpReqSemaphore;
    bool                                         mBe;
    tReqQueue                                    mReqQueue;
-   std::string                                  mTag;
    static Logger                                msLogger;
    info                                         mInfo;
 };

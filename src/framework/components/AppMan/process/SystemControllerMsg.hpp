@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,24 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef SYSTEMCONTROLLERMSG_AM_HPP_
 #define SYSTEMCONTROLLERMSG_AM_HPP_
 
-#include "framework/messageProtocol/SystemController_AppMan/AppMan/SystemControllerMsgProxy.hpp"
-#include "utils/misc/Logger.hpp"
+#include "SystemControllerMsgProxy.hpp"
+#include "Logger.hpp"
+#include <tr1/functional>
 
 class CSignalSemaphore;
 
@@ -63,11 +53,18 @@ namespace iviLink
           */
          virtual ~SystemControllerMsg();
 
+          void setLinkCallbacks( std::tr1::function<void ()> link_up,
+                                   std::tr1::function<void ()> link_down);
+
       private:
          /**
           * Callback is used to exit
           */
          virtual CError onShutDown();
+
+          virtual void onLinkUpNotification();
+          virtual void onLinkDownNotification();
+
 
          /**
           * Pointer to signal semaphore object
@@ -78,7 +75,9 @@ namespace iviLink
           * Object of logger
           */
          static Logger msLogger;
-      };
+
+          std::tr1::function<void ()> link_up, link_down;
+    };
 
    }
 

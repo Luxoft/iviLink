@@ -1,6 +1,5 @@
 /* 
- * 
- * iviLINK SDK, version 1.1.2
+ * iviLINK SDK, version 1.1.19
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -19,29 +18,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
+ */ 
+ 
 
 #ifndef APP_MAP_MSG_PROXY_HPP
 #define APP_MAN_MSG_PROXY_HPP
 
 #include <string>
-#include "utils/misc/CError.hpp"
-#include "utils/ipc/ICallbackHandler.hpp"
-#include "utils/ipc/ipc_common.hpp"
-#include "utils/ipc/CIpc.hpp"
+#include "CError.hpp"
+#include "ICallbackHandler.hpp"
+#include "ipc_common.hpp"
+#include "CIpc.hpp"
 
-#include "utils/misc/Logger.hpp"
+#include "Logger.hpp"
+
+#include "SysCtrlAmpProtocol.hpp"
+#include "CommonMessage.hpp"
 
 using namespace std;
 using namespace iviLink::Ipc;
@@ -49,63 +41,62 @@ using namespace iviLink::Ipc;
 namespace SystemControllerMsgProtocol
 {
 
-class AppManMsgProxy : public iviLink::Ipc::ICallbackHandler
+class AppManMsgProxy: public iviLink::Ipc::ICallbackHandler
 {
 private:
-   static Logger logger;
+    static Logger logger;
 
-  const char* getName() {return "AppManMsgProxy";}
+    const char* getName()
+    {
+        return "AppManMsgProxy";
+    }
 
-   iviLink::Ipc::CIpc* mpIpc;
+    iviLink::Ipc::CIpc* mpIpc;
 
 public:
-   explicit AppManMsgProxy(const string connectionName);
-   virtual ~AppManMsgProxy();
+    explicit AppManMsgProxy(const string connectionName);
+    virtual ~AppManMsgProxy();
 
 protected:
 
-   // Outgoing messages
-   //
-   CError requestShutDown();
+    // Outgoing messages
+    //
+    CError requestShutDown();
 
-   // Incoming messages
-   // should be implemented by implementation
-   virtual CError onCounterAMConnected() = 0;
-   virtual CError onCounterAMDisconnected() = 0;
+    CError linkUpNotification();    // SC_AM_LINK_UP_NOTIFY
+    CError linkDownNotification();  // SC_AM_LINK_DOWN_NOTIFY
+
+    // Incoming messages
+    // should be implemented by implementation
+    virtual CError onCounterAMConnected() = 0;
+    virtual CError onCounterAMDisconnected() = 0;
 
 protected:
-   // from ICallbackHandler
+    // from ICallbackHandler
 
-   virtual void OnConnection(iviLink::Ipc::DirectionID);
-   virtual void OnConnectionLost(iviLink::Ipc::DirectionID);
-   virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID);
+    virtual void OnConnection(iviLink::Ipc::DirectionID);
+    virtual void OnConnectionLost(iviLink::Ipc::DirectionID);
+    virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+            UInt8* const pResponseBuffer, UInt32& bufferSize, iviLink::Ipc::DirectionID);
+    virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+            iviLink::Ipc::DirectionID);
 
-   virtual void onAppManAvailable() = 0;
-   virtual void onAppManNotAvailable() = 0;
+    virtual void onAppManAvailable() = 0;
+    virtual void onAppManNotAvailable() = 0;
 
-   class CMsgIdGen
-   {
-   public:
-      CMsgIdGen();
-      ~CMsgIdGen();
-      iviLink::Ipc::MsgID getNext();
-   private:
-      iviLink::Ipc::MsgID mId;
-   };
+    // should return true if link is up
+    virtual bool getLinkState() = 0;  // AM_SC_GET_LINK_STATE
 
-   CMsgIdGen mMsgIdGen;
+    CMsgIdGen mMsgIdGen;
 
-   CError connectAppMan();
+    CError connectAppMan();
 
-   bool isConnected() const;
+    bool isConnected() const;
 
-   enum
-   {
-      BUFFER_SIZE = 4096
-   };
+    UInt8 mReadBuffer[BUFFER_SIZE];
+    UInt8 mWriteBuffer[BUFFER_SIZE];
 
-   UInt8 mReadBuffer[BUFFER_SIZE];
-   UInt8 mWriteBuffer[BUFFER_SIZE];
+    CError send_notify(eSCtoAMMessages notify_code);
 };
 
 }

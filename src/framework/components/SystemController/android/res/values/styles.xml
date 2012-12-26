@@ -1,5 +1,13 @@
 <resources>
 
     <style name="AppTheme" parent="android:Theme.Light" />
-
+	<style name="custom_dialog" parent="@android:style/Theme.Dialog">
+    	<item name="android:windowTitleStyle">@style/dialog_title_style</item>
+  	</style>
+	<style name="dialog_title_style" parent="android:Widget.TextView">
+    	<item name="android:background">@android:color/white</item>
+    	<item name="android:padding">10dp</item>
+    	<item name="android:textColor">	#3E3535</item>
+    	<item name="android:textSize">25dip</item>
+	</style>
 </resources>
