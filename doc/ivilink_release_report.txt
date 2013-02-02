@@ -1,0 +1,249 @@
+/* 
+ *  iviLINK SDK, version 1.2                                    
+ *    http://www.ivilink.net                                                         
+ *  Cross Platform Application Communication Stack for In-Vehicle Applications       
+ *                                                                                   
+ *  Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group               
+ *                                                                                   
+ *  This library is free software; you can redistribute it and/or                    
+ *  modify it under the terms of the GNU Lesser General Public                       
+ *  License as published by the Free Software Foundation; version 2.1.               
+ *                                                                                   
+ *  This library is distributed in the hope that it will be useful,                  
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of                   
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU                
+ *  Lesser General Public License for more details.                                  
+ *                                                                                   
+ *  You should have received a copy of the GNU Lesser General Public                 
+ *  License along with this library; if not, write to the Free Software              
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA   
+ * 
+ */ 
+
+
+1. Release date
+11-Apr-2013
+
+2. Release tag
+IVILINK_P2_B1.2_20130411_R
+
+3. Merged branches
+Build 1.1.37R:
+task_3705812_sabramenkova_default_build_type_release
+task_3704512_ebratanova_climate_a_a_crash
+task_3704583_ebratanova_ivilink_restarts_for_some_unknown_reason
+
+Build 1.1.36R:
+task_3660399_nzamotaev_Device_UID_not_displayed_in_DeviceManager
+task_3670938_ebratanova_CTcpCarrierAdapter_handshake_fix
+
+Build 1.1.35R:
+task_3660029_ebratanova_fix_json_crash
+task_3636306_odolmatova_media_number_of_port
+task_3647367_ebratanova_complete_cs_watchdog
+task_3646272_sabramenkova_change_types_in_bluez_bt
+task_3591924_ebratanova_auth_qml_startup_warnings
+task_1320357_ysafina_channel_supervisor_watchdog
+
+Build 1.1.34:
+task_3482481_ebratanova_twitter_build_fix
+task_3504725_ebratanova_excess_data_L1_fix
+task_3519243_amarkosov_add_sw_version
+task_3569301_ebratanova_kiyv_media_fix
+task_3570179_sabramenkova_logging_mails
+
+Build 1.1.33:
+task_3295602_pkramchaninov_adopt_profiler_script_for_android
+task_3369617_ebratanova_iviLink_apk_with_profiles_and_xmls
+task_3369610_ebratanova_android_build_system_changes_merge_32B
+task_3438760_ebratanova_hal_cnetlink_sock_folder_struct
+task_3012525_ebratanova_android_media_background_folders
+task_3297747_vplachkov_logging_config
+task_3449994_ebratanova_paths_install_fix
+
+Build 1.1.32:
+task_3282867_ebratanova_appman_database_consistency_checking_upmerge 
+task_3282867_ebratanova_appman_apps_notify_appman_of_their_existence_upmerge
+task_3282867_ebratanova_appman_listen_to_package_added_and_changed_events
+task_3282867_ebratanova_appman_listen_to_package_removed
+task_3324573_ebratanova_system_watchdog_bugfix
+task_3304343_ebratanova_android_appman_support_for_Activities_with_custom_process_names
+
+Build 1.1.31:
+task_3271399_amarkosov_renames_because_of_wince_defs
+task_3150865_first_app_lib_test_cases
+task_3222271_ebratanova_java_deallocate_channel_crash
+task_3222269_ebratanova_diagnostic_app_bugfix
+task_3162084_pkramchaninov_logging_launching_process
+task_3243034_ebratanova_stack_restarts_fix
+task_3083708_sabramenkova_bluez_bt
+
+
+4. List of Issues
+Build 1.1.37R:
+ - IVILINK-651. Change default build type to release
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-651
+ - IVILINK-646. IVILink restarts for some unknown reason
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-646
+ - IVILINK-648. A+A: Climate app does not work
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-648
+
+Build 1.1.36R:
+ - IVILINK-639. CTcpCarrierAdapter handshake
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-639
+ - IVILINK-597. Device`s UID does not displayed in Device Manager list
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-597
+
+Build 1.1.35R:
+ - IVILINK-621. json crash in seat and climate
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-621
+ - IVILINK-365. Media app Ubuntu: if another vlc server is open on the 5544 port, then cannot stream anything
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-365
+ - IVILINK-619. Complete Channel Supervisor watchdog
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-619
+ - IVILINK-540. Change types in BT CF to iviLink types
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-540
+ - IVILINK-590. Authentication App QML warnings during startup
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-590
+
+Build 1.1.34:
+ - IVILINK-594. add sendind launcher.log
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-594
+ - IVILINK-593. no media files on one side fix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-593
+ - IVILINK-469. add sw version
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-469
+ - IVILINK-558. L1 excess data sending fix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-558
+ - IVILINK-556. twitter build fix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-556
+
+Build 1.1.33:
+ - IVILINK-488. adopt profiler script for android
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-488
+ - IVILINK-329. android media background folders
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-329
+ - IVILINK-528. Change android build system to support the new SDK and samples structure
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-528
+ - IVILINK-532. Absolute paths to profile libs on Ubuntu
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-532
+ - IVILINK-531. onServiceDropped comes to the wrong app
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-531
+ - IVILINK-536. Isolate CNetlinkSocket as a platform-specific implementation from CTcpConnectionFinder
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-536
+ - IVILINK-529. Include Media and Auth profiles with xmls and etc. into the iviLink app
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-529
+ - IVILINK-456. separate logging config
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-456
+ - IVILINK-547. Navi and MediaApp installation paths fix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-547
+
+Build 1.1.32:
+ - IVILINK-481. Appman database consistency checking upmerge
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-481
+ - IVILINK-482. Appman apps notify appman of their existence upmerge
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-482
+ - IVILINK-483. appman listen to package added and changed events
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-483
+ - IVILINK-484. appman listen to package removed
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-484
+ - IVILINK-486. System Controller Watchdog bugfix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-486
+ - IVILINK-493. Add to logs stack up duration & authentication launch duration
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-493
+
+Build 1.1.31:
+ - IVILINK-475. Java API: call to deallocateChannel from the onDisable method may cause crash
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-475
+ - IVILINK-362. AppLib tests for 2-side cases
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-362
+ - IVILINK-445. Java API: call to deallocateChannel from the onDisable method may cause crash
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-445
+ - IVILINK-454. Android diagnostic app bugfix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-454
+ - IVILINK-454. Android diagnostic app bugfix
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-444
+ - IVILINK-343. Add to logs stack up duration & authentication launch duration
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-343
+ - IVILINK-355. Stack restarts few times before authentication app show
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-355
+ - IVILINK-421. Integrate with Baseline and fix (Bluez)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-421
+ - IVILINK-422. Integrate with Baseline and fix (Bluez)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-422
+ - IVILINK-391. Integrate with Baseline and fix (Bluez)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-391
+ - IVILINK-263. Integrate with Baseline and fix (Bluez)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-263
+ - IVILINK-237. Integrate with Baseline and fix (Bluez)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-237
+ 
+5. Known Defects
+IVILINK-30. The second closed application among two interlocutors hungs
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-30
+IVILINK-135. Seat app: one press displaces seat two positions
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-135
+IVILINK-143. Correct error handling everywhere (from TODOs list)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-143
+IVILINK-170. Compilation warnings
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-170
+IVILINK-175. Video in one side plays in not fullscreen mode
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-175
+IVILINK-248. Android ScreenSharing server: cant open virtual keyboard after server using
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-248
+IVILINK-289. CApp::isActive no return in else case
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-289
+IVILINK-366. Climate states are not saved between Climate launches
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-366
+IVILINK-369. Authentication profile: not all communication is encrypted
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-369
+IVILINK-382. Stack Up process loops
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-382
+IVILINK-395. A+A: ScreenSharing connection can not establish
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-395
+IVILINK-466: A+U: fast video playing
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-466
+IVILINK-471: Media A+U: mp4 videofile playing hangs on Android party
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-471
+IVILINK-477: xml no exceptions
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-477
+IVILINK-497: Create testing VM with Ubuntu 12.04
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-497
+IVILINK-500: Media app is unsynched after prev and next btns pressed at the same time on different devices
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-500
+IVILINK-539. Media crashes in first start
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-539
+IVILINK-585. Mouse is visible over pin-pad
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-585
+IVILINK-586. Unpair should not clean-up whole trust list
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-586
+IVILINK-587. device shoudl be removed after connection in half-paired scenario
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-587
+IVILINK-588. Startup and connect may take 20 seconds
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-588
+IVILINK-589. pin-pad may be shown with approx 10 seconds difference on 2 connected devices
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-589
+IVILINK-591. launcher: start many apps
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-591
+IVILINK-596. Auth was started long time on A+A
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-596
+IVILINK-613. Stress testing: IVILink restarts in case RAM is minimal
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-613
+IVILINK-615. U+U: Media fails at first launch
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-615
+IVILINK-622. On Linux iviLink executables can be run only from their own directory (otherwise they do not work)
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-622
+IVILINK-638. Navi app does not work
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-638
+IVILINK-645. Need to update INSTALL.txt
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-645
+IVILINK-637. U+A: IVILink restarts during establishing connection
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-637
+IVILINK-647. Seat not responding after simultaneous action on both sides
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-647
+IVILINK-649. Auth app is possible to start after IVILink connection is established
+	Jira: https://sentinel2.luxoft.com/sen/issues/browse/IVILINK-649
+
+
+6. Other Info
+Removed Navigation, DiagnosticApp, DeviceManager, EchoClientSample, EchoServerSample

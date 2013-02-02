@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>AppLibTestProfileImpl_UID</uid>
+   <name>AppLibTestProfileImpl</name>
+   <version>1</version>
+   <api uid ="AppLibTest_PAPI_UID" />
+   <complement>AppLibTestProfileImpl_UID</complement>
+
+</profile>

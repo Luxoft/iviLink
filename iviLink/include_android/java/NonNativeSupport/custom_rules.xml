@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules_lib">
+
+    <target name="-pre-build" >
+      <exec executable="ndk-build" failonerror="true"/> 
+    </target>
+
+    <target name = "-pre-clean">
+      <exec executable="ndk-build" >
+         <arg value="clean"/>
+      </exec>
+    </target>
+</project>
+

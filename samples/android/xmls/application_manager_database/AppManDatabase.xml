@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.basic/.BasicSampleActivity</launch-info>
+         <services>
+            <service uid="BasicSampleService" />
+         </services>
+      </app>             
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.seat/.SeatActivity</launch-info>
+         <services>
+            <service uid="SeatService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.climate/.ClimateActivity</launch-info>
+         <services>
+            <service uid="ClimateService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.sdk/.authentication.AuthenticationActivity</launch-info>
+         <services>
+            <service uid="AuthenticationService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.media/.ActivitiesDispatcher</launch-info>
+         <services>
+            <service uid="MediaService" />
+         </services>
+      </app>
+	  <app>
+         <launch-info>com.luxoft.ivilink.samples.screensharingviewer/.ScreenSharingViewer</launch-info>
+         <services>
+            <service uid="ScreenSharingViewerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.screensharingserver/.ScreenSharingServerActivity</launch-info>
+         <services>
+            <service uid="ScreenSharingServerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.notifications.server/.AuthActivity</launch-info>
+         <services>
+            <service uid="NotificationsServerService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.notifications.client/.EntryActivity</launch-info>
+         <services>
+            <service uid="NotificationsClientService" />
+         </services>
+      </app>     
+   </applications>
+</app-man>

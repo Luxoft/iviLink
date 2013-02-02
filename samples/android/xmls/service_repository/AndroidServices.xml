@@ -1,0 +1,39 @@
+<device name="Phone" >
+
+    <service
+        name="SeatService"
+        priority="4" />
+
+    <service
+        name="ClimateService"
+        priority="3" />
+
+    <service
+        name="BasicSampleService"
+        priority="7" />
+
+    <service
+        name="AuthenticationService"
+        priority="0" />
+
+    <service
+        name="MediaService"
+        priority="1" />
+
+    <service
+        name="NotificationsServerService"
+        priority="6" />
+
+    <service
+        name="NotificationsClientService"
+        priority="9" />
+
+    <service
+        name="ScreenSharingServerService"
+        priority="5" />
+
+    <service
+        name="ScreenSharingViewerService"
+        priority="2" />
+        
+</device>

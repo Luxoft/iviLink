@@ -1,0 +1,50 @@
+<project name="BasicProfile" default="dist" basedir=".">
+  <!-- set global properties for this build -->
+  <property name="src" location="src" />
+  <property name="bin" location="bin" />
+  
+  <property environment="env" />
+  <condition property="sdk.dir" value="${env.ANDROID_HOME}">
+    <isset property="env.ANDROID_HOME" />
+  </condition>
+  
+  <target name="jar">
+      <delete file="${ant.project.name}.jar" />
+      <property file="local.properties" />
+      <loadproperties srcFile="project.properties" />
+      <mkdir dir="bin/classes"/>
+      <javac srcdir="src"
+         destdir="bin/classes"
+         classpath="${sdk.dir}/platforms/android-16/android.jar;../../../../../iviLink/include_android/java/Utils/bin/classes;../../../../../iviLink/include_android/java/NonNativeSupport/bin/classes;../../ServiceSources/BasicSampleAPI/bin/classes"
+         includeantruntime="false"
+         target="1.6"
+         source="1.6"
+      />
+    <jar destfile="${ant.project.name}.jar" basedir="bin/classes/">
+      <!-- replace 'com' by what ever you are using -->
+      <!-- as first part of the package name -->
+      <!-- e.g. de, org, ... -->
+      <!-- the ** is important to include the directory recursively -->
+      <include name="com/**" />
+    </jar>
+    <exec executable="dx">
+        <arg value="--dex" />
+        <arg value="--output=classes.dex" />
+        <arg value="${ant.project.name}.jar" />
+    </exec>
+    <exec executable="aapt">
+        <arg value="add" />
+        <arg value="${ant.project.name}.jar" />
+        <arg value="classes.dex" />
+    </exec>
+    <delete file="classes.dex"/>
+    <copy file="${ant.project.name}.jar" todir="../../../../../samples/android/xmls/profile_repository/profileImpls"/>
+    <move file="${ant.project.name}.jar" todir="../../Database/profile_repository/profileImpls"/>
+  </target>
+
+  <target name="clean">
+      <delete dir="bin"/>
+      <delete dir="gen"/>
+      <delete dir="libs"/>
+  </target>
+</project>

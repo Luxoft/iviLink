@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<profileApi>
-	<version>1</version>
-	<role>NaviReceiverProfile_API_Role</role>
-	<uid>NaviReceiverProfile_PAPI_UID</uid>
-</profileApi>

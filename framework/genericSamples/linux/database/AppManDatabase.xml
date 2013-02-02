@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>applications/BasicSample</launch-info>
+         <services>
+            <service uid="BasicSampleService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>bin/AuthenticationApplication</launch-info>
+         <services>
+            <service uid="AuthenticationService" />
+         </services>
+      </app>
+   </applications>
+</app-man>
+

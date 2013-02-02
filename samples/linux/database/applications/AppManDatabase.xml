@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>applications/BasicSample</launch-info>
+         <services>
+            <service uid="BasicSampleService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>bin/AuthenticationApplication</launch-info>
+         <services>
+            <service uid="AuthenticationService" />
+         </services>
+      </app>      
+      <app>
+         <launch-info>applications/Climate_App</launch-info>
+         <services>
+            <service uid="ClimateService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>applications/Seat_App</launch-info>
+         <services>
+            <service uid="SeatService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>applications/MediaApp</launch-info>
+         <services>
+            <service uid="MediaService" />
+         </services>
+      </app>
+      <app>
+         <launch-info>applications/ScreenSharingViewer</launch-info>
+         <services>
+            <service uid="ScreenSharingViewerService" />
+         </services>
+      </app>
+   </applications>
+</app-man>

@@ -1,7 +1,0 @@
-Known Issues
-
-Authentication - works in straightforward scenarios;
-Video playback - video is green;
-PMP - thread safety problems; 
-Error handling - error types not unify;
-Screen sharing - poor devices support.

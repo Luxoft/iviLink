@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+  
+    <condition property="result.dir" else="../../../../iviLink/android_apk">
+      <isset property="result.dir"/>
+    </condition>
+
+    <target name = "-post-build">
+      <echo message="copying apk to: ${result.dir}" />
+      <copy file="bin/${ant.project.name}-debug.apk" tofile="${result.dir}/${ant.project.name}-debug.apk" overwrite="true" />
+    </target>
+</project>
+

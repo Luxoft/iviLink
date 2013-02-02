@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iviLinkAndroidSamples" basedir="." default="android-samples-help">
+
+    <dirname property="samples.basedir" file="${ant.file.iviLinkAndroidSamples}"/>
+
+    <condition property="device.path" else="/mnt/sdcard">
+      <isset property="device.path"/>
+    </condition>
+
+   <target name="build-android-samples" depends="build-android-3rdparty, build-android-libs-native">
+      <apply executable="ant" failonerror="true">
+         <arg value="debug" />
+         <arg value="-Dresult.dir=${samples.basedir}/../../iviLink/android_apk" />
+         <arg value="-buildfile" />
+         <fileset dir="${samples.basedir}/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+   </target>
+
+   <target name="install-android-samples">
+      <apply executable="ant" failonerror="true">
+         <arg value="installd" />
+         <arg value="-buildfile" />
+         <fileset dir="${samples.basedir}/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+      <exec executable="adb">
+         <arg value="push"/>
+         <arg value="${samples.basedir}/xmls/"/>
+         <arg value="${device.path}"/>
+      </exec>
+   </target>
+
+   <target name="uninstall-android-samples">
+      <apply executable="ant" failonerror="true">
+         <arg value="uninstall" />
+         <arg value="-buildfile" />
+         <fileset dir="${samples.basedir}/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+   </target>
+
+   <target name="clean-android-samples">
+      <apply executable="ant" failonerror="true">
+         <arg value="clean" />
+         <arg value="-buildfile" />
+         <fileset dir="${samples.basedir}/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+      <delete dir="${samples.basedir}/../../iviLink/android_apk" />
+   </target>
+
+   <target name="android-samples-help">
+      <echo message="ant build-android-samples              builds all sample apps (see the samples/android/Application dir, does not build genericSamples and core stack), as well as profiles (see samples/android/Profiles dir and samples/linux/profiles)" />
+      <echo message="ant install-android-samples            installs all sample apps (see the samples/android/Application dir, generic samples and the iviLink daemon are installed as well) to the connected device, as well as profiles (see samples/android/Profiles dir and samples/linux/profiles). Core stack is not installed (run ant install-android-core after building)" />
+      <echo message="ant uninstall-android-samples          uninstalls all sample apps (see the samples/android/Application dir for list) from the connected device" />
+      <echo message="ant clean-android-samples              cleans all sample apps (see the samples/android/Application dir, does not clean genericSamples and core stack), as well as profiles (see samples/android/Profiles dir and samples/linux/profiles)" />
+   </target>
+
+
+   <import file="${samples.basedir}/../../3rd_party/build.xml" />
+   <import file="${samples.basedir}/../../iviLink/include_android/build.xml" />
+
+ </project>

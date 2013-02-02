@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iviLinkAndroidPrebuilts" basedir="." default="android-3rdparty-help">
+
+  <dirname property="prebuilts.basedir" file="${ant.file.iviLinkAndroidPrebuilts}"/>
+
+   <target name="build-android-3rdparty">
+      <exec executable="ndk-build" failonerror="true" dir="${prebuilts.basedir}/rsa_android"/>
+      <copy todir="${prebuilts.basedir}/../framework/components/Android/libs/">
+         <fileset dir="${prebuilts.basedir}/mailutils_java">
+            <include name="**/*.jar"/>
+         </fileset>
+      </copy>
+      <copy todir="${prebuilts.basedir}/../samples/android/Applications/NotificationsServer/libs/">
+         <fileset dir="${prebuilts.basedir}/twitter4j_oauth_java">
+            <include name="**/*.jar"/>
+         </fileset>
+      </copy>
+      <copy todir="${prebuilts.basedir}/../samples/android/Applications/ScreenSharingViewer/libs/">
+         <fileset dir="${prebuilts.basedir}/vnc_viewer_android">
+            <include name="**/*.jar"/>
+         </fileset>
+      </copy>
+      <copy todir="${prebuilts.basedir}/../samples/android/Applications/Media/libs/">
+         <fileset dir="${prebuilts.basedir}/vlc_android">
+            <include name="**/*.jar"/>
+         </fileset>
+      </copy>
+   </target>
+
+   <target name="clean-android-3rdparty">
+      <exec executable="ndk-build" failonerror="true" dir="${prebuilts.basedir}/rsa_android">
+         <arg value="clean"/>
+      </exec>
+   </target>
+
+   <target name="android-3rdparty-help">
+      <echo message="ant build-android-3rdparty             builds cryptopp rsa static and shared libs, copies 3rd party jars to applications folders" />
+      <echo message="ant clean-android-3rdparty             cleans cryptopp rsa static and shared libs" />
+   </target>
+   
+</project>
+

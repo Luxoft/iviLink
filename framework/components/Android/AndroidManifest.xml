@@ -1,0 +1,87 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.luxoft.ivilink.sdk"
+    android:installLocation="auto"
+    android:sharedUserId="com.luxoft.ivilink.sdk.authentication"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".SysCtrlServLauncherActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".authentication.AuthenticationActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:process="com.luxoft.ivilink.sdk.authentication"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".killall.AntiIviLink"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:icon="@drawable/antivilink"
+            android:label="iviLink Kill Samples"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+
+        <service
+            android:name=".SystemControllerService"
+            android:enabled="true" />
+        <service
+            android:name=".componentservices.ApplicationManagerService"
+            android:enabled="true"
+            android:process="com.luxoft.ivilink.sdk.appman" />
+        <service
+            android:name=".componentservices.ChannelSupervisorService"
+            android:enabled="true"
+            android:process="com.luxoft.ivilink.sdk.negotiator" />
+        <service
+            android:name=".componentservices.ConnectivityAgentService"
+            android:enabled="true"
+            android:process="com.luxoft.ivilink.sdk.connagent" />
+        <service
+            android:name=".componentservices.ProfileLayerService"
+            android:enabled="true"
+            android:process="com.luxoft.ivilink.sdk.profiles" />
+        <service
+            android:name=".componentservices.SystemControllerWatchdogService"
+            android:enabled="true"
+            android:process="com.luxoft.ivilink.sdk.systemwatchdog" />
+    </application>
+
+</manifest>

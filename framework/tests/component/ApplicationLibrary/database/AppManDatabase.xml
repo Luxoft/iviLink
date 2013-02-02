@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>applications/AppLibTest7</launch-info>
+         <services>
+            <service uid="AppLibTestService_7" />
+         </services>
+      </app>
+      <app>
+         <launch-info>applications/AppLibTest9</launch-info>
+         <services>
+            <service uid="AppLibTestService_9" />
+         </services>
+      </app>
+   </applications>
+</app-man>

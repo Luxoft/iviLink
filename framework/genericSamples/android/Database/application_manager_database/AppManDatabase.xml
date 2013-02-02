@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<app-man>
+   <applications>
+      <app>
+         <launch-info>com.luxoft.ivilink.samples.basic/.BasicSampleActivity</launch-info>
+         <services>
+            <service uid="BasicSampleService" />
+         </services>
+      </app>     
+      <app>
+         <launch-info>com.luxoft.ivilink.sdk/.authentication.AuthenticationActivity</launch-info>
+         <services>
+            <service uid="AuthenticationService" />
+         </services>
+      </app>
+   </applications>
+</app-man>

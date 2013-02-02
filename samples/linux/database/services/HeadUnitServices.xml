@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<device name="HeadUnit">
+    <service name="VehicleSystemHUI" priority="5" />
+    <service name="VehicleSystemClient" priority="6" />
+    <service name="ClimateService" priority="3" />
+    <service name="SeatService" priority="4" />
+    <service name="BasicSampleService" priority="7" />
+    <service name="AuthenticationService" priority="0" />
+    <service name="MediaService" priority="1" />
+    <service name="ScreenSharingViewerService" priority="2" />
+</device>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<profiles>
+	<profile>
+       		<manifest-path>AppLibTestProfile_Impl.xml</manifest-path>
+      		<libs>
+         		<lib platform="Ubuntu" path="profiles/libAppLibTestProfileImpl.so" />
+      		</libs>
+	</profile>
+</profiles>
+

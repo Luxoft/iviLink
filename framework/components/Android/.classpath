@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AndroidCommonLib"/>
+	<classpathentry kind="src" path="/SplashLib"/>
+	<classpathentry exported="true" kind="lib" path="/home/alchemiss/AXIS/src/framework/public/AndroidCommonLib/bin/androidcommonlib.jar" sourcepath="/AndroidCommonLib/src"/>
+	<classpathentry kind="src" path="/Utils"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

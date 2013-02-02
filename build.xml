@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iviLink" basedir="." default="help">
+
+    <condition property="device.path" else="/mnt/sdcard">
+      <isset property="device.path"/>
+    </condition>
+
+  <dirname property="root.basedir" file="${ant.file.iviLink}"/>
+   
+   <target name="build-ubuntu">
+      <exec executable="make" failonerror="true" />
+   </target>
+
+   <target name="build-ubuntu-core">
+      <exec executable="make" failonerror="true">
+         <arg value="sdk"/>
+      </exec>
+   </target>
+
+   <target name="build-ubuntu-samples">
+      <exec executable="make" failonerror="true">
+         <arg value="samples"/>
+      </exec>
+   </target>
+   
+   <target name="clean-ubuntu">
+      <exec executable="make" failonerror="true">
+         <arg value="clean"/>
+      </exec>
+   </target>
+
+   <target name="clean-ubuntu-core">
+      <exec executable="make" failonerror="true">
+         <arg value="sdk_clean"/>
+      </exec>
+   </target>
+   
+   <target name="install-ubuntu">
+      <exec executable="make" failonerror="true">
+         <arg value="install"/>
+      </exec>
+   </target>
+
+   <target name="install-ubuntu-core">
+      <exec executable="make" failonerror="true">
+         <arg value="sdk_install"/>
+      </exec>
+   </target>
+
+   <target name="install-ubuntu-samples">
+      <exec executable="make" failonerror="true">
+         <arg value="samples_install"/>
+      </exec>
+   </target>
+
+   <target name="uninstall-ubuntu">
+      <exec executable="make" failonerror="true">
+         <arg value="clean_results"/>
+      </exec>
+   </target>
+   
+   <target name="build-android" depends="build-android-3rdparty, build-android-core, build-android-samples" />
+   <target name="clean-android" depends="clean-android-core, clean-android-samples, clean-android-libs, clean-android-3rdparty" />
+   <target name="install-android" depends="install-android-core, install-android-samples" />
+   <target name="uninstall-android" depends="uninstall-android-samples, uninstall-android-core" />
+
+   <target name="build" depends="build-ubuntu, build-android" />
+   <target name="clean" depends="clean-ubuntu, clean-android" />
+   <target name="install" depends="install-ubuntu, install-android" />
+   <target name="uninstall" depends="uninstall-ubuntu, uninstall-android" />
+
+   <target name="help" depends="android-3rdparty-help, android-libs-help, android-core-help, android-samples-help">
+      <echo message="Ubuntu commands:" />
+      <echo message="ant build-ubuntu              : builds everything for ubuntu" />
+      <echo message="ant build-ubuntu-core         : builds core stack and generic samples with their profiles for ubuntu" />
+      <echo message="ant build-ubuntu-samples      : builds samples with their profiles for ubuntu" />
+      <echo message="ant clean-ubuntu              : cleans everything for ubuntu" />
+      <echo message="ant clean-ubuntu-core         : cleans core stack and generic samples with their profiles for ubuntu" />
+      <echo message="ant install-ubuntu            : installs everything for ubuntu" />
+      <echo message="ant install-ubuntu-core       : installs core stack and generic samples with their profiles for ubuntu" />
+      <echo message="ant install-ubuntu-samples    : installs samples with their profiles for ubuntu" />
+      <echo message="ant uninstall-ubuntu          : uninstalls everything for ubuntu" />
+      <echo message="Common commands (they are just grouping the commands listed after semicolon):" />
+      <echo message="ant build-android             : build-android-3rdparty, build-android-core, build-android-samples" />
+      <echo message="ant clean-android             : clean-android-core, clean-android-samples, clean-android-libs, clean-android-3rdparty" />
+      <echo message="ant install-android           : install-android-core, install-android-samples" />
+      <echo message="ant uninstall-android         : uninstall-android-samples, uninstall-android-core" />
+      <echo message="ant build                     : build-ubuntu, build-android" />
+      <echo message="ant clean                     : clean-ubuntu, clean-android" />
+      <echo message="ant install                   : install-ubuntu, install-android" />
+      <echo message="ant uninstall                 : uninstall-ubuntu, uninstall-android" />
+      <echo message="use -Ddevice.path= to set device-specific external storage path (by default /mnt/sdcard is used)" />
+   </target>
+
+   <import file="${root.basedir}/3rd_party/build.xml" />
+   <import file="${root.basedir}/iviLink/include_android/build.xml" />
+   <import file="${root.basedir}/framework/build.xml" />
+   <import file="${root.basedir}/samples/android/build.xml" />
+</project>

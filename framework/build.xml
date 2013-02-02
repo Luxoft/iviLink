@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iviLinkAndroidCore" basedir="." default="android-core-help">
+
+    <condition property="device.path" else="/mnt/sdcard">
+      <isset property="device.path"/>
+    </condition>
+
+  <dirname property="core.basedir" file="${ant.file.iviLinkAndroidCore}"/>
+
+   <target name="build-android-core" depends="build-android-3rdparty, build-android-libs-native">
+      <ant antfile="${core.basedir}/components/Android/build.xml" inheritall="false"  target="debug"/> 
+      <apply executable="ant" failonerror="true">
+         <arg value="debug" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+      <apply executable="ant" failonerror="true">
+         <arg value="jar" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Profiles">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+   </target>
+
+   <target name="install-android-core">
+      <ant antfile="${core.basedir}/components/Android/build.xml" inheritall="false"  target="installd"/> 
+      <apply executable="ant" failonerror="true">
+         <arg value="installd" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+      <exec executable="adb">
+         <arg value="push"/>
+         <arg value="${core.basedir}/genericSamples/android/Database/"/>
+         <arg value="${device.path}"/>
+      </exec>
+   </target>
+
+   <target name="uninstall-android-core">
+      <ant antfile="${core.basedir}/components/Android/build.xml" inheritall="false"  target="uninstall"/> 
+      <apply executable="ant" failonerror="true">
+         <arg value="uninstall" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+      <!-- duplicated so that if one folder is not found, other rm's will still be attempted -->
+      <exec executable="adb">
+         <arg value="shell"/>
+         <arg value="rm"/>
+         <arg value="-r"/>
+         <arg value="${device.path}/profile_repository/"/>
+      </exec>
+      <exec executable="adb">
+         <arg value="shell"/>
+         <arg value="rm"/>
+         <arg value="-r"/>
+         <arg value="${device.path}/service_repository/"/>
+      </exec>
+      <exec executable="adb">
+         <arg value="shell"/>
+         <arg value="rm"/>
+         <arg value="-r"/>
+         <arg value="${device.path}/application_manager_database/"/>
+      </exec>
+   </target>
+
+   <target name="clean-android-core">
+      <ant antfile="${core.basedir}/components/Android/build.xml" inheritall="false"  target="clean"/> 
+      <apply executable="ant" failonerror="true">
+         <arg value="clean" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Applications">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+      <apply executable="ant" failonerror="true">
+         <arg value="clean" />
+         <arg value="-buildfile" />
+         <fileset dir="${core.basedir}/genericSamples/android/Profiles">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply>  
+   </target>
+
+   <target name="android-core-help">
+      <echo message="ant build-android-core                 builds iviLink core stack apk, BasicSample and DeviceManager with BasicSample and Authentication profiles" />
+      <echo message="ant install-android-core               installs iviLink core stack apk, BasicSample and DeviceManager with BasicSample and Authentication profiles and xmls to the connected device" />
+      <echo message="ant uninstall-android-core             uninstalls iviLink core stack, BasicSample and DeviceManager as well as all profiles and xml files from the connected device" />
+      <echo message="ant clean-android-core                 cleans iviLink core stack, BasicSample and DeviceManager as well as their profiles" />
+   </target>
+
+   <import file="${core.basedir}/../iviLink/include_android/build.xml" />
+   <import file="${core.basedir}/../3rd_party/build.xml" />
+
+ </project>

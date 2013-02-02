@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<profiles>
+	<profile>
+		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Android" path="profileImpls/BasicProfile.jar" />
+		</libs>
+	</profile>
+    <profile>
+    <manifest-path>SeatSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libSeatSenderProfile.so" />
+      </libs>
+   </profile> 
+	<profile>
+    <manifest-path>SeatReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libSeatReceiverProfile.so" />
+      </libs>
+   </profile> 
+   <profile>
+      <manifest-path>ClimateSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libClimateSenderProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>ClimateReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libClimateReceiverProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+    <manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libauthenticationProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+    <manifest-path>ScreenSharingProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libScreenSharingProfile.so" />
+      </libs>
+   </profile> 
+   <profile>
+      <manifest-path>MediaControlClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaControlClientProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaStreamingClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaStreamingClientProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaSourceClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaSourceClientProfile.so" />
+      </libs>
+   </profile>
+ <profile>
+      <manifest-path>MediaControlServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaControlServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaStreamingServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaStreamingServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaSourceServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libMediaSourceServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+    <manifest-path>NotificationsProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libNotificationsProfile.so" />
+      </libs>
+   </profile> 
+</profiles>
+

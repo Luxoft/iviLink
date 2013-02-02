@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<profile-apis>
+   <profile-api>
+      <uid>AppLibTest_PAPI_UID</uid>
+      <src>AppLibTestProfile_API.xml</src>
+   </profile-api>
+</profile-apis>

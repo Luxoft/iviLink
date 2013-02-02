@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<profile>
-   <uid>NaviReceiverProfileImpl_UID</uid>
-   <name>NaviReceiverProfileImpl</name>
-   <version>1</version>
-   <api uid ="NaviReceiverProfile_PAPI_UID" />
-   <complement>NaviSenderProfileImpl_UID</complement>
-</profile>

@@ -1,5 +1,3 @@
-src_products
-src_install
 .cproject
 .project
 *~
@@ -9,19 +7,22 @@ src_install
 
 *-build-desktop
 *.pro.user
+moc_*
 
 bin
 obj
 gen
 libs
-*.so
-*.jar
+profileImpls
+android_apk
 *.o
 *.o.d
 *.a
+*.dex
 
 .metadata/*
 
 local.properties
 
-platform_external_protobuf
+*.so
+

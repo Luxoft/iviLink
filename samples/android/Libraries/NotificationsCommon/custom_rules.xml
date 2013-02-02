@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+
+    <target name="-pre-build" >
+      <exec executable="ndk-build" failonerror="true"/> 
+      <move file="libs/armeabi/libNotificationsProfile.so" tofile="../../xmls/profile_repository/profileImpls/libNotificationsProfile.so"/>
+    </target>
+
+    <target name = "-pre-clean">
+      <exec executable="ndk-build" >
+         <arg value="clean"/>
+      </exec>
+    </target>
+</project>
+

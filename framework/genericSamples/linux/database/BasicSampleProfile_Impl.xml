@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<profile>
+   <uid>BasicSampleProfileImpl_UID</uid>
+   <name>BasicSampleProfileImpl</name>
+   <version>1</version>
+   <api uid ="BasicSampleProfile_PAPI_UID" />
+   <complement>BasicSampleProfileImpl_UID</complement>
+
+</profile>
+

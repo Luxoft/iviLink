@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/videoRootLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/videoLand"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/land_big_back"
+        android:baselineAligned="false"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="13"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="10"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="14"
+                    android:background="@drawable/land_small_back"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="0.15" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="5"
+                        android:orientation="horizontal" >
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="0.1" />
+
+                        <RelativeLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="5" >
+
+                            <ListView
+                                android:id="@+id/videolist"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:cacheColorHint="#00000000"
+                                android:choiceMode="singleChoice" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="0px"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="0.1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="0.15" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal" >
+
+                    <LinearLayout
+                        android:layout_width="0px"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
+                        android:orientation="vertical"
+                        android:weightSum="2.5" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="0.25" />
+
+                        <Button
+                            android:id="@+id/sync"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="1"
+                            android:background="@drawable/land_sync_inactive" />
+
+                        <Button
+                            android:id="@+id/toggle"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0px"
+                            android:layout_weight="1"
+                            android:background="@drawable/land_toggle" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0px"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.5" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="2"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:weightSum="6" >
+
+                <Button
+                    android:id="@+id/quitApp"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/exit_inactive" />
+
+                <Button
+                    android:id="@+id/videoPrev"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/prev_track" />
+
+                <Button
+                    android:id="@+id/videoStop"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/stop" />
+
+                <Button
+                    android:id="@+id/videoPlay"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/play" />
+
+                <Button
+                    android:id="@+id/videoPause"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/pause"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/videoNext"
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/next_track" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/videoPort"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/port_big_back"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.5" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1.5"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:weightSum="4" >
+
+            <Button
+                android:id="@+id/syncPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_sync_inactive" />
+
+            <Button
+                android:id="@+id/togglePort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_toggle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="13"
+            android:background="@drawable/port_ac_back"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="0.13" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="5"
+                android:baselineAligned="false"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.13" />
+
+                <RelativeLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="5" >
+
+                    <ListView
+                        android:id="@+id/videolistPort"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:cacheColorHint="#00000000"
+                        android:choiceMode="singleChoice" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.13" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0px"
+                android:layout_weight="0.07" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.25" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1.5"
+            android:orientation="horizontal"
+            android:weightSum="6" >
+
+            <Button
+                android:id="@+id/quitAppPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_exit_inactive" />
+
+            <Button
+                android:id="@+id/videoPrevPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_prev" />
+
+            <Button
+                android:id="@+id/videoStopPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_stop" />
+
+            <Button
+                android:id="@+id/videoPlayPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_play" />
+
+            <Button
+                android:id="@+id/videoPausePort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_pause"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/videoNextPort"
+                android:layout_width="0px"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/port_next" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.25" >
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

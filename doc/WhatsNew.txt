@@ -1,0 +1,85 @@
+What’s new?
+
+=====================================================
+
+1.2 release changes:
+
+Media in background
+
+Stability issues fixed;
+
+Watchdogs
+
+ScreenSharing not supported
+
+=====================================================
+
+1.1.19 release changes:
+
+Media app;
+
+Stability issues fixed;
+
+Twitter app;
+
+Htc connection fix;
+
+Setup script;
+
+Screen sharing app.
+
+=====================================================
+
+1.1.2 release changes:
+
+Android version of iviLink core and applications added (Android versions from 2.2 to 4.1 supported);
+
+Media Profiles added (Ubuntu version only);
+
+SeatApp and ClimateApp are now symmetric (the same on both sides).
+
+=====================================================
+
+1.0.1 release changes:
+
+Fix: crash on onProfileDied event;
+
+Fix: incorrect initialization of client Climate UI;
+
+Fix: crash in cryptopp library;
+
+Fix: segmentation fault on closing BasicSample application;
+
+Fix: misbehavior on wrong PIN-code is entered;
+
+Slightly change the folder structure;
+
+Fix: impossibility of running the same application more than one time;
+
+Fix: shutdown for ProfileRepository.
+
+=====================================================
+
+1.0 release changes:
+
+Profile library added
+	Library is used to provide IVILink APIs for creating Profiles and use its intercommunication functionality. Contains all needed header and source files for writing profiles and static lib that will be used by profiles. 
+
+Application library added
+	Library provides APIs needed for using IVILink functionality in applications. This library communicates with Service Manager and Application Manager and provides simple API to init application in IVILink system use IVILink services in applications.
+
+Symmetry in HAL implemented
+	Usage of the keys “-g client” and “-g server” is not required anymore. Connectivity agent instances negotiate the roles 	themselves.  For upper layers Connectivity agents are completely symmetrical.
+
+Reboot implemented
+	All the IVIlink processes may be easily rebooted by running the  command:
+		./IVILinkSystemController  -r 
+	on the one side. IVIlink processes will be restarted on the second side as well.  
+
+Shut down Implemented
+	All the IVIlink processes may be easily terminated by running the  command:
+		./IVILinkSystemController  -s.  
+	All the processes may be terminated with Ctrl+C pressing
+
+Authentication Implemented  
+	The mechanism that provides PIN authentication. 

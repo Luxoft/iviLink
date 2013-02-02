@@ -1,0 +1,12 @@
+Opened Issues
+
+- Sometime Authentication doesn't start for a long time
+- Between launches of Climate application its state doesn't saved
+- Media application is unsynched after prev and next buttons pressed at the same time on different devices
+- Pin-pad may be shown with approx 10 seconds difference on 2 connected devices
+- Mouse is visible over pin-pad
+- Unpair should not clean-up whole trust list
+- Startup and connect may take 20 seconds
+- On Linux iviLink executables can be run only from their own directory (otherwise they do not work)
+- Seat not responding after simultaneous action on both sides
+

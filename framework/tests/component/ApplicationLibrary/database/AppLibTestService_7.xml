@@ -1,0 +1,5 @@
+<service name= "AppLibTestService_7">
+    <pair name= "AppLibTestService_7"/>
+    <profile api="AppLibTest_PAPI_UID">
+    </profile>
+</service>

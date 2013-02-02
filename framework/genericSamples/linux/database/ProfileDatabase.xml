@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<profiles>
+	<profile>
+		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="profiles/libBasicSampleProfileImpl.so" />
+		</libs>
+	</profile>
+	<profile>
+		<manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Ubuntu" path="profiles/libAuthenticationProfileImpl.so" />
+		</libs>
+	</profile>
+</profiles>
+

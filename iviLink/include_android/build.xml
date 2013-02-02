@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iviLinkAndroidLibs" basedir="." default="android-libs-help">
+
+  <dirname property="libs.basedir" file="${ant.file.iviLinkAndroidLibs}"/>
+
+   <target name="build-android-libs" depends="build-android-libs-native">
+    <apply executable="ant" failonerror="true">
+         <arg value="debug" />
+         <arg value="-buildfile" />
+         <fileset dir="${libs.basedir}/java">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+    </target>
+   
+   <target name="build-android-libs-native">
+      <exec executable="ndk-build" failonerror="true" dir="${libs.basedir}/../../framework/libraries/AndroidPrebuilt"/>
+      <copy file="${libs.basedir}/../../framework/libraries/AndroidPrebuilt/obj/local/armeabi/libiviLinkApplicationLibrary.a" tofile="${libs.basedir}/native/libiviLinkApplicationLibrary.a" overwrite="true" />
+      <copy file="${libs.basedir}/../../framework/libraries/AndroidPrebuilt/libs/armeabi/libiviLinkApplicationLibraryShared.so" tofile="${libs.basedir}/native/libiviLinkApplicationLibraryShared.so" overwrite="true" />
+   </target>
+
+   <target name="clean-android-libs" depends="clean-android-libs-java">
+      <exec executable="ndk-build" failonerror="true" dir="${libs.basedir}/../../framework/libraries/AndroidPrebuilt">
+        <arg value="clean"/>
+      </exec>
+      <delete dir="native" />
+      <mkdir dir="native" />
+   </target>
+
+   <target name="clean-android-libs-java">
+    <apply executable="ant" failonerror="true">
+         <arg value="clean" />
+         <arg value="-buildfile" />
+         <fileset dir="${libs.basedir}/java">
+            <include name="**/build.xml"/>
+         </fileset>
+      </apply> 
+   </target>
+
+   <target name="android-libs-help">
+      <echo message="ant build-android-libs                 builds both native and java libs for Android" />
+      <echo message="ant build-android-libs-native          builds only native static and shared libs for Android" />
+      <echo message="ant clean-android-libs                 cleans both native and java libs for Android" />
+      <echo message="ant clean-android-libs-java            cleans only java libs for Android" />
+      <!-- there are no rules to clean only native libs or to build only java libs, because java libs depend on native libs -->
+   </target>
+ </project>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<profiles>
+	<profile>
+		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
+		<libs>
+			<lib platform="Android" path="profileImpls/BasicProfile.jar" />
+		</libs>
+	</profile>
+   <profile>
+    <manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Android" path="profileImpls/libauthenticationProfile.so" />
+      </libs>
+   </profile>
+</profiles>
+

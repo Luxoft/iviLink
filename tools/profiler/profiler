@@ -1,0 +1,190 @@
+#!/bin/bash
+#[PROFILER] [START]: IVILinkProgressBar was started at [22 02 2013 13:28:04:607]
+
+ProfilerMessagesFile=./.filteredProfilerMessages.tmp
+StartedComponents=./.filteredStartedComponents.tmp
+OperableComponents=./.filteredOperableComponents.tmp
+
+Components=(IVILinkConnectivityAgent IVILinkApplicationManager IVILinkNegotiator IVILinkProfileManager AuthenticationApplication RSAReadPreviouslyStoredKey RSAGenerateAndStoreKey)
+
+function process_android_log
+{
+	inputFile=$OPTARG
+
+	echo Processing Android log-file $inputFile
+
+	TAG="profiler"
+	START_EVENT="ComponentIsStarted"
+	OPERABLE_EVENT="ComponentIsOperable"
+
+	grep $TAG $inputFile > $ProfilerMessagesFile
+	grep $START_EVENT $ProfilerMessagesFile > $StartedComponents
+	grep $OPERABLE_EVENT $ProfilerMessagesFile > $OperableComponents
+
+	rm $ProfilerMessagesFile
+
+	for  component in ${Components[*]}
+	do
+	    echo -e '\n' 
+	    echo -e $component | tee -a $inputFile.result.txt
+	    echo -e ================================================================== | tee -a $inputFile.result.txt
+
+	    if grep --quiet $component $StartedComponents; then
+	
+		startDay=$(grep $component $StartedComponents | awk '{print $1; exit}' | awk -F"-" '{print $1+0; exit}')
+		startMonth=$(grep $component $StartedComponents | awk '{print $1; exit}' | awk -F"-" '{print $2+0; exit}')
+		startHour=$(grep $component $StartedComponents | awk '{print $2; exit}' | awk -F":" '{print $1+0; exit}')
+		startMinute=$(grep $component $StartedComponents | awk '{print $2; exit}' | awk -F":" '{print $2+0; exit}')
+		startSecond=$(grep $component $StartedComponents | awk '{print $2; exit}' | awk -F":" '{print $3; exit}' | awk -F"." '{print $1+0; exit}')
+		startMillisecond=$(grep $component $StartedComponents | awk '{print $2; exit}' | awk -F"." '{print $2+0; exit}')
+
+		echo -e $component was started on $startDay $startMonth at $startHour:$startMinute:$startSecond:$startMillisecond | tee -a $inputFile.result.txt
+	
+		if grep --quiet $component $OperableComponents; then
+		    operableDay=$(grep $component $OperableComponents | awk '{print $1; exit}' | awk -F"-" '{print $1+0; exit}')
+		    operableMonth=$(grep $component $OperableComponents | awk '{print $1; exit}' | awk -F"-" '{print $2+0; exit}')
+		    operableHour=$(grep $component $OperableComponents | awk '{print $2; exit}' | awk -F":" '{print $1+0; exit}')
+		    operableMinute=$(grep $component $OperableComponents | awk '{print $2; exit}' | awk -F":" '{print $2+0; exit}')
+		    operableSecond=$(grep $component $OperableComponents | awk '{print $2; exit}' | awk -F":" '{print $3; exit}' | awk -F"." '{print $1+0; exit}')
+		    operableMillisecond=$(grep $component $OperableComponents | awk '{print $2; exit}' | awk -F"." '{print $2+0; exit}')
+
+		    echo -e $component became operable at $operableDay $operableMonth at $operableHour:$operableMinute:$operableSecond:$operableMillisecond | tee -a $inputFile.result.txt
+
+		    if [ "$startDay" -eq "$operableDay" ] && [ "$startMonth" -eq "$operableMonth" ]; 
+		    then
+			diffMilliseconds=$(( operableMillisecond - startMillisecond
+		                         + ( operableSecond - startSecond ) * 1000 
+		                         + ( operableMinute - startMinute ) * 60 * 1000 
+		                         + ( operableHour - startHour ) * 60 * 60 * 1000 ))
+
+			case "$component" in
+			"IVILinkConnectivityAgent" | "IVILinkApplicationManager" | "IVILinkNegotiator" | "IVILinkProfileManager" | "AuthenticationApplication")
+			    echo Became operable in $diffMilliseconds ms | tee -a $inputFile.result.txt
+			    ;;
+			"RSAReadPreviouslyStoredKey" | "RSAGenerateAndStoreKey")
+			    echo Took $diffMilliseconds ms | tee -a $inputFile.result.txt
+			    ;;	
+			esac
+		    else
+			echo It took too long for component to become operable. | tee -a $inputFile.result.txt
+			echo Something is wrong | tee -a $inputFile.result.txt
+		    fi
+
+		else
+		    echo -e $component didn\'t become operable | tee -a $inputFile.result.txt
+		fi
+	    else
+		echo -e $component wasn\'t started | tee -a $inputFile.result.txt
+	    fi
+
+	    echo -e ================================================================== | tee -a $inputFile.result.txt
+	    echo -e '\n' | tee -a $inputFile.result.txt
+	done
+
+	rm $StartedComponents
+	rm $OperableComponents
+}
+
+function process_ubuntu_log  
+{
+	inputFile=$OPTARG
+
+	echo Processing Ubuntu log-file $inputFile
+
+	TAG="PROFILE"
+	START_EVENT="START"
+	OPERABLE_EVENT="OPERABLE"
+
+	grep $TAG $inputFile > $ProfilerMessagesFile
+	grep $START_EVENT $ProfilerMessagesFile > $StartedComponents
+	grep $OPERABLE_EVENT $ProfilerMessagesFile > $OperableComponents
+
+	rm $ProfilerMessagesFile
+
+	for  component in ${Components[*]}
+	do
+	    echo -e '\n'
+	    echo -e $component | tee -a $inputFile.result.txt
+	    echo -e ================================================================== | tee -a $inputFile.result.txt
+
+	    if grep --quiet $component $StartedComponents; then
+	
+		startDay=$(grep $component $StartedComponents | awk '{print $8+0; exit}')
+		startMonth=$(grep $component $StartedComponents | awk '{print $9+0; exit}')
+		startYear=$(grep $component $StartedComponents | awk '{print $10+0; exit}')
+		startHour=$(grep $component $StartedComponents | awk '{print $11+0; exit}')
+		startMinute=$(grep $component $StartedComponents | awk '{print $12+0; exit}')
+		startSecond=$(grep $component $StartedComponents | awk '{print $13+0; exit}')
+		startMillisecond=$(grep $component $StartedComponents | awk '{print $14+0; exit}')
+
+		echo -e $component was started on $startDay $startMonth $startYear at $startHour:$startMinute:$startSecond:$startMillisecond | tee -a $inputFile.result.txt
+	
+		if grep --quiet $component $OperableComponents; then
+		    operableDay=$(grep $component $OperableComponents | awk '{print $8+0; exit}')
+		    operableMonth=$(grep $component $OperableComponents | awk '{print $9+0; exit}')
+		    operableYear=$(grep $component $OperableComponents | awk '{print $10+0; exit}')
+		    operableHour=$(grep $component $OperableComponents | awk '{print $11+0; exit}')
+		    operableMinute=$(grep $component $OperableComponents | awk '{print $12+0; exit}')
+		    operableSecond=$(grep $component $OperableComponents | awk '{print $13+0; exit}')
+		    operableMillisecond=$(grep $component $OperableComponents | awk '{print $14+0; exit}')
+
+		    echo -e $component became operable at $operableDay $operableMonth $operableYear at $operableHour:$operableMinute:$operableSecond:$operableMillisecond | tee -a $inputFile.result.txt
+
+		    if [ "$startDay" -eq "$operableDay" ] && [ "$startMonth" -eq "$operableMonth" ] && [ "$startYear" -eq "$operableYear" ]; 
+		    then
+			diffMilliseconds=$(( operableMillisecond - startMillisecond
+		                         + ( operableSecond - startSecond ) * 1000 
+		                         + ( operableMinute - startMinute ) * 60 * 1000 
+		                         + ( operableHour - startHour ) * 60 * 60 * 1000 ))
+
+			case "$component" in
+			"IVILinkConnectivityAgent" | "IVILinkApplicationManager" | "IVILinkNegotiator" | "IVILinkProfileManager" | "AuthenticationApplication")
+			    echo Became operable in $diffMilliseconds ms | tee -a $inputFile.result.txt
+			    ;;
+			"RSAReadPreviouslyStoredKey" | "RSAGenerateAndStoreKey")
+			    echo Took $diffMilliseconds ms | tee -a $inputFile.result.txt
+			    ;;	
+			esac
+		    else
+			echo It took too long for component to become operable. | tee -a $inputFile.result.txt
+			echo Something is wrong | tee -a $inputFile.result.txt
+		    fi
+	
+		    
+		else
+		    echo -e $component didn\'t become operable | tee -a $inputFile.result.txt
+		fi
+
+	    else
+		echo -e $component wasn\'t started | tee -a $inputFile.result.txt
+	    fi
+
+	    echo -e ================================================================== | tee -a $inputFile.result.txt
+	    echo -e '\n' | tee -a $inputFile.result.txt
+	done
+
+	rm $StartedComponents
+	rm $OperableComponents
+}
+
+while getopts ":a:u:" opt; do
+    case $opt in
+    a)
+        echo "-a was triggered, Parameter: $OPTARG" >&2
+        process_android_log  
+        ;;
+    u)
+        echo "-u was triggered, Parameter: $OPTARG" >&2
+	process_ubuntu_log  
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
+done
+

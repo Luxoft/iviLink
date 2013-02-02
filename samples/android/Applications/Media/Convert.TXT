@@ -1,0 +1,4 @@
+Batch convert audio:
+find -name "*.mp3" -exec ffmpeg -ab 192k -i "{}" -map_meta_data "{}.m4a":"{}" "{}.m4a" \;
+Batch convert video:
+find -name "*.mp4" -exec ffmpeg -i "{}" -vcodec mpeg4 -sameq -intra  "{}"_intra.mp4 \;

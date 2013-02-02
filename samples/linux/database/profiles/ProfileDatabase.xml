@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<profiles>
+   <profile>
+      <manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libBasicSampleProfileImpl.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libAuthenticationProfileImpl.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>ClimateSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libClimateSenderProfile.so" />
+      </libs>
+   </profile>
+
+   <profile>
+      <manifest-path>ClimateReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libClimateReceiverProfile.so" />
+      </libs>
+   </profile>
+
+   <profile>
+      <manifest-path>SeatSenderProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libSeatSenderProfile.so" />
+      </libs>
+   </profile>
+
+   <profile>
+      <manifest-path>SeatReceiverProfile.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libSeatReceiverProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaControlClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaControlClientProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaStreamingClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaStreamingClientProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaSourceClientProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaSourceClientProfile.so" />
+      </libs>
+   </profile>
+ <profile>
+      <manifest-path>MediaControlServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaControlServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaStreamingServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaStreamingServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>MediaSourceServerProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libMediaSourceServerProfile.so" />
+      </libs>
+   </profile>
+   <profile>
+      <manifest-path>ScreenSharingProfile_Impl.xml</manifest-path>
+      <libs>
+         <lib platform="Ubuntu" path="profiles/libScreenSharingProfileImpl.so" />
+      </libs>
+   </profile>
+</profiles>
+

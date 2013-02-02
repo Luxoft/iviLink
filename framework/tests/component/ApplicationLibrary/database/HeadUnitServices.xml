@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<device name="HeadUnit">
+    <service name="AppLibTestService_1" priority="13"/>
+    <service name="AppLibTestService_7" priority="14"/>
+    <service name="AppLibTestService_9" priority="15"/>
+</device>

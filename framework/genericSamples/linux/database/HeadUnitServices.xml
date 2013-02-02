@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<device name="HeadUnit">
+    <service name="BasicSampleService" priority="7" />
+    <service name="AuthenticationService" priority="0" />
+</device>

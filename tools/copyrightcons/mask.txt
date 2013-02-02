@@ -1,0 +1,23 @@
+#*** 3RD_PARTY PATHS ***
+3rd_party
+json
+antlersoft
+androidVNC
+
+#*** 3RD_PARTY COPYRIGHTS ***
+Arseny Capoulkine
+Kristen Wegner
+
+#*** OUR COPYRIGHTS ***
+iviLINK
+Luxoft
+
+#*** FILTER ***
+-re:Project\s*AXIS
+copyright
+author
+license
+
+#*** ALERT LIST ***
++re:GNU\s*General\s*Public\s*License
+Sleepycat

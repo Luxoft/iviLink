@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+  
+    <condition property="result.dir" else="../../../../iviLink/android_apk">
+      <isset property="result.dir"/>
+    </condition>
+
+    <target name="-pre-build" >
+      <exec executable="ndk-build" failonerror="true"/> 
+      <move todir="../../xmls/profile_repository/profileImpls/">
+         <fileset dir="libs/armeabi">
+            <include name="**/*Profile.so"/>
+         </fileset>
+      </move>
+    </target>
+
+    <target name = "-post-build">
+      <echo message="copying apk to: ${result.dir}" />
+      <copy file="bin/${ant.project.name}-debug.apk" tofile="${result.dir}/${ant.project.name}-debug.apk" overwrite="true" />
+    </target>
+
+    <target name = "-pre-clean">
+      <exec executable="ndk-build" >
+         <arg value="clean"/>
+      </exec>
+    </target>
+</project>
+

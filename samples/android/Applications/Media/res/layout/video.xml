@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/videoRootLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/black" >
+
+    <FrameLayout
+        android:id="@+id/videoHostFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@android:color/black"
+        android:foregroundGravity="clip_horizontal" >
+
+        <SurfaceView
+            android:id="@+id/videoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/videoCoverBlack"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/black"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/pauseOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/pause_overlay"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/videoAdditionalButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:baselineAligned="false"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="visible" >
+
+            <Button
+                android:id="@+id/syncPort"
+                android:layout_width="124dp"
+                android:layout_height="51dp"
+                android:background="@drawable/port_sync_inactive" />
+
+            <Button
+                android:id="@+id/togglePort"
+                android:layout_width="124dp"
+                android:layout_height="51dp"
+                android:background="@drawable/port_toggle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:visibility="visible" >
+
+            <Button
+                android:id="@+id/videoAddPrev"
+                android:layout_width="0px"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@drawable/prev_track" />
+
+            <Button
+                android:id="@+id/videoAddStop"
+                android:layout_width="0px"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@drawable/stop" />
+
+            <Button
+                android:id="@+id/videoAddPlay"
+                android:layout_width="0px"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@drawable/play" />
+
+            <Button
+                android:id="@+id/videoAddPause"
+                android:layout_width="0px"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@drawable/pause"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/videoAddNext"
+                android:layout_width="0px"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@drawable/next_track" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progressAvSynchro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:indeterminate="true" />
+    </LinearLayout>
+
+</RelativeLayout>

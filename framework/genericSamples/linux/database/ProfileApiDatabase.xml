@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<profile-apis>
+   <profile-api>
+      <uid>BasicSampleProfile_PAPI_UID</uid>
+      <src>BasicSampleProfile_API.xml</src>
+   </profile-api>
+   <profile-api>
+      <uid>AuthenticationProfile_PAPI_UID</uid>
+      <src>AuthenticationProfile_API.xml</src>
+   </profile-api>
+</profile-apis>
