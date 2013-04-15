@@ -177,7 +177,7 @@
 For all platforms:
 
     For complete source code files removal please remove the iviLink folder. 
-    In this case all the build libraries and executable files to be removed as 
+    In this case all teh build libraries and executable files to be removed as 
     well.
 
 
