@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpCore.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Repository class provides access to PMP repository for other PMP subcomponents
+ */
 
 
 #ifndef CPMPCORE_HPP_
@@ -57,9 +69,9 @@ class PmpCore : public IPmpCoreToPim
 */
 
 public:
-    typedef std::map<Profile::Uid,PmpCoreProfileInfo> CoreProfileInfo;
+    typedef std::list<PmpCoreProfileInfo> CoreProfileInfoList;
 
-    typedef std::list<Profile::Uid> tComplementsList;
+    typedef std::list<std::pair<Profile::Uid, UInt32> > tComplementsList;
 
     /**
     * Constructor
@@ -70,46 +82,6 @@ public:
     * Destructor
     */
     virtual ~PmpCore();
-
-    /**
-    * Makes request to Profile Repository to add Profile
-    * @param manifestPath is path to Profile XML manifest
-    * @return error code
-    */
-    BaseError addProfile(const std::string &xmlManifestPath);
-
-    /**
-    * Makes request to Profile Repository to remove profile from repository
-    * @param profileUid is UID of profile to remove
-    * @return error code
-    */
-    BaseError removeProfile(iviLink::Profile::Uid profileUid);
-
-    /**
-    * Makes request to Profile Repository to add Profile Implementation
-    * @param profileID is UID of profile
-    * @param library is library with profile implementation library
-    * @return error code
-    */
-    BaseError addProfileImplementation(iviLink::Profile::Uid profileID, const LibDescriptor& library);
-
-    /**
-    * Makes request to Profile Repository to remove profile implementation
-    * @param profileUid is UID of profile
-    * @param platform is a target platform of profile implementation
-    * @return error code
-    */
-    BaseError removeProfileImplementation(iviLink::Profile::Uid profileUid, const std::string &platform);
-
-    /**
-    * Makes request to Profile Repository to find Profiles by UID and Profile parameters
-    * @param id is UID of Profile or Profile API
-    * @param profileArguments is a map of Profile Parametes
-    * @param platform is target platform
-    * @prarm onlyAvailable is used to get enabled and unlocked profiles
-    */
-    void findProfiles(Profile::ApiUid id, const std::map<std::string, std::string> & profileArguments,
-            const std::string &platform, std::list<LibInfo>& profiles, bool onlyAvailable = true);
 
     /**
     * Function is used to clear cached Profiles information and load actual from Repository
@@ -167,22 +139,14 @@ public:
     virtual void enableByClientAll();
 
     /**
-    * Makes request to Profile Repository to get Profile of Profile API manifest
-    * @param uid is UID of Profile of Profile API
-    * @manifest[out] is result string with manifest
-    * @return true if UID is unknown
-    */
-    virtual bool getManifest(iviLink::BaseUid uid, std::string & manifest);
-
-    /**
     * Calls another version of findProfiles() function with list of LibInfo objects.
     * This version of function is used to make requests by clients of Profile Manager
     * @param id is UID of Profile API of Profile
-    * @param profileParameters is map of Profile Parameters
+    * @param profileParameters is a reserved parameter. core doesn't use it
     * @param[out] profiles is list of results
     * @param enabledProfiles is true if client want to get only enabled and unlocked Profiles
     */
-    virtual void findProfiles(Profile::ApiUid id,
+    virtual void findProfiles(const Profile::ApiUid & id,
             const std::map<std::string, std::string> & profileParameters
             , std::list<Profile::Uid> & profiles, bool enabledProfiles = true);
 
@@ -192,7 +156,7 @@ public:
     * @param[out] path is path to Profile Implementation library
     * @return true if success and false if UID is unknown
     */
-    virtual bool getProfileLibPath(Profile::Uid uid, std::string& path);
+    virtual bool getProfileLibPath(Profile::Uid uid, std::string& path) const;
 
     /**
     * @return true if state of PMP Core is equal to Profile Repository state
@@ -322,12 +286,12 @@ public:
     */
     bool enableApiUidByClient(Profile::ApiUid id);
 
-    void getAvailbleProfileComplementsResponse(const std::list<Profile::Uid> & complements);
+    void getAvailbleProfileComplementsResponse(const std::list<std::pair<Profile::Uid, UInt32> > & complements);
 
 private:
 
     ProfileRepository * mRepository; ///< Pointer to Profile Repository client
-    CoreProfileInfo mProfiles; ///< Map of Profiles. Core gets if from Repository
+    CoreProfileInfoList mProfiles; ///< Map of Profiles. Core gets if from Repository
 
     std::string mPlatform;  ///< Contains name of current platform
     bool mActualRepoState;  ///< is true if state of Core is similar with Profile Repository state

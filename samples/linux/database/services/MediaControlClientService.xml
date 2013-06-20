@@ -1,5 +1,0 @@
-<service name= "MediaControlClientService">
-    <pair name= "MediaControlServerService"/>
-    <profile api="MediaControlClientProfile_API_UID">
-    </profile>
-</service>

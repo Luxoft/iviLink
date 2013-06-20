@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.luxoft.ivilink.sdk"
     android:installLocation="auto"
-    android:sharedUserId="com.luxoft.ivilink.sdk.authentication"
     android:versionCode="1"
     android:versionName="1.0" >
 

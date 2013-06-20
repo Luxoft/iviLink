@@ -1,5 +1,0 @@
-<service name= "BasicSampleService">
-    <pair name= "BasicSampleService"/>
-    <profile api="BasicSampleProfile_PAPI_UID">
-    </profile>
-</service>

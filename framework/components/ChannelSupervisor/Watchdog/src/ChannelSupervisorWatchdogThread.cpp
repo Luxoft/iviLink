@@ -1,27 +1,7 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
 #include <stdlib.h>
 
 #include "ChannelSupervisorWatchdogThread.hpp"
+#include "NegotiatorConstants.hpp"
 
 using namespace iviLink::ChannelSupervisor;
 
@@ -29,15 +9,26 @@ using namespace iviLink::ChannelSupervisor;
 
 #define WD_MAX_SLEEP_TIMEOUT_MS 50
 
+Logger ChannelSupervisorWatchdogThread::mLogger = 
+            Logger::getInstance("ChannelSupervisor.NegotiatorProcess.ChannelSupervisorWatchdog.Thread");
+
 ChannelSupervisorWatchdogThread::ChannelSupervisorWatchdogThread()
-:CThread(CSWATCHDOG_THREAD_NAME)
+:CThread(CSWATCHDOG_THREAD_NAME, true)
 {
+    LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
     div_t sleepyTimes = div(WD_SLEEP_TIMEOUT_MS, WD_MAX_SLEEP_TIMEOUT_MS);
     mSleepTimeoutParts = sleepyTimes.quot;
 }
 
+ChannelSupervisorWatchdogThread::~ChannelSupervisorWatchdogThread()
+{
+    LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
+    CThread::stop();
+}
+
 void ChannelSupervisorWatchdogThread::threadFunc()
 {
+    LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
     ChannelSupervisorWatchdog * watchdog = ChannelSupervisorWatchdog::getInstance();
     while (!getStopFlag())
     {

@@ -1,4 +1,8 @@
+#ifndef __APPLE__
 #include <json/writer.h>
+#else
+#include "writer.h"
+#endif
 #include <utility>
 #include <assert.h>
 #include <stdio.h>

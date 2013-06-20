@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                ProfileApiInfo.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Contains information about Profile API gotten from XML manifest
+ */
 
 
 #ifndef CPROFILEAPIINFO_HPP_
@@ -45,7 +57,7 @@ public:
     * Constructor
     * @param xmlPath contains path to manifest. Constructor parses this manifest
     */
-    ProfileApiInfo(std::string xmlPath);
+    ProfileApiInfo(const Profile::ApiUid & profileApi);
 
     /**
     * Constructor
@@ -63,41 +75,12 @@ public:
     Profile::ApiUid uid() const;
 
     /**
-    * @return role of Profile API
-    */
-    std::string role() const;
-
-    /**
-    * @return version of Profile API
-    */
-    int version() const;
-
-    /**
-    * @return path to manifest
-    */
-    std::string xmlPath() const;
-
-    /**
     * Makes logs with Profile API information
     */
     void print() const;
 
-    /**
-    * @return true if it was parsing troubles
-    */
-    bool failed() const;
-
 private:
-    /**
-    * Loads Profile API info from manifest
-    */
-    void loadProfileApiInfo();
-
-    std::string mXmlPath;   ///< Manifest path
     Profile::ApiUid mUid;               ///< UID of Profile API
-    std::string mRole;      ///< Role of Profile API
-    int mVersion;           ///< Version of Profile API
-    bool mFailed;           ///< Is state of object incorrect?
 
     static Logger msLogger; ///< object of logger
 };

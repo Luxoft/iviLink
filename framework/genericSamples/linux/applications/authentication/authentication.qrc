@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/AuthenticationApplication/authentication.qml</file>
+        <file>qml/AuthenticationApplication/images/pin/0.png</file>
+        <file>qml/AuthenticationApplication/images/pin/0-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/1.png</file>
+        <file>qml/AuthenticationApplication/images/pin/1-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/2.png</file>
+        <file>qml/AuthenticationApplication/images/pin/2-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/3.png</file>
+        <file>qml/AuthenticationApplication/images/pin/3-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/4.png</file>
+        <file>qml/AuthenticationApplication/images/pin/4-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/5.png</file>
+        <file>qml/AuthenticationApplication/images/pin/5-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/6.png</file>
+        <file>qml/AuthenticationApplication/images/pin/6-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/7.png</file>
+        <file>qml/AuthenticationApplication/images/pin/7-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/8.png</file>
+        <file>qml/AuthenticationApplication/images/pin/8-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/9.png</file>
+        <file>qml/AuthenticationApplication/images/pin/9-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/auth_failed.png</file>
+        <file>qml/AuthenticationApplication/images/pin/background.png</file>
+        <file>qml/AuthenticationApplication/images/pin/background-gray.png</file>
+        <file>qml/AuthenticationApplication/images/pin/backspace.png</file>
+        <file>qml/AuthenticationApplication/images/pin/backspace-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/cancel.png</file>
+        <file>qml/AuthenticationApplication/images/pin/cancel-grey.png</file>
+        <file>qml/AuthenticationApplication/images/pin/input.png</file>
+        <file>qml/AuthenticationApplication/images/pin/light.png</file>
+        <file>qml/AuthenticationApplication/images/pin/ok.png</file>
+        <file>qml/AuthenticationApplication/images/pin/ok-grey.png</file>
+    </qresource>
+</RCC>

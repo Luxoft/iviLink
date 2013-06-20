@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpIpcProtocol.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements PmpIpcProtocol class
+ */
 
 
 #include <cassert>
@@ -181,40 +193,6 @@ bool PmpIpcProtocol::generatePIUidResponse(const iviLink::Profile::IUid& piuid,
     return true;
 }
 
-bool PmpIpcProtocol::getManifestResponse(const std::string & manifest,
-        iviLink::Ipc::DirectionID const& dirId)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    CBuffer writeBuf = mWriteBufMgr.getBuffer();
-    ProfileManager::Ipc::PmMessage* req = reinterpret_cast<ProfileManager::Ipc::PmMessage*>(writeBuf.get());
-    req->header.type = ProfileManager::Ipc::PMP_PMAL_GET_MANIFEST;
-    iviLink::Ipc::Helpers::CBufferWriter writer(req->data, writeBuf.getSize() - sizeof(req->header));
-
-
-    BaseError err = writer.write(manifest);
-    if (!err.isNoError())
-    {
-        LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
-        return false;
-    }
-
-    req->header.size = writer.getUsedSize();
-    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-    UInt32 const reqSize = sizeof(ProfileManager::Ipc::PmMessage) + req->header.size;
-
-    err = mIpc->asyncRequest(id, writeBuf.get(), reqSize, &dirId);
-
-    if (!err.isNoError())
-    {
-        LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
-        return false;
-    }
-
-    return true;
-}
-
 bool PmpIpcProtocol::getProfileLibPathResponse(const std::string & path,
         iviLink::Ipc::DirectionID const& dirId)
 {
@@ -334,9 +312,6 @@ void PmpIpcProtocol::OnAsyncRequest(iviLink::Ipc::MsgID id,
         break;
     case ProfileManager::Ipc::PMAL_PMP_ENABLE_ALL:
         processEnableAllRequest(req, dirId);
-        break;
-    case ProfileManager::Ipc::PMAL_PMP_GET_MANIFEST:
-        processGetManifestRequest(req, dirId);
         break;
     case ProfileManager::Ipc::PMAL_PMP_GET_PROFILE_LIB_PATH:
         processGetProfileLibPathRequest(req, dirId);
@@ -490,22 +465,6 @@ void PmpIpcProtocol::processEnableAllRequest(ProfileManager::Ipc::PmMessage cons
     mCore->enableByClientAll(dirId);
 }
 
-void PmpIpcProtocol::processGetManifestRequest(ProfileManager::Ipc::PmMessage const* const req, iviLink::Ipc::DirectionID const& dirId)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    iviLink::Ipc::Helpers::CBufferReader reader(req->data, req->header.size);
-    iviLink::Profile::Uid uid;
-    BaseError err = reader.read(uid);
-
-    if (!err.isNoError())
-    {
-        return;
-    }
-    mCore->getManifest(uid, dirId);
-}
-
-
 void PmpIpcProtocol::processGetProfileLibPathRequest(ProfileManager::Ipc::PmMessage const* const req, iviLink::Ipc::DirectionID const& dirId)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
@@ -514,8 +473,11 @@ void PmpIpcProtocol::processGetProfileLibPathRequest(ProfileManager::Ipc::PmMess
     iviLink::Profile::Uid uid;
     BaseError err = reader.read(uid);
 
+    LOG4CPLUS_INFO(msLogger, "UID: " + uid.value());
+
     if (!err.isNoError())
     {
+        LOG4CPLUS_INFO(msLogger, static_cast<std::string>(err) );
         return;
     }
     mCore->getProfileLibPath(uid, dirId);

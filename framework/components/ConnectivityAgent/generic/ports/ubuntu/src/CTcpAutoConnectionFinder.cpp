@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 #include <cerrno>
@@ -44,13 +45,15 @@
 #include "Logger.hpp"
 #include "SocketUtils.hpp"
 
+using namespace std;
 using namespace iviLink::ConnectivityAgent::HAL;
 Logger CTcpAutoConnectionFinder::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("ConnectivityAgent.HAL.CTcpAutoConnectionFinder"));
 
 CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& handler, EGenderType gender) :
    CConnectionFinder(handler, gender),
    mpNetlinkSocket(NULL),
-   mBroadcastSock(0)
+   mBroadcastSock(0),
+   mAutoconnectionAllowed(true)
 {
    memcpy(mBrdMsg.handshake, BRD_MESSAGE_TEXT, sizeof(mBrdMsg.handshake));
    mBrdMsg.random = 0;
@@ -88,6 +91,11 @@ CTcpAutoConnectionFinder::CTcpAutoConnectionFinder(IFoundConnectionHandler& hand
    }
 
    srandom(time(NULL));
+}
+            
+void CTcpAutoConnectionFinder::setAutoConnectionAllowed(bool allowed)
+{
+    mAutoconnectionAllowed = allowed;
 }
 
 CTcpAutoConnectionFinder::~CTcpAutoConnectionFinder()
@@ -219,6 +227,15 @@ eMessageResult CTcpAutoConnectionFinder::waitForMessage(std::string& client_addr
          LOG4CPLUS_INFO(msLogger, "CCTcpAutoConnectionFinder::waitForMessage correct response from " + std::string(addr)
             + "with random number = " + convertIntegerToString(in_msg->random)
             + " (our = " + convertIntegerToString(mTurnRandomNumber) + ")");
+
+         //This is done, to allow response to broadcasts in case automatic connection searching is not allowed
+         if(!mAutoconnectionAllowed)
+         {
+             for (tAddresses::iterator it = mBrdAddresses.begin(); it != mBrdAddresses.end(); ++it)
+             {
+                 sendBroadcastMessage(*it);
+             }
+         }
 
          eMessageResult ret = eERROR;
 
@@ -385,11 +402,13 @@ bool CTcpAutoConnectionFinder::checkInterfaces()
       return false;
    }
 
-   // Here mBrdAddresses and mLocalAddresses have been already filled.
-
-   for (tAddresses::iterator it = mBrdAddresses.begin(); it != mBrdAddresses.end(); ++it)
+   if(mAutoconnectionAllowed)
    {
-      sendBroadcastMessage(*it);
+       // Here mBrdAddresses and mLocalAddresses have been already filled.
+       for (tAddresses::iterator it = mBrdAddresses.begin(); it != mBrdAddresses.end(); ++it)
+       {
+           sendBroadcastMessage(*it);
+       }
    }
 
    return true;

@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +19,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
+
 
 
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-
 #include "CThread.hpp"
 
 using namespace std;
@@ -36,7 +45,7 @@ CThread::CThread(const char* const pThreadName, bool joinable/* = false*/) :
    mStopFlag(false),
    mIsRunning(false),
    mThread(0),
-   mpSleepSemaphore(0),
+   mpSleepSemaphore(),
    mJoinable(joinable)
 {
    if (pThreadName)
@@ -52,7 +61,7 @@ CThread::CThread(const char* const pThreadName, bool joinable/* = false*/) :
       pthread_attr_setdetachstate(&mAttr,PTHREAD_CREATE_DETACHED);
    }
 
-   mpSleepSemaphore = new CSignalSemaphore(0);
+   mpSleepSemaphore = new CSignalSemaphore();
 }
 
 CThread::~CThread()
@@ -138,9 +147,8 @@ bool CThread::join()
 //        pthread_detach(mThread);
 //        pthread_exit(0);
       }
-      
-      LOG4CPLUS_INFO(logger, "CThread::join() " + convertIntegerToString(pthread_self())
-                           + " -> " + convertIntegerToString(mThread));
+      LOG4CPLUS_INFO(logger, "CThread::join() " + convertIntegerToString((int)pthread_self())
+                           + " -> " + convertIntegerToString((int)mThread));
       int rc = pthread_join(mThread, 0);
       if (0 == rc)
          return true;
@@ -160,7 +168,7 @@ void* CThread::launchInterface(void* pMyself)
    if (pThread)
    {
       LOG4CPLUS_INFO(logger, string(pThread->mpThreadName) + 
-         " mThread = " + convertIntegerToString(pThread->mThread));
+         " mThread = " + convertIntegerToString((int)pThread->mThread));
 
       pThread->mIsRunning = true;
       pThread->threadFunc();

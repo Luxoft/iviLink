@@ -1,29 +1,9 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
 package com.luxoft.ivilink.sdk.android.nonnative;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -32,11 +12,10 @@ import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.Assertion;
-import com.luxoft.ivilink.sdk.android.lib.utils.ForApp;
-import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
+import com.luxoft.ivilink.utils.Assertion;
+import com.luxoft.ivilink.utils.ForApp;
+import com.luxoft.ivilink.utils.log.Logging;
 
 /**
  * This class represents an application in iviLink.
@@ -48,10 +27,10 @@ public final class IviLinkApplication {
 
     private final String tag = IviLinkApplication.class.getName();
 
-    private static boolean hasBeenInited = false;
+    private AtomicBoolean mHasBeenInited = new AtomicBoolean();
 
-    static boolean isServiceManagerCreated() {
-        return hasBeenInited;
+    boolean isServiceManagerCreated() {
+        return mHasBeenInited.get();
     }
 
     ApplicationStateCallbacks appCallbacks;
@@ -154,11 +133,6 @@ public final class IviLinkApplication {
             final String toastText = "Warning: provided Activity is not among application's entry activities,"
                     + " iviLink may not work correctly!";
             Log.e(tag, toastText);
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
-                }
-            });
         }
 
         createAppNative(ForApp.getServicePath(), ForApp.getInternalPath(activity),
@@ -178,7 +152,6 @@ public final class IviLinkApplication {
         appCallbacks = callbacks;
         Assertion.check(appCallbacks != null, "ApplicationStateCallbacks provided are null");
         initInIviLinkNative();
-        hasBeenInited = true;
     }
 
     /**
@@ -323,6 +296,7 @@ public final class IviLinkApplication {
 
     private void initDone(final boolean isStartedByUser) {
         Log.v(tag, Logging.getCurrentMethodName(isStartedByUser));
+        mHasBeenInited.compareAndSet(false, true);
         appCallbacks.onInitDone(isStartedByUser);
     }
 

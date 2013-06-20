@@ -1,8 +1,9 @@
-# iviLINK SDK, version 1.2
+# 
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
-# Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+# Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+# 
 # 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -50,6 +52,7 @@ INCLUDES      += -I$(CON_AGENT_DIR)L0/
 INCLUDES      += -I$(CON_AGENT_DIR)common/
 INCLUDES      += -I$(CON_AGENT_DIR)HAL/
 INCLUDES      += -I$(UTILS_DIR)ipc/
+INCLUDES      += -I$(UTILS_DIR)serialize/
 INCLUDES      += -I$(SC_MSG_PROTOCOL)
 INCLUDES      += -I$(UNITTEST_DIR)
 INCLUDES      += -I$(SC_MSG_PROTOCOL)SystemController_ConnectivityAgent/

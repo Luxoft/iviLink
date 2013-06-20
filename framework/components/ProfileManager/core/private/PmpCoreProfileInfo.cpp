@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpCoreProfileInfo.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements PmpCoreProfileInfo class
+ */
 
 
 #include "PmpCoreProfileInfo.hpp"
@@ -40,13 +52,13 @@ PmpCoreProfileInfo::PmpCoreProfileInfo()
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 }
 
-PmpCoreProfileInfo::PmpCoreProfileInfo(const std::string & profileManifest)
+PmpCoreProfileInfo::PmpCoreProfileInfo(const LibInfo & libInfo)
     : mEnabledByComplement(false)
     , mEnabledByClient(true)
     , mLocked(false)
+	, mLibInfo(libInfo)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    parseXml(profileManifest);
 }
 
 PmpCoreProfileInfo::PmpCoreProfileInfo(const PmpCoreProfileInfo &info)
@@ -55,10 +67,7 @@ PmpCoreProfileInfo::PmpCoreProfileInfo(const PmpCoreProfileInfo &info)
     mEnabledByClient = info.mEnabledByClient;
     mEnabledByComplement = info.mEnabledByComplement;
     mLocked = info.mLocked;
-    mUid = info.mUid;
-    mApi = info.mApi;
-    mComplement = info.mComplement;
-    mLibrary = info.mLibrary;
+    mLibInfo = info.mLibInfo;
 }
 
 PmpCoreProfileInfo& PmpCoreProfileInfo::operator = (const PmpCoreProfileInfo &info)
@@ -67,34 +76,13 @@ PmpCoreProfileInfo& PmpCoreProfileInfo::operator = (const PmpCoreProfileInfo &in
     mEnabledByClient = info.mEnabledByClient;
     mEnabledByComplement = info.mEnabledByComplement;
     mLocked = info.mLocked;
-    mUid = info.mUid;
-    mApi = info.mApi;
-    mComplement = info.mComplement;
-    mLibrary = info.mLibrary;
+    mLibInfo = info.mLibInfo;
     return *this;
-}
-
-void PmpCoreProfileInfo::parseXml(const std::string & profileManifest)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    pugi::xml_document doc;
-    pugi::xml_parse_result res = doc.load(profileManifest.c_str());
-    if(pugi::status_ok != res.status)
-    {
-        LOG4CPLUS_INFO(msLogger, "Error while parsing Profile API manifest");
-        return;
-    }
-
-    pugi::xml_node prof = doc.child("profile");
-    mUid = Profile::Uid(prof.child_value("uid"));
-    mApi = Profile::ApiUid(prof.child("api").attribute("uid").value());
-    mComplement = Profile::Uid(prof.child_value("complement"));
 }
 
 void PmpCoreProfileInfo::setLibrary(const std::string & library)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    mLibrary = library;
 }
 
 PmpCoreProfileInfo::~PmpCoreProfileInfo()
@@ -104,23 +92,23 @@ PmpCoreProfileInfo::~PmpCoreProfileInfo()
 
 Profile::Uid PmpCoreProfileInfo::uid() const
 {
-    return mUid;
+    return mLibInfo.uid;
 }
 
 Profile::ApiUid PmpCoreProfileInfo::api() const
 {
-    return mApi;
+    return mLibInfo.apiUid;
 }
 
 Profile::Uid PmpCoreProfileInfo::complement() const
 {
-    return mComplement;
+    return mLibInfo.complement;
 }
 
 std::string PmpCoreProfileInfo::library() const
 {
-    LOG4CPLUS_INFO(msLogger, "mLibrary = " + mLibrary);
-    return mLibrary;
+    LOG4CPLUS_INFO(msLogger, "mLibrary = " + mLibInfo.path);
+    return mLibInfo.path;
 }
 
 bool PmpCoreProfileInfo::locked() const
@@ -172,6 +160,11 @@ void PmpCoreProfileInfo::enableByComplement()
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     mEnabledByComplement = true;
+}
+
+UInt32 PmpCoreProfileInfo::version() const
+{
+	return mLibInfo.version;
 }
 
 }

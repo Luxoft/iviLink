@@ -1,1 +1,16 @@
-*
+#untrack directories
+autom4te.cache/
+.deps/
+.libs/
+
+#untrack files
+INSTALL
+stamp*
+*.log
+*.status
+libtool
+*.lo
+*.la
+*.o
+Makefile
+tests/*_test/*_test

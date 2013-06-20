@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                IPmpCoreForIpc.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Interface of PMP core for IPC requests from PMAL core to PMP core
+ */
 
 
 #ifndef IPMPCORETOIPC_HPP_
@@ -64,15 +76,6 @@ public:
     * Enables all Profiles by client's request
     */
     virtual void enableByClientAll(const iviLink::Ipc::DirectionID & dirId) = 0;
-
-    /**
-    * Makes request to Profile Repository to get Profile of Profile API manifest
-    * @param uid is UID of Profile of Profile API
-    * @manifest[out] is result string with manifest
-    * @return true if UID is unknown
-    */
-    virtual void getManifest(const iviLink::BaseUid & uid,
-            const iviLink::Ipc::DirectionID & dirId) = 0;
 
     /**
     * Function is used to get path to Profile Implementation library

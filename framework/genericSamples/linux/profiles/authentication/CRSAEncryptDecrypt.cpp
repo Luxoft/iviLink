@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,15 +19,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
 
 
 #include <sstream>
 #include <sys/time.h>
-#include <fstream>
 
 #include "Types.hpp"
 #include "CRSAEncryptDecrypt.hpp"
+#include "RSAFileHelper.hpp"
 
 #include "filters.h"
 using CryptoPP::PK_EncryptorFilter;
@@ -64,39 +67,24 @@ RSA::PrivateKey CRSAEncryptDecrypt::getPrivateKey(const std::string& pathToKeySt
 	  //try to read it from file
       std::string filePath = pathToKeyStorage + "/private.k";
       LOG4CPLUS_INFO(msLogger, "getPrivate(): filepath=" + filePath);
+      RSAFileHelper fileHelper(filePath);
 
-      std::ifstream inFile;
-      size_t size = 0;
-
-      inFile.open(filePath.c_str(), std::ios::in|std::ios::binary|std::ios::ate );
-      if(inFile.good()) // the file is present and is readable
+      if(fileHelper.isFilePresent() && fileHelper.getDataSize() != 0)
       {
     	 LOG4CPLUS_TRACE(Logger::getInstance(LOG4CPLUS_TEXT("profiler.ComponentIsStarted")), "RSAReadPreviouslyStoredKey");
 
     	 LOG4CPLUS_INFO(msLogger, "getPrivate(): retrieving previously stored data");
-         char* signedData = 0;
-         inFile.seekg(0, std::ios::end); // set the pointer to the end
-         size = inFile.tellg() ; // get the length of the file
-         inFile.seekg(0, std::ios::beg); // set the pointer to the beginning
-
-         signedData = new char[size]; 
-         inFile.read( signedData, size );
-         inFile.close();
-         UInt8 * unSignedData = new UInt8[size];
-         memcpy(unSignedData, signedData, size);
+         char signedData[fileHelper.getDataSize()];
+         fileHelper.readDataToBuffer(signedData, fileHelper.getDataSize());
          CryptoPP::ByteQueue queue;
-         queue.Put(unSignedData,  size);
+         queue.Put(reinterpret_cast<UInt8*>(signedData),  sizeof(signedData));
          rsaPrivate.Load(queue);
-         delete[] signedData;
-         delete[] unSignedData;
-
          LOG4CPLUS_TRACE(Logger::getInstance(LOG4CPLUS_TEXT("profiler.ComponentIsOperable")), "RSAReadPreviouslyStoredKey");
       } 
       else // the file is not present or broken
       {
     	 LOG4CPLUS_TRACE(Logger::getInstance(LOG4CPLUS_TEXT("profiler.ComponentIsStarted")), "RSAGenerateAndStoreKey");
-
-         remove(pathToKeyStorage.c_str());
+         remove(filePath.c_str());
          LOG4CPLUS_INFO(msLogger, "getPrivate(): no key stored, generating");
          AutoSeededRandomPool rnd;
          rsaPrivate.GenerateRandomWithKeySize(rnd, 2048);
@@ -105,12 +93,9 @@ RSA::PrivateKey CRSAEncryptDecrypt::getPrivateKey(const std::string& pathToKeySt
          CryptoPP::ByteQueue queue;
          rsaPrivate.Save(queue);
          UInt32 queueSize = queue.CurrentSize();
-         UInt8* outgoingData = new UInt8[queueSize];
+         UInt8 outgoingData[queueSize];
          queue.Get(outgoingData, queueSize);
-         std::ofstream outputBuffer(filePath.c_str(), std::ios::binary|std::ios::out);
-         outputBuffer.write(reinterpret_cast<char*>(outgoingData), queueSize);
-         outputBuffer.close();
-         delete[] outgoingData;
+         RSAFileHelper::writeDataToFile(reinterpret_cast<const char*>(outgoingData), queueSize, filePath);
          LOG4CPLUS_TRACE(Logger::getInstance(LOG4CPLUS_TEXT("profiler.ComponentIsOperable")), "RSAGenerateAndStoreKey");
       }
       privateKeyGenerated = true;

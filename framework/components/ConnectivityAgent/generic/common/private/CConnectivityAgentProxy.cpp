@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 #include <cstdlib>
@@ -135,6 +136,13 @@ ConnectivityAgentError CConnectivityAgentProxy::allocateChannel(TChannelPriority
 					+ convertIntegerToString((intptr_t) this));
 
 	ConnectivityAgentError result;
+
+	ConnectivityAgentError res = connectIpcIfNecessary();
+	if (!res.isNoError())
+	{
+		return res;
+	}
+	
 	if ((channel_id > 0) && (channel_id <= 0xFFFF) && (NULL != observer))
 	{
 		mRegistryMutex.lockWrite();
@@ -260,6 +268,12 @@ ConnectivityAgentError CConnectivityAgentProxy::deallocateChannel(const UInt32 c
 			"CConnectivityAgentProxy::deallocateChannel(chID = "
 					+ convertIntegerToString(channel_id) + ")");
 	ConnectivityAgentError result(ConnectivityAgentError::ERROR_NOT_FOUND);
+
+	ConnectivityAgentError res = connectIpcIfNecessary();
+	if (!res.isNoError())
+	{
+		return res;
+	}
 
 	mRegistryMutex.lockWrite();
 	// Channel info will be saved in info and removed from registry here.
@@ -553,13 +567,8 @@ void CConnectivityAgentProxy::receiveDataNotification(CDataAccessor & accessor)
 
 		if (free_size < data_size)
 		{
-
-			mCallbackListMutex.lock();
-			CCallbackWrapper* pCallback = new CBufferOverflowCallback(iter->second.mpClient,
-					channel_id);
-			mCallbackList.push_back(pCallback);
-			mCallbackListMutex.unlock();
-			mCallbackSema.signal();
+			pushCallbackToQueue(new CBufferOverflowCallback(iter->second.mpClient,
+					channel_id));
 			LOG4CPLUS_ERROR(logger,
 					"CConnectivityAgentProxy::receiveDataNotification() => overflow!");
 			//copy or not?
@@ -567,12 +576,8 @@ void CConnectivityAgentProxy::receiveDataNotification(CDataAccessor & accessor)
 		{
 			buf->appendData(accessor.getData(), data_size);
 			free_size -= data_size;
-			mCallbackListMutex.lock();
-			CCallbackWrapper* pCallback = new CDataReceivedCallback(iter->second.mpClient,
-					channel_id, data_size);
-			mCallbackList.push_back(pCallback);
-			mCallbackListMutex.unlock();
-			mCallbackSema.signal();
+			pushCallbackToQueue(new CDataReceivedCallback(iter->second.mpClient,
+					channel_id, data_size));
 		}
 	} else
 	{
@@ -608,15 +613,8 @@ void CConnectivityAgentProxy::channelDeletedNotification(CDataAccessor & accesso
 		} else
 		{
 			LOG4CPLUS_INFO(logger, "channel " + convertIntegerToString(channel_id) + " found");
-			mCallbackListMutex.lock();
-			{
-				CCallbackWrapper* pCallback = new CChannelDeletedCallback(iter->second.mpClient,
-						channel_id);
-				mCallbackList.push_back(pCallback);
-				mCallbackSema.signal();
-			}
-			mCallbackListMutex.unlock();
-
+			pushCallbackToQueue(new CChannelDeletedCallback(iter->second.mpClient,
+						channel_id));
 			mChannelRegistry.erase(channel_id);
 		}
 
@@ -631,6 +629,12 @@ ConnectivityAgentError CConnectivityAgentProxy::sendData(const UInt32 channel_id
 			"CConnectivityAgentProxy::sendData() => channel " + convertIntegerToString(channel_id)
 					+ ", size " + convertIntegerToString(size));
 	ConnectivityAgentError result;
+
+	ConnectivityAgentError res = connectIpcIfNecessary();
+	if (!res.isNoError())
+	{
+		return res;
+	}
 
 	const int MAX_BUF_SIZE = 0xFFFF;
 
@@ -658,18 +662,20 @@ ConnectivityAgentError CConnectivityAgentProxy::sendData(const UInt32 channel_id
 				return result;
 			}
 
-			UInt32 respSize = 0;
-			BaseError err = mpIpc->request(mMsgIdGen.next(), buf, requestDA.getObjectSize(), NULL,
-					respSize);
+			// async Request
+			BaseError err = mpIpc->asyncRequest(mMsgIdGen.next(), buf, requestDA.getObjectSize(), NULL);
+
 			if (err.isNoError())
 			{
 				result.setNoError();
-			} else
+			} 
+			else
 			{
 				LOG4CPLUS_WARN(logger, static_cast<std::string>(err));
 				result.setErrorCode(ConnectivityAgentError::ERROR_REQUEST_FAILED);
 			}
-		} else
+		} 
+		else
 		{
 			LOG4CPLUS_ERROR(logger,
 					"CConnectivityAgentProxy::sendData() => ERROR: channel "
@@ -715,6 +721,12 @@ ConnectivityAgentError CConnectivityAgentProxy::getConnectionInformation(Connect
 {
 	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
 	ConnectivityAgentError result;
+
+	ConnectivityAgentError res = connectIpcIfNecessary();
+	if (!res.isNoError())
+	{
+		return res;
+	}
 
 	CDataAccessor requestDA;
 	requestDA.setOpCode(E_GET_CONNECTION_ADDR);
@@ -768,6 +780,12 @@ void CConnectivityAgentProxy::deallocateChannelForcibly(UInt32 channelID)
 	LOG4CPLUS_INFO(logger,
 			"CConnectivityAgentProxy::deallocateChannelForcibly(chID = "
 					+ convertIntegerToString(channelID) + ")");
+	
+	ConnectivityAgentError res = connectIpcIfNecessary();
+	if (!res.isNoError())
+	{
+		return;
+	}
 
 	mRegistryMutex.lockWrite();
 	mChannelOnDeallocSet.insert(channelID);
@@ -833,35 +851,73 @@ void CConnectivityAgentProxy::deallocateChannelForcibly(UInt32 channelID)
 void CConnectivityAgentProxy::OnDisconnected()
 {
 	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
-
+#ifndef  __APPLE__
 	mRegistryMutex.lockWrite();
 	tChannelsRegistryMap::iterator iter = mChannelRegistry.begin();
-	mCallbackListMutex.lock();
 	while (iter != mChannelRegistry.end())
 	{
-		CCallbackWrapper* pCallback = new CConnectionLostCallback(iter->second.mpClient);
-		mCallbackList.push_back(pCallback);
-		mCallbackSema.signal();
+		pushCallbackToQueue(new CConnectionLostCallback(iter->second.mpClient));
+		iter++;
 	}
-	mCallbackListMutex.unlock();
 	mRegistryMutex.unlockWrite();
+#endif // __APPLE__
 }
 
 void CConnectivityAgentProxy::threadFunc()
 {
-	while (false == getStopFlag())
+	while (!getStopFlag())
 	{
 		mCallbackSema.wait();
-		mCallbackListMutex.lock();
-		for (std::list<CCallbackWrapper*>::iterator iter = mCallbackList.begin();
-				iter != mCallbackList.end(); ++iter)
+		CCallbackWrapper * callback = popCallbackFromQueue();
+		if (callback)
 		{
-
-			LOG4CPLUS_INFO(logger, "CConnectivityAgentProxy:: callbacks execution");
-			static_cast<CCallbackWrapper*>(*iter)->execute();
-			delete *iter;
+			callback->execute();
+			delete callback;
 		}
-		mCallbackList.clear();
-		mCallbackListMutex.unlock();
+	}
+}
+
+
+void CConnectivityAgentProxy::pushCallbackToQueue(CCallbackWrapper* callback)
+{
+	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+	mCallbacksQueueMutex.lock();
+	mCallbacksQueue.push_back(callback);
+	mCallbackSema.signal();
+	mCallbacksQueueMutex.unlock();
+}
+
+CCallbackWrapper * CConnectivityAgentProxy::popCallbackFromQueue()
+{
+	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+	CCallbackWrapper * result = NULL;
+	mCallbacksQueueMutex.lock();
+	if (!mCallbacksQueue.empty())
+	{
+		result = mCallbacksQueue.front();
+		mCallbacksQueue.pop_front();
+	}
+	mCallbacksQueueMutex.unlock();
+	return result;
+}
+
+ConnectivityAgentError CConnectivityAgentProxy::connectIpcIfNecessary()
+{
+	ConnectivityAgentError result = ConnectivityAgentError::NoError();
+	LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+	if (mpIpc)
+	{
+		if (!mpIpc->isConnected())
+		{
+		    LOG4CPLUS_INFO(logger, "IPC is not connected, connecting");
+		    mpIpc->connect();	
+		}   	
+		return result;
+	} 
+	else
+	{
+		LOG4CPLUS_WARN(logger, "bad mpIpc pointer");
+		result.setErrorCode(ConnectivityAgentError::ERROR_OTHER);	
+		return result;
 	}
 }

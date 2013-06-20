@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cstdlib>
 #include <time.h>
@@ -32,11 +33,18 @@
 using namespace iviLink::ConnectivityAgent::L1;
 
 JNIEXPORT void JNICALL Java_com_luxoft_ivilink_sdk_CConnectivityAgentWrapper_startCA
-  (JNIEnv * env, jobject, jobject bluetooth)
+  (JNIEnv * env, jobject, jobject bluetooth, jboolean isActive)
 {
 	//doing this just to avoid "stale local reference error"
 	// BluetoothHelper is a singleton, and thus cannot be garbage collected
    jobject toStore = env->NewGlobalRef(bluetooth);
    gBlueHelper = toStore;
-   iviLink::ConnectivityAgent::connectivityAgentEntryPoint();
+   if((bool)isActive)
+   {
+       iviLink::ConnectivityAgent::connectivityAgentEntryPoint();
+   }
+   else
+   {
+       iviLink::ConnectivityAgent::connectivityAgentEntryPoint(1, NULL);
+   }
 }

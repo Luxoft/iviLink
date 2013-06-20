@@ -1,25 +1,6 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
 #ifndef ANDROID
+
+
 #include "QMLAuthenticationDialog.hpp"
 
 using namespace iviLink::Authentication;
@@ -27,6 +8,7 @@ using namespace iviLink::Authentication;
 Logger QMLAuthenticationDialog::mLogger =  Logger::getInstance(LOG4CPLUS_TEXT("applications.AuthenticationApplication"));
 
 QMLAuthenticationDialog::QMLAuthenticationDialog()
+        :isCursorHide(true)
 {
     LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
     mMachine = new AuthenticationStateMachine(PREFIX "/database/");
@@ -142,4 +124,26 @@ void QMLAuthenticationDialog::updateUiAvaliability()
     }
     emit sigSetTexbox(QString::fromStdString(mPin.getEnteredDigitsAsString()));
 }
+
+void QMLAuthenticationDialog::setDeclarativeView(QDeclarativeView * declarativeView)
+{
+    mDeclarativeView = declarativeView;
+}
+
+void QMLAuthenticationDialog::onRightButtonClicked()
+{
+    LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
+
+    if (isCursorHide)
+    {
+        isCursorHide = false;
+        mDeclarativeView->setCursor(QCursor(Qt::ArrowCursor));
+    }
+    else
+    {
+        isCursorHide = true;
+        mDeclarativeView->setCursor(QCursor(Qt::BlankCursor));
+    }
+}
+
 #endif // ANDROID

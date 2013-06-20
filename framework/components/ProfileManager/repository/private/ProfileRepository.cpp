@@ -1,24 +1,36 @@
-/* 
- * iviLINK SDK, version 1.2
+/*
+ *
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
+ *
  * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; version 2.1.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
+ *
+ *
+ */
+
+
+/**
+ * @file                ProfileRepository.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements Repository class
+ */
 
 
 #include <cstddef>
@@ -82,68 +94,15 @@ BaseError ProfileRepository::removeProfileApi(Profile::ApiUid profileApiUid)
     return mProfileApiDatabase->removeProfileApi(profileApiUid);
 }
 
-BaseError ProfileRepository::addProfile(const std::string xmlManifestPath)
+void ProfileRepository::getAllLibs(std::list<LibInfo> & libs)
 {
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->addProfile(xmlManifestPath);
+    mProfileDatabase->getAllLibs(libs);
 }
 
-BaseError ProfileRepository::removeProfile(Profile::Uid profileUid)
+int ProfileRepository::getRelevance(const Profile::Uid & profile, const UInt32 version, const std::map<std::string, std::string> & profileArguments) const
 {
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->removeProfile(profileUid);
-}
-
-BaseError ProfileRepository::addProfileImplementation(Profile::Uid profileID, const LibDescriptor& library)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->addProfileImplementation(profileID, library);
-}
-
-BaseError ProfileRepository::removeProfileImplementation(Profile::Uid profileUid, std::string platform)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->removeProfileImplementation(profileUid, platform);
-}
-
-BaseError ProfileRepository::removeProfileImplementation(Profile::Uid profileUid, LibDescriptor ld)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->removeProfileImplementation(profileUid, ld);
-}
-
-std::list<LibInfo> ProfileRepository::findProfiles(Profile::ApiUid id, const std::map<std::string, std::string> & profileArguments, std::string platform)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->findProfiles(id, profileArguments, platform);
-}
-
-std::string ProfileRepository::getManifest(Profile::Uid uid)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->getManifest(uid);
-}
-
-std::list<Profile::Uid> ProfileRepository::getProfilesList()
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-
-    assert(mProfileDatabase);
-    return mProfileDatabase->getProfilesList();
+    assert(mProfileApiDatabase);
+    return mProfileDatabase->getRelevance(profile, version, profileArguments);
 }
 
 } /* namespace PMP */

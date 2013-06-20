@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                ProfileDatabase.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * ProfileDatabase class is a repository for Profiles
+ */
 
 
 #ifndef CPROFILEDATABASE_HPP_
@@ -51,7 +63,7 @@ namespace PMP
 class ProfileDatabase
 {
 public:
-    typedef std::map<Profile::Uid,CProfileInfo> ProfileInfoMap;
+    typedef std::map<Profile::Uid,ProfileInfo> ProfileInfoMap;
 
     /**
     * This enumeration is used as data type for ProfileDatabase state
@@ -77,65 +89,20 @@ public:
     ~ProfileDatabase();
 
     /**
-    * Addes Profile to repository
-    * @param xmlManifestPath contains path to Profile Manifest
-    * @return true if success
-    */
-    BaseError addProfile(const std::string xmlManifestPath);
-
-    /**
-    * Removes entire profile with all implementations from repository
-    * @param profileUid - UID of profile
-    * @return CError code
-    */
-    BaseError removeProfile(Profile::Uid profileUid);
-
-    /**
-    * Addes Profile implementation to repository
-    * profileID - UID of Profile
-    * @param library - lib descriptor of Profile Implementation library
-    * @return CError code
-    */
-    BaseError addProfileImplementation(Profile::Uid profileID, const LibDescriptor& library);
-
-    /**
-    * Removes single profile implementation from repository
-    * @param profileUid - UID of profile
-    * @param platform - information about target platform
-    * @return CError code
-    */
-    BaseError removeProfileImplementation(Profile::Uid profileUid, std::string platform);
-
-    /**
-    * Removes single profile implementation from repository
-    * @param profileUid - ld - descriptor of library to remove
-    * @return CError code
-    */
-    BaseError removeProfileImplementation(Profile::Uid profileUid, LibDescriptor ld);
-
-    /**
-    * finds profiles with given requirements
-    * @param id is UID of Profile API or Profile
-    * @param profileParameters contains pairs of parameters and values
-    * @param platform - information about target platform, if platform == "" - result will be returned for all platforms
-    * @return map with pair Profile UID and LibDescriptor that contains information about platform and library path
-    */
-    std::list<LibInfo> findProfiles(Profile::Uid id, const std::map<std::string, std::string> & profileArguments, std::string platform = "");
-
-    /**
-    * @param uid - UID of Profile or Profile API
-    * @return manifest XML description or empty string if wrong UID
-    */
-    std::string getManifest(Profile::Uid uid);
-
-    /**
-    * @return list of profile UIDs in database
-    */
-    std::list<Profile::Uid> getProfilesList();
-    /**
     * Function is used for logging purposes
     */
     void printDB();
+
+    /**
+     * @param[out] libs contains all profile libs
+     */
+    void getAllLibs(std::list<LibInfo> & libs);
+
+    /**
+     * Counts relevance between request and profile
+     * @return value in range 0...100
+     */
+     int getRelevance(const Profile::Uid & profile, const UInt32 version, const std::map<std::string, std::string> & profileArguments) const;
 
 private:
     /**
@@ -150,17 +117,6 @@ private:
     */
     bool loadParsedDatabase(const pugi::xml_document &doc);
 
-    /**
-    * Saves Database into an XML file
-    * @return true if success
-    */
-    bool saveChanges();
-
-    /**
-    * Counts relevance between request and profile
-    * @return value in range 0...100
-    */
-    int getRelevance(const CProfileInfo & proInfo, const std::map<std::string, std::string> & profileArguments);
 
     std::string mFolderPath;
     std::string mDbName;

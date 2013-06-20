@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,18 +19,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
 
 
 #ifndef CBASICSAMPLE_HPP_
 #define CBASICSAMPLE_HPP_
 
 //CApp header, must be included for interaction with apllication manager
+#ifdef __APPLE__
+#include <iviLink/Application.hpp>
+#include <iviLink/Logger.hpp>
+#include <iviLink/CSignalSemaphore.hpp>
+#else
 #include "Application.hpp"
 #include "Logger.hpp"
+#include "CSignalSemaphore.hpp"
+#endif
 //basic sample api profile header, must be included for implementing callbacks
 #include "IBasicSampleProfileAPI.hpp"
-#include "CSignalSemaphore.hpp"
 
 
 // CBasicSample class inherits CApp class
@@ -56,7 +69,14 @@ class CBasicSample : public iviLink::Application
           */
          virtual void operandsReceived(int a, int b)
          {
-            mpSemaphore->signal();
+#ifndef __APPLE__
+             mpSemaphore->signal();
+#else 
+             IosLog::Logger::getInstance("BasicSampleCallbacks").info("Got operands: " +
+                                                                      convertIntegerToString(a)
+                                                                      + " " + convertIntegerToString(b),
+                                                                      __FILE__, __func__, __LINE__);
+#endif
          }
 
 	      /**
@@ -66,7 +86,14 @@ class CBasicSample : public iviLink::Application
           */
          virtual void resultReceived(int a)
          {
-            mpSemaphore->signal();
+             LOG4CPLUS_DEBUG(Logger::getInstance("BasicSampleCallbacks"), __PRETTY_FUNCTION__);
+#ifndef __APPLE__
+             mpSemaphore->signal();
+#else
+             IosLog::Logger::getInstance("BasicSampleCallbacks").info("Got result: " +
+                                                                      convertIntegerToString(a),
+                                                                      __FILE__, __func__, __LINE__);
+#endif
          }
    };
 
@@ -86,7 +113,10 @@ public:
     * @return none
     */
    virtual void onInitDone(iviLink::ELaunchInfo launcher);
-
+    
+    // for iOS
+    virtual void onLinkUp();
+    
 private:
 
    //instance of class implementing callbacks

@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
+#include <cassert>
 
 #include "CBasicSample.hpp"
 //profile proxy header provides the access to profile API, must be included
@@ -33,20 +36,22 @@ CBasicSample::CBasicSample(CSignalSemaphore & semaphore)
    , mBasicSampleCallbacks(semaphore)
    , mpSemaphore(&semaphore)
 {
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 }
 
 CBasicSample::~CBasicSample()
 {
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 
 }
 
 void CBasicSample::init()
 {
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    //registration profile callbacks for given profile API
+    registerProfileCallbacks(iviLink::Profile::ApiUid("BasicSampleProfile_PAPI_UID"), &mBasicSampleCallbacks);
    // initialize application in iviLink core
    initInIVILink();
-
-   //registration profile callbacks for given profile API
-   registerProfileCallbacks(iviLink::Profile::ApiUid("BasicSampleProfile_PAPI_UID"), &mBasicSampleCallbacks);
 }
 
 /**
@@ -66,10 +71,8 @@ void CBasicSample::onInitDone(iviLink::ELaunchInfo launcher)
       if (loadError.isNoError())
       {
          LOG4CPLUS_INFO(msLogger, "service started");
-
          //loading profile proxy which corresponds to given service UID
          CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleService"));
-
          //using method from profile API
          sampleProxy.sendOperands(8,21);
       }
@@ -86,3 +89,14 @@ void CBasicSample::onInitDone(iviLink::ELaunchInfo launcher)
       LOG4CPLUS_INFO(msLogger, "started by iviLink");
    }
 }
+
+// iOS
+void CBasicSample::onLinkUp()
+{
+    LOG4CPLUS_INFO(msLogger, "started by user");
+    iviLink::Error loadError = loadService(iviLink::Service::Uid("BasicSampleService"));
+    assert (loadError.isNoError());
+    CBasicSampleProfileProxy sampleProxy(iviLink::Service::Uid("BasicSampleService"));
+    sampleProxy.sendOperands(5,3);
+}
+

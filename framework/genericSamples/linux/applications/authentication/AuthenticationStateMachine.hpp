@@ -1,24 +1,36 @@
-/* 
- * iviLINK SDK, version 1.2
+/*
+ *
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
+ *
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; version 2.1.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
+ *
+ *
+ */
+
+
+/**
+ * @file                AuthenticationStateMachine.hpp
+ * @ingroup             Authentication application
+ * @author              Kramchaninov Pavel <pkramchaninov@luxoft.com>
+ * @date                25.12.2012
+ *
+ * State machine which implements the authentication logic
+ */
 
 
 #ifndef AUTHENTICATIONSTATEMACHINE_HPP_
@@ -28,7 +40,7 @@
 #include "Application.hpp"
 #include "PINCode.hpp"
 #include "CAuthenticationProxy.hpp"
-#include "SystemControllerMsgProxy.hpp"
+#include "SystemControllerForAuthentication.hpp"
 #include "IAuthenticationDialog.hpp"
 
 #include "PrivateKeyGenerationThread.hpp"
@@ -44,7 +56,6 @@ class AuthenticationStateMachine : private iviLink::Application
                                   , public IAuthenticationProfile_API::Callbacks
                                   , public AuthenticationAppMsgProtocol::SystemControllerMsgProxy
 {
-
 public:
     AuthenticationStateMachine(const std::string& pathToTrlist, iviLink::Android::AppInfo appInfo = iviLink::Android::AppInfo());
 
@@ -121,6 +132,8 @@ private:
 
     PINCode mLocalPIN;
     PINCode mRemotePIN;
+    string mRemoteName;
+    iviLink::ELaunchInfo mLaunchInfo; // ios fix - because getLaunchInfo() returns LAUNCHED_BY_USER always
 
     CAuthenticationProxy * mpAuthenticationProxy;
     PrivateKeyGenerationThread * mKeygenThread;

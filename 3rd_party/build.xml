@@ -10,21 +10,6 @@
             <include name="**/*.jar"/>
          </fileset>
       </copy>
-      <copy todir="${prebuilts.basedir}/../samples/android/Applications/NotificationsServer/libs/">
-         <fileset dir="${prebuilts.basedir}/twitter4j_oauth_java">
-            <include name="**/*.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${prebuilts.basedir}/../samples/android/Applications/ScreenSharingViewer/libs/">
-         <fileset dir="${prebuilts.basedir}/vnc_viewer_android">
-            <include name="**/*.jar"/>
-         </fileset>
-      </copy>
-      <copy todir="${prebuilts.basedir}/../samples/android/Applications/Media/libs/">
-         <fileset dir="${prebuilts.basedir}/vlc_android">
-            <include name="**/*.jar"/>
-         </fileset>
-      </copy>
    </target>
 
    <target name="clean-android-3rdparty">

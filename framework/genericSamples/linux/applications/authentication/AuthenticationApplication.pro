@@ -36,7 +36,8 @@ HEADERS  += \
             IAuthenticationDialog.hpp \
             QMLAuthenticationDialog.hpp
             
-RESOURCES   =
+RESOURCES   = \
+    authentication.qrc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../json/lib/release/ -lj
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../json/lib/debug/ -lj

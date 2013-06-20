@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
 
 
 #ifndef CTRUSTLIST_HPP__
@@ -35,6 +43,7 @@ namespace iviLink
 {
 
 
+
 class ITrustListStorage;
 
 class CTrustList
@@ -42,6 +51,7 @@ class CTrustList
 public:
 
    iviLink::BaseUid getOurUid() const;
+   std::string getOurName() const;
 
    bool isKnownUid(iviLink::BaseUid const& uid) const;
 
@@ -50,6 +60,7 @@ public:
     * @retval ERROR_STORAGE
     */
    CTrustListError addUid(iviLink::BaseUid const& uid);
+   CTrustListError addUid(iviLink::BaseUid const& uid, std::string const& name);
 
    /**
     * @retval IVILINK_NO_ERROR
@@ -65,11 +76,31 @@ public:
    CTrustListError clearList();
 
    typedef std::vector<iviLink::BaseUid> tUidVector;
+   typedef std::pair<iviLink::BaseUid,std::string> tNameUid;
+   typedef std::vector<tNameUid> tNameUidVector;
    /**
     * @retval IVILINK_NO_ERROR
     * @retval ERROR_STORAGE
     */
-   CTrustListError getKnownUids(tUidVector& result) const;
+   CTrustListError getKnownUids(tNameUidVector& result) const;
+
+   /**
+    * @retval IVILINK_NO_ERROR
+    * @retval ERROR_STORAGE
+    */
+   CTrustListError getLastConnection(iviLink::BaseUid& uid, time_t &time);
+
+   /**
+    * @retval IVILINK_NO_ERROR
+    * @retval ERROR_STORAGE
+    */
+   CTrustListError setLastConnection(iviLink::BaseUid const& uid, time_t const &time);
+
+   /**
+    * @retval IVILINK_NO_ERROR
+    * @retval ERROR_STORAGE
+    */
+   CTrustListError setLastConnection(iviLink::BaseUid const& uid);
 
 public:
    CTrustList(std::string pathToTrlist);

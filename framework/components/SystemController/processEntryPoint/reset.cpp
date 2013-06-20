@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +19,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
 
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <sys/types.h>
+#include <dirent.h>
 #include <signal.h>
 #include <string>
 #include <unistd.h>
@@ -142,48 +145,82 @@ int destroy(pid_t pid)
    return 0;
 }
 
-int search_and_destroy(std::string const name)
+std::string name_from_path(std::string const& path)
 {
-   FILE *fp;
-   int status;
+    size_t pos = path.find_last_of("\\/");
+    if (pos == std::string::npos)
+    {
+        return path;
+    }
+    else
+    {
+        return std::string(path.begin() + pos + 1, path.end());
+    }
+}
 
+int filterProc(const struct dirent* entry)
+{
+    if (entry->d_type & DT_DIR)
+    {
+        if (std::string(entry->d_name).find_first_not_of("0123456789") == std::string::npos)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+tPidVector pidof(std::string const& name)
+{
+    tPidVector pids;
+    struct dirent ** entries=NULL;
+    int count = 0;
+    pids.clear();
+
+    count = scandir("/proc/", &entries, filterProc, alphasort);
+    if (count < 0)
+    {
+        return pids;
+    }
+
+    while (count--)
+    {
+        char processExecutablePath[PATH_MAX];
+        std::string processExecutableLink = "/proc/" + std::string(entries[count]->d_name) + "/exe";
+        memset(processExecutablePath, 0, sizeof(processExecutablePath));
+        if (readlink(processExecutableLink.c_str(), processExecutablePath, sizeof(processExecutablePath)) >= 0)
+        {
+            std::string path = name_from_path(processExecutablePath);
+            if (path == name) 
+            {
+                pids.push_back(atoi(entries[count]->d_name));
+            }
+        }
+        free(entries[count]);
+    }
+    free(entries);
+    return pids;
+}
+
+
+int search_and_destroy(std::string const& name)
+{
    if (name.empty())
    {
       LOG4CPLUS_ERROR(gsLogger, "Empty file name");
       return 1;
    }
 
-   struct sigaction saved;
-   struct sigaction def;
-   def.sa_handler = SIG_DFL;
-   sigemptyset(&def.sa_mask);
-   def.sa_flags = 0;
-
-   if (-1 == sigaction(SIGCHLD, &def, &saved))
-   {
-      int se = errno;
-      LOG4CPLUS_ERROR(gsLogger, "sigaction failed " + BaseError::FormErrnoDescr(se));
-      return 2;
-   }
-
-
-   fp = popen(("pidof " + name).c_str(), "r");
-   if (fp == NULL)
-   {
-      int se = errno;
-      LOG4CPLUS_ERROR(gsLogger, "popen failed " + BaseError::FormErrnoDescr(se));
-      return 2;
-   }
+   tPidVector pids = pidof(name);
 
    const pid_t self = getpid();
 
-   int pid;
-   while (fscanf(fp, "%u", &pid) != EOF)
+   for (tPidIterator pid = pids.begin(); pid != pids.end(); ++pid)
    {
-      LOG4CPLUS_TRACE(gsLogger, "got pid " + convertIntegerToString(pid));
-      if (self != pid)
+      LOG4CPLUS_TRACE(gsLogger, "got pid " + convertIntegerToString(*pid));
+      if (self != *pid)
       {
-         destroy(pid);
+         destroy(*pid);
       }
       else
       {
@@ -191,31 +228,7 @@ int search_and_destroy(std::string const name)
       }
    }
 
-   status = pclose(fp);
-   if (status == -1) 
-   {
-      int se = errno;
-      LOG4CPLUS_ERROR(gsLogger, "pclose failed " + BaseError::FormErrnoDescr(se));
-      return 3;
-   }
-
-   if (-1 == sigaction(SIGCHLD, &saved, NULL))
-   {
-      int se = errno;
-      LOG4CPLUS_ERROR(gsLogger, "sigaction failed " + BaseError::FormErrnoDescr(se));
-      return 2;
-   }
-
    return 0;
-}
-
-std::string name_from_path(std::string const& path)
-{
-   size_t pos = path.find_last_of("\\/");
-   if (std::string::npos == pos)
-      return path;
-   else
-      return std::string(path.begin() + pos + 1, path.end());
 }
 
 int hardStop(bool internal_stop)
@@ -240,19 +253,11 @@ int getQuantityOfRunningIVILink()
 {
    LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
    int count = 0;
-   char line[SIZE_OF_PIDOF_RET];
-   char *subStr = 0;
 
-   FILE *command = popen("pidof IVILinkSystemController", "r");
+   tPidVector pids = pidof(SYSTEM_CONTROLLER_PROCESS_NAME);
 
-   fgets(line, SIZE_OF_PIDOF_RET, command); 
-   subStr = strtok(line, " ");   
-   while (subStr != NULL) 
-   {
-      count++; 
-      subStr = strtok(NULL, " ");   
-   } 
-   pclose(command);
+   count = pids.size();
+
    LOG4CPLUS_INFO(gsLogger, "number of running iviLink = " +
          convertIntegerToString(count));
    return count;
@@ -262,39 +267,22 @@ bool shutdownIviProcess(const char *proc_name)
 {   
    LOG4CPLUS_TRACE_METHOD(gsLogger, __PRETTY_FUNCTION__);
    bool killed = true;
-   char *subStr = 0;
-   char *line = new char[SIZE_OF_PIDOF_RET];   
-   char *sCom = new char[strlen(PIDOF_STR) + strlen(proc_name)];
-   pid_t pid = 0;
+   
+   tPidVector pids = pidof(proc_name);
 
-   strcpy(sCom, PIDOF_STR);
-   strcat(sCom, proc_name);
-
-   FILE *command = popen(sCom, "r");
-
-   fgets(line, SIZE_OF_PIDOF_RET, command); 
-   subStr = strtok(line, " ");   
-   while (subStr != NULL) 
-   {               
-      if ((pid = atoi(subStr)) > 0)
-      {        
-         if (-1 == kill(-pid, SIGTERM))
+   for (tPidIterator pid = pids.begin(); pid != pids.end(); ++pid)
+   {
+         if (-1 == kill(-(*pid), SIGTERM))
          {
             LOG4CPLUS_WARN(gsLogger, "Failed to kill " + std::string(proc_name) + BaseError::FormErrnoDescr(errno));
             killed = false;
          }
          else
          {
-            LOG4CPLUS_INFO(gsLogger, "Killed process " + std::string(proc_name) + " with pid = " + convertIntegerToString(pid));
+            LOG4CPLUS_INFO(gsLogger, "Killed process " + std::string(proc_name) + " with pid = " + convertIntegerToString(*pid));
             killed = true;
          }
-      }
-      subStr = strtok(NULL, " ");
-   } 
-   pclose(command);
-
-   delete []sCom;
-   delete []line;
+   }
    return killed;
 }
 
@@ -313,7 +301,6 @@ void shutdownIviProcesses()
    viviProc.push_back("ScreenSharing");
    viviProc.push_back("Climate_App");
    viviProc.push_back("Seat_App");
-   viviProc.push_back("MediaApp");
    viviProc.push_back("Navi");
 
    for (int i = 0; i != viviProc.size(); i++)

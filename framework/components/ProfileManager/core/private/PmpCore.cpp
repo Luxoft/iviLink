@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpCore.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements PmpCore class
+ */
 
 
 #include <cassert>
@@ -56,133 +68,46 @@ PmpCore::~PmpCore()
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 }
 
-BaseError PmpCore::addProfile(const std::string &xmlManifestPath)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    BaseError err = mRepository->addProfile(xmlManifestPath);
-    if (err.isNoError())
-    {
-        mActualRepoState = false;
-    }
-    return err;
-}
-
-BaseError PmpCore::removeProfile(Profile::Uid profileUid)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    BaseError err = mRepository->removeProfile(profileUid);
-    if (err.isNoError())
-    {
-        mActualRepoState = false;
-    }
-    return err;
-}
-
-BaseError PmpCore::addProfileImplementation(Profile::Uid profileID, const LibDescriptor& library)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    BaseError err = mRepository->addProfileImplementation(profileID,library);
-    if (err.isNoError())
-    {
-        mActualRepoState = false;
-    }
-    return err;
-}
-
-BaseError PmpCore::removeProfileImplementation(Profile::Uid profileUid, const std::string &platform)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    BaseError err = mRepository->removeProfileImplementation(profileUid,platform);
-    if (err.isNoError())
-    {
-        mActualRepoState = false;
-    }
-    return err;
-}
-
-void PmpCore::findProfiles(Profile::ApiUid profileApiUid,
+void PmpCore::findProfiles(const Profile::ApiUid & id,
         const std::map<std::string, std::string> & profileParameters
         , std::list<Profile::Uid> & profiles, bool enabledProfiles)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    std::list<LibInfo> profileInfos;
-    profiles.clear();
-    findProfiles(profileApiUid, profileParameters, mPlatform,profileInfos,enabledProfiles);
-    for (std::list<LibInfo>::const_iterator it = profileInfos.begin(); profileInfos.end() != it; ++it)
-    {
-        profiles.push_back(it->uid);
-    }
-}
 
-void PmpCore::findProfiles(Profile::ApiUid id, const std::map<std::string, std::string> & profileArguments, const std::string &platform, std::list<LibInfo>& profiles, bool onlyAvailable)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    profiles.clear();
-    std::list<LibInfo> list;
-    list = mRepository->findProfiles(id, profileArguments, platform);
-    LOG4CPLUS_INFO(msLogger, "PmpCore::findProfilesAsync : List size : " + convertIntegerToString(list.size()));
-    for (std::list<LibInfo>::iterator it = list.begin(); list.end() != it; ++it)
+    assert(mRepository);
+    std::map<int, Profile::Uid> profMap;
+    for (CoreProfileInfoList::const_iterator it = mProfiles.begin(); it != mProfiles.end(); ++it)
     {
-        LOG4CPLUS_INFO(msLogger, "PmpCore::findProfilesAsync : in cycle");
-        if (mProfiles.find(it->uid) == mProfiles.end())
+        if ((id == it->api() || id == it->uid()) &&
+                (!enabledProfiles || it->available()))
         {
-            LOG4CPLUS_INFO(msLogger, "continue");
-            continue;
-        }
-        if ( it->platform == platform && ( !onlyAvailable || mProfiles[it->uid].available() ) )
-        {
-            LOG4CPLUS_INFO(msLogger, "push_back");
-            profiles.push_back((*it));
+            profMap.insert(std::make_pair(mRepository->getRelevance(it->uid(), it->version(),profileParameters), it->uid()));
         }
     }
-    LOG4CPLUS_INFO(msLogger, "PmpCore::findProfilesAsync() : res size : " + convertIntegerToString(profiles.size()));
-}
 
-bool PmpCore::getManifest(iviLink::BaseUid uid, std::string & manifest)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    manifest = mRepository->getManifest(uid);
-    if (manifest == "")
+    profiles.clear();
+
+    for (std::map<int, Profile::Uid>::const_reverse_iterator it = profMap.rbegin();
+            profMap.rend() != it; ++it)
     {
-        return false;
+        profiles.push_back(it->second);
     }
-    return true;
+    LOG4CPLUS_INFO(msLogger, "PmpCore::findProfiles : List size : " + convertIntegerToString(profiles.size()));
 }
 
 void PmpCore::reloadProfilesFromRepository()
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     mProfiles.clear();
-    std::list <Profile::Uid> tmp = mRepository->getProfilesList();
-    std::list<Profile::Uid> list;
-    for(std::list<Profile::Uid>::iterator it = tmp.begin(); tmp.end() != it; ++it)
-    {
-        list.push_back((*it));
-    }
+    std::list<LibInfo> libs;
+    mRepository->getAllLibs(libs);
 
-    LOG4CPLUS_INFO(msLogger, "List of Profiles has been returned");
-    LOG4CPLUS_INFO(msLogger, "List size : " + convertIntegerToString(list.size()));
-    for (std::list<Profile::Uid>::const_iterator it = list.begin(); list.end() != it; ++it)
+    for (std::list<LibInfo>::const_iterator it = libs.begin();
+            libs.end() != it; ++it)
     {
-        LOG4CPLUS_INFO(msLogger, "UID : " + (*it).value());
-        std::map<std::string, std::string> profileArguments;
-        std::list<LibInfo> impls;
-        impls = mRepository->findProfiles((*it),profileArguments,mPlatform);
-        LOG4CPLUS_INFO(msLogger, "findProfiles result : " + convertIntegerToString(impls.size()));
-
-        for (std::list<LibInfo>::const_iterator lit = impls.begin(); impls.end() != lit; ++lit)
+        if (mPlatform == it->platform)
         {
-            LOG4CPLUS_INFO(msLogger, "mPlatform: " + mPlatform +
-                    ", lit->platform : " + lit->platform + ", lit->path : " + lit->path);
-            if (lit->platform == mPlatform)
-            {
-                LOG4CPLUS_INFO(msLogger, "Found implementation: " + lit->path);
-                std::string man;
-                getManifest((*it),man);
-                mProfiles[(*it)] = PmpCoreProfileInfo(man);
-                mProfiles[(*it)].setLibrary(lit->path);
-                break;
-            }
+            mProfiles.push_back(PmpCoreProfileInfo(*it));
         }
     }
 
@@ -198,21 +123,22 @@ void PmpCore::resetProfilesState()
     mpCoreProtocol->getAvailableProfileComplementsRequest();
 }
 
-void PmpCore::getAvailbleProfileComplementsResponse(const std::list<Profile::Uid> & complements)
+void PmpCore::getAvailbleProfileComplementsResponse(const std::list<std::pair<Profile::Uid, UInt32> > & complements)
 {
-    for (std::list<Profile::Uid>::const_iterator it = complements.begin(); complements.end() != it; ++it)
+    for (std::list<std::pair<Profile::Uid, UInt32> >::const_iterator it = complements.begin(); complements.end() != it; ++it)
     {
-        LOG4CPLUS_INFO(msLogger, "Available complement: " + it->value());
-        for (CoreProfileInfo::iterator pit = mProfiles.begin(); mProfiles.end() != pit; ++pit)
+        LOG4CPLUS_INFO(msLogger, "Available complement: " + it->first.value());
+        for (CoreProfileInfoList::iterator pit = mProfiles.begin(); mProfiles.end() != pit; ++pit)
         {
-            LOG4CPLUS_INFO(msLogger, "*it : " + (*it).value() + ", pit->complement: " + pit->second.complement().value());
-            if ((*it) == pit->second.complement())
+            LOG4CPLUS_INFO(msLogger, "*it : " + it->first.value() + ", pit->complement: " + pit->complement().value());
+            if (it->first == pit->complement() && it->second == pit->version())
             {
                 LOG4CPLUS_INFO(msLogger, "true");
-                pit->second.enableByComplement();
+                pit->enableByComplement();
             }
         }
     }
+
     print();
     mEventFactory->coreIsReady();
 }
@@ -220,33 +146,39 @@ void PmpCore::getAvailbleProfileComplementsResponse(const std::list<Profile::Uid
 void PmpCore::disableByComplementAll()
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.disableByComplement();
+        it->disableByComplement();
     }
 }
 
 bool PmpCore::lock(iviLink::BaseUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    if (!mpCoreProtocol)
+    if (!mpCoreProtocol || !mpPim || mpPim->hasInstance(id))
     {
         return false;
     }
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+
+    bool res = false;
+    Profile::Uid complement;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
     {
-        bool res = lockByApiUid(id);
-        return res;
+        if (id == it->uid())
+        {
+            res = true;
+            it->lock();
+            complement = it->complement();
+        }
     }
-    if (!mpPim || mpPim->hasInstance(id))
+    if (!res)
     {
-        return false;
+        return lockByApiUid(id);
     }
     else
     {
-        it->second.lock();
-        return mpCoreProtocol->lock(it->second.complement());
+        return mpCoreProtocol->lock(complement);
     }
 }
 
@@ -257,29 +189,41 @@ bool PmpCore::unlock(iviLink::BaseUid id)
     {
         return false;
     }
-    CoreProfileInfo::iterator it = mProfiles.find(id);
 
-    if (it == mProfiles.end())
+    bool res = false;
+    Profile::Uid complement;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
     {
-        bool res = unlockByApiUid(id);
-        return res;
+        if (id == it->uid())
+        {
+            res = true;
+            it->unlock();
+            complement = it->complement();
+        }
     }
-    it->second.unlock();
-    return mpCoreProtocol->unlock(it->second.complement());
+    if (!res)
+    {
+        return unlockByApiUid(id);
+    }
+    else
+    {
+        return mpCoreProtocol->unlock(complement);
+    }
 }
 
 bool PmpCore::lockByApiUid(Profile::ApiUid id)
 {
     bool res = false;
     std::list<Profile::Uid> lst;
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        if (it->second.api() == id && mpPim &&
-                !mpPim->hasInstance(it->second.uid()))
+        if (it->api() == id && mpPim &&
+                !mpPim->hasInstance(it->uid()))
         {
             res = true;
-            it->second.lock();
-            lst.push_back(it->second.complement());
+            it->lock();
+            lst.push_back(it->complement());
         }
     }
 
@@ -294,14 +238,14 @@ bool PmpCore::unlockByApiUid(Profile::ApiUid id)
 {
     bool res = false;
     std::list<Profile::Uid> lst;
-    for (CoreProfileInfo::iterator it = mProfiles.begin();
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
     mProfiles.end() != it; ++it)
     {
-        if (it->second.api() == id)
+        if (it->api() == id)
         {
             res = true;
-            it->second.unlock();
-            lst.push_back(it->second.complement());
+            it->unlock();
+            lst.push_back(it->complement());
         }
     }
 
@@ -322,9 +266,9 @@ void PmpCore::lockAll()
         return;
     }
 
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.lock();
+        it->lock();
     }
     mpCoreProtocol->lockAll();
 }
@@ -338,28 +282,28 @@ void PmpCore::unlockAll()
         return;
     }
 
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.unlock();
+        it->unlock();
     }
     mpCoreProtocol->unlockAll();
 }
 
-bool PmpCore::getProfileLibPath(Profile::Uid uid, std::string& path)
+bool PmpCore::getProfileLibPath(Profile::Uid uid, std::string& path) const
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CoreProfileInfo::iterator it = mProfiles.find(uid);
-    if (it == mProfiles.end())
+    UInt32 version = 0;
+    for (CoreProfileInfoList::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        LOG4CPLUS_WARN(msLogger, "profile not found");
-        return false;
+        if (it->uid() == uid && it->version() > version)
+        {
+            path = it->library();
+            version = it->version();
+        }
     }
-    else
-    {
-        path = it->second.library();
-        LOG4CPLUS_INFO(msLogger, "path = " + path);
-        return true;
-    }
+    LOG4CPLUS_INFO(msLogger, "Found lib path: " + path + " for UID: " + uid.value() +
+             ", version: " + convertIntegerToString(version));
+    return static_cast<bool> (version);
 }
 
 bool PmpCore::disableByClient(iviLink::BaseUid id)
@@ -370,18 +314,31 @@ bool PmpCore::disableByClient(iviLink::BaseUid id)
     {
         return false;
     }
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+
+    bool res = false;
+    Profile::Uid complement;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
+    {
+        if (id == it->uid())
+        {
+            res = true;
+            it->disableByClient();
+            complement = it->complement();
+        }
+    }
+    if (!res)
     {
         return disableApiUidByClient(id);
     }
-    it->second.disableByClient();
-
-    if (mpPim && mEventFactory)
+    else
     {
-        mEventFactory->coreInternalUnloadInstances(mpPim,id);
+        if (mpPim && mEventFactory)
+        {
+            mEventFactory->coreInternalUnloadInstances(mpPim,id);
+        }
+        mpCoreProtocol->disableByClient(complement);
     }
-    mpCoreProtocol->disableByClient(it->second.complement());
     return true;
 }
 
@@ -393,14 +350,27 @@ bool PmpCore::enableByClient(iviLink::BaseUid id)
         LOG4CPLUS_ERROR(msLogger, "no mpCoreProtocol");
         return false;
     }
-    CoreProfileInfo::iterator it = mProfiles.find(id);
 
-    if (it == mProfiles.end())
+    bool res = false;
+    Profile::Uid complement;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
+    {
+        if (id == it->uid())
+        {
+            res = true;
+            it->enableByClient();
+            complement = it->complement();
+        }
+    }
+    if (!res)
     {
         return enableApiUidByClient(id);
     }
-    it->second.enableByClient();
-    mpCoreProtocol->enableByClient(it->second.complement());
+    else
+    {
+        mpCoreProtocol->enableByClient(complement);
+    }
     return true;
 }
 
@@ -408,30 +378,24 @@ bool PmpCore::disableApiUidByClient(Profile::ApiUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     bool res = false;
-    std::list<Profile::Uid> lstComp;
-    std::list<Profile::Uid> lstProfs;
-    for (CoreProfileInfo::iterator it = mProfiles.begin();
-            mProfiles.end() != it; ++it)
+    std::list<Profile::Uid> lst;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        if (it->second.api() == id)
+        if (it->api() == id)
         {
-            lstProfs.push_back(it->second.uid());
             res = true;
-            it->second.disableByClient();
-            lstComp.push_back(it->second.complement());
+            it->disableByClient();
+            if (mpPim)
+            {
+                mpPim->unloadInstances(it->uid());
+            }
+            lst.push_back(it->complement());
         }
     }
 
-    for(std::list<Profile::Uid>::iterator it = lstProfs.begin();
-            lstProfs.end() != it; ++it)
+    for (std::list<Profile::ApiUid>::iterator it = lst.begin(); lst.end() != it; ++it)
     {
-        mpPim->unloadInstances((*it));
-    }
-
-    for (std::list<Profile::Uid>::iterator it = lstComp.begin();
-            lstComp.end() != it; ++it)
-    {
-        mpCoreProtocol->disableByClient((*it));
+        mpCoreProtocol->disableByClient(*it);
     }
     return res;
 }
@@ -440,25 +404,21 @@ bool PmpCore::enableApiUidByClient(Profile::ApiUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     bool res = false;
-
     std::list<Profile::Uid> lst;
-    for (CoreProfileInfo::iterator it = mProfiles.begin();
-            mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        if (it->second.api() == id)
+        if (it->api() == id)
         {
             res = true;
-            it->second.enableByClient();
-            lst.push_back(it->second.complement());
+            it->enableByClient();
+            lst.push_back(it->complement());
         }
     }
 
-    for (std::list<Profile::Uid>::iterator it = lst.begin();
-            lst.end() != it; ++it)
+    for (std::list<Profile::ApiUid>::iterator it = lst.begin(); lst.end() != it; ++it)
     {
-        mpCoreProtocol->enableByClient((*it));
+        mpCoreProtocol->enableByClient(*it);
     }
-
     return res;
 }
 
@@ -470,9 +430,9 @@ void PmpCore::enableByClientAll()
         return;
     }
 
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.enableByClient();
+        it->enableByClient();
     }
     mpCoreProtocol->enableByClientAll();
 }
@@ -482,10 +442,10 @@ void PmpCore::getAvailableProfileComplements()
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     tComplementsList complementsList;
 
-    for (std::map<Profile::Uid, PmpCoreProfileInfo>::iterator it = mProfiles.begin();
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();
             mProfiles.end() != it; ++it)
     {
-        complementsList.push_back(it->second.uid());
+        complementsList.push_back(std::make_pair(it->uid(), it->version()));
     }
     mpCoreProtocol->getAvailableProfileComplementsResponse(complementsList);
 }
@@ -493,33 +453,39 @@ void PmpCore::getAvailableProfileComplements()
 bool PmpCore::onLock(iviLink::BaseUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+    bool res = false;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        return false;
+        if (it->uid() == id)
+        {
+            res = true;
+            it->lock();
+        }
     }
-    it->second.lock();
-    return true;
+    return res;
 }
 
 bool PmpCore::onUnlock(iviLink::BaseUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+    bool res = false;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        return false;
+        if (it->uid() == id)
+        {
+            res = true;
+            it->unlock();
+        }
     }
-    it->second.unlock();
-    return true;
+    return res;
 }
 
 void PmpCore::onLockAll()
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    for (CoreProfileInfo::iterator it = mProfiles.begin();  mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin();  mProfiles.end() != it; ++it)
     {
-        it->second.lock();
+        it->lock();
     }
 }
 
@@ -527,42 +493,48 @@ void PmpCore::onUnlockAll()
     {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.unlock();
+        it->unlock();
     }
 }
 
 bool PmpCore::onDisableByClient(iviLink::BaseUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+    bool res = false;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        return false;
+        if (it->uid() == id)
+        {
+            res = true;
+            it->disableByClient();
+        }
     }
-    it->second.disableByClient();
-    return true;
+    return res;
 }
 
 bool PmpCore::onEnableByClient(iviLink::BaseUid id)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CoreProfileInfo::iterator it = mProfiles.find(id);
-    if (it == mProfiles.end())
+    bool res = false;
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        return false;
+        if (it->uid() == id)
+        {
+            res = true;
+            it->enableByClient();
+        }
     }
-    it->second.enableByClient();
-    return true;
+    return res;
 }
 
 void PmpCore::onEnableByClientAll()
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    for (CoreProfileInfo::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
-        it->second.enableByClient();
+        it->enableByClient();
     }
 }
 
@@ -608,16 +580,16 @@ void PmpCore::print() const
     std::string str = mActualRepoState ? "" : "not ";
     print += "\nCore state is " + str + "actual";
 
-    for (CoreProfileInfo::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
+    for (CoreProfileInfoList::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
         print += "\n\t***";
-        print += "\n\tUID :" + it->second.uid().value();
-        print += "\n\tAPI : " + it->second.api().value();
-        print += "\n\tComplement : " + it->second.complement().value();
-        print += it->second.available() ? "\n\tAvailable" : "\n\tNot available";
-        print += it->second.enabled() ? "\n\tEnabled" : "\n\tDisabled";
-        print += it->second.locked() ? "\n\tLocked" : "\n\tUnlocked";
-        print += "\n\tLibrary : " + it->second.library();
+        print += "\n\tUID :" + it->uid().value();
+        print += "\n\tAPI : " + it->api().value();
+        print += "\n\tComplement : " + it->complement().value();
+        print += it->available() ? "\n\tAvailable" : "\n\tNot available";
+        print += it->enabled() ? "\n\tEnabled" : "\n\tDisabled";
+        print += it->locked() ? "\n\tLocked" : "\n\tUnlocked";
+        print += "\n\tLibrary : " + it->library();
     }
     print += "\n*****";
     LOG4CPLUS_INFO(msLogger, print);
@@ -627,40 +599,33 @@ void PmpCore::print() const
 bool PmpCore::getComplementary(Profile::Uid const& profUid,
         Profile::Uid& complProfUid) const
 {
-    bool res = true;
 
+    for (CoreProfileInfoList::const_iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
     {
-        CoreProfileInfo::const_iterator it = mProfiles.find(profUid);
-        if (it == mProfiles.end())
+        if (profUid == it->uid())
         {
-            res = false;
-        }
-        else
-        {
-            complProfUid = it->second.complement();
+            complProfUid = it->complement();
+            return true;
         }
     }
-
-    return res;
+    return false;
 }
 
 bool PmpCore::getPapiUid(iviLink::Profile::Uid const& profUid,
         iviLink::Profile::ApiUid& papiUid) const
 {
-    bool res = true;
+
+    for (CoreProfileInfoList::const_iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
     {
-        CoreProfileInfo::const_iterator it = mProfiles.find(profUid);
-        if (it == mProfiles.end())
+        if (profUid == it->uid())
         {
-            res = false;
-        }
-        else
-        {
-            papiUid = it->second.api();
+            papiUid = it->api();
+            return true;
         }
     }
-
-    return res;
+    return false;
 }
 
 bool PmpCore::unlockAuthProfile()

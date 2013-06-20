@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include "CCarrierAdapter.hpp"
 #include "Frame.hpp"
@@ -43,7 +44,8 @@ Logger CCarrierAdapter::logger = Logger::getInstance(LOG4CPLUS_TEXT("Connectivit
 CCarrierAdapter::CCarrierAdapter() :
    mGenderType(eAnyGender),
    mFilledSize(0),
-   mpFrameReceiver(NULL)
+   mpFrameReceiver(NULL),
+   mIsFrameProcessingAllowed(false)
 {
 
 }
@@ -145,6 +147,13 @@ void CCarrierAdapter::haveData()
 ConnectivityAgentError CCarrierAdapter::processFrame(iviLink::ConnectivityAgent::HAL::Frame & frame)
 {
    ConnectivityAgentError processResult = ConnectivityAgentError::NoError();
+    
+    mFrameProcessingCondVar.lock();
+    while (!mIsFrameProcessingAllowed)
+    {
+        mFrameProcessingCondVar.wait();
+    }
+    mFrameProcessingCondVar.unlock();
 
    mFrameReceiverLock.lock();
    if (mpFrameReceiver)
@@ -210,6 +219,15 @@ void CCarrierAdapter::CFrameConverter::frameToArray(const iviLink::ConnectivityA
    {
       std::copy(pFrame->data, pFrame->data + saved_size, pFrameArray->data);
    }
+}
+
+void CCarrierAdapter::unlockFrameProcessing()
+{
+    LOG4CPLUS_INFO(logger, __PRETTY_FUNCTION__);
+    mFrameProcessingCondVar.lock();
+    mIsFrameProcessingAllowed = true;
+    mFrameProcessingCondVar.signal();
+    mFrameProcessingCondVar.unlock();
 }
 
 

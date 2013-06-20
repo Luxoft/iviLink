@@ -27,13 +27,7 @@
 
    <target name="install-android-core">
       <ant antfile="${core.basedir}/components/Android/build.xml" inheritall="false"  target="installd"/> 
-      <apply executable="ant" failonerror="true">
-         <arg value="installd" />
-         <arg value="-buildfile" />
-         <fileset dir="${core.basedir}/genericSamples/android/Applications">
-            <include name="**/build.xml"/>
-         </fileset>
-      </apply> 
+      <ant antfile="${core.basedir}/genericSamples/android/Applications/BasicSample/build.xml" inheritall="false"  target="installd"/> 
       <exec executable="adb">
          <arg value="push"/>
          <arg value="${core.basedir}/genericSamples/android/Database/"/>

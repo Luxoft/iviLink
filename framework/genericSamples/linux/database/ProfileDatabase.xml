@@ -1,16 +1,24 @@
 <?xml version="1.0"?>
 <profiles>
-	<profile>
-		<manifest-path>BasicSampleProfile_Impl.xml</manifest-path>
-		<libs>
-			<lib platform="Ubuntu" path="profiles/libBasicSampleProfileImpl.so" />
-		</libs>
-	</profile>
-	<profile>
-		<manifest-path>AuthenticationProfile_Impl.xml</manifest-path>
-		<libs>
-			<lib platform="Ubuntu" path="profiles/libAuthenticationProfileImpl.so" />
-		</libs>
-	</profile>
+
+<profile>
+   <uid>BasicSampleProfileImpl_UID</uid>
+   <name>BasicSampleProfileImpl</name>
+   <api-uid>BasicSampleProfile_PAPI_UID</api-uid>
+   <complement>BasicSampleProfileImpl_UID</complement>
+   <libs>
+      <lib platform="Ubuntu" path="profiles/libBasicSampleProfileImpl.so" version="1" />
+   </libs>
+</profile>
+
+<profile>
+   <uid>AuthenticationProfileImpl_UID</uid>
+   <name>AuthenticationProfileImpl</name>
+   <api-uid>AuthenticationProfile_PAPI_UID</api-uid>
+   <complement>AuthenticationProfileImpl_UID</complement>
+   <libs>
+      <lib platform="Ubuntu" path="profiles/libAuthenticationProfileImpl.so" version="1" />
+   </libs>
+</profile>
 </profiles>
 

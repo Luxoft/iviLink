@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
 
 #ifndef L1INTERFACE_STUB_HPP
@@ -187,7 +189,7 @@ public:
 
     /**
      * Function starts the system
-     * @param isServer are we a server
+     * @param isServer are we a server (and thus solicite for connection)
      * @param sockPath path to Unix Socket  file descriptor
      */
     void start(bool isServer, const char* sockPath);
@@ -440,6 +442,27 @@ private:
 
     bool processClientGetConnectionAddrRequest(CDataAccessor & accessor,
             const iviLink::Ipc::DirectionID dirId);
+
+    /**
+     * Connection request processing function
+     * @param accessor reference to data accessor contained request related data
+     * @return true if the accessor should be sent back to client
+     */
+    bool processClientConnectionRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
+
+    /**
+     * Disconnect request processing function
+     * @param accessor reference to data accessor contained request related data
+     * @return true if the accessor should be sent back to client
+     */
+    bool processClientDisconnectRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
+
+    /**
+     * Discovered device list request processing function
+     * @param accessor reference to data accessor contained request related data
+     * @return true if the accessor should be sent back to client
+     */
+    bool processClientGetDeviceList(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId);
 
     /**
      * Fills callback maps for service and clients requests processing.

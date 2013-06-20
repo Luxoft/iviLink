@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 package com.luxoft.ivilink.sdk.authentication;
 
@@ -28,6 +29,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -43,7 +45,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.luxoft.ivilink.sdk.R;
-import com.luxoft.ivilink.sdk.android.lib.utils.ForApp;
+import com.luxoft.ivilink.utils.ForApp;
 import com.luxoft.ivilink.sdk.helpers.Common;
 import com.luxoft.ivilink.sdk.helpers.StartupProgress;
 
@@ -152,7 +154,7 @@ public class AuthenticationActivity extends Activity {
 				start(ForApp.getServicePath(),
 						ForApp.getLaunchInfo(AuthenticationActivity.this),
 						ForApp.getInternalPath(AuthenticationActivity.this),
-						ForApp.getInternalPath(AuthenticationActivity.this));
+						Environment.getExternalStorageDirectory().getAbsolutePath());
 				Log.i(tag, "auth thread has finished");
 			}
 		}).start();

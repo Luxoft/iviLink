@@ -1,5 +1,0 @@
-<service name= "MediaStreamingServerService">
-    <pair name= "MediaStreamingClientService"/>
-    <profile api="MediaStreamingServerProfile_API_UID">
-    </profile>
-</service>

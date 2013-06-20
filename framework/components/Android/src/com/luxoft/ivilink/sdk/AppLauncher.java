@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 package com.luxoft.ivilink.sdk;
 
@@ -33,9 +34,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.ProcessesHelper;
-import com.luxoft.ivilink.sdk.android.lib.utils.log.BigLog;
-import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
+import com.luxoft.ivilink.utils.ProcessesHelper;
+import com.luxoft.ivilink.utils.log.BigLog;
+import com.luxoft.ivilink.utils.log.Logging;
 import com.luxoft.ivilink.sdk.authentication.AuthenticationActivity;
 import com.luxoft.ivilink.sdk.authentication.AuthenticationProcessInfo;
 import com.luxoft.ivilink.sdk.helpers.WakeUpHelper;
@@ -146,6 +147,7 @@ public class AppLauncher {
         Intent launchIntent = new Intent(Intent.ACTION_MAIN);
         launchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        launchIntent.putExtra("ivilink", true);
         launchIntent.setComponent(component);
         mContext.startActivity(launchIntent);
     }

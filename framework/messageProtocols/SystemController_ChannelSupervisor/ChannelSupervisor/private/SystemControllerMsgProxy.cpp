@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +19,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 
-#include "SystemControllerMsgProxy.hpp"
+#include "SystemControllerForNegotiator.hpp"
 
 using namespace iviLink::Ipc;
 
@@ -82,25 +83,26 @@ void SystemControllerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pP
         UInt32 payloadSize, UInt8* const pResponseBuffer, UInt32& bufferSize,
         iviLink::Ipc::DirectionID)
 {
-    Message const* req = reinterpret_cast<Message const*>(pPayload);
-
-    assert(req->header.size + sizeof(Message) == payloadSize);
-    assert(bufferSize >= sizeof(Message));
-
-    switch (req->header.type)
-    {
-    case SC_CS_SHUTDOWN:
-        onShutDown();
-        break;
-    default:
-        break;
-    }
+    bufferSize = 0;
 }
 
 void SystemControllerMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
         UInt32 payloadSize, iviLink::Ipc::DirectionID)
 {
-
+    switch ((SystemControllerToNegotiator)pPayload[0])
+    {
+    case SC_CS_SHUTDOWN:
+        onShutDown();
+        break;
+    case SC_CS_ROLE:
+        if (payloadSize == 2)
+        {
+            onReceiveRole((bool)pPayload[1]);
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void SystemControllerMsgProxy::OnConnection(iviLink::Ipc::DirectionID)

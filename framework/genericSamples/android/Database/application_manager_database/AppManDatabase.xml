@@ -2,13 +2,13 @@
 
 <app-man>
    <applications>
-      <app>
+      <app name="BasicSample" version="1">
          <launch-info>com.luxoft.ivilink.samples.basic/.BasicSampleActivity</launch-info>
          <services>
             <service uid="BasicSampleService" />
          </services>
       </app>     
-      <app>
+      <app name="AuthenticationApplication" version="1">
          <launch-info>com.luxoft.ivilink.sdk/.authentication.AuthenticationActivity</launch-info>
          <services>
             <service uid="AuthenticationService" />

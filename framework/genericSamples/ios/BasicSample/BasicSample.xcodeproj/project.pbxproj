@@ -1,0 +1,383 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		17B107771705B41000FEBDFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B107761705B41000FEBDFC /* UIKit.framework */; };
+		17B107791705B41000FEBDFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B107781705B41000FEBDFC /* Foundation.framework */; };
+		17B1077B1705B41000FEBDFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B1077A1705B41000FEBDFC /* CoreGraphics.framework */; };
+		17B107811705B41000FEBDFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17B1077F1705B41000FEBDFC /* InfoPlist.strings */; };
+		17B107831705B41000FEBDFC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B107821705B41000FEBDFC /* main.m */; };
+		17B107871705B41000FEBDFC /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17B107861705B41000FEBDFC /* AppDelegate.mm */; };
+		17B1078A1705B41000FEBDFC /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B107881705B41000FEBDFC /* MainStoryboard_iPhone.storyboard */; };
+		17B1078D1705B41000FEBDFC /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B1078B1705B41000FEBDFC /* MainStoryboard_iPad.storyboard */; };
+		17B107901705B41000FEBDFC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B1078F1705B41000FEBDFC /* ViewController.m */; };
+		17B107FA1705B9C100FEBDFC /* ServicesInfoImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17B107F81705B9C000FEBDFC /* ServicesInfoImpl.cpp */; };
+		17D1B9921712BD16002C3221 /* CBasicSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B9901712BD16002C3221 /* CBasicSample.cpp */; };
+		17D1B99B1712BD3E002C3221 /* libiviLink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D1B9981712BD1E002C3221 /* libiviLink.a */; };
+		17D1B9BF1712BF9C002C3221 /* CBasicSampleProfileImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B9BD1712BF9C002C3221 /* CBasicSampleProfileImpl.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17D1B9971712BD1E002C3221 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17D1B9931712BD1E002C3221 /* iviLink Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 17ADF89817059BE200BE52A7;
+			remoteInfo = iviLink;
+		};
+		17D1B9991712BD39002C3221 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17D1B9931712BD1E002C3221 /* iviLink Framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 17ADF89717059BE200BE52A7;
+			remoteInfo = iviLink;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		17B107721705B41000FEBDFC /* BasicSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BasicSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17B107761705B41000FEBDFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		17B107781705B41000FEBDFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		17B1077A1705B41000FEBDFC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		17B1077E1705B41000FEBDFC /* BasicSample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BasicSample-Info.plist"; sourceTree = "<group>"; };
+		17B107801705B41000FEBDFC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		17B107821705B41000FEBDFC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		17B107841705B41000FEBDFC /* BasicSample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BasicSample-Prefix.pch"; sourceTree = "<group>"; };
+		17B107851705B41000FEBDFC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		17B107861705B41000FEBDFC /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		17B107891705B41000FEBDFC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		17B1078C1705B41000FEBDFC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		17B1078E1705B41000FEBDFC /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		17B1078F1705B41000FEBDFC /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		17B107F81705B9C000FEBDFC /* ServicesInfoImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServicesInfoImpl.cpp; sourceTree = "<group>"; };
+		17D1B9901712BD16002C3221 /* CBasicSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CBasicSample.cpp; path = ../../../linux/applications/basicSample/CBasicSample.cpp; sourceTree = "<group>"; };
+		17D1B9911712BD16002C3221 /* CBasicSample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CBasicSample.hpp; path = ../../../linux/applications/basicSample/CBasicSample.hpp; sourceTree = "<group>"; };
+		17D1B9931712BD1E002C3221 /* iviLink Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iviLink Framework.xcodeproj"; path = "/Users/ivilink/AXIS/framework/genericSamples/ios/../../../iviLink/include_ios/iviLink Framework/iviLink Framework.xcodeproj"; sourceTree = "<absolute>"; };
+		17D1B9BD1712BF9C002C3221 /* CBasicSampleProfileImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CBasicSampleProfileImpl.cpp; path = ../../../linux/profiles/basicSample/CBasicSampleProfileImpl.cpp; sourceTree = "<group>"; };
+		17D1B9BE1712BF9C002C3221 /* CBasicSampleProfileImpl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CBasicSampleProfileImpl.hpp; path = ../../../linux/profiles/basicSample/CBasicSampleProfileImpl.hpp; sourceTree = "<group>"; };
+		17D1B9C01712BFAF002C3221 /* CBasicSampleProfileProxy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CBasicSampleProfileProxy.hpp; path = ../../../linux/serviceSources/CBasicSampleProfileProxy.hpp; sourceTree = "<group>"; };
+		17D1B9C11712BFAF002C3221 /* IBasicSampleProfileAPI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IBasicSampleProfileAPI.hpp; path = ../../../linux/serviceSources/IBasicSampleProfileAPI.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		17B1076F1705B41000FEBDFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17D1B99B1712BD3E002C3221 /* libiviLink.a in Frameworks */,
+				17B107771705B41000FEBDFC /* UIKit.framework in Frameworks */,
+				17B107791705B41000FEBDFC /* Foundation.framework in Frameworks */,
+				17B1077B1705B41000FEBDFC /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		17B107671705B41000FEBDFC = {
+			isa = PBXGroup;
+			children = (
+				17D1B9931712BD1E002C3221 /* iviLink Framework.xcodeproj */,
+				17B1077C1705B41000FEBDFC /* BasicSample */,
+				17B107751705B41000FEBDFC /* Frameworks */,
+				17B107731705B41000FEBDFC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		17B107731705B41000FEBDFC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17B107721705B41000FEBDFC /* BasicSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17B107751705B41000FEBDFC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				17B107761705B41000FEBDFC /* UIKit.framework */,
+				17B107781705B41000FEBDFC /* Foundation.framework */,
+				17B1077A1705B41000FEBDFC /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		17B1077C1705B41000FEBDFC /* BasicSample */ = {
+			isa = PBXGroup;
+			children = (
+				17B107851705B41000FEBDFC /* AppDelegate.h */,
+				17B107861705B41000FEBDFC /* AppDelegate.mm */,
+				17D1B9C21712BFC0002C3221 /* BasicSample ported */,
+				17B1078B1705B41000FEBDFC /* MainStoryboard_iPad.storyboard */,
+				17B107881705B41000FEBDFC /* MainStoryboard_iPhone.storyboard */,
+				17B107F81705B9C000FEBDFC /* ServicesInfoImpl.cpp */,
+				17B1077D1705B41000FEBDFC /* Supporting Files */,
+				17B1078E1705B41000FEBDFC /* ViewController.h */,
+				17B1078F1705B41000FEBDFC /* ViewController.m */,
+			);
+			path = BasicSample;
+			sourceTree = "<group>";
+		};
+		17B1077D1705B41000FEBDFC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				17B1077E1705B41000FEBDFC /* BasicSample-Info.plist */,
+				17B1077F1705B41000FEBDFC /* InfoPlist.strings */,
+				17B107821705B41000FEBDFC /* main.m */,
+				17B107841705B41000FEBDFC /* BasicSample-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		17D1B9941712BD1E002C3221 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17D1B9981712BD1E002C3221 /* libiviLink.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17D1B9C21712BFC0002C3221 /* BasicSample ported */ = {
+			isa = PBXGroup;
+			children = (
+				17D1B9C01712BFAF002C3221 /* CBasicSampleProfileProxy.hpp */,
+				17D1B9C11712BFAF002C3221 /* IBasicSampleProfileAPI.hpp */,
+				17D1B9BD1712BF9C002C3221 /* CBasicSampleProfileImpl.cpp */,
+				17D1B9BE1712BF9C002C3221 /* CBasicSampleProfileImpl.hpp */,
+				17D1B9901712BD16002C3221 /* CBasicSample.cpp */,
+				17D1B9911712BD16002C3221 /* CBasicSample.hpp */,
+			);
+			name = "BasicSample ported";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		17B107711705B41000FEBDFC /* BasicSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17B107931705B41000FEBDFC /* Build configuration list for PBXNativeTarget "BasicSample" */;
+			buildPhases = (
+				17B1076E1705B41000FEBDFC /* Sources */,
+				17B1076F1705B41000FEBDFC /* Frameworks */,
+				17B107701705B41000FEBDFC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17D1B99A1712BD39002C3221 /* PBXTargetDependency */,
+			);
+			name = BasicSample;
+			productName = BasicSample;
+			productReference = 17B107721705B41000FEBDFC /* BasicSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		17B107691705B41000FEBDFC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Ivilink Tsc";
+			};
+			buildConfigurationList = 17B1076C1705B41000FEBDFC /* Build configuration list for PBXProject "BasicSample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 17B107671705B41000FEBDFC;
+			productRefGroup = 17B107731705B41000FEBDFC /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 17D1B9941712BD1E002C3221 /* Products */;
+					ProjectRef = 17D1B9931712BD1E002C3221 /* iviLink Framework.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				17B107711705B41000FEBDFC /* BasicSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		17D1B9981712BD1E002C3221 /* libiviLink.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libiviLink.a;
+			remoteRef = 17D1B9971712BD1E002C3221 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		17B107701705B41000FEBDFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17B107811705B41000FEBDFC /* InfoPlist.strings in Resources */,
+				17B1078A1705B41000FEBDFC /* MainStoryboard_iPhone.storyboard in Resources */,
+				17B1078D1705B41000FEBDFC /* MainStoryboard_iPad.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		17B1076E1705B41000FEBDFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17B107831705B41000FEBDFC /* main.m in Sources */,
+				17B107871705B41000FEBDFC /* AppDelegate.mm in Sources */,
+				17B107901705B41000FEBDFC /* ViewController.m in Sources */,
+				17B107FA1705B9C100FEBDFC /* ServicesInfoImpl.cpp in Sources */,
+				17D1B9921712BD16002C3221 /* CBasicSample.cpp in Sources */,
+				17D1B9BF1712BF9C002C3221 /* CBasicSampleProfileImpl.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17D1B99A1712BD39002C3221 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iviLink;
+			targetProxy = 17D1B9991712BD39002C3221 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		17B1077F1705B41000FEBDFC /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17B107801705B41000FEBDFC /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		17B107881705B41000FEBDFC /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17B107891705B41000FEBDFC /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		17B1078B1705B41000FEBDFC /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17B1078C1705B41000FEBDFC /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		17B107911705B41000FEBDFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		17B107921705B41000FEBDFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		17B107941705B41000FEBDFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BasicSample/BasicSample-Prefix.pch";
+				INFOPLIST_FILE = "BasicSample/BasicSample-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		17B107951705B41000FEBDFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BasicSample/BasicSample-Prefix.pch";
+				INFOPLIST_FILE = "BasicSample/BasicSample-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		17B1076C1705B41000FEBDFC /* Build configuration list for PBXProject "BasicSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17B107911705B41000FEBDFC /* Debug */,
+				17B107921705B41000FEBDFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17B107931705B41000FEBDFC /* Build configuration list for PBXNativeTarget "BasicSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17B107941705B41000FEBDFC /* Debug */,
+				17B107951705B41000FEBDFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 17B107691705B41000FEBDFC /* Project object */;
+}

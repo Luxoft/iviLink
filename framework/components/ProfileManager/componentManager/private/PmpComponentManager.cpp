@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,8 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
+
+/**
+ * @file                PmpComponentManager.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implementation of PmpComponentManager class
+ */
 
 #include <cstdio>
 #include <cstdlib>
@@ -174,6 +185,25 @@ void PmpComponentManager::initPmp()
     mEventFactory->getIpcCoreHandler(), ipcAddr.empty() ? NULL : ipcAddr.c_str());
     mAmpClient->init(mEventFactory->getAmpHandler());
 
+    
+    bool res = false;
+    for(int i=0; i<30; ++i)
+    {
+        LOG4CPLUS_INFO(mLogger, "Connecting to AMP...");
+        if (mAmpClient->connect())
+        {
+            res = true;
+            break;
+        }
+        usleep(250000);
+    }
+    if (!res)
+    {
+        LOG4CPLUS_FATAL(mLogger, "No AMP connection");
+        killProcess(1);
+    }
+    LOG4CPLUS_INFO(mLogger, "AMP connected");
+
     if (!mInteractionProtocol->connect())
     {
         LOG4CPLUS_FATAL(mLogger, "Can't connect interaction protocol");
@@ -287,24 +317,6 @@ void PmpComponentManager::endInitialization()
     {
         LOG4CPLUS_WARN(mLogger, "Started without SC connection possibility");
     }
-
-    bool res = false;
-    for(int i=0; i<30; ++i)
-    {
-        LOG4CPLUS_INFO(mLogger, "Connecting to AMP...");
-        if (mAmpClient->connect())
-        {
-            res = true;
-            break;
-        }
-        usleep(250000);
-    }
-    if (!res)
-    {
-        LOG4CPLUS_FATAL(mLogger, "No AMP connection");
-        killProcess(1);
-    }
-    LOG4CPLUS_INFO(mLogger, "AMP connected");
 
     char macAddr[13] = "";
 

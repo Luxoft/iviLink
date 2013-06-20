@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
 
 
 #include "get_mac.hpp"
 
+#ifndef __APPLE__
 #include <cerrno>
 #include <cstring>
 #include <cstdio>
@@ -92,11 +100,61 @@ bool get_mac(char buff[13])
 
    if (found)
    {
-      for (int i = 0; i < 6; ++i)
-      {
-         snprintf(buff + 2*i, 13 - 2*i, "%02x", ifr.ifr_hwaddr.sa_data[i]);
-      }
+        for (int i=0; i<6; i++)
+        {
+            sprintf(&buff[i*2],"%02X",((unsigned char*)ifr.ifr_hwaddr.sa_data)[i]);
+        }
+        buff[12]='\0';
    }
 
    return found;
 }
+
+#else
+#include <sys/types.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <net/if_dl.h>
+#include <ifaddrs.h>
+#include <algorithm>
+
+#define IFT_ETHER 0x6
+
+
+bool get_mac(char buff[13])
+{    
+    int  success;
+    struct ifaddrs * addrs;
+    struct ifaddrs * cursor;
+    const struct sockaddr_dl * dlAddr;
+    const unsigned char* base;
+    
+    memset(buff, 0 , 13);
+    
+    success = getifaddrs(&addrs) == 0;
+    if (success)
+    {
+        cursor = addrs;
+        while (cursor != 0)
+        {
+            if ( (cursor->ifa_addr->sa_family == AF_LINK)
+                && (((const struct sockaddr_dl *) cursor->ifa_addr)->sdl_type == IFT_ETHER))
+            {
+                dlAddr = (const struct sockaddr_dl *) cursor->ifa_addr;
+                base = (const unsigned char*) &dlAddr->sdl_data[dlAddr->sdl_nlen];
+                int cycleLimit = std::min(6, (int)dlAddr->sdl_alen);
+                for (int i = 0; i < cycleLimit; ++i)
+                {
+                    snprintf(buff + 2*i, 13 - 2*i, "%02x", base[i]);
+                }
+                return true;
+            }
+            cursor = cursor->ifa_next;
+        }
+        freeifaddrs(addrs);
+    }
+    return false;
+}
+
+#endif //

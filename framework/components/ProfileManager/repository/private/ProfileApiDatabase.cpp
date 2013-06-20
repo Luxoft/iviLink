@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                ProfileApiDatabase.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements ProfileApiDatabase class
+ */
 
 
 #include <cassert>
@@ -105,24 +117,20 @@ bool ProfileApiDatabase::loadParsedDatabase(const pugi::xml_document &doc)
     for (pugi::xml_node_iterator it = apis.begin(); it != apis.end(); ++it)
     {
         LOG4CPLUS_INFO(msLogger, "Profile API adding");
-        std::map<Profile::ApiUid,ProfileApiInfo>::iterator mit = mApis.find(Profile::ApiUid(it->child_value("uid")));
+        Profile::ApiUid apiUid(Profile::ApiUid(it->child_value("uid")));
+        if ("" == apiUid.value())
+        {
+            LOG4CPLUS_INFO(msLogger, "Empty UID");
+            continue;
+        }
+        ProfileApiInfoMap::iterator mit = mApis.find(Profile::ApiUid(it->child_value("uid")));
         if (mApis.end() == mit)
         {
-            std::string fullPath = mFolderName + std::string(it->child_value("src"));
-            LOG4CPLUS_INFO(msLogger, "path to profile api manifest is: " + fullPath);
-            ProfileApiInfo inf(fullPath);
-            if (!inf.failed())
-            {
-                mApis[Profile::ApiUid(it->child_value("uid"))] = inf;
-            }
-        }
-        else if (0 != it->child_value("uid"))
-        {
-            LOG4CPLUS_WARN(msLogger, "Error: UID repetition: " + std::string(it->child_value("uid")));
+            mApis[apiUid] = ProfileApiInfo(apiUid);
         }
         else
         {
-            LOG4CPLUS_WARN(msLogger, "Error: UID repetition");
+            LOG4CPLUS_WARN(msLogger, "Error: UID repetition: " + apiUid.value());
         }
     }
     return true;
@@ -133,14 +141,12 @@ bool ProfileApiDatabase::saveChanges()
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     pugi::xml_document doc;
     pugi::xml_node apis = doc.append_child("profile-apis");
-    for (std::map<Profile::ApiUid,ProfileApiInfo>::const_iterator it = mApis.begin(); it != mApis.end(); ++it)
+    for (ProfileApiInfoMap::const_iterator it = mApis.begin(); it != mApis.end(); ++it)
     {
         LOG4CPLUS_INFO(msLogger, it->first.value());
         pugi::xml_node apiNode = apis.append_child("profile-api");
         pugi::xml_node uidNode = apiNode.append_child("uid");
         uidNode.append_child(pugi::node_pcdata).set_value(it->first.value().c_str());
-        pugi::xml_node srcNode = apiNode.append_child("src");
-        srcNode.append_child(pugi::node_pcdata).set_value(it->second.xmlPath().c_str());
     }
     std::string path = mFolderName + mDbName;
     bool result =doc.save_file(path.c_str());
@@ -159,7 +165,7 @@ BaseError ProfileApiDatabase::addProfileApi(std::string manifestPath)
     LOG4CPLUS_INFO(msLogger, "manifestPath = " + manifestPath);
     ProfileApiInfo info(manifestPath);
     info.print();
-    std::map<Profile::ApiUid,ProfileApiInfo>::iterator mit = mApis.find(info.uid());
+    ProfileApiInfoMap::iterator mit = mApis.find(info.uid());
     if (mApis.end() != mit)
     {
         LOG4CPLUS_WARN(msLogger, "Error: UID repetition");
@@ -186,7 +192,7 @@ BaseError ProfileApiDatabase::removeProfileApi(Profile::ApiUid profileApiUid)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     LOG4CPLUS_INFO(msLogger, "profileApiUid = '" + profileApiUid.value() + "'");
-    std::map<Profile::ApiUid,ProfileApiInfo>::iterator mit = mApis.find(profileApiUid);
+    ProfileApiInfoMap::iterator mit = mApis.find(profileApiUid);
     if (mApis.end() == mit)
     {
         LOG4CPLUS_WARN(msLogger, "Error: UID repetition");
@@ -201,20 +207,6 @@ BaseError ProfileApiDatabase::removeProfileApi(Profile::ApiUid profileApiUid)
     {
         return RepositoryError(RepositoryError::ERROR_DATABASE_WRITE);
     }
-}
-
-std::string ProfileApiDatabase::getManifest(Profile::ApiUid uid)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    LOG4CPLUS_INFO(msLogger, "uid: " + uid.value());
-    std::map<Profile::ApiUid,ProfileApiInfo>::iterator mit = mApis.find(uid);
-    if (mApis.end() == mit)
-    {
-        return std::string("");
-    }
-    std::stringstream txt;
-    txt << std::ifstream(mit->second.xmlPath().c_str()).rdbuf();
-    return txt.str();
 }
 
 void ProfileApiDatabase::printDB()

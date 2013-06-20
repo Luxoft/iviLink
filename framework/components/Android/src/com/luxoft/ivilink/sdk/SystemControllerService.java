@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,14 +19,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 package com.luxoft.ivilink.sdk;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,9 +35,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.IntentActions;
-import com.luxoft.ivilink.sdk.android.lib.utils.ProcessesHelper;
-import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
 import com.luxoft.ivilink.sdk.authentication.AuthenticationActivity;
 import com.luxoft.ivilink.sdk.authentication.AuthenticationProcessInfo;
 import com.luxoft.ivilink.sdk.componentservices.ApplicationManagerService;
@@ -52,6 +49,9 @@ import com.luxoft.ivilink.sdk.helpers.BigIntegerGenerator;
 import com.luxoft.ivilink.sdk.helpers.Common;
 import com.luxoft.ivilink.sdk.helpers.NotificationHandler;
 import com.luxoft.ivilink.sdk.loggingdaemon.LogsRecorder;
+import com.luxoft.ivilink.utils.IntentActions;
+import com.luxoft.ivilink.utils.ProcessesHelper;
+import com.luxoft.ivilink.utils.log.Logging;
 
 public class SystemControllerService extends Service {
 	// empty method stub
@@ -99,6 +99,7 @@ public class SystemControllerService extends Service {
 			Log.e(tag, "Trying to start " + this.getClass().getSimpleName() + " more than once!");
 			return START_NOT_STICKY;
 		}
+        sendBroadcast(new Intent(IntentActions.SHUT_DOWN_NOTIFICATION)); // kill old instances of apps
 		bluetoothPermitted = intent.getBooleanExtra("bluetooth", false);
 		Log.i(tag, "starting SSM  thread");
 		if (Config.sendMails) {

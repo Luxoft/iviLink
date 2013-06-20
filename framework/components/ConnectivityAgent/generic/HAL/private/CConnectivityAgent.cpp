@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <unistd.h>
 #include <assert.h>
@@ -46,7 +47,7 @@ CConnectivityAgent::CConnectivityAgent(bool isServer) :
    mpManager(NULL),
    mGenderType(eAnyGender)
 {
-   mFinders = createListOfFinders(*this, eAnyGender);
+   mFinders = createListOfFinders(*this, eAnyGender, isServer);
 }
 
 CConnectivityAgent::~CConnectivityAgent()
@@ -98,11 +99,16 @@ void CConnectivityAgent::threadFunc()
                LOG4CPLUS_INFO(logger, "agent: calling mpManager->OnDisconnected ");
                mpManager->OnDisconnected();
             }
+#ifdef __APPLE__
+             stop();
+#endif
          }
       }
       mMainFuncMutex.unlock();
-
-      CThread::sleep(2000);
+       if (!getStopFlag())
+       {
+           CThread::sleep(2000);
+       }
    }
    LOG4CPLUS_INFO(logger, "agent: stopped");
 }
@@ -174,14 +180,16 @@ ConnectivityAgentError CConnectivityAgent::initAdapterHandshake(CCarrierAdapter*
    if (!mpManager)
    {
       mpManager = new CConnectivityManager(pAdapter);
+      mManagerMutex.unlockWrite();
+      mpManager->onConnected();
       LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: created Connectivity Manager");
    }
    else
    {
       LOG4CPLUS_INFO(logger, "CConnectivityAgent::initAdapterHandshake: replace Carrier in  Connectivity Manager");
       mpManager->replaceCarrier(pAdapter);
+      mManagerMutex.unlockWrite();
    }
-   mManagerMutex.unlockWrite();
 
    return ConnectivityAgentError::NoError();
 }
@@ -205,18 +213,18 @@ void CConnectivityAgent::onConnectionProblem(ECarrierType carrierType)
 //   LOG4CPLUS_INFO(logger, "agent: CHALController::onConnectionLost(" +
 //      convertIntegerToString((int)carrierType) + ")");
 //
-//   CCarrierAdapter* pAdapter = tryToRecover(carrierType);
-//   if (pAdapter)
-//   {
-//      mpManager->replaceCarrier(pAdapter);
-//
-//      LOG4CPLUS_INFO(logger, "agent: CHALController::onReconnected("
-//            +  convertIntegerToString((int)carrierType) + ")");
-//   }
-//   else
-//   {
-//      disconnect();
-//   }
+   CCarrierAdapter* pAdapter = tryToRecover(carrierType);
+   if (pAdapter)
+   {
+      mpManager->replaceCarrier(pAdapter);
+
+      LOG4CPLUS_INFO(logger, "agent: CHALController::onReconnected("
+            +  convertIntegerToString((int)carrierType) + ")");
+   }
+   else
+   {
+      disconnect();
+   }
 }
 
 iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::tryToRecover(ECarrierType carrierType)
@@ -245,6 +253,7 @@ iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::getCurrent
 {
    CCarrierAdapter* pCA = NULL;
    mManagerMutex.lockRead();
+
    if (mpManager)
    {
       pCA = mpManager->getCarrier();
@@ -254,7 +263,7 @@ iviLink::ConnectivityAgent::HAL::CCarrierAdapter* CConnectivityAgent::getCurrent
    return pCA;
 }
 
-iviLink::ConnectivityAgent::L0::L0Interface * CConnectivityAgent::getL0Interface ()
+iviLink::ConnectivityAgent::L0::L0Interface * CConnectivityAgent::getL0Interface()
 {
    iviLink::ConnectivityAgent::L0::L0Interface* pInterface = NULL;
    mManagerMutex.lockRead();

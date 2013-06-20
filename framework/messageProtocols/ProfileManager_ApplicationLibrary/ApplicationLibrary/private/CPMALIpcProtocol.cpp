@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
 
 #include <cassert>
@@ -58,7 +60,6 @@ namespace Ipc {
    {
        SyncRequestsData()
            : generatePIUidResponseResult(false)
-           , getManifestResponseResult(false)
            , getProfileLibPathResponseResult(false)
            , findProfilesResponseResult(false)
            , mLogger(Logger::getInstance(LOG4CPLUS_TEXT("profileManager.PMAL.CIpcProtocol")))
@@ -87,29 +88,6 @@ namespace Ipc {
            generatePIUidResponseResult = true;
            generatePIUidResponsePIUid = piuid;
            generatePIUidResponseSem.signal();
-       }
-
-       void getManifestResponseReset()
-       {
-           getManifestResponseResult = false;
-       }
-
-       bool getManifestResponseWait(std::string & manifest)
-       {
-           LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__ );
-
-           getManifestResponseSem.waitTimeout(syncTimeout);
-           manifest = getManifestResponseManifest;
-           return getManifestResponseResult;
-       }
-
-       void getManifestResponseSignal(const std::string & manifest)
-       {
-           LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__ );
-
-           getManifestResponseResult = true;
-           getManifestResponseManifest = manifest;
-           getManifestResponseSem.signal();
        }
 
        void getProfileLibPathResponseReset()
@@ -164,11 +142,6 @@ namespace Ipc {
        CSignalSemaphore generatePIUidResponseSem;
        mutable iviLink::Profile::IUid generatePIUidResponsePIUid;
        mutable bool generatePIUidResponseResult;
-
-       /// Get Manifest
-       CSignalSemaphore getManifestResponseSem;
-       mutable std::string getManifestResponseManifest;
-       mutable bool getManifestResponseResult;
 
        /// Get Profile Lib Path
        CSignalSemaphore getProfileLibPathResponseSem;
@@ -524,48 +497,6 @@ bool CIpcProtocol::enableAll()
    return true;
 }
 
-bool CIpcProtocol::getManifest(iviLink::BaseUid const& uid, std::string& manifest)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    if (!mpIpc)
-    {
-        LOG4CPLUS_ERROR(msLogger, "no ipc");
-        return false;
-    }
-
-   CBuffer writeBuf = mWriteBufMgr.getBuffer();
-   CBuffer readBuf = mReadBufMgr.getBuffer();
-   ProfileManager::Ipc::PmMessage* req = reinterpret_cast<ProfileManager::Ipc::PmMessage*>(writeBuf.get());
-   req->header.type = ProfileManager::Ipc::PMAL_PMP_GET_MANIFEST;
-   {
-      iviLink::Ipc::Helpers::CBufferWriter writer(req->data, writeBuf.getSize() - sizeof(req->header));
-
-      BaseError err = writer.write(uid);
-
-      if (!err.isNoError())
-      {
-         LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
-         return false;
-      }
-
-      req->header.size = writer.getUsedSize();
-   }
-
-   iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
-
-   UInt32 const reqSize = sizeof(ProfileManager::Ipc::PmMessage) + req->header.size;
-   mSyncData.getManifestResponseReset();
-   BaseError err = mpIpc->asyncRequest(id, writeBuf.get(), reqSize);
-
-   if (!err.isNoError())
-   {
-      LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
-      return false;
-   }
-
-   return mSyncData.getManifestResponseWait(manifest);
-}
-
 bool CIpcProtocol::getProfileLibPath(iviLink::Profile::Uid const& uid, std::string& path)
 {
    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
@@ -704,9 +635,6 @@ void CIpcProtocol::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
     case ProfileManager::Ipc::PMP_PMAL_GENERATE_PIUID:
        processGeneratePIUidResponse(req);
        break;
-    case ProfileManager::Ipc::PMP_PMAL_GET_MANIFEST:
-       processGetManifestResponse(req);
-       break;
     case ProfileManager::Ipc::PMP_PMAL_GET_PROFILE_LIB_PATH:
        processGetProfileLibPathResponse(req);
        break;
@@ -824,34 +752,6 @@ void CIpcProtocol::processGeneratePIUidResponse(ProfileManager::Ipc::PmMessage c
             mSyncData.generatePIUidResponseSignal(piuid);
         }
    }
-}
-
-void CIpcProtocol::processGetManifestResponse(ProfileManager::Ipc::PmMessage const* const req)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    if (req->header.type != ProfileManager::Ipc::PMP_PMAL_GET_MANIFEST)
-    {
-        LOG4CPLUS_ERROR(msLogger, "wrong response");
-    }
-    else if (0 == req->header.size)
-    {
-        LOG4CPLUS_ERROR(msLogger, "empty message");
-    }
-    else
-    {
-        iviLink::Ipc::Helpers::CBufferReader reader(req->data, req->header.size);
-
-        std::string manifest;
-        BaseError err = err = reader.read(manifest);
-        if (!err.isNoError())
-        {
-            LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
-        }
-        else
-        {
-            mSyncData.getManifestResponseSignal(manifest);
-        }
-    }
 }
 
 void CIpcProtocol::processGetProfileLibPathResponse(ProfileManager::Ipc::PmMessage const* const req)

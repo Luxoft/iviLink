@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,9 +19,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
-
+ 
 /**
  * \file defines.hpp
  * This file contains useful macros for creating profiles. See
@@ -34,10 +36,22 @@
  * \def IVILINK_PROFILE_BEGIN
  * This macro should be put into the beginning of a header with profile implementation declaration.
  */
+#ifdef __APPLE__
+#define IVILINK_PROFILE_BEGIN   \
+namespace iviLink               \
+{                               \
+    class ServicesInfoProvider; \
+    namespace PMP               \
+    {                           \
+        class PmpPIM;           \
+    }                           \
+}
+#else
 #define IVILINK_PROFILE_BEGIN \
    extern "C" iviLink::Profile::ProfileHolder* createProfile \
    (iviLink::Profile::IUid const& id, iviLink::Service::Uid const& sid, \
          iviLink::Profile::IProfileCallbackProxy* pCbProxy);
+#endif
          
          
 /**
@@ -45,20 +59,29 @@
  * This macro should be put into the end of a header with profile implementation declaration.
  * @param PROFILE_CLASS profile implementation class name
  */
+#ifdef __APPLE__
+#define IVILINK_PROFILE_END(PROFILE_CLASS) 
+#else
 #define IVILINK_PROFILE_END(PROFILE_CLASS) \
    extern "C" iviLink::Profile::ProfileHolder* createProfile \
          (iviLink::Profile::IUid const& id, iviLink::Service::Uid const& sid, \
                iviLink::Profile::IProfileCallbackProxy* pCbProxy) \
 { return new iviLink::Profile::ProfileHolder(id, sid, new PROFILE_CLASS(pCbProxy)); }
-
+#endif
 
 /**
  * \def IVILINK_PROFILE_DECLARE
  * This macro should be put into the beginning of a profile implementation declaration.
  */
+#ifdef __APPLE__
+#define IVILINK_PROFILE_DECLARE             \
+friend class iviLink::ServicesInfoProvider; \
+friend class iviLink::PMP::PmpPIM;          
+#else
 #define IVILINK_PROFILE_DECLARE \
    friend iviLink::Profile::ProfileHolder* createProfile(iviLink::Profile::IUid const& id, \
          iviLink::Service::Uid const& sid, iviLink::Profile::IProfileCallbackProxy*);
+#endif
          
 /**
  * \def IVILINK_PROFILE_NAME(PROFILE_NAME)

@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
 
 #ifndef ANDROID
@@ -52,15 +54,18 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(true);
     QDeclarativeView  viewer;
     QMLAuthenticationDialog * dialog = new QMLAuthenticationDialog;
+    dialog->setDeclarativeView(&viewer);
     viewer.rootContext()->setContextProperty("QMLAuthenticationDialog", dialog);
-    viewer.setSource(QUrl::fromLocalFile("qml/AuthenticationApplication/authentication.qml"));
+    viewer.setSource(QUrl("qrc:///qml/AuthenticationApplication/authentication.qml"));
     viewer.setAttribute(Qt::WA_TranslucentBackground);
     viewer.setAttribute(Qt::WA_NoSystemBackground);
     viewer.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     viewer.setStyleSheet("background:transparent;");
+    viewer.setCursor(QCursor(Qt::BlankCursor));
     // show the application
     viewer.move(QApplication::desktop()->screen()->rect().center() - viewer.rect().center() );
     viewer.show();
+    viewer.activateWindow();
     dialog->init();
 
     LOG4CPLUS_TRACE(Logger::getInstance(LOG4CPLUS_TEXT("profiler.ComponentIsStarted")), "AuthenticationApplication");

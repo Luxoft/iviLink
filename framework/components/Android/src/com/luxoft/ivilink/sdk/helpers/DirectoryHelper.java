@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 package com.luxoft.ivilink.sdk.helpers;
 
@@ -28,11 +29,9 @@ import java.io.File;
 import android.os.Environment;
 import android.util.Log;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.Paths;
+import com.luxoft.ivilink.utils.Paths;
 
 public class DirectoryHelper {
-    private static final String TAG = DirectoryHelper.class.getName();
-
     static String extStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     /*

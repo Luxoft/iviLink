@@ -90,7 +90,7 @@
     
     <target name="includefiles">
         <copy todir="assets/">
-            <fileset dir="../../../../samples/android/xmls" />
+            <fileset dir="../../../samples/android/xmls" />
         </copy>
         <exec executable="sh" dir="assets" outputproperty="noOfFiles">
             <arg value="-c" />

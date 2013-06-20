@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpCoreProfileInfo.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * PmpCoreProfileInfo contains profile information needed for PMP core
+ */
 
 
 #ifndef CPMPCOREPROFILEINFO_HPP_
@@ -29,6 +41,7 @@
 
 #include "Logger.hpp"
 #include "UID.hpp"
+#include "RepositoryTypes.hpp"
 
 namespace iviLink
 {
@@ -51,7 +64,7 @@ public:
     /**
     * Constructor. Parses manifest and sets members
     */
-    PmpCoreProfileInfo(const std::string & profileManifest);
+    PmpCoreProfileInfo(const LibInfo & libInfo);
 
     /**
     * Copy constructor
@@ -138,19 +151,17 @@ public:
     */
     void setLibrary(const std::string & library);
 
-private:
     /**
-    * Parses XML manifest and loads parsed data
-    */
-    void parseXml(const std::string & profileManifest);
+     * Returns version of profile
+     */
+    UInt32 version() const;
+
+private:
 
     bool mEnabledByComplement;  ///< true if profile has complement on another side
     bool mEnabledByClient;      ///< true if profile is enabled by client's request
     bool mLocked;               ///< true if profile is locked
-    Profile::Uid mUid;          ///< UID of Profile
-    Profile::ApiUid mApi;       ///< UID of Profile API
-    Profile::Uid mComplement;   ///< UID of Profile Complement
-    std::string mLibrary;       ///< Path to DLL with Profile Implementation
+    LibInfo mLibInfo;           ///< Information about profile lib
 
     static Logger msLogger;     ///< object of logger
 };

@@ -1,6 +1,12 @@
 #ifndef CRYPTOPP_CONFIG_H
 #define CRYPTOPP_CONFIG_H
 
+
+#ifdef __APPLE__
+#define CRYPTOPP_DISABLE_ASM 1
+#define CRYPTOPP_DISABLE_SSE2 1
+#endif
+
 // ***************** Important Settings ********************
 
 // define this if running on a big-endian CPU
@@ -458,5 +464,17 @@ NAMESPACE_END
 #else
 #define CRYPTOPP_STATIC_TEMPLATE_CLASS CRYPTOPP_EXTERN_STATIC_TEMPLATE_CLASS
 #endif
+
+#if CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE || CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE || defined(CRYPTOPP_X64_MASM_AVAILABLE)
+#define CRYPTOPP_BOOL_ALIGN16_ENABLED 1
+#else
+#define CRYPTOPP_BOOL_ALIGN16_ENABLED 0
+#endif
+
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(PRODUCT_iPhone)
+# undef CRYPTOPP_BOOL_ALIGN16_ENABLED
+# define CRYPTOPP_BOOL_ALIGN16_ENABLED 0
+#endif
+
 
 #endif

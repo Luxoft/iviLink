@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +19,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 package com.luxoft.ivilink.sdk;
 
 import android.util.Log;
+import android.os.Environment;
+import java.io.File;
 
 import com.luxoft.ivilink.sdk.bluetooth.BluetoothHelper;
 import com.luxoft.ivilink.sdk.helpers.Common;
@@ -32,21 +35,30 @@ import com.luxoft.ivilink.sdk.helpers.Common;
  * Encapsulates Connectivity Agent
  */
 public class CConnectivityAgentWrapper {
-	static {
-		System.loadLibrary("ConnectivityAgent");
-	}
+    static {
+        System.loadLibrary("ConnectivityAgent");
+    }
 
-	Thread mThread;
+    Thread mThread;
 
-	public void start(final BluetoothHelper bluetooth) {
-		(mThread = new Thread(new Runnable() {
-			public void run() {
-				startCA(bluetooth);
-				Log.e(Common.TAG + ".ConnectivityAgent", "has died!");
-			}
-		})).start();
-	}
+    public void start(final BluetoothHelper bluetooth) {
+        (mThread = new Thread(new Runnable() {
+            public void run() {
+                String path = Environment.getExternalStorageDirectory().getPath() + "/.Headunit";
+                Log.v(this.getClass().getName(),"FilePath=" + path);
+                File file = new File(path);
+                if(file.exists()) {
+                    Log.v(this.getClass().getName(),"FilePath=" + path + " exists");
+                    startCA(bluetooth, false);
+                } else {
+                    Log.v(this.getClass().getName(),"FilePath=" + path + " does not exist");
+                    startCA(bluetooth, true);
+                }
+                Log.e(Common.TAG + ".ConnectivityAgent", "has died!");
+            }
+        })).start();
+    }
 
-	// code is taken from ConnectivityAgent/src/linux/main.cpp
-	private native void startCA(BluetoothHelper helper);
+    // code is taken from ConnectivityAgent/src/linux/main.cpp
+    private native void startCA(BluetoothHelper helper, boolean isActive);
 }

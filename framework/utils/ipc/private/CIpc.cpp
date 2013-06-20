@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
 
 
 #include <cassert>
@@ -35,7 +44,7 @@ namespace iviLink {
 namespace Ipc {
 
 Logger CIpc::logger = Logger::getInstance(LOG4CPLUS_TEXT("utils.ipc.CIpc"));
-
+    
 CIpc::CIpc(Address const& address, ICallbackHandler& callbackHandler) :
    mpClientHandler(&callbackHandler),
    mAddress(address),
@@ -56,7 +65,7 @@ CIpc::~CIpc()
 
 BaseError CIpc::connect()
 {
-   LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
    if (isConnected())
       return CIpcError::NoIpcError("Already connected");
 
@@ -174,16 +183,19 @@ BaseError CIpc::request(MsgID id,
       return CIpcError(CIpcError::ERROR_WRONG_THREAD, "This is the thread performing onRequest()");
    }
 
-   int mutexErr = mRequestMutex.timedLock(mRequestTimeout);
-   switch (mutexErr)
-   {
-   case 0:
-      break;
-   case ETIMEDOUT:
-      return CIpcError(CIpcError::ERROR_REQUEST_TIMEOUT, "Cannot begin request before timeout");
-   default:
-      return CIpcError(CIpcError::ERROR_OTHER, strerror(errno));
-   }
+    int mutexErr = mRequestMutex.timedLock(mRequestTimeout);
+    switch (mutexErr)
+    {
+        case 0:
+            LOG4CPLUS_INFO(logger, "ipc request timedlock success");
+            break;
+        case ETIMEDOUT:
+            LOG4CPLUS_WARN(logger, "ipc request timedlock timeout");
+            return CIpcError(CIpcError::ERROR_REQUEST_TIMEOUT, "Cannot begin request before timeout");
+        default:
+            LOG4CPLUS_WARN(logger, "ipc request timedlock other error");
+            return CIpcError(CIpcError::ERROR_OTHER, strerror(errno));
+    }
 
    tSharedSem recvSem(new CSignalSemaphore);
    if (!mRequestDataContainer.insert(id, pResponseBuffer, bufferSize, recvSem, pDirId))

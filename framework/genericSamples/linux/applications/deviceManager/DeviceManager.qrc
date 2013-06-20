@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/DeviceManager/devicemanager.qml</file>
+        <file alias="images/b-01.png">qml/DeviceManager/images/b-01.png</file>
+        <file alias="images/delete_device_btn.png">qml/DeviceManager/images/delete_device_btn.png</file>
+        <file alias="images/connect_device_btn.png">qml/DeviceManager/images/connect_device_btn.png</file>
+        <file alias="images/btn_disconnect_disabled.png">qml/DeviceManager/images/btn_disconnect_disabled.png</file>
+        <file alias="images/btn_disconnect_enabled.png">qml/DeviceManager/images/btn_disconnect_enabled.png</file>
+        <file alias="images/btn_disconnect_pressed.png">qml/DeviceManager/images/btn_disconnect_pressed.png</file>
+        <file alias="images/btn_remove_all_disabled.png">qml/DeviceManager/images/btn_remove_all_disabled.png</file>
+        <file alias="images/btn_remove_all_enabled.png">qml/DeviceManager/images/btn_remove_all_enabled.png</file>
+        <file alias="images/btn_remove_all_pressed.png">qml/DeviceManager/images/btn_remove_all_pressed.png</file>
+        <file alias="images/btn_home_enabled.png">qml/DeviceManager/images/home_enable.png</file>
+        <file alias="images/btn_home_pressed.png">qml/DeviceManager/images/home_pressed.png</file>
+    </qresource>
+</RCC>

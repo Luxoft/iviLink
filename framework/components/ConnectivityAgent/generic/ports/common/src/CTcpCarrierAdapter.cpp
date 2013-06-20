@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 #include <cerrno>
@@ -36,6 +37,10 @@
 #include "CTcpCarrierAdapter.hpp"
 #include "SocketUtils.hpp"
 #include "VersionCompatibility.hpp"
+
+#ifdef __APPLE__
+#define MSG_NOSIGNAL SO_NOSIGPIPE
+#endif
 
 using iviLink::ConnectivityAgent::HAL::CTcpCarrierAdapter;
 using namespace iviLink::ConnectivityAgent;
@@ -269,6 +274,7 @@ ConnectivityAgentError CTcpCarrierAdapter::receiveRawArray(UInt8* pArray, UInt32
 }
 
 
+
 bool CTcpCarrierAdapter::isBrokenUnprotected() const
 {
    return mIsBroken;
@@ -436,7 +442,6 @@ void CTcpCarrierAdapter::closeListenSocket(bool needLock)
 void CTcpCarrierAdapter::closeSocket(int sock)
 {
    LOG4CPLUS_TRACE(logger, __PRETTY_FUNCTION__ + convertIntegerToString(sock));
-
    int res = -1;
    do
    {
@@ -448,6 +453,8 @@ void CTcpCarrierAdapter::closeSocket(int sock)
       LOG4CPLUS_ERROR(logger, BaseError::FormErrnoDescr(errno).c_str());
    }
 }
+
+
 
 
 void CTcpCarrierAdapter::threadFunc()
@@ -819,7 +826,8 @@ void CTcpCarrierAdapter::setRemoteAddress(const char* const pAddress)
          + ", new = " + std::string(pAddress ? pAddress : "(null)"));
    if (mpRemoteAddress)
    {
-      free(mpRemoteAddress);
+       free(mpRemoteAddress);
+       mpRemoteAddress = NULL;
    }
    if (pAddress)
    {

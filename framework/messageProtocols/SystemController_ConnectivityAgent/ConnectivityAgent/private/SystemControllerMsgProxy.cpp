@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +19,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 
-#include "SystemControllerMsgProxy.hpp"
+#include "SystemControllerForCA.hpp"
 #include "buffer_helpers.hpp"
 
 using namespace iviLink::Ipc;
@@ -34,29 +35,33 @@ namespace ConnectivityAgentMsgProtocol
 {
 
 SystemControllerMsgProxy::SystemControllerMsgProxy(const string connectionName)
-        : mpIpc(NULL)
+        : mSystemCtrlIpc(NULL)
 {
-    mpIpc = new CIpc(connectionName, *this);
+    mSystemCtrlIpc = new CIpc(connectionName, *this);
 }
 
 SystemControllerMsgProxy::~SystemControllerMsgProxy()
 {
-    delete mpIpc;
+    if (mSystemCtrlIpc)
+    {
+        delete mSystemCtrlIpc;
+        mSystemCtrlIpc = NULL;
+    }
 }
 
 BaseError SystemControllerMsgProxy::connect()
 {
-    return mpIpc->connect();
+    return mSystemCtrlIpc->connect();
 }
 
 bool SystemControllerMsgProxy::isConnected() const
 {
-    return mpIpc->isConnected();
+    return mSystemCtrlIpc->isConnected();
 }
 
 BaseError SystemControllerMsgProxy::requestConnectionEstablished(UInt8 gender)
 {
-    if (!mpIpc)
+    if (!mSystemCtrlIpc)
         return BaseError(1, getName(), BaseError::IVILINK_FATAL, "no ipc");
 
     Message* req = reinterpret_cast<Message*>(mWriteBuffer);
@@ -74,12 +79,12 @@ BaseError SystemControllerMsgProxy::requestConnectionEstablished(UInt8 gender)
     UInt32 const reqSize = sizeof(Message) + req->header.size;
     UInt32 respSize = 0;
 
-    return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
+    return mSystemCtrlIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
 }
 
 BaseError SystemControllerMsgProxy::requestConnectionLost()
 {
-    if (!mpIpc)
+    if (!mSystemCtrlIpc)
         return BaseError(1, getName(), BaseError::IVILINK_FATAL, "no ipc");
 
     Message* req = reinterpret_cast<Message*>(mWriteBuffer);
@@ -91,7 +96,7 @@ BaseError SystemControllerMsgProxy::requestConnectionLost()
     UInt32 const reqSize = sizeof(Message) + req->header.size;
     UInt32 respSize = 0;
 
-    return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
+    return mSystemCtrlIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
 }
 
 void SystemControllerMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,

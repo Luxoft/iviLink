@@ -21,6 +21,7 @@ $(MAKE) -C log4cplus $@
 $(MAKE) -C cryptopp $@
 $(MAKE) -C xml $@
 $(MAKE) -C json $@
+
 endef
 ###############################################################################
 # Rules
@@ -34,11 +35,13 @@ release:
 3rdp_clean:
 	$(SUBFOLDERS)
 	-rm -Rf $(3RD_PARTY_RES_DIR)
-	
+	make -C qtsingleapplication clean
 install:
 	mkdir -p $(IVILINK_LIB_DIR)
 	cp -u "$(3RD_PARTY_RES_DIR)lib/liblog4cplus-1.0.so.4" "$(IVILINK_LIB_DIR)"
 	cp -u "$(3RD_PARTY_RES_DIR)lib/liblog4cplus.so" "$(IVILINK_LIB_DIR)"
+	mkdir -p ~/.fonts
+	cp -u ./TitulaFont.ttf ~/.fonts
 
 .PHONY: debug release clean3rdp_clean
 

@@ -1,8 +1,9 @@
-# iviLINK SDK, version 1.2
+# 
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
-# Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+# Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 # 
+# 
+# Autodetection of config.mk and includes
 
 ifndef CONFIG_MK_EXPORTED
 ifdef AXIS_CONFIG_MK
@@ -107,13 +110,8 @@ install:
 
 	cp -u "$(FW_DIR)log4cplus.properties" "$(IVILINK_BIN_DIR)"
 
-	cp -u "$(FW_DIR)genericSamples/linux/database/BasicSampleProfile_API.xml" "$(IVILINK_PROFILE_API_REPO_DIR)"
-	cp -u "$(FW_DIR)genericSamples/linux/database/AuthenticationProfile_API.xml" "$(IVILINK_PROFILE_API_REPO_DIR)"
 	cp -u "$(FW_DIR)genericSamples/linux/database/ProfileApiDatabase.xml" "$(IVILINK_PROFILE_API_REPO_DIR)"
-	
 	cp -u "$(FW_DIR)genericSamples/linux/database/ProfileDatabase.xml" "$(IVILINK_PROFILE_REPO_DIR)"
-	cp -u "$(FW_DIR)genericSamples/linux/database/AuthenticationProfile_Impl.xml" "$(IVILINK_PROFILE_REPO_DIR)"
-	cp -u "$(FW_DIR)genericSamples/linux/database/BasicSampleProfile_Impl.xml" "$(IVILINK_PROFILE_REPO_DIR)"
 	
 	cp -u "$(FW_DIR)genericSamples/linux/database/HeadUnitServices.xml" "$(IVILINK_SERVICE_REPO_DIR)"
 	cp -u "$(FW_DIR)genericSamples/linux/database/BasicSampleService.xml" "$(IVILINK_SERVICE_REPO_DIR)"
@@ -126,7 +124,7 @@ install:
 	
 	cp -u "$(RESULT_DIR)/framework/genericSamples/linux/applications/basicSample/BasicSample" "$(IVILINK_APP_DIR)"
 	cp -u "$(RESULT_DIR)/framework/genericSamples/linux/applications/authentication/AuthenticationApplication" "$(IVILINK_BIN_DIR)"
-	cp -ur "$(RESULT_DIR)/framework/genericSamples/linux/applications/authentication/obj/qml" "$(IVILINK_BIN_DIR)"
+	cp -u "$(RESULT_DIR)/framework/genericSamples/linux/applications/deviceManager/DeviceManager" "$(IVILINK_APP_DIR)"
 	cp -u "$(RESULT_DIR)/framework/genericSamples/linux/applications/IVILinkProgressBar/IVILinkProgressBar" "$(IVILINK_BIN_DIR)"
 
 unittest :
@@ -137,6 +135,9 @@ rununittest : unittest
 	
 comptest :
 	$(TEST_SUBFOLDERS)
+	
+	cp -u "$(FW_DIR)log4cplus.properties" "$(IVILINK_APP_DIR)"
+	cp -u "$(FW_DIR)tests/component/ProfileLibrary/ChannelTest/ProfileTestChannelTest.properties" "$(IVILINK_APP_DIR)"
 	
 runcomptest :
 	$(TEST_SUBFOLDERS)

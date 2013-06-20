@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,9 +19,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
-
+ 
 /**
  * \file ProfileProxy.hpp
  * This header contains declaration of the base class
@@ -50,11 +52,11 @@ class ProfileProxy;
 class CProfileGetter
 {
     template <typename ProfileApi> friend class ProfileProxy;
-    static BaseProfileApi * getBaseProfile(const Service::Uid & service,
+    static BaseProfileApi * getBaseProfile(const iviLink::Service::Uid & service,
             const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo
             = iviLink::Android::AppInfo());
 
-    static void releaseProfile(const Service::Uid & service,
+    static void releaseProfile(const iviLink::Service::Uid & service,
         const Profile::ApiUid & api, iviLink::Android::AppInfo appInfo
         = iviLink::Android::AppInfo());
 };
@@ -72,7 +74,7 @@ template <typename ProfileApi>
 class ProfileProxy
 {
 public:
-    ProfileProxy (const Service::Uid & service, const Profile::ApiUid & api,
+    ProfileProxy (const iviLink::Service::Uid & service, const iviLink::Profile::ApiUid & api,
             iviLink::Android::AppInfo appInfo = iviLink::Android::AppInfo())
         : mService(service)
         , mApi(api)
@@ -97,8 +99,8 @@ protected:
 
 private:
 
-    Service::Uid mService;
-    Profile::ApiUid mApi;
+    iviLink::Service::Uid mService;
+    iviLink::Profile::ApiUid mApi;
 
     iviLink::Android::AppInfo mAppInfo;
 };

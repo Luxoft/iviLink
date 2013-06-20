@@ -1,5 +1,0 @@
-<service name= "AuthenticationService">
-    <pair name= "AuthenticationService"/>
-    <profile api="AuthenticationProfile_PAPI_UID">
-     </profile>
-</service>

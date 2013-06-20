@@ -1,24 +1,3 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
 #include <limits>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,14 +5,13 @@
 #include <sys/types.h>   
 #include <sys/socket.h>
 #include <errno.h>
+#include <cassert>
 
 #include "TcpMobileConnectionFinder.hpp"
 #include "CTcpCarrierAdapter.hpp"
 
-
 #define MAX_SOCK_ADDR 128
 #define SERVER_CONNECT_TRY_COUNT 10
-
 
 using namespace iviLink::ConnectivityAgent::HAL;
 
@@ -41,26 +19,51 @@ Logger TcpMobileConnectionFinder::mLogger = Logger::getInstance("ConnectivityAge
 
 TcpMobileConnectionFinder::TcpMobileConnectionFinder(IFoundConnectionHandler& handler, EGenderType gender)
 :
+    mAutoconnectionAllowed(true),
     CConnectionFinder(handler, gender)
 {
     LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
-    srandom(time(NULL));
+    srandom(clock());
     mBroadcastSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     memcpy(mMessage.handshake, BRD_MESSAGE_TEXT, sizeof(mMessage.handshake));
     
     initSockaddrIn(mBroadcastAddr, INADDR_BROADCAST);
+#ifdef __APPLE__
+    mBroadcastAddr.sin_len = sizeof(mBroadcastAddr);
+    int receiveBufSize = 1024*1024;
+    if (setsockopt(mBroadcastSock, SOL_SOCKET, SO_RCVBUF, &receiveBufSize, sizeof(receiveBufSize)) == -1)
+    {
+        LOG4CPLUS_ERROR(mLogger, "Could not tweak receive buffer size!");
+        assert(false);
+    }
+#endif
     
     int optval = 1;
     setsockopt(mBroadcastSock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
     setsockopt(mBroadcastSock, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval));
-    struct timeval tv;
+    timeval tv;
     tv.tv_sec = 1;
     tv.tv_usec = 0;
     setsockopt(mBroadcastSock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
     
     sockaddr_in servaddr;
     initSockaddrIn(servaddr, INADDR_ANY);
-    bind(mBroadcastSock, reinterpret_cast<sockaddr*>(&servaddr), sizeof(servaddr));
+    if (::bind(mBroadcastSock, reinterpret_cast<sockaddr*>(&servaddr), sizeof(servaddr)) == -1)
+    {
+        LOG4CPLUS_FATAL(mLogger, "Could not bind socket!");
+        assert(false);
+    }
+}
+
+TcpMobileConnectionFinder::~TcpMobileConnectionFinder()
+{
+    LOG4CPLUS_TRACE_METHOD(mLogger, __PRETTY_FUNCTION__);
+    ::close(mBroadcastSock);
+}
+
+void TcpMobileConnectionFinder::setAutoConnectionAllowed(bool allowed)
+{
+    mAutoconnectionAllowed = allowed;
 }
 
 void TcpMobileConnectionFinder::initSockaddrIn(sockaddr_in& addr, unsigned long s_addr)
@@ -78,8 +81,10 @@ void TcpMobileConnectionFinder::performSearch()
     mRoundRandNumber = random() % std::numeric_limits<UInt8>::max();
     mMessage.random = mRoundRandNumber;
     LOG4CPLUS_INFO(mLogger, "Current turn random number: " + convertIntegerToString(mRoundRandNumber));
-    sendto(mBroadcastSock, &mMessage, sizeof(mMessage), 0, (struct sockaddr *)&mBroadcastAddr, sizeof(mBroadcastAddr));
-
+    if(mAutoconnectionAllowed)
+    {
+        sendto(mBroadcastSock, &mMessage, sizeof(mMessage), 0, (struct sockaddr *)&mBroadcastAddr, sizeof(mBroadcastAddr));
+    }
     char buffer[sizeof(mMessage)];
     tBrdMessage const* const receivedMessage = reinterpret_cast<tBrdMessage const* const>(buffer);
     sockaddr_in cli_addr;
@@ -100,6 +105,10 @@ void TcpMobileConnectionFinder::performSearch()
             {
                 LOG4CPLUS_WARN(mLogger, "Got incorrect message");
                 return;
+            }
+            if(!mAutoconnectionAllowed)
+            {
+                sendto(mBroadcastSock, &mMessage, sizeof(mMessage), 0, (struct sockaddr *)&mBroadcastAddr, sizeof(mBroadcastAddr));
             }
             sockaddr_in const* sin = reinterpret_cast<sockaddr_in const*>(p_cli_addr_base);
             const size_t addressLength = MAX_SOCK_ADDR;

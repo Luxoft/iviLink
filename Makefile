@@ -1,8 +1,9 @@
-# iviLINK SDK, version 1.2
+# 
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
-# Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+# Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+# 
 # 
 include config.mk
 
@@ -31,23 +33,19 @@ debug:
 	$(MAKE) -C 3rd_party install
 	$(MAKE) -C framework $@
 	$(MAKE) -C framework install
-	$(MAKE) -C samples $@
 	
 release:
 	$(MAKE) -C 3rd_party $@
 	$(MAKE) -C 3rd_party install
 	$(MAKE) -C framework $@
 	$(MAKE) -C framework install
-	$(MAKE) -C samples $@
 
 install:
 	$(MAKE) -C 3rd_party $@
 	$(MAKE) -C framework $@
-	$(MAKE) -C samples $@
 	
 clean:
 	$(MAKE) -C framework $@
-	$(MAKE) -C samples $@
 	
 3rdp_clean:
 	$(MAKE) -C 3rd_party $@
@@ -72,18 +70,6 @@ sdk_install:
 	
 sdk_clean:
 	$(MAKE) -C framework clean
-
-samples:
-	$(MAKE) -C samples debug
-
-samples_debug:
-	$(MAKE) -C samples debug
-
-samples_release:
-	$(MAKE) -C samples release
-
-samples_install:
-	$(MAKE) -C samples install
 
 unittest:
 	$(MAKE) -C framework $@

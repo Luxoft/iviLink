@@ -1,8 +1,6 @@
 #*** 3RD_PARTY PATHS ***
 3rd_party
 json
-antlersoft
-androidVNC
 
 #*** 3RD_PARTY COPYRIGHTS ***
 Arseny Capoulkine

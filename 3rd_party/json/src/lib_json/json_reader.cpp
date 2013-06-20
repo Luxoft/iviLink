@@ -1,5 +1,10 @@
+#ifndef __APPLE__
 #include <json/reader.h>
 #include <json/value.h>
+#else
+#include "reader.h"
+#include "value.h"
+#endif
 #include <utility>
 #include <cstdio>
 #include <cassert>

@@ -5,8 +5,9 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/BasicSampleAPI"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AndroidCommonLib"/>
 	<classpathentry kind="src" path="/NonNativeSupport"/>
+	<classpathentry kind="src" path="/Utils"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="/Utils"/>
+
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

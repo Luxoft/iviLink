@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #ifndef CTCPAUTOCONNECTIONFINDER_HPP_
 #define CTCPAUTOCONNECTIONFINDER_HPP_
@@ -82,6 +83,8 @@ namespace iviLink
              * Destructor
              */
             virtual ~CTcpAutoConnectionFinder();
+
+            virtual void setAutoConnectionAllowed(bool allowed);
 
          protected:
             // Methods section
@@ -176,6 +179,9 @@ namespace iviLink
             /// This message buffer is used for all sent message. Text is initialized once
             /// and only random number is changed each turn.
             tBrdMessage mBrdMsg;
+
+            /// This field is used for controlling automatic device connection
+            bool mAutoconnectionAllowed;
          };
 
       }

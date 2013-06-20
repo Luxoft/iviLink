@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.26
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2013, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
+/**
+ * @file                Communicator.cpp
+ * @ingroup             Application Library Test Utils
+ * @author              Mikhail Prosuntsov <MProsuntsov@luxoft.com>
+ * @date                10.02.2013
+ */
 
 #include <iostream>
 #include <string>
@@ -106,7 +114,7 @@ void Communicator::sendMessage(InterAppMessage message)
     //put message into buffer to be sent
     strncpy((buffer + 3), ss.str().c_str(), ss.str().length());
 
-    LOG4CPLUS_INFO(mLogger, "Buffer: " + string(buffer));
+    LOG4CPLUS_INFO(mLogger, "Buffer: " + std::string(buffer));
 
     //write to the socket
     sentLength = write(mRemoteCommunicatorSocket, buffer, ss.str().length() + 3);
@@ -227,12 +235,12 @@ void Communicator::listen()
                     break;
                 }
             }
-            LOG4CPLUS_INFO(mLogger, "Here is the message: " + string(buffer));
+            LOG4CPLUS_INFO(mLogger, "Here is the message: " + std::string(buffer));
 
             //extract message
 
             int msgValue;
-            istringstream(buffer) >> msgValue;
+            std::istringstream(buffer) >> msgValue;
 
             LOG4CPLUS_INFO(mLogger, "Here is the message: " + convertIntegerToString(msgValue));
 

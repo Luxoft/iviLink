@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
+
+
 
 
 #include <cassert>
@@ -609,7 +620,7 @@ namespace iviLink
          std::map<int, CApplication>::iterator endIter = mApplications.end();
          for (; appsIterator != endIter;) 
          {
-            if (appsIterator->second.launchInfo().find(launchInfo) != string::npos) 
+            if (appsIterator->second.launchInfo().find(launchInfo) != std::string::npos) 
             {
                LOG4CPLUS_INFO(msLogger, "Found possible match: " + appsIterator->second.launchInfo());
                if (!mLaunchInfoProcessor->isLaunchInfoValid(appsIterator->second.launchInfo())) 
@@ -622,7 +633,9 @@ namespace iviLink
                {
                   ++appsIterator;
                }
-            } else {
+            } 
+            else 
+            {
                ++appsIterator;
             }
          } 

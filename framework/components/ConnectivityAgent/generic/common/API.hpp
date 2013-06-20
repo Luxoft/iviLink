@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
 
 
 #ifndef CONNECTIVITY_AGENT_API_HPP
@@ -48,6 +57,11 @@ enum tOpCode
    E_RECEIVE_DATA_NTF         = 9,     //> Data received  notification
    E_CONNECTION_LOST_NTF      = 10,    //> Connection Lost notification
    E_DEALLOCATE_CHANNEL_NTF   = 11,    //> Channel deallocation notification
+
+   //
+   E_CONNECT_DEVICE           = 12,    //> Request connection to device
+   E_DISCONNECT_DEVICE        = 13,    //> Request disconnect from device
+   E_GET_DEVICE_LIST          = 14,    //> Request list of discovered devices
 
    //
    E_GET_CONNECTION_ADDR      = 100,
@@ -121,6 +135,7 @@ iviLink::ConnectivityAgent::ConnectivityAgentError getFreeSize(UInt32 channel_id
 
 
 void deinitConnectivityAgentProxy();
+
 
 
 #ifdef __cplusplus

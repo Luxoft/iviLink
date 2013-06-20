@@ -1,29 +1,8 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
 package com.luxoft.ivilink.sdk.android.nonnative;
 
 import android.util.Log;
 
-import com.luxoft.ivilink.sdk.android.lib.utils.log.Logging;
+import com.luxoft.ivilink.utils.log.Logging;
 
 /**
  * Contains methods to obtain and to release a profile implementation instance
@@ -46,7 +25,7 @@ public final class ProfileGetter {
     public static Object getProfile(String serviceName, String profileAPIName) {
         Log.v(ProfileGetter.class.getName(),
               Logging.getCurrentMethodName(serviceName, profileAPIName));
-        if (IviLinkApplication.isServiceManagerCreated()) {
+        if (IviLinkApplication.getInstance() != null && IviLinkApplication.getInstance().isServiceManagerCreated()) {
             return getProfileNative(serviceName, profileAPIName);
         } else {
             Log.w(ProfileGetter.class.getName(), "Service Manager has not been created");
@@ -67,7 +46,7 @@ public final class ProfileGetter {
     public static void releaseProfile(String serviceName, String profileAPIName) {
         Log.v(ProfileGetter.class.getName(),
               Logging.getCurrentMethodName(serviceName, profileAPIName));
-        if (IviLinkApplication.isServiceManagerCreated()) {
+        if (IviLinkApplication.getInstance() != null && IviLinkApplication.getInstance().isServiceManagerCreated()) {
             releaseProfileNative(serviceName, profileAPIName);
         } else {
             Log.w(ProfileGetter.class.getName(), "Service Manager has not been created");

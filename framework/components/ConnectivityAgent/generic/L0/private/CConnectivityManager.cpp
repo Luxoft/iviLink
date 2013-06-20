@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <map>
 
@@ -46,7 +47,6 @@ CConnectivityManager::CConnectivityManager(iviLink::ConnectivityAgent::HAL::CCar
 {
    CChannelAllocator *pChannelAllocator = CChannelAllocator::getInstance();
    pChannelAllocator->setL0Interface(&mL0Interface);
-   pChannelAllocator->OnConnected();
 }
 
 CConnectivityManager::~CConnectivityManager()
@@ -56,7 +56,10 @@ CConnectivityManager::~CConnectivityManager()
       delete mpCarrierAdapter;
    }
    mpCarrierAdapter = NULL;
+#ifndef __APPLE__
+    // TODO investigate if this call is needed on other platforms
    CChannelAllocator::getInstance()->OnDisconnected();
+#endif
 }
 
 void CConnectivityManager::replaceCarrier(iviLink::ConnectivityAgent::HAL::CCarrierAdapter* pCarrierAdaptor)
@@ -89,4 +92,9 @@ L0Interface * CConnectivityManager::getL0Interface ()
 void CConnectivityManager::OnDisconnected()
 {
    CChannelAllocator::getInstance()->OnDisconnected();
+}
+
+void CConnectivityManager::onConnected()
+{
+    CChannelAllocator::getInstance()->OnConnected();
 }

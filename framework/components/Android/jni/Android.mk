@@ -87,7 +87,7 @@ LOCAL_MODULE := ChannelSupervisor
 LOCAL_STATIC_LIBRARIES := UdpSocket iviLinkApplicationLibrary
 LOCAL_SRC_FILES := src/com_luxoft_ivilink_sdk_CChannelSupervisorWrapper.cpp
 LOCAL_SRC_FILES += $(wildcard $(MSG_PROTO_PREFIX)/SystemController_ChannelSupervisor/ChannelSupervisor/private/*.cpp)
-LOCAL_SRC_FILES += $(wildcard $(FW_PREFIX)/components/ChannelSupervisor/NegotiatorProcess/private/*.cpp)
+LOCAL_SRC_FILES += $(wildcard $(FW_PREFIX)/components/ChannelSupervisor/NegotiatorProcess/src/*.cpp)
 LOCAL_SRC_FILES += $(wildcard $(FW_PREFIX)/components/ChannelSupervisor/Map/private/*.cpp)
 LOCAL_SRC_FILES += $(wildcard $(FW_PREFIX)/components/ChannelSupervisor/Watchdog/src/*.cpp)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES:$(LOCAL_PATH)/%=%)

@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +19,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
 
 
 #ifndef SIGNALSEMAPHORE_HPP
 #define SIGNALSEMAPHORE_HPP
+
+#ifndef __APPLE__
 
 #include <pthread.h>
 #include <semaphore.h>
@@ -35,28 +44,52 @@ private:
    static Logger logger;
 
 public:
-	 explicit CSignalSemaphore ( int count = 0 );
-	 virtual ~CSignalSemaphore (void);
-	 void wait (void);
-	 int tryWait (void);
-	 void signal (void);
-	 void clear(void);
-	 virtual void init ( int count );
+    explicit CSignalSemaphore ( int count = 0 );
+    virtual ~CSignalSemaphore (void);
+    void wait (void);
+    int tryWait (void);
+    void signal (void);
+    void clear(void);
+    virtual void init ( int count );
 
-	 /**
-	  *
-	  * @param miliSec
-	  * @return see sem_timedwait()
-	  */
+    /**
+    *
+    * @param miliSec
+    * @return see sem_timedwait()
+    */
     int waitTimeout(const time_t miliSec);
 
 private:
-	CSignalSemaphore(CSignalSemaphore &);
-   CSignalSemaphore& operator= (CSignalSemaphore &);
+    CSignalSemaphore(CSignalSemaphore &);
+    CSignalSemaphore& operator= (CSignalSemaphore &);
 
 protected:
-   sem_t mSemaphore;
+    sem_t mSemaphore;
 };
 
+#else
+
+#include "Logger.hpp"
+#include <dispatch/dispatch.h>
+
+class SignalSemaphore
+{
+public:
+    explicit SignalSemaphore (int count = 0);
+    virtual ~SignalSemaphore (void);
+    void wait (void);
+    int tryWait (void);
+    void signal (void);
+    int waitTimeout(const time_t miliSec);
+private:
+	SignalSemaphore(SignalSemaphore &);
+    SignalSemaphore& operator= (SignalSemaphore &);
+private:
+    dispatch_semaphore_t mSemaphore;
+};
+
+typedef SignalSemaphore CSignalSemaphore;
+#endif // __APPLE__
 #endif
+
 

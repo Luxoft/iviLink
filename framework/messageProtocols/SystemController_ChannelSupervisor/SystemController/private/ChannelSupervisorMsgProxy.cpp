@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #include <cassert>
 
@@ -38,6 +39,8 @@ ChannelSupervisorMsgProxy::ChannelSupervisorMsgProxy(const string connectionName
     LOG4CPLUS_TRACE(logger, "ChannelSupervisorMsgProxy(" + connectionName + ")");
 
     mpIpc = new CIpc(connectionName, *this);
+    
+    mNegotiatorDirId = -1;
 }
 
 ChannelSupervisorMsgProxy::~ChannelSupervisorMsgProxy()
@@ -62,20 +65,21 @@ bool ChannelSupervisorMsgProxy::isConnected() const
 BaseError ChannelSupervisorMsgProxy::requestShutDown()
 {
     LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
-
-    if (!mpIpc)
-        return BaseError(1, getName(), BaseError::IVILINK_FATAL, "no ipc");
-
-    Message* req = reinterpret_cast<Message*>(mWriteBuffer);
-    req->header.type = SC_CS_SHUTDOWN;
-    req->header.size = 0;
-
+    UInt8 message[1];
+    message[0] = (UInt8)SC_CS_SHUTDOWN;
     iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
+    return mpIpc->asyncRequest(id, message, sizeof(message), &mNegotiatorDirId);
+}
 
-    UInt32 const reqSize = sizeof(Message) + req->header.size;
-    UInt32 respSize = 0;
-
-    return mpIpc->request(id, mWriteBuffer, reqSize, mReadBuffer, respSize);
+BaseError ChannelSupervisorMsgProxy::sendRole(bool isMaster)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    LOG4CPLUS_INFO(logger, "negotiatorrole: " + convertIntegerToString(isMaster));
+    UInt8 message[2];
+    message[0] = (UInt8)SC_CS_ROLE;
+    message[1] = (UInt8)isMaster;
+    iviLink::Ipc::MsgID id = mMsgIdGen.getNext();
+    return mpIpc->asyncRequest(id, message, sizeof(message), &mNegotiatorDirId);
 }
 
 void ChannelSupervisorMsgProxy::OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload,
@@ -109,10 +113,10 @@ void ChannelSupervisorMsgProxy::OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 con
 {
 }
 
-void ChannelSupervisorMsgProxy::OnConnection(iviLink::Ipc::DirectionID)
+void ChannelSupervisorMsgProxy::OnConnection(iviLink::Ipc::DirectionID dirid)
 {
     LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
-
+    mNegotiatorDirId = dirid;
     onChannelSupervisorAvailable();
 }
 

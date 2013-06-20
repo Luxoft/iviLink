@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
+
+
 
 
 #ifndef PMAL_ICORE_HPP_
@@ -102,17 +113,6 @@ public:
     * @retval CPMALError::ERROR_OTHER in case of IPC errors
     */
    virtual CPMALError enableAll() = 0;
-
-   /**
-    * Function is used to get information about Profile
-    * @param uid - Profile UID or UID of Profile Instance
-    * @param[out] profInfo is ProfileInfo structure with information about Profile
-    * @retval CPMALError::isNoError() if success
-    * @retval CPMALError::ERROR_MANIFEST_PARSING if it's problems with XML parsing
-    * @retval CPMALError::ERROR_UNKNOWN_PROFILE_UID in case of unknown Profile
-    * @retval CPMALError::ERROR_OTHER in case of IPC and other errors
-    */
-   virtual CPMALError getProfileInfo(iviLink::Profile::Uid uid, ProfileInfo & profInfo) = 0;
 
 protected:
 

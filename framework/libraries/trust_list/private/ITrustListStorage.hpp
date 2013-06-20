@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
 
 
 #include <vector>
@@ -37,18 +43,25 @@ public:
 	virtual CTrustListError disconnect() = 0;
 
 	virtual bool isReady() const = 0;
+	
+    typedef std::vector<iviLink::BaseUid> tUidVector;
+    typedef std::pair<iviLink::BaseUid,std::string> tNameUid;
+	typedef std::vector<tNameUid> tNameUidVector;
 
-	typedef std::vector<iviLink::BaseUid> tUidVector;
-	virtual CTrustListError readAll(tUidVector& uids) = 0;
-
+	virtual CTrustListError readAll(tNameUidVector& uids) = 0;
 	virtual CTrustListError insert(BaseUid const& uid) = 0;
+    virtual CTrustListError updateName(BaseUid const& uid, std::string const& name) = 0;
 	virtual CTrustListError remove(BaseUid const& uid) = 0;
+    virtual CTrustListError setLastConnection(BaseUid const& uid, time_t timestamp) = 0;
+    virtual CTrustListError getLastConnection(BaseUid& uid, time_t &timestamp) = 0;
 
 	virtual CTrustListError clear() = 0;
 
 	virtual CTrustListError getOurUid(BaseUid& uid) = 0;
+	virtual CTrustListError getOurName(std::string& name) = 0;
 	virtual CTrustListError setOurUid(BaseUid const& uid) = 0;
-
+	virtual CTrustListError setOurName(std::string const& name) = 0;
+	
 	virtual ~ITrustListStorage() {}
 };
 

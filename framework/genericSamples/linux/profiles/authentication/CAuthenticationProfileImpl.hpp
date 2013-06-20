@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
 
 
 #ifndef CAUTHENTICATION_PROFILE_IMPL_HPP
@@ -48,7 +55,7 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    {
       SEND_ENCRYPTED_PIN = 1,
       SEND_PUBLIC_KEY,
-      SEND_UID,
+      SEND_UID_AND_NAME,
       YOUR_UID_IS_OK,
       YOUR_UID_IS_NOK,
       READY_TO_EXIT
@@ -77,7 +84,7 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    void sendEncryptedString(const std::string& , const PROCEDURES_IDS);
    void sendProcedureId(const PROCEDURES_IDS);
    void sendPublicKey(const RSA::PublicKey publicKey);
-   void sendTrustListUID(const iviLink::BaseUid uid);
+   void sendTrustListUidAndName(const iviLink::BaseUid uid, const std::string name);
    void sendYourUIDIsKnow();
    void sendYourUIDIsUnknown();
    void validateUIDs();
@@ -91,10 +98,13 @@ class CAuthenticationProfileImpl : public IAuthenticationProfile_API
    CTrustList * mpTrustList;
 
    iviLink::BaseUid mRemoteUID;
+   std::string mRemoteName;
    bool remoteUIDIsChecked;
    bool remoteUIDIsOK;
    bool localUIDIsChecked;
    bool localUIDIsOK;
+    
+    bool mAuthDecided;
 };
 
 IVILINK_PROFILE_END(CAuthenticationProfileImpl)

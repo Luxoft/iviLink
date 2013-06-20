@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:weightSum="10" >
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:choiceMode="singleChoice"
+        android:footerDividersEnabled="false" />
+
+    <LinearLayout
+        android:id="@+id/Buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/disconnect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/btn_disconnect"
+            android:enabled="false"
+            android:text="Disconnect"
+            android:textColor="#b3b3b3"
+            android:textSize="20px" >
+        </Button>
+
+        <Button
+            android:id="@+id/rmAll"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/btn_remove_all"
+            android:enabled="false"
+            android:text="Remove All"
+            android:textColor="#b3b3b3"
+            android:textSize="20px" >
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

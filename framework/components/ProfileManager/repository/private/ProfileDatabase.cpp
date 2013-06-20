@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,13 +19,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                ProfileDatabase.cpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Implements ProfileDatabase class
+ */
 
 
 #include <cassert>
 #include <cstdio>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 #include "ProfileDatabase.hpp"
 #include "pugixml.hpp"
@@ -38,8 +51,8 @@ Logger ProfileDatabase::msLogger = Logger::getInstance(LOG4CPLUS_TEXT("profileMa
 
 ProfileDatabase::ProfileDatabase(const std::string & rootFolderPath, const std::string & relativeFolderPath, const std::string & dbName)
     : mFolderPath(rootFolderPath + relativeFolderPath)
-    , mRootFolderPath(rootFolderPath)
     , mDbName(dbName)
+    , mRootFolderPath(rootFolderPath)
     , mDbState(EDB_NORMAL_OK)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
@@ -83,7 +96,7 @@ void ProfileDatabase::loadDatabase()
     case pugi::status_bad_attribute:       // Parsing error occurred while parsing element attribute
     case pugi::status_bad_end_element:     // Parsing error occurred while parsing end element tag
     case pugi::status_end_element_mismatch: // There was a mismatch of start-end tags (closing tag had incorrect name, some tag was not closed or there was an excessive closing tag)
-        LOG4CPLUS_ERROR(msLogger, "Profile API Database parsing error");
+        LOG4CPLUS_ERROR(msLogger, "Profile Database parsing error");
         mDbState = EDB_PARSING_ERROR;
         break;
     default:
@@ -106,246 +119,62 @@ bool ProfileDatabase::loadParsedDatabase(const pugi::xml_document &doc)
     for (pugi::xml_node_iterator it = profs.begin(); it != profs.end(); ++it)
     {
         LOG4CPLUS_INFO(msLogger, "Profile adding");
-        CProfileInfo info(mFolderPath + std::string(it->child_value("manifest-path")));
-        if (info.failed())
+        Profile::Uid profileUid = Profile::Uid(it->child_value("uid"));
+        Profile::ApiUid apiUid = Profile::ApiUid(it->child_value("api-uid"));
+        std::string name = it->child_value("name");
+        Profile::Uid complement = Profile::Uid(it->child_value("complement"));
+        if ("" == profileUid.value() || "" == apiUid.value() || "" == complement.value() || "" == name)
         {
-            LOG4CPLUS_WARN(msLogger, "Failed loading of XML Manifest");
+            LOG4CPLUS_WARN(msLogger, "Profile adding error\nProfile UID: " + profileUid.value() +
+                    ", API UID: " + apiUid.value() + ", Complement UID: " + complement.value() +
+                    ", name: " + name);
             continue;
         }
-        ProfileInfoMap::iterator mit = mProfiles.find(info.uid());
+        ProfileInfo profile(profileUid, apiUid, complement, name);
+
+        pugi::xml_node libs = it->child("libs");
+        for (pugi::xml_node_iterator sit = libs.begin(); sit != libs.end(); ++sit)
+        {
+            std::string pathToLib = mRootFolderPath + (std::string)sit->attribute("path").value();
+            UInt32 version = atoi(sit->attribute("version").value());
+            std::string platform = sit->attribute("platform").value();
+            profile.addLib(ProfileLibInfo(version, pathToLib, platform));
+        }
+
+        ProfileInfoMap::iterator mit = mProfiles.find(profile.uid());
         if (mProfiles.end() == mit)
         {
-            mProfiles[info.uid()] = info;
-            pugi::xml_node libs = it->child("libs");
-            for (pugi::xml_node_iterator sit = libs.begin(); sit != libs.end(); ++sit)
-            {
-                std::string pathToLib = mRootFolderPath + (std::string)sit->attribute("path").value();
-                mProfiles[info.uid()].addLib(sit->attribute("platform").value(), pathToLib);
-            }
-        }
-        else if ( 0 != it->child_value("uid"))
-        {
-            LOG4CPLUS_WARN(msLogger, "Error: UID repetition: " + std::string(it->child_value("uid")));
+            mProfiles.insert(std::make_pair(profile.uid(), profile));
+            LOG4CPLUS_INFO(msLogger, "Added profile into profiles map, profile UID: " + profile.uid().value());
         }
         else
         {
-            LOG4CPLUS_WARN(msLogger, "Error: UID repetition");
+            LOG4CPLUS_WARN(msLogger, "Error: UID repetition: " + profile.uid().value());
         }
     }
     return true;
 }
 
-bool ProfileDatabase::saveChanges()
+int ProfileDatabase::getRelevance(const Profile::Uid & profile, const UInt32 version, const std::map<std::string, std::string> & profileArguments) const
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    pugi::xml_document doc;
-    pugi::xml_node profiles = doc.append_child("profiles");
-    for (ProfileInfoMap::const_iterator it = mProfiles.begin(); it != mProfiles.end(); ++it)
+    ProfileInfoMap::const_iterator it = mProfiles.find(profile);
+    if (mProfiles.end() == it)
     {
-        pugi::xml_node profile = profiles.append_child("profile");
-        pugi::xml_node maniPath = profile.append_child("manifest-path");
-        maniPath.append_child(pugi::node_pcdata).set_value(it->second.xmlPath().c_str());
-        pugi::xml_node libsNode = profile.append_child("libs");
-        for (std::map<std::string,std::string>::const_iterator sit = it->second.libs().begin(); sit != it->second.libs().end(); ++sit)
+        return 0;
+    }
+    const std::vector<ProfileLibInfo> &libs = (*it).second.libs();
+
+    int i=1;
+    for (std::vector<ProfileLibInfo>::const_iterator it = libs.begin();
+            libs.end() != it; ++it, ++i)
+    {
+        if (version == it->version())
         {
-            pugi::xml_node libNode = libsNode.append_child("lib");
-            libNode.append_attribute("platform").set_value(sit->first.c_str());
-            libNode.append_attribute("path").set_value(sit->second.c_str());
+            return (100 * i) / libs.size(); // relevance works correctly if profile version <= 100
         }
     }
-    std::string path = mFolderPath + mDbName;
-    bool result = doc.save_file(path.c_str());
-    if (result)
-    {
-        mDbState = EDB_SAVE_ERROR;
-    }
-    printDB();
-    return result;
-}
-
-BaseError ProfileDatabase::addProfile(const std::string xmlManifestPath)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    CProfileInfo info(xmlManifestPath);
-    ProfileInfoMap::iterator mit = mProfiles.find(info.uid());
-    if (mProfiles.end() != mit)
-    {
-        LOG4CPLUS_WARN(msLogger, "Error: UID repetition");
-        return RepositoryError(RepositoryError::ERROR_UID_ALREADY_EXISTS);
-    }
-    else
-    {
-        mProfiles[info.uid()] = info;
-    }
-    if (saveChanges())
-    {
-        return RepositoryError::NoRepositoryError();
-    }
-    else
-    {
-        return RepositoryError(RepositoryError::ERROR_DATABASE_WRITE);
-    }
-}
-
-BaseError ProfileDatabase::removeProfile(Profile::Uid profileUid)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    ProfileInfoMap::iterator mit = mProfiles.find(profileUid);
-
-    if (mProfiles.end() == mit)
-    {
-        return RepositoryError(RepositoryError::ERROR_UNKNOWN_UID);
-    }
-    else
-    {
-        for (std::map<std::string,std::string>::const_iterator it = mit->second.libs().begin(); it != mit->second.libs().end(); ++it)
-        {
-            mit->second.removeLib(it->first);
-        }
-        mProfiles.erase(mit);
-    }
-
-    if (saveChanges())
-    {
-        return RepositoryError::NoRepositoryError();
-    }
-    else
-    {
-        return RepositoryError(RepositoryError::ERROR_DATABASE_WRITE);
-    }
-}
-
-BaseError ProfileDatabase::addProfileImplementation(Profile::Uid profileID, const LibDescriptor& library)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    ProfileInfoMap::iterator mit = mProfiles.find(profileID);
-    if (mProfiles.end() == mit)
-    {
-        return RepositoryError(RepositoryError::ERROR_UNKNOWN_UID);
-    }
-    else
-    {
-        mit->second.addLib(library.platform,library.libPath);
-    }
-    if (saveChanges())
-    {
-        return RepositoryError::NoRepositoryError();
-    }
-    else
-    {
-        return RepositoryError(RepositoryError::ERROR_DATABASE_WRITE);
-    }
-}
-
-BaseError ProfileDatabase::removeProfileImplementation(Profile::Uid profileUid, std::string platform)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    ProfileInfoMap::iterator mit = mProfiles.find(profileUid);
-
-    if (mProfiles.end() == mit)
-    {
-        return RepositoryError(RepositoryError::ERROR_UNKNOWN_UID);
-    }
-    bool res = mit->second.removeLib(platform);
-
-    if (!res)
-    {
-        return RepositoryError(RepositoryError::ERROR_NO_DLL);
-    }
-
-    if (saveChanges())
-    {
-        return RepositoryError::NoRepositoryError();
-    }
-    else
-    {
-        return RepositoryError(RepositoryError::ERROR_DATABASE_WRITE);
-    }
-}
-
-BaseError ProfileDatabase::removeProfileImplementation(Profile::Uid profileUid, LibDescriptor ld)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    return removeProfileImplementation(profileUid,ld.platform);
-}
-
-std::list<LibInfo> ProfileDatabase::findProfiles(Profile::Uid id, const std::map<std::string, std::string> & profileArguments, std::string platform)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    LOG4CPLUS_INFO(msLogger, "- ProfileDatabase::findProfiles() Find UID : " + id.value());
-    std::list<LibInfo> result;
-    for (ProfileInfoMap::iterator pit = mProfiles.begin(); mProfiles.end() != pit; ++pit)
-    {
-        CProfileInfo &info = pit->second;
-        LOG4CPLUS_INFO(msLogger, "-- UID: "+ info.uid().value() + ", API UID : " + info.apiUid().value());
-        if ((info.uid() == id || info.apiUid() == id)/* && (platform == "" || "" != info.lib(platform))*/)
-        {
-            int rel = getRelevance(info,profileArguments);
-            if (!rel)
-            {
-                continue;
-            }
-            if ("" == platform)
-            {
-                for (std::map<std::string,std::string>::const_iterator libIt = info.libs().begin(); info.libs().end() != libIt; ++libIt)
-                {
-                    LibInfo libInfo(info.uid(),libIt->first, libIt->second,rel);
-                    result.push_back(libInfo);
-                }
-            }
-            else
-            {
-                std::string rPath = info.lib(platform);
-                if ("" != rPath)
-                {
-                    LibInfo libInfo(info.uid(),platform,rPath);
-                    result.push_back(libInfo);
-                }
-            }
-        }
-    }
-    /// todo: sort results by relevance (add operator < to to LibInfo structure) (after first AXIS implementation, this task is on future)
-    return result;
-}
-
-int ProfileDatabase::getRelevance(const CProfileInfo & proInfo, const std::map<std::string, std::string> & profileArguments)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    for (std::map<std::string, std::string>::const_iterator it = profileArguments.begin(); profileArguments.end() != it; ++it)
-    {
-        std::map<std::string,std::string>::const_iterator fit = proInfo.attributes().find(it->first);
-        if (fit == proInfo.attributes().end() || fit->second != it->second)
-        {
-            LOG4CPLUS_INFO(msLogger, "returned 0");
-            return 0;
-        }
-    }
-    LOG4CPLUS_INFO(msLogger, "returned 100");
-    return 100;
-}
-
-std::string ProfileDatabase::getManifest(Profile::Uid uid)
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    ProfileInfoMap::iterator mit = mProfiles.find(uid);
-    if (mProfiles.end() == mit)
-    {
-        return std::string("");
-    }
-    std::stringstream txt;
-    txt << std::ifstream(mit->second.xmlPath().c_str()).rdbuf();
-    return txt.str();
-}
-
-std::list<Profile::Uid> ProfileDatabase::getProfilesList()
-{
-    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
-    std::list<Profile::Uid> list;
-    for (ProfileInfoMap::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
-    {
-        list.push_back(it->first);
-    }
-    return list;
+    return 0;
 }
 
 void ProfileDatabase::printDB()
@@ -353,9 +182,26 @@ void ProfileDatabase::printDB()
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     LOG4CPLUS_INFO(msLogger, "Folder path: " + mFolderPath + " DB name: " + mDbName);
     LOG4CPLUS_INFO(msLogger, "State: " + convertIntegerToString(static_cast<int>(mDbState)));
+
     for (ProfileInfoMap::const_iterator it = mProfiles.begin(); mProfiles.end() != it; ++it)
     {
         it->second.print();
+    }
+}
+
+void ProfileDatabase::getAllLibs(std::list<LibInfo> & libs)
+{
+    libs.clear();
+    for (ProfileInfoMap::const_iterator it = mProfiles.begin();
+            mProfiles.end() != it; ++it)
+    {
+        const std::vector<ProfileLibInfo> & pLibs = it->second.libs();
+        for (std::vector<ProfileLibInfo>::const_iterator pit = pLibs.begin();
+                pLibs.end() != pit; ++pit)
+        {
+            libs.push_back(LibInfo(it->second.uid(), it->second.apiUid(), it->second.complement(),
+                    pit->version(), pit->platform(),pit->path()));
+        }
     }
 }
 

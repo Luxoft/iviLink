@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                RepositoryTypes.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * Defines data types for PMP repository
+ */
 
 
 #ifndef PMP_REPOSITORY_TYPES_HPP_
@@ -57,8 +69,13 @@ struct LibInfo
     /**
     * Constructor
     */
-    LibInfo(Profile::Uid profileUid, std::string libPlatform, std::string libPath, UInt32 libRelevance = 100)
+    LibInfo(Profile::Uid profileUid, Profile::ApiUid profileApiUid, Profile::Uid complementUid,
+            UInt32 libVersion, std::string libPlatform, std::string libPath,
+            UInt32 libRelevance = 100)
         : uid(profileUid)
+        , apiUid(profileApiUid)
+        , complement(complementUid)
+        , version(libVersion)
         , platform(libPlatform)
         , path(libPath)
         , relevance(libRelevance)
@@ -66,6 +83,9 @@ struct LibInfo
     }
 
     Profile::Uid uid;       ///< UID of Profile
+    Profile::ApiUid apiUid; ///< Profile API UID
+    Profile::Uid complement;///< Complement Profile UID
+    UInt32 version;         ///< version of profile implementation
     std::string platform;   ///< string with platform
     std::string path;       ///<path to library
     UInt32 relevance;       ///< Relevance of result 0...100

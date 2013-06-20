@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
 
 
 #include <utility>
@@ -40,7 +42,7 @@
 #include "TimeoutManager.hpp"
 #include "CCarrierAdapter.hpp"
 #include "UnstableAPI.hpp"
-
+#include "FoundDevice.hpp"
 
 using namespace iviLink::ConnectivityAgent::L1;
 using namespace iviLink::ConnectivityAgent;
@@ -61,6 +63,7 @@ L1InterfaceStub::L1InterfaceStub()
     , mSCProtocol(this,systemControllerSocket )
     , bShutDownFlag(false)
     , mTimeoutManager(new Utils::TimeoutManager())
+    , mpIpc(NULL)
 {
     fillCallbacks();
     BaseError err = mSCProtocol.connect();
@@ -69,18 +72,28 @@ L1InterfaceStub::L1InterfaceStub()
 
 L1InterfaceStub::~L1InterfaceStub()
 {
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
     if (mTimeoutManager)
     {
         mTimeoutManager->finish();
         delete mTimeoutManager;
     }
     mClientDirections.clear();
-    delete mpIpc;
-    delete mpAgent;
+    if (mpIpc)
+    {
+        delete mpIpc;
+        mpIpc = NULL;
+    }
+    if (mpAgent)
+    {
+        delete mpAgent;
+        mpAgent = NULL;
+    }
 }
 
 void L1InterfaceStub::start(bool isServer, const char* sockPath)
 {
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
     mpAgent = new CConnectivityAgent(isServer);
     mpAgent->start();
     mpIpc = new iviLink::Ipc::CIpc(sockPath, *this);
@@ -101,8 +114,11 @@ L1InterfaceStub* L1InterfaceStub::getInstance()
 
 void L1InterfaceStub::deleteInstance()
 {
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    mSingletonMutex.lock();
     delete this;
     mSelf = NULL;
+    mSingletonMutex.unlock();
 }
 
 void L1InterfaceStub::OnConnection(DirectionID dirId)
@@ -520,7 +536,15 @@ void L1InterfaceStub::OnConnected()
     mRegistryMutex.lock();
     allocateChannelLocally(CA_SERVICE_CHANNEL, info);
     mRegistryMutex.unlock();
-
+    
+    
+    iviLink::ConnectivityAgent::HAL::CCarrierAdapter* pca = mpAgent->getCurrentCarrierAdapter();
+    if (!pca)
+    {
+        LOG4CPLUS_ERROR(logger, "Could not obtain carrier adapter!");
+    }
+    assert(pca);
+    pca->unlockFrameProcessing();
     mSCProtocol.sendConnectionEstablished(mpAgent->getCurrentGender());
 
 }
@@ -553,6 +577,10 @@ void L1InterfaceStub::fillCallbacks()
     mClientsCallbacksMap.insert(std::make_pair(E_SEND_DATA,           &L1InterfaceStub::processClientSendRequest             ));
     mClientsCallbacksMap.insert(std::make_pair(E_GET_CONNECTION_ADDR, &L1InterfaceStub::processClientGetConnectionAddrRequest));
     mClientsCallbacksMap.insert(std::make_pair(E_DEALLOCATE_CHANNEL_WATCHDOG, &L1InterfaceStub::processClientDeallocateByWD  ));
+    
+    mClientsCallbacksMap.insert(std::make_pair(E_CONNECT_DEVICE,      &L1InterfaceStub::processClientConnectionRequest       ));
+    mClientsCallbacksMap.insert(std::make_pair(E_DISCONNECT_DEVICE,   &L1InterfaceStub::processClientDisconnectRequest       ));
+    mClientsCallbacksMap.insert(std::make_pair(E_GET_DEVICE_LIST,     &L1InterfaceStub::processClientGetDeviceList           ));
 
     mServiceCallbacksMap.insert(std::make_pair(E_ALLOCATE_CHANNEL,        &L1InterfaceStub::processServiceAllocateRequest    ));
     mServiceCallbacksMap.insert(std::make_pair(E_DEALLOCATE_CHANNEL,      &L1InterfaceStub::processServiceDeallocateRequest  ));
@@ -567,7 +595,7 @@ void L1InterfaceStub::OnRequest(iviLink::Ipc::MsgID id,
         DirectionID dirId)
 {
     LOG4CPLUS_INFO(logger, "L1InterfaceStub::OnRequest(): received " +
-            convertIntegerToString(payloadSize) + " bytes");
+                   convertIntegerToString(payloadSize) + " bytes");
 
     const UInt32 savedBufferSize = bufferSize;
     // no response by default
@@ -576,25 +604,25 @@ void L1InterfaceStub::OnRequest(iviLink::Ipc::MsgID id,
     CDataAccessor pReq(pPayload, payloadSize);
     pReq.printContent();
 
-    bool send_result = false;
+    bool sendResult = false;
 
     tClientsCallbacksMap::const_iterator callback_iter =
             mClientsCallbacksMap.find(static_cast<tOpCode>(pReq.getOpCode()));
     if (callback_iter != mClientsCallbacksMap.end())
     {
         LOG4CPLUS_INFO(logger, "OnRequest: found callback, invoking...");
-        send_result = (this->*callback_iter->second)(pReq, dirId);
+        sendResult = (this->*callback_iter->second)(pReq, dirId);
     }
     else
     {
         LOG4CPLUS_WARN(logger, "L1InterfaceStub::OnRequest() => UNKNOWN REQUEST!");
         pReq.resetData();
         pReq.setErrorCode(ConnectivityAgentError::ERROR_NOT_FOUND);
-        send_result = true;
+        sendResult = true;
     }
 
     /*Here was a "<" condition, getConnectionAddr did not work */
-    if (send_result && (savedBufferSize >= pReq.getObjectSize() ) )
+    if (sendResult && (savedBufferSize >= pReq.getObjectSize() ) )
     {
         bufferSize = pReq.getObjectSize();
         pReq.copyToRawArray(pResponseBuffer);
@@ -605,7 +633,111 @@ void L1InterfaceStub::OnAsyncRequest(iviLink::Ipc::MsgID id,
         UInt8 const* pPayload, UInt32 payloadSize,
         DirectionID dirId)
 {
+    LOG4CPLUS_INFO(logger, "L1InterfaceStub::OnAsyncRequest(): received " +
+            convertIntegerToString(payloadSize) + " bytes");
+
+    CDataAccessor pReq(pPayload, payloadSize);
+    pReq.printContent();
+
+    bool sendResult = false;
+
+    tClientsCallbacksMap::const_iterator callback_iter =
+            mClientsCallbacksMap.find(static_cast<tOpCode>(pReq.getOpCode()));
+    if (callback_iter != mClientsCallbacksMap.end())
+    {
+        LOG4CPLUS_INFO(logger, "OnRequest: found callback, invoking...");
+        sendResult = (this->*callback_iter->second)(pReq, dirId);
+    }
+    else
+    {
+        LOG4CPLUS_WARN(logger, "L1InterfaceStub::OnRequest() => UNKNOWN REQUEST!");
+        pReq.resetData();
+        pReq.setErrorCode(ConnectivityAgentError::ERROR_NOT_FOUND);
+        sendResult = true;
+    }
+}
+
+bool L1InterfaceStub::processClientConnectionRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId)
+{
     LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    //FIXME: add code
+    return false;
+}
+
+bool L1InterfaceStub::processClientDisconnectRequest(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+    //FIXME: add code
+    
+    if(mpAgent)
+    {
+        mpAgent->onConnectionProblem(eDummyTcpCarrier);
+    }
+
+    return false;
+}
+
+bool L1InterfaceStub::processClientGetDeviceList(CDataAccessor & accessor, const iviLink::Ipc::DirectionID dirId)
+{
+    LOG4CPLUS_TRACE_METHOD(logger, __PRETTY_FUNCTION__);
+
+    UInt32 number = 0;
+    if(accessor.getDataSize()<sizeof(UInt32))
+    {
+        accessor.resetData();
+        accessor.setErrorCode(ConnectivityAgentError::ERROR_REQUEST_FAILED);
+        return true;
+    }
+    number=*(reinterpret_cast<UInt32*>(accessor.getData()));
+    if(number!=0)
+    {
+        accessor.resetData();
+        accessor.setErrorCode(ConnectivityAgentError::ERROR_NOT_FOUND);
+        return true;
+    }
+    else
+    {
+        LOG4CPLUS_INFO(logger, "Device Number know, transmitting");
+        FoundDevice device;
+        UInt8* serializedData = NULL;
+        device.mName="N/a";
+        device.mAddress="";
+        device.mConnection=CON_UNKNOWN;
+        if (mpAgent)
+        {
+            iviLink::ConnectivityAgent::HAL::CCarrierAdapter* pca = mpAgent->getCurrentCarrierAdapter();
+            if (pca)
+            {
+                const char *remoteAddress = pca->getRemoteAddress();
+                const char *connTypeName = pca->getTypeName();
+                if(connTypeName == NULL)
+                {
+                    connTypeName = "";
+                }
+                if(remoteAddress == NULL)
+                {
+                    remoteAddress = "N/a";
+                }
+                std::string typeName = connTypeName;
+                device.mName = remoteAddress;
+                device.mAddress = remoteAddress;
+                if (typeName == "Bluetooth")
+                {
+                    device.mConnection = CON_BLUETOOTH;
+                }
+                else if (typeName == "TCP/IP")
+                {
+                    device.mConnection = CON_IP;
+                }
+            }
+        }
+        serializedData = device.serialize();
+        accessor.resetData();
+        accessor.setData(serializedData,device.getSerializedSize());
+        delete[] serializedData;
+        accessor.setErrorCode(BaseError::IVILINK_NO_ERROR);
+        return true;
+    }
 }
 
 bool L1InterfaceStub::processClientAllocateRequest(CDataAccessor & accessor,

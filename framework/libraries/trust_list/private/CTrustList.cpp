@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
 
 
 #include <algorithm>
 #include <vector>
+#include <ctime>
 #include <unistd.h>
 
 #include "BaseUid.hpp"
@@ -59,10 +67,34 @@ iviLink::BaseUid CTrustList::getOurUid() const
 	return uid;
 }
 
+std::string CTrustList::getOurName() const
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    std::string name;
+    BaseError err = mpStorage->getOurName(name);
+    if (!err.isNoError())
+    {
+        LOG4CPLUS_WARN(msLogger, static_cast<std::string>(err));
+        name = "Generated name" + getOurUid().value();
+        LOG4CPLUS_INFO(msLogger, "Our newly-generated name is: " + name);
+        err = mpStorage->setOurName(name);
+        if (!err.isNoError())
+        {
+            LOG4CPLUS_ERROR(msLogger, static_cast<std::string>(err));
+        }
+    }
+    else
+    {
+        LOG4CPLUS_INFO(msLogger, "Our stored name is: " + name);		
+    }
+    return name;
+}
+
 bool CTrustList::isKnownUid(iviLink::BaseUid const& uid) const
 {
 	LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
-	tUidVector vec;
+	tNameUidVector vec;
+	tNameUidVector::iterator i;
 	BaseError err = mpStorage->readAll(vec);
 	if (!err.isNoError())
 	{
@@ -71,13 +103,46 @@ bool CTrustList::isKnownUid(iviLink::BaseUid const& uid) const
 	}
 	LOG4CPLUS_INFO(msLogger, "Looking for: " + uid.value());
 
-	return std::find(vec.begin(), vec.end(), uid) != vec.end();
+	for(i = vec.begin(); i != vec.end(); ++i)
+	{
+		if(uid == i->first) return true;
+	}
+	return false;
 }
 
 CTrustListError CTrustList::addUid(iviLink::BaseUid const& uid)
 {
 	LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 	return mpStorage->insert(uid);
+}
+
+CTrustListError CTrustList::addUid(iviLink::BaseUid const& uid, std::string const& name)
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    CTrustListError err = mpStorage->insert(uid);
+    if(!err.isNoError())
+    {
+        return err;
+    }
+    return mpStorage->updateName(uid, name);
+}
+   
+CTrustListError CTrustList::getLastConnection(iviLink::BaseUid& uid, time_t &timestamp)
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    return mpStorage->getLastConnection(uid, timestamp);
+}
+
+CTrustListError CTrustList::setLastConnection(iviLink::BaseUid const& uid, time_t const &timestamp)
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    return mpStorage->setLastConnection(uid, timestamp);
+}
+
+CTrustListError CTrustList::setLastConnection(iviLink::BaseUid const& uid)
+{
+    LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
+    return mpStorage->setLastConnection(uid, time(NULL));
 }
 
 CTrustListError CTrustList::removeUid(iviLink::BaseUid const& uid)
@@ -92,7 +157,7 @@ CTrustListError CTrustList::clearList()
 	return mpStorage->clear();
 }
 
-CTrustListError CTrustList::getKnownUids(tUidVector& result) const
+CTrustListError CTrustList::getKnownUids(tNameUidVector& result) const
 {
 	LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 	return mpStorage->readAll(result);
@@ -112,7 +177,6 @@ CTrustList::~CTrustList()
 	LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__);
 	delete mpStorage;
 }
-
 
 BaseUid CTrustList::generateNewUid() const
 {

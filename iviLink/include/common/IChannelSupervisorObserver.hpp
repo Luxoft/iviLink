@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +19,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
-
+ * 
+ */
 
 #ifndef CHANNEL_SUPERVISOR_TUBE_H
 #define CHANNEL_SUPERVISOR_TUBE_H
 
 #include <string>
+#include "Types.hpp"
 
 namespace iviLink
 {
@@ -47,19 +49,19 @@ public:
      * @param readSize data size available for read
      * @param freeSize free size left
      */
-    virtual void onDataReceived(const unsigned int channelId, const unsigned int readSize) = 0;
+    virtual void onDataReceived(const UInt32 channelId, const UInt32 readSize) = 0;
 
     /**
      * Callback indicating channel buffer overflow.
      * @param channelId channel number which data has been lost
      */
-    virtual void onBufferOverflow(const unsigned int channelId) = 0;
+    virtual void onBufferOverflow(const UInt32 channelId) = 0;
 
     /**
      * Callback indicating channel is deleted
      * @param channelId channel number which has been deallocated
      */
-    virtual void onChannelDeleted(const unsigned int channelId) = 0;
+    virtual void onChannelDeleted(const UInt32 channelId) = 0;
 
     /**
      * Callback indicating connection between devices is lost

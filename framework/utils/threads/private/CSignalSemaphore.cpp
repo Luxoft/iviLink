@@ -1,9 +1,10 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+ * Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+
+
+
+
+
+
+
 
 
 #include <errno.h>
@@ -131,14 +142,14 @@ int CSignalSemaphore::waitTimeout(const time_t miliSec)
 
    struct timespec ts;
    clock_gettime(CLOCK_REALTIME, &ts);
-   ts.tv_sec 	+= sec;
+   ts.tv_sec   += sec;
    if (1000000000 <= ts.tv_nsec + msec * 1000000)
    {
       ++ts.tv_sec;
       ts.tv_nsec = ts.tv_nsec + msec * 1000000 - 1000000000;
    } else
    {
-      ts.tv_nsec	+= msec * 1000000;
+      ts.tv_nsec  += msec * 1000000;
    }
    return sem_timedwait(&mSemaphore, &ts);
 }

@@ -1,5 +1,6 @@
 /* 
- * iviLINK SDK, version 1.2
+ * 
+ * iviLINK SDK, version 1.1.2
  * http://www.ivilink.net
  * Cross Platform Application Communication Stack for In-Vehicle Applications
  * 
@@ -18,7 +19,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * 
- */ 
+ * 
+ */
+
+
+/**
+ * @file                PmpCoreProtocol.hpp
+ * @ingroup             Profile Manager
+ * @author              Plachkov Vyacheslav <vplachkov@luxoft.com>
+ * @date                10.01.2013
+ *
+ * PMP core protocol class implementation
+ */
 
 
 #include <cassert>
@@ -69,17 +81,17 @@ bool PmpCoreProtocol::getAvailableProfileComplementsRequest()
     return mPmpProtocol->makeCoreRequest(req);
 }
 
-bool PmpCoreProtocol::getAvailableProfileComplementsResponse(const std::list<Profile::Uid> & complements)
+bool PmpCoreProtocol::getAvailableProfileComplementsResponse(const std::list< std::pair<Profile::Uid, UInt32> > & complements)
 {
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
 
     assert(mPmpProtocol);
 
     UInt32 size = sizeof(PMPFrame) + 4;
-    for (std::list<Profile::Uid>::const_iterator it = complements.begin();
+    for (std::list< std::pair<Profile::Uid, UInt32> >::const_iterator it = complements.begin();
     complements.end() != it; ++it)
     {
-        size += stringInBufSize(it->value());
+        size += stringInBufSize(it->first.value()) + sizeof (it->second);
     }
 
     PMPFrame * pReq = reinterpret_cast<PMPFrame*>(new UInt8[size]);
@@ -91,11 +103,15 @@ bool PmpCoreProtocol::getAvailableProfileComplementsResponse(const std::list<Pro
     count = ByteOrder::hton32(count);
     memcpy(pReq->data,&count,4);
     UInt32 pos = 4;
-    for (std::list<Profile::Uid>::const_iterator it = complements.begin();
+    for (std::list<std::pair<Profile::Uid, UInt32> >::const_iterator it = complements.begin();
     complements.end() != it; ++it)
     {
-        stringToBuffer(it->value(),pReq->data + pos,true);
-        pos += stringInBufSize(it->value());
+        stringToBuffer(it->first.value(),pReq->data + pos,true);
+        pos += stringInBufSize(it->first.value());
+        UInt32 version = it->second;
+        version = ByteOrder::hton32(version);
+        memcpy (pReq->data + pos, &version, sizeof (version));
+        pos += sizeof (version);
     }
 
     assert(pos == size-sizeof(PMPFrame));
@@ -249,7 +265,6 @@ void PmpCoreProtocol::onGetAvailableProfileComplementsResponse(PMPFrame * frame)
     LOG4CPLUS_TRACE_METHOD(msLogger, __PRETTY_FUNCTION__ );
     assert(mEventFactory);
 
-
     if (!frame)
     {
         LOG4CPLUS_ERROR(msLogger, "No frame");
@@ -261,13 +276,17 @@ void PmpCoreProtocol::onGetAvailableProfileComplementsResponse(PMPFrame * frame)
     count = ByteOrder::ntoh32(count);
     int pos = 4;
     LOG4CPLUS_INFO(msLogger, "RES COUNT : " + convertIntegerToString(count));
-    std::list<Profile::Uid> complements;
+    std::list<std::pair<Profile::Uid, UInt32> > complements;
 
     for (UInt32 i = 0; i<count; ++i)
     {
         std::string str = bufferToString(frame->data+pos,true);
-        complements.push_back(Profile::Uid(str));
         pos += stringInBufSize(str);
+        UInt32 version;
+        memcpy(&version, frame->data+pos, sizeof(version));
+        pos += sizeof(version);
+        version = ByteOrder::ntoh32(version);
+        complements.push_back(std::make_pair(Profile::Uid(str), version));
     }
 
     mEventFactory->coreProtocolGetAvailableProfileComplementsResponse(complements);

@@ -1,70 +1,88 @@
-/* 
- * iviLINK SDK, version 1.2
- * http://www.ivilink.net
- * Cross Platform Application Communication Stack for In-Vehicle Applications
- * 
- * Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; version 2.1.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- * 
- */ 
+/**
+ * Copyright placeholder
+ */
+/**
+ * @ingroup             Channel Supervisor
+ * @author              Elena Bratanova <ebratanova@luxoft.com>
+ * @date                23.04.2013
+ *
+ * Communicates with the Negotiator Process.
+ */
 
-
-#ifndef NEGOTIATORCLIENT_HPP
-#define  NEGOTIATORCLIENT_HPP
+#ifndef NEGOTIATOR_CLIENT_HPP
+#define NEGOTIATOR_CLIENT_HPP
 
 #include <string>
-#include <tr1/memory>
+#include <map>
+
+#include "ICallbackHandler.hpp"
+#include "INegotiatorClient.hpp"
 
 #include "CMutex.hpp"
 #include "Types.hpp"
 #include "Logger.hpp"
-#include "CMutex.hpp"
+#include "CIpc.hpp"
+#include "Request.hpp"
+#include "NegotiatorResponseData.hpp"
 
 namespace iviLink
 {
 namespace ChannelSupervisor
 {
-
-struct NegotiatorIPCClient;
-
 class NegotiatorClientDeleter;
 
-class NegotiatorClient
+typedef std::map<iviLink::Ipc::MsgID, NegotiatorResponseData*> tResponsesMap;
+
+class NegotiatorClient: public iviLink::Ipc::ICallbackHandler, public INegotiatorClient
 {
     friend class NegotiatorClientDeleter;
-
+    friend class NegotiatorClientHolder;
 public:
-    static NegotiatorClient* getInstance();
+    // INegotiatorClient interface
+    virtual BaseError negotiateChannel(std::string const& tag, UInt32 & channelID);
+    virtual BaseError updateMapWithCID(std::string const& tag, UInt32 const& channelID);
+    virtual BaseError freeChannel(UInt32 const& channelID);
+    virtual BaseError updateChannelInfo(std::string const& tag, UInt32 const& channelID);
 
-    BaseError NegotiateChannel(std::string const& tag, UInt32 & channelId);
-    BaseError UpdateMapWithCID(std::string const& tag, UInt32 & channelId);
-    BaseError FreeChannel(const UInt32 channelId);
-    BaseError UpdateChannelInfo(std::string const& tag, const UInt32 & channelId);
+    // ICallbackHandler interface
+    virtual void OnConnection(iviLink::Ipc::DirectionID dirId) {}
+    virtual void OnConnectionLost(iviLink::Ipc::DirectionID dirId) {}
+    virtual void OnRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+                    UInt8* const pResponseBuffer, UInt32& bufferSize,
+                    iviLink::Ipc::DirectionID dirId) {}
+    virtual void OnAsyncRequest(iviLink::Ipc::MsgID id, UInt8 const* pPayload, UInt32 payloadSize,
+                    iviLink::Ipc::DirectionID dirId);
+private:
+    void signalResponseSemaphore(Messages::Response*, iviLink::Ipc::MsgID const&);
+    Messages::Response* waitForResponse(iviLink::Ipc::MsgID const&);
+    NegotiatorResponseData * getDataForMessageId(iviLink::Ipc::MsgID const&);
+    void eraseDataForMessageId(iviLink::Ipc::MsgID const&);
+
+    bool ensureConnection();
+    iviLink::Ipc::MsgID getNextMsgId();
+
+    /**
+     * Note: request will be deallocated inside the method.
+     */
+    BaseError sendMessageToNegotiator(Messages::Request*, iviLink::Ipc::MsgID const&);
+
+    BaseError communicateWithNegotiator(Messages::Request::RequestType, std::string const&tag, UInt32& channelID);
 
 private:
     NegotiatorClient();
     NegotiatorClient(NegotiatorClient const&);
     void operator =(NegotiatorClient const&);
-    ~NegotiatorClient();
+    virtual ~NegotiatorClient() {}
 
-    static std::tr1::shared_ptr<NegotiatorClient> m_Instance;
-    static CMutex m_SingletonMutex;
+private:
+    iviLink::Ipc::CIpc mIpc;
+    CMutex mResponsesMapMutex;
+    tResponsesMap mResponsesMap;
 
-    NegotiatorIPCClient * m_ipcClient;
-    static Logger msLogger;
+    iviLink::Ipc::MsgID mMessageId;
+    CMutex mMessageIdMutex;
 
+    static Logger mLogger;
 };
 
 }  // namespace ChannelSupervisor

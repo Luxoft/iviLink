@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<profileApi>
-	<version>1</version>
-	<role>AuthenticationProfile_API_Role</role>
-	<uid>AuthenticationProfile_PAPI_UID</uid>
-</profileApi>

@@ -1,8 +1,9 @@
-# iviLINK SDK, version 1.2
+# 
+# iviLINK SDK, version 1.1.2
 # http://www.ivilink.net
 # Cross Platform Application Communication Stack for In-Vehicle Applications
 # 
-# Copyright (C) 2012-2013, Luxoft Professional Corp., member of IBS group
+# Copyright (C) 2012, Luxoft Professional Corp., member of IBS group
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+# 
 # 
 
 ###############################################################################
@@ -59,7 +61,7 @@ INCLUDES      += -I$(ROOT_DIR)samples/linux/Profiles/ProfileAPI/
 INCLUDES      += -I$(FW_DIR)libraries/trust_list/
 INCLUDES      += -I$(FW_DIR)genericSamples/linux/serviceSources/
 INCLUDES      += -I$(ROOT_DIR)3rd_party/cryptopp/cryptopp-5.6.1/
-
+INCLUDES      += -I$(ROOT_DIR)iviLink/include/utils/serialize/
 CXXFLAGS       = $(GLOBAL_CXXFLAGS) $(GLOBAL_DLL_CXXFLAGS) $(INCLUDES)
 CFLAGS         = $(GLOBAL_CFLAGS) $(GLOBAL_DLL_CFLAGS) $(INCLUDES) -std=c99
 LDFLAGS       := $(GLOBAL_LDFLAGS) $(GLOBAL_DLL_LDFALGS)

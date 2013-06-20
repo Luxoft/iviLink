@@ -1,6 +1,11 @@
 #include <iostream>
+#ifndef __APPLE__
 #include <json/value.h>
 #include <json/writer.h>
+#else
+#include "value.h"
+#include "writer.h"
+#endif
 #include <utility>
 #include <stdexcept>
 #include <cstring>
